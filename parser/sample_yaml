@@ -1,0 +1,128 @@
+device_type: qemu
+job_name: qemu-pipeline
+timeouts:
+  job:
+    minutes: 25		# timeout for the whole job
+  action:
+    minutes: 5		# default timeout applied for each action; can be overriden in the action itself
+priority: medium
+
+actions:
+
+  - deploy:
+      timeout:
+        minutes: 20
+      images:		# list of images
+         - uri: https://images.validation.linaro.org/kvm/standard/stretch-1.img.gz
+           checksum_uri: https://images.validation.linaro.org/kvm/standard/stretch-1.md5
+           checksum_type: md5
+           compression: gz
+         - uri: https://images.validation.linaro.org/kvm/standard/stretch-2.img.zip
+           checksum_uri: https://images.validation.linaro.org/kvm/standard/stretch-2.md5
+           checksum_type: md5
+           compression: zip
+      partition_layout:		# list of partitions structures
+         - id: 1
+           device_name: device_name1_string
+           image_name: image_name1_string
+           size: 12345
+           type: fat
+         - id: 2
+           device_name: device_name2_string
+           image_name: image_name2_string
+           size: 23456
+           type: ext2
+         - id: 3
+           device_name: device_name3_string
+           image_name: image_name3_string
+           size: 34567
+           type: ext3
+  - boot:
+      login: root
+      password: tizen
+      prompts:
+        - 'linaro-test'
+        - 'root@debian:~#'
+      failure_retry: 2
+      timeout:
+        minutes: 20
+      input_sequence: input_sequence_string
+      wait_pattern: 'sample pattern we wait for'
+      wait_time:
+        minutes: 4
+  - test:
+      failure_retry: 3
+      name: kvm-basic-singlenode
+      timeout:
+        minutes: 5
+      test_cases:
+        - case_name: case_name1_string
+          test_actions:
+            - boot:
+                login: root
+                password: tizen
+                prompts:
+                  - 'linaro-test'
+                  - 'root@debian:~#'
+                failure_retry: 2
+                timeout:
+                  minutes: 20
+                input_sequence: input_sequence_string
+                wait_pattern: 'sample pattern 1 we wait for'
+                wait_time:
+                  minutes: 4
+            - push:
+                uri: uri1_string
+                dest: path1_string
+                alias: alias1_string
+                timeout:
+                  minutes: 6
+            - run:
+                name: name1_string
+                timeout:
+                  minutes: 2
+            - pull:
+                src: path2_string
+                alias: alias2_string
+                timeout:
+                  minutes: 1
+        - case_name: case_name2_string
+          test_actions:
+            - boot:
+                login: root
+                password: tizen
+                prompts:
+                  - 'linaro-test'
+                  - 'root@debian:~#'
+                failure_retry: 2
+                timeout:
+                  minutes: 20
+                input_sequence: input_sequence_string
+                wait_pattern: 'sample pattern 2 we wait for'
+                wait_time:
+                  minutes: 3
+            - push:
+                uri: uri1_string
+                dest: path1_string
+                alias: alias1_string
+                timeout:
+                  minutes: 4
+            - push:
+                uri: uri1_string
+                dest: path1_string
+                alias: alias1_string
+                timeout:
+                  minutes: 5
+            - pull:
+                src: path2_string
+                alias: alias2_string
+                timeout:
+                  minutes: 2
+        - case_name: case_name3_string
+          test_actions:
+             - pull:
+                src: path2_string
+                alias: alias2_string
+                timeout:
+                  minutes: 1
+
