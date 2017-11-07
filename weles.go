@@ -17,5 +17,5 @@
 // Package weles represents the base of the Weles system.
 package weles
 
-// JobID is a reference to Job.
+// JobID is a unique identifier for Weles Job.
 type JobID uint64
