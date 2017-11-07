@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ type JobInfo struct {
 	Name string
 	// Created is the Job creation time in UTC.
 	Created time.Time
-	// Updated is the time of latest Job status modification.
+	// Updated is the time of latest Jobs' status modification.
 	Updated time.Time
 	// Status specifies current state of the Job.
 	Status JobStatus
@@ -64,7 +64,7 @@ type JobInfo struct {
 	Info string
 }
 
-// JobManager interface defines API for actions that can be called on Weles Jobs
+// JobManager interface defines API for actions that can be called on Weles' Jobs
 // by external modules. These methods are intended to be used by HTTP server.
 type JobManager interface {
 	// CreateJob creates a new Job in Weles using recipe passed in YAML format.
