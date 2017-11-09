@@ -24,8 +24,38 @@ import (
 // ArtifactDownloader downloads requested file if there is need to.
 type ArtifactDownloader interface {
 	// Download starts downloading requested artifact.
-	Download(URI ArtifactURI) (ArtifactInfo, error)
+	Download(URI ArtifactURI, path ArtifactPath, ch chan ArtifactStatusChange) error
 
 	// CheckInCache checks if file already exists in ArtifactDB.
 	CheckInCache(URI ArtifactURI) (ArtifactInfo, error)
+
+	// Close waits for all jobs to finish, and gracefully closes ArtifactDownloader.
+	Close()
+}
+
+// Storage should be used by Weles' subsystems that need access to ArtifactDB
+// or information about artifacts stored there.
+// Storage implements ArtifactManager interface.
+type Storage struct {
+	ArtifactManager
+}
+
+// ListArtifact is part of implementation of ArtifactManager interface.
+func (s *Storage) ListArtifact(filter ArtifactFilter) ([]ArtifactInfo, error) {
+	return nil, ErrNotImplemented
+}
+
+// PushArtifact is part of implementation of ArtifactManager interface.
+func (s *Storage) PushArtifact(artifact ArtifactDescription, ch chan ArtifactStatusChange) (ArtifactPath, error) {
+	return "", ErrNotImplemented
+}
+
+// CreateArtifact is part of implementation of ArtifactManager interface.
+func (s *Storage) CreateArtifact(artifact ArtifactDescription) (ArtifactPath, error) {
+	return "", ErrNotImplemented
+}
+
+// GetArtifactInfo is part of implementation of ArtifactManager interface.
+func (s *Storage) GetArtifactInfo(path ArtifactPath) (ArtifactInfo, error) {
+	return ArtifactInfo{}, ErrNotImplemented
 }
