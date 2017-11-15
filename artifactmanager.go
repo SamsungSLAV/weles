@@ -103,4 +103,7 @@ type ArtifactManager interface {
 
 	// GetFileInfo retrieves information about an artifact from ArtifactDB.
 	GetArtifactInfo(path ArtifactPath) (ArtifactInfo, error)
+
+	// Close gracefully closes ArtifactManager.
+	Close() error
 }

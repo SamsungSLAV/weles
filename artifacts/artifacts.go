@@ -18,7 +18,14 @@
 package artifacts
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strconv"
+	"time"
+
 	. "git.tizen.org/tools/weles"
+	. "git.tizen.org/tools/weles/artifacts/database"
 )
 
 // ArtifactDownloader downloads requested file if there is need to.
@@ -38,6 +45,41 @@ type ArtifactDownloader interface {
 // Storage implements ArtifactManager interface.
 type Storage struct {
 	ArtifactManager
+	db  ArtifactDB
+	dir string
+}
+
+const (
+	// defaultDb is default ArtifactDB name.
+	defaultDb = "weles.db"
+	// defaultDir is default directory for ArtifactManager storage.
+	defaultDir = "/tmp/weles/"
+)
+
+func newArtifactManager(db, dir string) (ArtifactManager, error) {
+	err := os.MkdirAll(dir, os.ModePerm)
+	if err != nil {
+		return nil, err
+	}
+	am := Storage{dir: dir}
+	err = am.db.Open(db)
+
+	if err != nil {
+		return nil, err
+	}
+	return &am, nil
+}
+
+// NewArtifactManager returns initialized Storage implementing ArtifactManager interface.
+// If db or dir is empy, default value will be used.
+func NewArtifactManager(db, dir string) (ArtifactManager, error) {
+	if db == "" {
+		db = defaultDb
+	}
+	if dir == "" {
+		dir = defaultDir
+	}
+	return newArtifactManager(filepath.Join(dir, db), dir)
 }
 
 // ListArtifact is part of implementation of ArtifactManager interface.
@@ -52,10 +94,47 @@ func (s *Storage) PushArtifact(artifact ArtifactDescription, ch chan ArtifactSta
 
 // CreateArtifact is part of implementation of ArtifactManager interface.
 func (s *Storage) CreateArtifact(artifact ArtifactDescription) (ArtifactPath, error) {
-	return "", ErrNotImplemented
+	path, err := s.getNewPath(artifact)
+	if err != nil {
+		return "", err
+	}
+
+	err = s.db.InsertArtifactInfo(&ArtifactInfo{artifact, path, "", time.Now().UTC()})
+	if err != nil {
+		return "", err
+	}
+	return path, nil
 }
 
 // GetArtifactInfo is part of implementation of ArtifactManager interface.
 func (s *Storage) GetArtifactInfo(path ArtifactPath) (ArtifactInfo, error) {
-	return ArtifactInfo{}, ErrNotImplemented
+	return s.db.SelectPath(path)
+}
+
+// Close closes Storage's ArtifactDB.
+func (s *Storage) Close() error {
+	return s.db.Close()
+}
+
+// getNewPath prepares new path for artifact.
+func (s *Storage) getNewPath(ad ArtifactDescription) (ArtifactPath, error) {
+	var (
+		jobDir  = filepath.Join(s.dir, strconv.FormatUint(uint64(ad.JobID), 10))
+		typeDir = filepath.Join(jobDir, string(ad.Type))
+		err     error
+	)
+
+	// Organize by filetypes
+	err = os.MkdirAll(typeDir, os.ModePerm)
+	if err != nil {
+		return "", err
+	}
+
+	// Add human readable prefix
+	f, err := ioutil.TempFile(typeDir, string(ad.Alias))
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+	return ArtifactPath(f.Name()), err
 }
