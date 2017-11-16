@@ -45,17 +45,18 @@ func newDryadJobRunner(ctx context.Context, rusalka dryad.SessionProvider, devic
 // Deploy is part of DryadJobRunner interface.
 func (d *dryadJobRunner) Deploy() error {
 	// TODO(amistewicz): implement.
-	return nil
+	return d.rusalka.TS()
 }
 
 // Boot is part of DryadJobRunner interface.
 func (d *dryadJobRunner) Boot() error {
 	// TODO(amistewicz): implement.
-	return nil
+	return d.rusalka.DUT()
 }
 
 // Test is part of DryadJobRunner interface.
 func (d *dryadJobRunner) Test() error {
 	// TODO(amistewicz): implement.
-	return nil
+	_, _, err := d.rusalka.Exec([]string{"echo", "healthcheck"})
+	return err
 }

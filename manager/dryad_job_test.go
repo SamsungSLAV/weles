@@ -17,21 +17,57 @@
 package manager
 
 import (
+	"context"
+
 	. "git.tizen.org/tools/weles"
 
+	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("dryadJob", func() {
-	var changes chan DryadJobStatusChange
-	var jobID JobID
-	var dj *dryadJob
+	var (
+		changes            chan DryadJobStatusChange
+		jobID              JobID
+		dj                 *dryadJob
+		djSync             chan struct{}
+		ctrl               *gomock.Controller
+		mockDryadJobRunner DryadJobRunner
+		cancel             context.CancelFunc
+	)
+
+	newMockDryadJob := func(job JobID) (*dryadJob, chan struct{}) {
+		dJobSync := make(chan struct{})
+		var ctx context.Context
+		ctx, cancel = context.WithCancel(context.Background())
+		dJob := newDryadJobWithCancel(job, changes, mockDryadJobRunner, cancel)
+		go func() {
+			defer close(dJobSync)
+			defer GinkgoRecover()
+			dJob.run(ctx)
+		}()
+		return dJob, dJobSync
+	}
 
 	BeforeEach(func() {
+		ctrl = gomock.NewController(GinkgoT())
+		mockDryadJobRunner = NewMockDryadJobRunner(ctrl)
+		mockOfDryadJobRunner := mockDryadJobRunner.(*MockDryadJobRunner)
+		gomock.InOrder(
+			mockOfDryadJobRunner.EXPECT().Deploy(),
+			mockOfDryadJobRunner.EXPECT().Boot(),
+			mockOfDryadJobRunner.EXPECT().Test(),
+		)
+
 		jobID = 666
 		changes = make(chan DryadJobStatusChange, 6)
-		dj = newDryadJob(jobID, Dryad{}, changes)
+		dj, djSync = newMockDryadJob(jobID)
+	})
+
+	AfterEach(func() {
+		Eventually(djSync).Should(BeClosed())
+		ctrl.Finish()
 	})
 
 	It("should go through proper states", func() {
