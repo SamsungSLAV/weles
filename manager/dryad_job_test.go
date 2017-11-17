@@ -18,11 +18,13 @@ package manager
 
 import (
 	"context"
+	"errors"
 
 	. "git.tizen.org/tools/weles"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
 
@@ -34,6 +36,7 @@ var _ = Describe("dryadJob", func() {
 		djSync             chan struct{}
 		ctrl               *gomock.Controller
 		mockDryadJobRunner DryadJobRunner
+		deploy, boot, test *gomock.Call
 		cancel             context.CancelFunc
 	)
 
@@ -45,6 +48,7 @@ var _ = Describe("dryadJob", func() {
 		go func() {
 			defer close(dJobSync)
 			defer GinkgoRecover()
+			<-dJobSync
 			dJob.run(ctx)
 		}()
 		return dJob, dJobSync
@@ -54,11 +58,9 @@ var _ = Describe("dryadJob", func() {
 		ctrl = gomock.NewController(GinkgoT())
 		mockDryadJobRunner = NewMockDryadJobRunner(ctrl)
 		mockOfDryadJobRunner := mockDryadJobRunner.(*MockDryadJobRunner)
-		gomock.InOrder(
-			mockOfDryadJobRunner.EXPECT().Deploy(),
-			mockOfDryadJobRunner.EXPECT().Boot(),
-			mockOfDryadJobRunner.EXPECT().Test(),
-		)
+		deploy = mockOfDryadJobRunner.EXPECT().Deploy().Times(1)
+		boot = mockOfDryadJobRunner.EXPECT().Boot().Times(1).After(deploy)
+		test = mockOfDryadJobRunner.EXPECT().Test().Times(1).After(boot)
 
 		jobID = 666
 		changes = make(chan DryadJobStatusChange, 6)
@@ -71,6 +73,7 @@ var _ = Describe("dryadJob", func() {
 	})
 
 	It("should go through proper states", func() {
+		djSync <- struct{}{}
 		states := []DryadJobStatus{DJ_NEW, DJ_DEPLOY, DJ_BOOT, DJ_TEST, DJ_OK}
 		for _, state := range states {
 			change := DryadJobStatusChange{jobID, state}
@@ -78,7 +81,53 @@ var _ = Describe("dryadJob", func() {
 		}
 	})
 
+	registerPhaseErr := func(c *gomock.Call, err error, times int) {
+		c.Return(err).Times(times)
+	}
+	registerErr := func(deployErr, bootErr, testErr error) []DryadJobStatus {
+		ret := []DryadJobStatus{DJ_NEW, DJ_DEPLOY}
+		switch {
+		case deployErr != nil:
+			registerPhaseErr(deploy, deployErr, 1)
+			registerPhaseErr(boot, bootErr, 0)
+			registerPhaseErr(test, testErr, 0)
+		case bootErr != nil:
+			registerPhaseErr(deploy, deployErr, 1)
+			registerPhaseErr(boot, bootErr, 1)
+			ret = append(ret, DJ_BOOT)
+			registerPhaseErr(test, testErr, 0)
+		case testErr != nil:
+			registerPhaseErr(deploy, deployErr, 1)
+			registerPhaseErr(boot, bootErr, 1)
+			ret = append(ret, DJ_BOOT)
+			registerPhaseErr(test, testErr, 1)
+			ret = append(ret, DJ_TEST)
+		}
+		ret = append(ret, DJ_FAIL)
+		djSync <- struct{}{}
+		return ret
+	}
+	DescribeTable("fail when one of the stages does",
+		func(f func() []DryadJobStatus) {
+			states := f()
+			for _, state := range states {
+				change := DryadJobStatusChange{jobID, state}
+				Eventually(changes).Should(Receive(Equal(change)))
+			}
+		},
+		Entry("after deploy", func() []DryadJobStatus {
+			return registerErr(errors.New("deploy failed"), nil, nil)
+		}),
+		Entry("after boot", func() []DryadJobStatus {
+			return registerErr(nil, errors.New("boot failed"), nil)
+		}),
+		Entry("after test", func() []DryadJobStatus {
+			return registerErr(nil, nil, errors.New("test failed"))
+		}),
+	)
+
 	It("should return DryadJobInfo", func() {
+		djSync <- struct{}{}
 		info := dj.GetJobInfo()
 		Expect(info.Job).To(Equal(jobID))
 	})
