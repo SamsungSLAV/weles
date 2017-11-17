@@ -64,11 +64,31 @@ func (d *DryadJobs) Cancel(job JobID) error {
 	return nil
 }
 
+// createStatusMatcher creates a matcher for DryadJobStatus.
+// It is a helper function of List.
+func createStatusMatcher(statuses []DryadJobStatus) func(DryadJobStatus) bool {
+	if len(statuses) == 0 {
+		return func(s DryadJobStatus) bool {
+			return true
+		}
+	}
+	m := make(map[DryadJobStatus]interface{})
+	for _, status := range statuses {
+		m[status] = nil
+	}
+	return func(s DryadJobStatus) bool {
+		_, ok := m[s]
+		return ok
+	}
+}
+
 // List is part of DryadJobManager interface.
 func (d *DryadJobs) List(filter *DryadJobFilter) ([]DryadJobInfo, error) {
+	d.jobsMutex.RLock()
+	defer d.jobsMutex.RUnlock()
+
+	// Trivial case - return all.
 	if filter == nil {
-		d.jobsMutex.RLock()
-		defer d.jobsMutex.RUnlock()
 		ret := make([]DryadJobInfo, 0, len(d.jobs))
 		for _, job := range d.jobs {
 			info := job.GetJobInfo()
@@ -76,6 +96,31 @@ func (d *DryadJobs) List(filter *DryadJobFilter) ([]DryadJobInfo, error) {
 		}
 		return ret, nil
 	}
-	// TODO(amistewicz): implement.
-	panic("not implemented")
+
+	ret := make([]DryadJobInfo, 0)
+	statusMatcher := createStatusMatcher(filter.Statuses)
+
+	// References undefined - check only Status.
+	if filter.References == nil {
+		for _, job := range d.jobs {
+			info := job.GetJobInfo()
+			if statusMatcher(info.Status) {
+				ret = append(ret, info)
+			}
+		}
+		return ret, nil
+	}
+
+	// References defined - iterate only over requested keys.
+	for _, id := range filter.References {
+		job, ok := d.jobs[id]
+		if !ok {
+			continue
+		}
+		info := job.GetJobInfo()
+		if statusMatcher(info.Status) {
+			ret = append(ret, info)
+		}
+	}
+	return ret, nil
 }

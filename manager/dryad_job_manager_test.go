@@ -14,13 +14,15 @@
  *  limitations under the License
  */
 
-package manager_test
+package manager
 
 import (
+	"sync"
+
 	. "git.tizen.org/tools/weles"
-	. "git.tizen.org/tools/weles/manager"
 
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
 
@@ -58,11 +60,101 @@ var _ = Describe("DryadJobManager", func() {
 		Expect(err).To(Equal(ErrNotExist))
 	})
 
-	It("should list created jobs", func() {
-		create()
+	Describe("list", func() {
+		var list []DryadJobInfo
 
-		list, err := djm.List(nil)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(list).To(HaveLen(1))
+		createN := func(start, end int, status DryadJobStatus) {
+			dj := djm.(*DryadJobs)
+			for i := start; i <= end; i++ {
+				id := JobID(i)
+				info := DryadJobInfo{
+					Job:    id,
+					Status: status,
+				}
+				dj.jobs[id] = &dryadJob{
+					mutex: new(sync.Mutex),
+					info:  info,
+				}
+				list = append(list, info)
+			}
+		}
+
+		BeforeEach(func() {
+			list = make([]DryadJobInfo, 0, 11)
+			createN(0, 2, DJ_NEW)
+			createN(3, 5, DJ_DEPLOY)
+			createN(6, 8, DJ_BOOT)
+			createN(9, 11, DJ_TEST)
+		})
+
+		It("should list created jobs", func() {
+			l, err := djm.List(nil)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(l).To(HaveLen(len(list)))
+		})
+
+		DescribeTable("list of jobs with status",
+			func(start, end int, s []DryadJobStatus) {
+				l, err := djm.List(&DryadJobFilter{
+					Statuses: s,
+				})
+				Expect(err).ToNot(HaveOccurred())
+				Expect(l).To(HaveLen(end - start + 1))
+				for _, j := range l {
+					Expect(s).To(ContainElement(j.Status))
+					Expect(j.Job).To(BeNumerically(">=", start))
+					Expect(j.Job).To(BeNumerically("<=", end))
+				}
+			},
+			Entry("NEW", 0, 2, []DryadJobStatus{DJ_NEW}),
+			Entry("DEPLOY", 3, 5, []DryadJobStatus{DJ_DEPLOY}),
+			Entry("BOOT", 6, 8, []DryadJobStatus{DJ_BOOT}),
+			Entry("TEST", 9, 11, []DryadJobStatus{DJ_TEST}),
+			Entry("NEW and DEPLOY", 0, 5, []DryadJobStatus{DJ_NEW, DJ_DEPLOY}),
+		)
+
+		DescribeTable("list of jobs with id",
+			func(ids []JobID, exp []int) {
+				l, err := djm.List(&DryadJobFilter{
+					References: ids,
+				})
+				Expect(err).ToNot(HaveOccurred())
+				Expect(l).To(HaveLen(len(exp)))
+				expected := make([]DryadJobInfo, 0)
+				for _, i := range exp {
+					expected = append(expected, list[i])
+				}
+				for _, j := range l {
+					Expect(expected).To(ContainElement(Equal(j)))
+				}
+			},
+			Entry("any - 0", []JobID{0}, []int{0}),
+			Entry("any - 10", []JobID{10}, []int{10}),
+			Entry("out of bounds - 128", []JobID{128}, []int{}),
+			Entry("many - 1 and 8", []JobID{1, 8}, []int{1, 8}),
+		)
+
+		DescribeTable("list of jobs with status and id",
+			func(filter DryadJobFilter, exp []int) {
+				l, err := djm.List(&filter)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(l).To(HaveLen(len(exp)))
+				expected := make([]DryadJobInfo, 0)
+				for _, i := range exp {
+					expected = append(expected, list[i])
+				}
+				for _, j := range l {
+					Expect(expected).To(ContainElement(Equal(j)))
+				}
+			},
+			Entry("NEW - 2, 3", DryadJobFilter{
+				References: []JobID{2, 3},
+				Statuses:   []DryadJobStatus{DJ_NEW},
+			}, []int{2}),
+			Entry("NEW, TEST - 0, 6, 8, 10, 11", DryadJobFilter{
+				References: []JobID{0, 6, 8, 10, 11},
+				Statuses:   []DryadJobStatus{DJ_NEW, DJ_TEST},
+			}, []int{0, 10, 11}),
+		)
 	})
 })
