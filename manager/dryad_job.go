@@ -99,10 +99,11 @@ func (d *dryadJob) run(ctx context.Context) {
 		if r := recover(); r != nil {
 			if err, ok := r.(error); ok {
 				d.failReason = err.Error()
-				d.changeStatus(DJ_FAIL)
-				return
+			} else {
+				d.failReason = fmt.Sprintf("run panicked: %v", r)
 			}
-			panic(r)
+			d.changeStatus(DJ_FAIL)
+			return
 		}
 		d.changeStatus(DJ_OK)
 	}()

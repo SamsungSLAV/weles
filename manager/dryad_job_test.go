@@ -126,6 +126,27 @@ var _ = Describe("dryadJob", func() {
 		}),
 	)
 
+	DescribeTable("should recover a panic and go to failed state",
+		func(f func()) {
+			f()
+			djSync <- struct{}{}
+			fail := DryadJobStatusChange{jobID, DJ_FAIL}
+			Eventually(changes).Should(Receive(Equal(fail)))
+		},
+		Entry("deploy", func() {
+			deploy.Do(func() { panic("deploy") })
+			boot.Times(0)
+			test.Times(0)
+		}),
+		Entry("boot", func() {
+			boot.Do(func() { panic("boot") })
+			test.Times(0)
+		}),
+		Entry("test", func() {
+			test.Do(func() { panic("test") })
+		}),
+	)
+
 	It("should return DryadJobInfo", func() {
 		djSync <- struct{}{}
 		info := dj.GetJobInfo()
