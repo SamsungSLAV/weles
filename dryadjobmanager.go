@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,11 @@
 // File dryadjobmanager.go defines DryadJobManager interface and structures related to it.
 
 package weles
+
+import (
+	"crypto/rsa"
+	"net"
+)
 
 // DryadJobStatus is a representation of current state of DryadJob.
 type DryadJobStatus string
@@ -48,7 +53,14 @@ type DryadJobStatusChange DryadJobInfo
 
 // Dryad contains information about device allocated for Job
 // and credentials required to use it.
-type Dryad struct{}
+type Dryad struct {
+	// Addr is necessary information to connect to a tunnel to Dryad.
+	Addr net.Addr
+	// Key is private RSA key of the job session.
+	Key rsa.PrivateKey
+	// Username defines Dryad's account name.
+	Username string
+}
 
 // DryadJobFilter is used by List to access only jobs of interest.
 //
