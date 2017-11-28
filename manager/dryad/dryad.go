@@ -45,6 +45,12 @@ type SessionProvider interface {
 
 	// Close terminates session to Dryad.
 	Close() error
+
+	// SendFile sends file to Dryad.
+	SendFile(src, dst string) error
+
+	// ReceiveFile receives file from Dryad.
+	ReceiveFile(src, dst string) error
 }
 
 // Credentials are used to login to device.

@@ -18,13 +18,14 @@ package dryad
 
 import (
 	"bytes"
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
-	"strings"
-
 	"crypto/rsa"
-
-	"fmt"
 
 	. "git.tizen.org/tools/weles"
 	"golang.org/x/crypto/ssh"
@@ -162,4 +163,101 @@ func (d *sessionProvider) Close() error {
 	err := d.connection.client.Close()
 	d.connection.client = nil
 	return err
+}
+
+// SendFile is a part of SessionProvider interface.
+func (d *sessionProvider) SendFile(src, dst string) error {
+	f, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	s, err := f.Stat()
+	if err != nil {
+		return err
+	}
+
+	session, err := d.newSession()
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+
+	filename := filepath.Base(dst)
+	directory := filepath.Dir(dst)
+
+	w, err := session.StdinPipe()
+	if err != nil {
+		return err
+	}
+	defer w.Close()
+
+	var stdout, stderr bytes.Buffer
+	session.Stdout = &stdout
+	session.Stderr = &stderr
+
+	// Trigger SCP sink mode
+	err = session.Start("scp -t " + directory)
+	if err != nil {
+		return err
+	}
+
+	_, err = fmt.Fprintln(w, "C0755", s.Size(), filename)
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(w, f)
+	if err != nil {
+		return err
+	}
+
+	_, err = fmt.Fprintln(w, "\x00")
+	if err != nil {
+		return err
+	}
+
+	err = session.Wait()
+
+	// FIXME: unexpected <newline> is reported by scp every time the transfer is finished properly. Needs to be solved.
+	// Bellow we have a very lousy trick. I hope it will be fixed in the future.
+	// I don't know what is the reason or how to fix it. Has to wait a little bit. Or maybe someone else will find the solution.
+	// First candidate sshfs -o slave
+	if strings.Contains(stdout.String(), "unexpected <newline>") {
+		return nil
+	}
+	return err
+}
+
+// ReceiveFile is a part of SessionProvider interface.
+func (d *sessionProvider) ReceiveFile(src, dst string) error {
+	session, err := d.newSession()
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+
+	r, err := session.StdoutPipe()
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	err = session.Start("scp " + src + " /dev/stdout")
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(file, r)
+	if err != nil {
+		return err
+	}
+
+	return session.Wait()
 }

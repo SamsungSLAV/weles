@@ -16,6 +16,8 @@
 
 package manager
 
+//go:generate mockgen -package=manager -destination=mock_dryad_test.go git.tizen.org/tools/weles/manager/dryad SessionProvider,DeviceCommunicationProvider
+
 import (
 	"context"
 	"errors"

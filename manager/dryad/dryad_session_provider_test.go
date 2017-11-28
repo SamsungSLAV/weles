@@ -69,4 +69,24 @@ var _ = Describe("SessionProvider", func() {
 	It("should switch to TS", func() {
 		Expect(sp.TS()).ToNot(HaveOccurred())
 	})
+
+	It("should transfer file to Dryad", func() {
+		err := sp.SendFile(keyFile, "/tmp/"+keyFile)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	It("should not transfer file to Dryad - insufficient permissions", func() {
+		err := sp.SendFile(keyFile, "/root/"+keyFile)
+		Expect(err).To(HaveOccurred())
+	})
+
+	It("should transfer file from Dryad", func() {
+		err := sp.ReceiveFile("/tmp/"+keyFile, "/tmp/dl-"+keyFile)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	It("should not transfer nonexistent file from Dryad", func() {
+		err := sp.ReceiveFile("/tmp/"+keyFile+"noway", "/tmp/dl-"+keyFile)
+		Expect(err).To(HaveOccurred())
+	})
 })
