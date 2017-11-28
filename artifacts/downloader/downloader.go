@@ -22,6 +22,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sync"
 
 	. "git.tizen.org/tools/weles"
 )
@@ -30,22 +31,33 @@ import (
 type Downloader struct {
 	notification chan ArtifactStatusChange // can be used to monitor ArtifactStatusChanges.
 	queue        chan downloadJob
+	wg           sync.WaitGroup
 }
 
 // downloadJob provides necessary info for download to be done.
 type downloadJob struct {
+	path ArtifactPath
+	uri  ArtifactURI
+	ch   chan ArtifactStatusChange
 }
 
 // queueCap is the default length of download queue.
 const queueCap = 100
 
 // newDownloader returns initilized Downloader.
-func newDownloader(notification chan ArtifactStatusChange, workerCount int, queueSize int) *Downloader {
+func newDownloader(notification chan ArtifactStatusChange, workers int, queueSize int) *Downloader {
 
-	return &Downloader{
+	d := &Downloader{
 		notification: notification,
 		queue:        make(chan downloadJob, queueSize),
 	}
+
+	// Start all workers.
+	d.wg.Add(workers)
+	for i := 0; i < workers; i++ {
+		go d.work()
+	}
+	return d
 }
 
 // NewDownloader returns Downloader initialized  with default queue length
@@ -54,14 +66,14 @@ func NewDownloader(notification chan ArtifactStatusChange, workerCount int) *Dow
 }
 
 // Close is part of implementation of ArtifactDownloader interface.
-// It closes used channels.
+// It waits for running download jobs to stop and closes used channels.
 func (d *Downloader) Close() {
 	close(d.queue)
+	d.wg.Wait()
 }
 
 // getData downloads file from provided location and saves it in a prepared path.
 func (d *Downloader) getData(URI ArtifactURI, path ArtifactPath) error {
-
 	resp, err := http.Get(string(URI))
 	if err != nil {
 		return err
@@ -104,15 +116,34 @@ func (d *Downloader) download(URI ArtifactURI, path ArtifactPath, ch chan Artifa
 	} else {
 		change.NewStatus = AM_READY
 	}
-
 	notify(change, channels)
 }
 
 // Download is part of implementation of ArtifactDownloader interface.
-// TODO implement.
+// It puts new downloadJob on the queue.
 func (d *Downloader) Download(URI ArtifactURI, path ArtifactPath, ch chan ArtifactStatusChange) error {
-	return ErrNotImplemented
+	channels := []chan ArtifactStatusChange{ch, d.notification}
+	notify(ArtifactStatusChange{path, AM_PENDING}, channels)
 
+	job := downloadJob{
+		path: path,
+		uri:  URI,
+		ch:   ch,
+	}
+
+	select {
+	case d.queue <- job:
+	default:
+		return ErrQueueFull
+	}
+	return nil
+}
+
+func (d *Downloader) work() {
+	defer d.wg.Done()
+	for job := range d.queue {
+		d.download(job.uri, job.path, job.ch)
+	}
 }
 
 // CheckInCache is part of implementation of ArtifactDownloader interface.
