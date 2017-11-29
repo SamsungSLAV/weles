@@ -32,9 +32,12 @@ import (
 
 var _ = Describe("ArtifactDB", func() {
 	var (
-		job           weles.JobID        = 58008
-		invalidJob    weles.JobID        = 1
-		invalidPath   weles.ArtifactPath = "invalidPath"
+		job           weles.JobID          = 58008
+		invalidJob    weles.JobID          = 1
+		invalidPath   weles.ArtifactPath   = "invalidPath"
+		invalidStatus weles.ArtifactStatus = "invalidStatus"
+		invalidType   weles.ArtifactType   = "invalidType"
+		invalidAlias  weles.ArtifactAlias  = "invalidAlias"
 		goldenUnicorn ArtifactDB
 		tmpDir        string
 
@@ -87,6 +90,26 @@ var _ = Describe("ArtifactDB", func() {
 		}
 
 		testArtifacts = []weles.ArtifactInfo{artifact, aImageReady, aYamlFailed, aTestFailed}
+
+		oneJobFilter  = weles.ArtifactFilter{[]weles.JobID{artifact.JobID}, nil, nil, nil}
+		twoJobsFilter = weles.ArtifactFilter{[]weles.JobID{artifact.JobID, aImageReady.JobID}, nil, nil, nil}
+		noJobFilter   = weles.ArtifactFilter{[]weles.JobID{invalidJob}, nil, nil, nil}
+
+		oneTypeFilter  = weles.ArtifactFilter{nil, []weles.ArtifactType{aYamlFailed.Type}, nil, nil}
+		twoTypesFilter = weles.ArtifactFilter{nil, []weles.ArtifactType{aYamlFailed.Type, aTestFailed.Type}, nil, nil}
+		noTypeFilter   = weles.ArtifactFilter{nil, []weles.ArtifactType{invalidType}, nil, nil}
+
+		oneStatusFilter = weles.ArtifactFilter{nil, nil, []weles.ArtifactStatus{artifact.Status}, nil}
+		twoStatusFilter = weles.ArtifactFilter{nil, nil, []weles.ArtifactStatus{artifact.Status, aYamlFailed.Status}, nil}
+		noStatusFilter  = weles.ArtifactFilter{nil, nil, []weles.ArtifactStatus{invalidStatus}, nil}
+
+		oneAliasFilter = weles.ArtifactFilter{nil, nil, nil, []weles.ArtifactAlias{artifact.Alias}}
+		twoAliasFilter = weles.ArtifactFilter{nil, nil, nil, []weles.ArtifactAlias{artifact.Alias, aImageReady.Alias}}
+		noAliasFilter  = weles.ArtifactFilter{nil, nil, nil, []weles.ArtifactAlias{invalidAlias}}
+
+		fullFilter    = weles.ArtifactFilter{twoJobsFilter.JobID, twoTypesFilter.Type, twoStatusFilter.Status, twoAliasFilter.Alias}
+		noMatchFilter = weles.ArtifactFilter{oneJobFilter.JobID, oneTypeFilter.Type, nil, nil}
+		emptyFilter   = weles.ArtifactFilter{}
 	)
 
 	jobsInDB := func(job weles.JobID) int64 {
@@ -198,6 +221,37 @@ var _ = Describe("ArtifactDB", func() {
 			Entry("select multiple entries for Type", weles.AM_IMAGEFILE, nil, artifact, aImageReady),
 			Entry("select multiple entries for Alias", aImageReady.Alias, nil, aImageReady, aYamlFailed),
 			Entry("select multiple entries for Status", weles.AM_FAILED, nil, aYamlFailed, aTestFailed),
+		)
+	})
+
+	Describe("List", func() {
+		BeforeEach(func() {
+			for _, a := range testArtifacts {
+				err := goldenUnicorn.InsertArtifactInfo(&a)
+				Expect(err).ToNot(HaveOccurred())
+			}
+		})
+		DescribeTable("list artifacts matching filter",
+			func(filter weles.ArtifactFilter, expected ...weles.ArtifactInfo) {
+				results, err := goldenUnicorn.Filter(filter)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(results).To(ConsistOf(expected))
+			},
+			Entry("filter one JobID", oneJobFilter, artifact),
+			Entry("filter more than one JobIDs", twoJobsFilter, artifact, aImageReady, aYamlFailed),
+			Entry("filter JobID not in db", noJobFilter),
+			Entry("filter one Type", oneTypeFilter, aYamlFailed),
+			Entry("filter more than one Type", twoTypesFilter, aYamlFailed, aTestFailed),
+			Entry("filter Type not in db", noTypeFilter),
+			Entry("filter one Status", oneStatusFilter, artifact),
+			Entry("filter more than one Status", twoStatusFilter, artifact, aTestFailed, aYamlFailed),
+			Entry("filter Status not in db", noStatusFilter),
+			Entry("filter one Alias", oneAliasFilter, artifact),
+			Entry("filter more than one Alias", twoAliasFilter, artifact, aImageReady, aYamlFailed),
+			Entry("filter Alias not in db", noAliasFilter),
+			Entry("filter is completly set up", fullFilter, aYamlFailed),
+			Entry("no artifact in db matches filter", noMatchFilter),
+			Entry("filter is empty", emptyFilter, artifact, aImageReady, aYamlFailed, aTestFailed),
 		)
 	})
 })

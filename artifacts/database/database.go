@@ -19,6 +19,7 @@ package database
 
 import (
 	"database/sql"
+	"strings"
 
 	. "git.tizen.org/tools/weles"
 
@@ -80,6 +81,72 @@ func (aDB *ArtifactDB) SelectPath(path ArtifactPath) (ArtifactInfo, error) {
 		return ArtifactInfo{}, err
 	}
 	return ar.ArtifactInfo, nil
+}
+
+// prepareQuery prepares query based on given filter.
+// TODO code duplication
+func prepareQuery(filter ArtifactFilter) (string, []interface{}) {
+	var (
+		conditions []string
+		query      = "select * from artifacts "
+		args       []interface{}
+	)
+	if len(filter.JobID) > 0 {
+		q := make([]string, len(filter.JobID))
+		for i, job := range filter.JobID {
+			q[i] = "?"
+			args = append(args, job)
+		}
+		conditions = append(conditions, " JobID in ("+strings.Join(q, ",")+")")
+	}
+	if len(filter.Type) > 0 {
+		q := make([]string, len(filter.Type))
+		for i, typ := range filter.Type {
+			q[i] = "?"
+			args = append(args, typ)
+		}
+		conditions = append(conditions, " Type in ("+strings.Join(q, ",")+")")
+	}
+	if len(filter.Status) > 0 {
+		q := make([]string, len(filter.Status))
+		for i, status := range filter.Status {
+			q[i] = "?"
+			args = append(args, status)
+		}
+		conditions = append(conditions, " Status in ("+strings.Join(q, ",")+")")
+	}
+	if len(filter.Alias) > 0 {
+		q := make([]string, len(filter.Alias))
+		for i, alias := range filter.Alias {
+			q[i] = "?"
+			args = append(args, alias)
+		}
+		conditions = append(conditions, " Alias in ("+strings.Join(q, ",")+")")
+	}
+	if len(conditions) > 0 {
+		query += " where " + strings.Join(conditions, " AND ")
+	}
+	return query, args
+}
+
+// Filter fetches elements matching ArtifactFilter from database.
+func (aDB *ArtifactDB) Filter(filter ArtifactFilter) ([]ArtifactInfo, error) {
+	results := []artifactInfoRecord{}
+
+	query, args := prepareQuery(filter)
+
+	// TODO gorp doesn't support passing list of arguments to where in(...) clause yet.
+	// Thats why it's done with the use prepareQuery.
+	_, err := aDB.dbmap.Select(&results, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	artifacts := make([]ArtifactInfo, len(results))
+	for i, res := range results {
+		artifacts[i] = res.ArtifactInfo
+	}
+	return artifacts, nil
+
 }
 
 // Select fetches artifacts from ArtifactDB.

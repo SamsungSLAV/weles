@@ -84,7 +84,7 @@ func NewArtifactManager(db, dir string) (ArtifactManager, error) {
 
 // ListArtifact is part of implementation of ArtifactManager interface.
 func (s *Storage) ListArtifact(filter ArtifactFilter) ([]ArtifactInfo, error) {
-	return nil, ErrNotImplemented
+	return s.db.Filter(filter)
 }
 
 // PushArtifact is part of implementation of ArtifactManager interface.
