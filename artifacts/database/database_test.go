@@ -254,4 +254,32 @@ var _ = Describe("ArtifactDB", func() {
 			Entry("filter is empty", emptyFilter, artifact, aImageReady, aYamlFailed, aTestFailed),
 		)
 	})
+	Describe("SetStatus", func() {
+		BeforeEach(func() {
+			for _, a := range testArtifacts {
+				err := goldenUnicorn.InsertArtifactInfo(&a)
+				Expect(err).ToNot(HaveOccurred())
+			}
+		})
+		DescribeTable("artifact status change",
+			func(change weles.ArtifactStatusChange, expectedErr error) {
+
+				err := goldenUnicorn.SetStatus(change)
+				if expectedErr == nil {
+					Expect(err).ToNot(HaveOccurred())
+
+					a, err := goldenUnicorn.SelectPath(change.Path)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(a.Status).To(Equal(change.NewStatus))
+				} else {
+					Expect(err).To(Equal(expectedErr))
+					a, err := goldenUnicorn.SelectPath(change.Path)
+					Expect(err).To(HaveOccurred())
+					Expect(a).To(Equal(weles.ArtifactInfo{}))
+				}
+			},
+			Entry("change status of artifact not present in ArtifactDB", weles.ArtifactStatusChange{invalidPath, weles.AM_DOWNLOADING}, sql.ErrNoRows),
+			Entry("change status of artifact present in ArtifactDB", weles.ArtifactStatusChange{artifact.Path, weles.AM_DOWNLOADING}, nil),
+		)
+	})
 })

@@ -179,3 +179,33 @@ func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []ArtifactInfo, err er
 	}
 	return artifacts, nil
 }
+
+// getID fetches ID of an artifact with provided path.
+func (aDB *ArtifactDB) getID(path ArtifactPath) (int64, error) {
+	res, err := aDB.dbmap.SelectInt("select ID from artifacts where Path=?", path)
+	if err != nil {
+		return 0, err
+	}
+	return res, nil
+}
+
+// SetStatus changes artifact's status in ArtifactDB.
+func (aDB *ArtifactDB) SetStatus(change ArtifactStatusChange) error {
+	ai, err := aDB.SelectPath(change.Path)
+	if err != nil {
+		return err
+	}
+	ar := artifactInfoRecord{
+		ArtifactInfo: ai,
+	}
+
+	id, err := aDB.getID(ar.Path)
+	if err != nil {
+		return err
+	}
+	ar.ID = id
+
+	ar.Status = change.NewStatus
+	_, err = aDB.dbmap.Update(&ar)
+	return err
+}
