@@ -99,7 +99,21 @@ func (d *dryadJobRunner) Boot() (err error) {
 
 // Test is part of DryadJobRunner interface.
 func (d *dryadJobRunner) Test() error {
-	// TODO(amistewicz): implement.
-	_, _, err := d.rusalka.Exec("echo", "healthcheck")
-	return err
+	for _, testcase := range d.conf.Action.Test.TestCases {
+		for _, testaction := range testcase.TestActions {
+			switch action := testaction.(type) {
+			case weles.Push:
+				d.device.CopyFilesTo([]string{action.Path}, action.Dest)
+			case weles.Run:
+				// Exec joins arguments in a single string.
+				// Split and then Join are avoided.
+				d.device.Exec(action.Name)
+			case weles.Pull:
+				d.device.CopyFilesFrom([]string{action.Src}, action.Path)
+			default:
+				panic("unknown test action type")
+			}
+		}
+	}
+	return nil
 }

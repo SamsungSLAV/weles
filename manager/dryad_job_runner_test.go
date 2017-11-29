@@ -68,5 +68,16 @@ var _ = Describe("DryadJobRunner", func() {
 		)
 
 		Expect(djr.Boot()).To(Succeed())
+
+		By("Test")
+		gomock.InOrder(
+			mockDevice.EXPECT().CopyFilesTo([]string{basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Path},
+				basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Dest),
+			mockDevice.EXPECT().Exec("command to be run"),
+			mockDevice.EXPECT().CopyFilesFrom([]string{basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Src},
+				basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Path),
+		)
+
+		Expect(djr.Test()).To(Succeed())
 	})
 })
