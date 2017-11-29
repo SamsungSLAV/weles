@@ -35,7 +35,7 @@ var _ = Describe("DryadJobManager", func() {
 	})
 
 	create := func() {
-		err := djm.Create(jobID, Dryad{}, nil)
+		err := djm.Create(jobID, Dryad{}, Config{}, nil)
 		Expect(err).ToNot(HaveOccurred())
 	}
 
@@ -51,7 +51,7 @@ var _ = Describe("DryadJobManager", func() {
 	It("should fail to duplicate jobs", func() {
 		create()
 
-		err := djm.Create(jobID, Dryad{}, nil)
+		err := djm.Create(jobID, Dryad{}, Config{}, nil)
 		Expect(err).To(Equal(ErrDuplicated))
 	})
 

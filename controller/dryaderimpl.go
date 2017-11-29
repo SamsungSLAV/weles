@@ -141,9 +141,15 @@ func (h *DryaderImpl) StartJob(j weles.JobID) {
 		return
 	}
 
+	config, err := h.jobs.GetConfig(j)
+	if err != nil {
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Job config : %s", err.Error()))
+		return
+	}
+
 	h.add(j)
 
-	err = h.djm.Create(j, d, h.listener)
+	err = h.djm.Create(j, d, config, h.listener)
 	if err != nil {
 		h.remove(j)
 		h.SendFail(j, fmt.Sprintf("Cannot delegate Job to Dryad : %s", err.Error()))

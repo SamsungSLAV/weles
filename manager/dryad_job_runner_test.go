@@ -22,6 +22,8 @@ import (
 	"context"
 	"errors"
 
+	"git.tizen.org/tools/weles"
+
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -39,7 +41,7 @@ var _ = Describe("DryadJobRunner", func() {
 		ctrl = gomock.NewController(GinkgoT())
 		mockSession = NewMockSessionProvider(ctrl)
 		mockDevice = NewMockDeviceCommunicationProvider(ctrl)
-		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice)
+		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, weles.Config{})
 	})
 
 	AfterEach(func() {

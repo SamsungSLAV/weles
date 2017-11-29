@@ -46,15 +46,15 @@ func (mr *MockDryadJobManagerMockRecorder) Cancel(arg0 interface{}) *gomock.Call
 }
 
 // Create mocks base method
-func (m *MockDryadJobManager) Create(arg0 weles.JobID, arg1 weles.Dryad, arg2 chan<- weles.DryadJobStatusChange) error {
-	ret := m.ctrl.Call(m, "Create", arg0, arg1, arg2)
+func (m *MockDryadJobManager) Create(arg0 weles.JobID, arg1 weles.Dryad, arg2 weles.Config, arg3 chan<- weles.DryadJobStatusChange) error {
+	ret := m.ctrl.Call(m, "Create", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Create indicates an expected call of Create
-func (mr *MockDryadJobManagerMockRecorder) Create(arg0, arg1, arg2 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockDryadJobManager)(nil).Create), arg0, arg1, arg2)
+func (mr *MockDryadJobManagerMockRecorder) Create(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockDryadJobManager)(nil).Create), arg0, arg1, arg2, arg3)
 }
 
 // List mocks base method

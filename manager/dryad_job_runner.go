@@ -21,6 +21,7 @@ package manager
 import (
 	"context"
 
+	"git.tizen.org/tools/weles"
 	"git.tizen.org/tools/weles/manager/dryad"
 )
 
@@ -30,15 +31,18 @@ type dryadJobRunner struct {
 	ctx     context.Context
 	rusalka dryad.SessionProvider
 	device  dryad.DeviceCommunicationProvider
+	conf    weles.Config
 }
 
 // newDryadJobRunner prepares a new instance of dryadJobRunner
 // and returns DryadJobRunner interface to it.
-func newDryadJobRunner(ctx context.Context, rusalka dryad.SessionProvider, device dryad.DeviceCommunicationProvider) DryadJobRunner {
+func newDryadJobRunner(ctx context.Context, rusalka dryad.SessionProvider,
+	device dryad.DeviceCommunicationProvider, conf weles.Config) DryadJobRunner {
 	return &dryadJobRunner{
 		ctx:     ctx,
 		rusalka: rusalka,
 		device:  device,
+		conf:    conf,
 	}
 }
 

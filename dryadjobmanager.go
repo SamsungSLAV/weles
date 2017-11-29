@@ -18,6 +18,8 @@
 
 package weles
 
+//go:generate mockgen -package mock -destination=mock/dryadjobmanager.go git.tizen.org/tools/weles DryadJobManager
+
 import (
 	"crypto/rsa"
 	"net"
@@ -74,9 +76,12 @@ type DryadJobFilter struct {
 // DryadJobManager organizes running Jobs on allocated Dryad.
 type DryadJobManager interface {
 	// Create starts execution of Job definition on allocated Dryad.
+	// Job's config is passed in order to avoid need to fetch it from Job Manager.
+	//
+	// JobID is used only to reference currently executing Jobs.
 	//
 	// Slow read from a channel may miss some events.
-	Create(JobID, Dryad, chan<- DryadJobStatusChange) error
+	Create(JobID, Dryad, Config, chan<- DryadJobStatusChange) error
 
 	// Cancel stops DryadJob associated with Job.
 	//

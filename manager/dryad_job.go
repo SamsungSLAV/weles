@@ -54,13 +54,13 @@ func newDryadJobWithCancel(job JobID, changes chan<- DryadJobStatusChange,
 
 // newDryadJob creates an instance of dryadJob and starts a goroutine
 // executing phases of given job implemented by provider of DryadJobRunner interface.
-func newDryadJob(job JobID, rusalka Dryad, changes chan<- DryadJobStatusChange) *dryadJob {
+func newDryadJob(job JobID, rusalka Dryad, conf Config, changes chan<- DryadJobStatusChange) *dryadJob {
 	// FIXME: It should use the proper path to the artifactory.
 	session := dryad.NewSessionProvider(rusalka, "")
 	device := dryad.NewDeviceCommunicationProvider(session)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	runner := newDryadJobRunner(ctx, session, device)
+	runner := newDryadJobRunner(ctx, session, device, conf)
 
 	dJob := newDryadJobWithCancel(job, changes, runner, cancel)
 
