@@ -79,9 +79,22 @@ func (d *dryadJobRunner) Deploy() (err error) {
 }
 
 // Boot is part of DryadJobRunner interface.
-func (d *dryadJobRunner) Boot() error {
-	// TODO(amistewicz): implement.
-	return d.rusalka.DUT()
+func (d *dryadJobRunner) Boot() (err error) {
+	// Attempt to start a device boot.
+	err = d.rusalka.DUT()
+	if err != nil {
+		return
+	}
+	err = d.rusalka.PowerTick()
+	if err != nil {
+		return
+	}
+
+	// Login to the device only if credentials were specified.
+	if username, password := d.conf.Action.Boot.Login, d.conf.Action.Boot.Password; username != "" && password != "" {
+		return d.device.Login(dryad.Credentials{username, password})
+	}
+	return nil
 }
 
 // Test is part of DryadJobRunner interface.

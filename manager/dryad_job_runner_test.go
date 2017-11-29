@@ -22,6 +22,7 @@ import (
 	"context"
 
 	"git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles/manager/dryad"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -58,5 +59,14 @@ var _ = Describe("DryadJobRunner", func() {
 		)
 
 		Expect(djr.Deploy()).To(Succeed())
+
+		By("Boot")
+		gomock.InOrder(
+			mockSession.EXPECT().DUT(),
+			mockSession.EXPECT().PowerTick(),
+			mockDevice.EXPECT().Login(dryad.Credentials{basicConfig.Action.Boot.Login, basicConfig.Action.Boot.Password}),
+		)
+
+		Expect(djr.Boot()).To(Succeed())
 	})
 })
