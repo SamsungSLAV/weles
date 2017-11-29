@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package manager
 
 import (
 	"context"
-	"errors"
 
 	"git.tizen.org/tools/weles"
 
@@ -48,63 +47,16 @@ var _ = Describe("DryadJobRunner", func() {
 		ctrl.Finish()
 	})
 
-	Describe("Deploy", func() {
-		var tsCall *gomock.Call
+	It("should execute the basic weles job definition", func() {
+		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, basicConfig)
+		By("Deploy")
+		gomock.InOrder(
+			mockSession.EXPECT().TS(),
+			mockSession.EXPECT().Exec("echo", "'{\"image name_1\":\"1\",\"image_name 2\":\"2\"}'", ">", fotaFilePath),
+			mockSession.EXPECT().Exec(newFotaCmd(fotaSDCardPath, fotaFilePath,
+				[]string{basicConfig.Action.Deploy.Images[0].Path, basicConfig.Action.Deploy.Images[1].Path}).GetCmd()),
+		)
 
-		BeforeEach(func() {
-			tsCall = mockSession.EXPECT().TS().Times(1)
-		})
-
-		It("should switch to TS", func() {
-			err := djr.Deploy()
-			Expect(err).ToNot(HaveOccurred())
-		})
-
-		It("should fail if TS fails", func() {
-			tsCall.Return(errors.New("TS failed"))
-
-			err := djr.Deploy()
-			Expect(err).To(HaveOccurred())
-		})
-	})
-
-	Describe("Boot", func() {
-		var dutCall *gomock.Call
-
-		BeforeEach(func() {
-			dutCall = mockSession.EXPECT().DUT().Times(1)
-		})
-
-		It("should switch to DUT", func() {
-			err := djr.Boot()
-			Expect(err).ToNot(HaveOccurred())
-		})
-
-		It("should fail if DUT fails", func() {
-			dutCall.Return(errors.New("DUT failed"))
-
-			err := djr.Boot()
-			Expect(err).To(HaveOccurred())
-		})
-	})
-
-	Describe("Test", func() {
-		var execCall *gomock.Call
-
-		BeforeEach(func() {
-			execCall = mockSession.EXPECT().Exec([]string{"echo", "healthcheck"})
-		})
-
-		It("should exec echo healthcheck", func() {
-			err := djr.Test()
-			Expect(err).ToNot(HaveOccurred())
-		})
-
-		It("should fail if Exec fails", func() {
-			execCall.Return(nil, nil, errors.New("exec failed"))
-
-			err := djr.Test()
-			Expect(err).To(HaveOccurred())
-		})
+		Expect(djr.Deploy()).To(Succeed())
 	})
 })
