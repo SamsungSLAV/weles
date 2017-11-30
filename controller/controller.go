@@ -24,6 +24,9 @@ package controller
 
 import (
 	"sync"
+	"time"
+
+	"git.tizen.org/tools/boruta"
 
 	"git.tizen.org/tools/weles"
 )
@@ -53,8 +56,23 @@ type Controller struct {
 	looper sync.WaitGroup
 }
 
+// NewJobManager creates and initializes a new instance of Controller with
+// internal submodules and returns JobManager interface.
+// It is the only valid way to get JobManager interface.
+func NewJobManager(arm weles.ArtifactManager, yap weles.Parser, bor boruta.Requests,
+	borutaRefreshPeriod time.Duration, djm weles.DryadJobManager) weles.JobManager {
+
+	js := NewJobsController()
+	pa := NewParser(js, arm, yap)
+	do := NewDownloader(js, arm)
+	bo := NewBoruter(js, bor, borutaRefreshPeriod)
+	dr := NewDryader(js, djm)
+
+	return NewController(js, pa, do, bo, dr)
+}
+
 // NewController creates and initializes a new instance of Controller.
-// It is the only valid way of Controller struct creation.
+// It requires internal Controller's submodules.
 func NewController(js JobsController, pa Parser, do Downloader, bo Boruter, dr Dryader) *Controller {
 	c := &Controller{
 		jobs:       js,

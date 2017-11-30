@@ -19,15 +19,35 @@ package controller
 import (
 	"errors"
 	"sync"
+	"time"
 
 	"git.tizen.org/tools/weles"
 	cmock "git.tizen.org/tools/weles/controller/mock"
 	"git.tizen.org/tools/weles/controller/notifier"
+	mock "git.tizen.org/tools/weles/mock"
 	gomock "github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
+
+var _ = Describe("JobManager", func() {
+	It("should create a new object", func() {
+		ctrl := gomock.NewController(GinkgoT())
+
+		arm := mock.NewMockArtifactManager(ctrl)
+		yap := mock.NewMockParser(ctrl)
+		bor := cmock.NewMockRequests(ctrl)
+		djm := mock.NewMockDryadJobManager(ctrl)
+
+		bor.EXPECT().ListRequests(nil).AnyTimes()
+
+		jm := NewJobManager(arm, yap, bor, time.Second, djm)
+		Expect(jm).NotTo(BeNil())
+
+		ctrl.Finish()
+	})
+})
 
 var _ = Describe("Controller", func() {
 	var (
