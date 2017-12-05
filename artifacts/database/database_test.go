@@ -1,0 +1,197 @@
+/*
+ *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License
+ */
+
+// Package database is responsible for Weles system's job artifact storage.
+package database
+
+import (
+	"database/sql"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"time"
+
+	"git.tizen.org/tools/weles"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
+	. "github.com/onsi/gomega"
+)
+
+var _ = Describe("ArtifactDB", func() {
+	var (
+		job           weles.JobID        = 58008
+		invalidJob    weles.JobID        = 1
+		invalidPath   weles.ArtifactPath = "invalidPath"
+		goldenUnicorn ArtifactDB
+		tmpDir        string
+
+		artifact = weles.ArtifactInfo{
+			weles.ArtifactDescription{
+				job,
+				weles.AM_IMAGEFILE,
+				"some alias",
+				"http://example.com",
+			},
+			"path1",
+			weles.AM_PENDING,
+			time.Now().UTC(),
+		}
+
+		aImageReady = weles.ArtifactInfo{
+			weles.ArtifactDescription{
+				job + 1,
+				weles.AM_IMAGEFILE,
+				"other alias",
+				"http://example.com/1",
+			},
+			"path2",
+			weles.AM_READY,
+			time.Now().UTC(),
+		}
+
+		aYamlFailed = weles.ArtifactInfo{
+			weles.ArtifactDescription{
+				job + 1,
+				weles.AM_YAMLFILE,
+				"other alias",
+				"http://example.com/2",
+			},
+			"path3",
+			weles.AM_FAILED,
+			time.Now().UTC(),
+		}
+
+		aTestFailed = weles.ArtifactInfo{
+			weles.ArtifactDescription{
+				job + 2,
+				weles.AM_TESTFILE,
+				"alias",
+				"http://example.com/2",
+			},
+			"path4",
+			weles.AM_FAILED,
+			time.Unix(3000, 60).UTC(),
+		}
+
+		testArtifacts = []weles.ArtifactInfo{artifact, aImageReady, aYamlFailed, aTestFailed}
+	)
+
+	jobsInDB := func(job weles.JobID) int64 {
+		n, err := goldenUnicorn.dbmap.SelectInt(`SELECT COUNT(*)
+ 		FROM artifacts
+ 		WHERE JobID = ?`, job)
+		Expect(err).ToNot(HaveOccurred())
+		return n
+	}
+
+	BeforeEach(func() {
+		var err error
+		tmpDir, err = ioutil.TempDir("", "weles-")
+		Expect(err).ToNot(HaveOccurred())
+		err = goldenUnicorn.Open(filepath.Join(tmpDir, "test.db"))
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	AfterEach(func() {
+		err := goldenUnicorn.Close()
+		Expect(err).ToNot(HaveOccurred())
+		err = os.RemoveAll(tmpDir)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	It("should open new database, with artifact table", func() {
+		n, err := goldenUnicorn.dbmap.SelectInt(`SELECT COUNT(*)
+ 		FROM sqlite_master
+ 		WHERE name = 'artifacts'
+ 		AND type = 'table'`)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(n).To(BeNumerically("==", 1))
+	})
+
+	It("should fail to open database on invalid path", func() {
+		// sql.Open only validates arguments.
+		// db.Ping must be called to check the connection.
+		invalidDatabasePath := filepath.Join(tmpDir, "invalid", "test.db")
+		err := goldenUnicorn.Open(invalidDatabasePath)
+		Expect(err).To(HaveOccurred())
+		Expect(invalidDatabasePath).ToNot(BeAnExistingFile())
+	})
+
+	It("should insert new artifact to database", func() {
+		Expect(jobsInDB(job)).To(BeNumerically("==", 0))
+
+		err := goldenUnicorn.InsertArtifactInfo(&artifact)
+		Expect(err).ToNot(HaveOccurred())
+
+		Expect(jobsInDB(artifact.JobID)).To(BeNumerically("==", 1))
+	})
+
+	Describe("SelectPath", func() {
+
+		BeforeEach(func() {
+			err := goldenUnicorn.InsertArtifactInfo(&artifact)
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(jobsInDB(artifact.JobID)).To(BeNumerically("==", 1))
+		})
+
+		DescribeTable("database selectpath",
+			func(path weles.ArtifactPath, expectedErr error, expectedArtifact weles.ArtifactInfo) {
+				result, err := goldenUnicorn.SelectPath(path)
+
+				if expectedErr != nil {
+					Expect(err).To(Equal(expectedErr))
+				} else {
+					Expect(err).ToNot(HaveOccurred())
+				}
+				Expect(result).To(Equal(expectedArtifact))
+			},
+			Entry("retrieve artifact based on path", artifact.Path, nil, artifact),
+			Entry("retrieve artifact based on invalid path", invalidPath, sql.ErrNoRows, weles.ArtifactInfo{}),
+		)
+	})
+
+	Describe("Select", func() {
+
+		BeforeEach(func() {
+			for _, a := range testArtifacts {
+				err := goldenUnicorn.InsertArtifactInfo(&a)
+				Expect(err).ToNot(HaveOccurred())
+			}
+		})
+
+		DescribeTable("database select",
+			func(lookedFor interface{}, expectedErr error, expectedResult ...weles.ArtifactInfo) {
+				result, err := goldenUnicorn.Select(lookedFor)
+
+				if expectedErr != nil {
+					Expect(err).To(Equal(expectedErr))
+					Expect(result).To(BeNil())
+				} else {
+					Expect(err).ToNot(HaveOccurred())
+					Expect(result).To(Equal(expectedResult))
+				}
+			},
+			// type supported by select.
+			Entry("select JobID", artifact.JobID, nil, artifact),
+			// type bool is not supported by select.
+			Entry("select unsupported value", true, ErrUnsupportedQueryType),
+			// test query itsef.
+			Entry("select multiple entries for JobID", aImageReady.JobID, nil, aImageReady, aYamlFailed),
+			Entry("select no entries for invalid JobID", invalidJob, nil),
+		)
+	})
+})
