@@ -26,6 +26,7 @@ import (
 
 	. "git.tizen.org/tools/weles"
 	. "git.tizen.org/tools/weles/artifacts/database"
+	. "git.tizen.org/tools/weles/artifacts/downloader"
 )
 
 // ArtifactDownloader downloads requested file if there is need to.
@@ -45,8 +46,10 @@ type ArtifactDownloader interface {
 // Storage implements ArtifactManager interface.
 type Storage struct {
 	ArtifactManager
-	db  ArtifactDB
-	dir string
+	db         ArtifactDB
+	dir        string
+	downloader ArtifactDownloader
+	notifier   chan ArtifactStatusChange
 }
 
 const (
@@ -54,6 +57,10 @@ const (
 	defaultDb = "weles.db"
 	// defaultDir is default directory for ArtifactManager storage.
 	defaultDir = "/tmp/weles/"
+	// notifierCap is default notifier channel capacity.
+	notifierCap = 100
+	// workersCount is default number of workers.
+	workersCount = 16
 )
 
 func newArtifactManager(db, dir string) (ArtifactManager, error) {
@@ -61,12 +68,20 @@ func newArtifactManager(db, dir string) (ArtifactManager, error) {
 	if err != nil {
 		return nil, err
 	}
-	am := Storage{dir: dir}
-	err = am.db.Open(db)
+	notifier := make(chan ArtifactStatusChange, notifierCap)
 
+	am := Storage{
+		dir:        dir,
+		downloader: NewDownloader(notifier, workersCount),
+		notifier:   notifier,
+	}
+	err = am.db.Open(db)
 	if err != nil {
 		return nil, err
 	}
+
+	go am.listenToChanges()
+
 	return &am, nil
 }
 
@@ -89,7 +104,17 @@ func (s *Storage) ListArtifact(filter ArtifactFilter) ([]ArtifactInfo, error) {
 
 // PushArtifact is part of implementation of ArtifactManager interface.
 func (s *Storage) PushArtifact(artifact ArtifactDescription, ch chan ArtifactStatusChange) (ArtifactPath, error) {
-	return "", ErrNotImplemented
+	path, err := s.CreateArtifact(artifact)
+	if err != nil {
+		return "", err
+	}
+
+	err = s.downloader.Download(artifact.URI, path, ch)
+	if err != nil {
+		s.db.SetStatus(ArtifactStatusChange{path, AM_FAILED})
+		return "", err
+	}
+	return path, nil
 }
 
 // CreateArtifact is part of implementation of ArtifactManager interface.
@@ -113,6 +138,8 @@ func (s *Storage) GetArtifactInfo(path ArtifactPath) (ArtifactInfo, error) {
 
 // Close closes Storage's ArtifactDB.
 func (s *Storage) Close() error {
+	s.downloader.Close()
+	close(s.notifier)
 	return s.db.Close()
 }
 
@@ -137,4 +164,13 @@ func (s *Storage) getNewPath(ad ArtifactDescription) (ArtifactPath, error) {
 	}
 	defer f.Close()
 	return ArtifactPath(f.Name()), err
+}
+
+// listenToChanges updates artifact's status in db every time Storage is notified
+// about status change.
+func (s *Storage) listenToChanges() {
+	for change := range s.notifier {
+		// TODO handle errors returned by SetStatus
+		s.db.SetStatus(change)
+	}
 }

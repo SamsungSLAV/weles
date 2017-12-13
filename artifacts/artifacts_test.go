@@ -19,7 +19,10 @@ package artifacts
 
 import (
 	"database/sql"
+	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -34,12 +37,29 @@ import (
 
 var _ = Describe("ArtifactManager", func() {
 
+	const poem = `How doth the little crocodile
+Improve his shining tail,
+And pour the waters of the Nile
+On every golden scale!
+
+How cheerfully he seems to grin
+How neatly spreads his claws,
+And welcomes little fishes in,
+With gently smiling jaws!
+
+-Lewis Carroll`
+
+	var (
+		testDir string
+		dbPath  string
+		err     error
+	)
+
 	var (
 		silverKangaroo weles.ArtifactManager
-		testDir        string
-		dbPath         string
-		err            error
-		job            weles.JobID = 58008
+		job            weles.JobID       = 58008
+		validURL       weles.ArtifactURI = "validURL"
+		invalidURL     weles.ArtifactURI = "invalidURL"
 	)
 
 	var (
@@ -80,6 +100,28 @@ var _ = Describe("ArtifactManager", func() {
 		err = silverKangaroo.Close()
 		Expect(err).ToNot(HaveOccurred())
 	})
+
+	checkPathInDb := func(path weles.ArtifactPath) bool {
+		db, err := sql.Open("sqlite3", dbPath)
+		Expect(err).ToNot(HaveOccurred())
+		defer db.Close()
+		var n int
+		err = db.QueryRow("select count (*) from artifacts where path = ?", path).Scan(&n)
+		Expect(err).ToNot(HaveOccurred())
+		return (n > 0)
+	}
+
+	prepareServer := func(url weles.ArtifactURI) *httptest.Server {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if url == validURL {
+				w.WriteHeader(http.StatusOK)
+				fmt.Fprint(w, poem)
+			} else {
+				w.WriteHeader(http.StatusNotFound)
+			}
+		}))
+		return ts
+	}
 
 	It("should create new temp directory for artifacts", func() {
 		var path, pathSame, pathType weles.ArtifactPath
@@ -139,9 +181,7 @@ var _ = Describe("ArtifactManager", func() {
 
 		By("Check if it's possible to GetFileInfo", func() {
 			for _, p := range paths {
-				ai, err := silverKangaroo.GetArtifactInfo(p)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(ai.Path).To(Equal(p))
+				Expect(checkPathInDb(p)).To(BeTrue())
 			}
 		})
 	})
@@ -177,6 +217,69 @@ var _ = Describe("ArtifactManager", func() {
 			Entry("create database in default directory", defaultDb, defaultDir),
 			Entry("create database in default directory, when arguments are empty", "", ""),
 			Entry("create database in custom directory", customDb, customDir),
+		)
+	})
+
+	Describe("PushArtifact", func() {
+
+		var (
+			ch chan weles.ArtifactStatusChange
+
+			ad weles.ArtifactDescription = weles.ArtifactDescription{
+				job,
+				weles.AM_IMAGEFILE,
+				"somealias",
+				validURL,
+			}
+
+			adInvalid weles.ArtifactDescription = weles.ArtifactDescription{
+				job,
+				weles.AM_IMAGEFILE,
+				"somealias",
+				invalidURL,
+			}
+		)
+
+		BeforeEach(func() {
+			ch = make(chan weles.ArtifactStatusChange, 20)
+		})
+
+		DescribeTable("Push artifact",
+			func(ad weles.ArtifactDescription, finalStatus weles.ArtifactStatus) {
+
+				ts := prepareServer(ad.URI)
+				defer ts.Close()
+				ad.URI = weles.ArtifactURI(ts.URL)
+
+				path, err := silverKangaroo.PushArtifact(ad, ch)
+
+				Expect(err).ToNot(HaveOccurred())
+
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.AM_PENDING})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.AM_DOWNLOADING})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, finalStatus})))
+
+				if finalStatus != weles.AM_FAILED {
+					By("Check if file exists and has proper content")
+
+					content, err := ioutil.ReadFile(string(path))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(string(content)).To(BeIdenticalTo(poem))
+
+				} else {
+					By("Check if file exists")
+					Expect(string(path)).NotTo(BeAnExistingFile())
+				}
+
+				ai, err := silverKangaroo.GetArtifactInfo(path)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(ai.Status).To(Equal(finalStatus))
+
+				By("Check if artifact is in ArtifactDB")
+				Expect(checkPathInDb(path)).To(BeTrue())
+			},
+			Entry("push artifact to db and download file", ad, weles.AM_READY),
+			Entry("do not push an invalid artifact", adInvalid, weles.AM_FAILED),
 		)
 	})
 })
