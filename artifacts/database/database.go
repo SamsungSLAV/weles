@@ -92,6 +92,12 @@ func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []ArtifactInfo, err er
 	switch arg.(type) {
 	case JobID:
 		query = "select * from artifacts where JobID = ?"
+	case ArtifactType:
+		query = "select * from artifacts where Type = ?"
+	case ArtifactAlias:
+		query = "select * from artifacts where Alias = ?"
+	case ArtifactStatus:
+		query = "select * from artifacts where Status = ?"
 	default:
 		return nil, ErrUnsupportedQueryType
 	}

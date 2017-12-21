@@ -185,13 +185,19 @@ var _ = Describe("ArtifactDB", func() {
 					Expect(result).To(Equal(expectedResult))
 				}
 			},
-			// type supported by select.
+			// types supported by select.
 			Entry("select JobID", artifact.JobID, nil, artifact),
+			Entry("select Type", weles.AM_YAMLFILE, nil, aYamlFailed),
+			Entry("select Status", weles.AM_READY, nil, aImageReady),
+			Entry("select Alias", artifact.Alias, nil, artifact),
 			// type bool is not supported by select.
 			Entry("select unsupported value", true, ErrUnsupportedQueryType),
 			// test query itsef.
 			Entry("select multiple entries for JobID", aImageReady.JobID, nil, aImageReady, aYamlFailed),
 			Entry("select no entries for invalid JobID", invalidJob, nil),
+			Entry("select multiple entries for Type", weles.AM_IMAGEFILE, nil, artifact, aImageReady),
+			Entry("select multiple entries for Alias", aImageReady.Alias, nil, aImageReady, aYamlFailed),
+			Entry("select multiple entries for Status", weles.AM_FAILED, nil, aYamlFailed, aTestFailed),
 		)
 	})
 })
