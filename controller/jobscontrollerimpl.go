@@ -23,6 +23,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-openapi/strfmt"
+
 	"git.tizen.org/tools/weles"
 )
 
@@ -80,13 +82,13 @@ func (js *JobsControllerImpl) NewJob(yaml []byte) (weles.JobID, error) {
 
 	j := js.nextID()
 
-	now := time.Now()
+	now := strfmt.DateTime(time.Now())
 	js.jobs[j] = &Job{
 		JobInfo: weles.JobInfo{
 			JobID:   j,
 			Created: now,
 			Updated: now,
-			Status:  weles.JOB_NEW,
+			Status:  weles.JobStatusNEW,
 		},
 		yaml: yaml,
 	}
@@ -120,7 +122,7 @@ func (js *JobsControllerImpl) SetConfig(j weles.JobID, conf weles.Config) error 
 	}
 
 	job.config = conf
-	job.Updated = time.Now()
+	job.Updated = strfmt.DateTime(time.Now())
 	return nil
 }
 
@@ -131,29 +133,29 @@ func isStatusChangeValid(oldStatus, newStatus weles.JobStatus) bool {
 		return true
 	}
 	switch oldStatus {
-	case weles.JOB_NEW:
+	case weles.JobStatusNEW:
 		switch newStatus {
-		case weles.JOB_PARSING, weles.JOB_CANCELED, weles.JOB_FAILED:
+		case weles.JobStatusPARSING, weles.JobStatusCANCELED, weles.JobStatusFAILED:
 			return true
 		}
-	case weles.JOB_PARSING:
+	case weles.JobStatusPARSING:
 		switch newStatus {
-		case weles.JOB_DOWNLOADING, weles.JOB_CANCELED, weles.JOB_FAILED:
+		case weles.JobStatusDOWNLOADING, weles.JobStatusCANCELED, weles.JobStatusFAILED:
 			return true
 		}
-	case weles.JOB_DOWNLOADING:
+	case weles.JobStatusDOWNLOADING:
 		switch newStatus {
-		case weles.JOB_WAITING, weles.JOB_CANCELED, weles.JOB_FAILED:
+		case weles.JobStatusWAITING, weles.JobStatusCANCELED, weles.JobStatusFAILED:
 			return true
 		}
-	case weles.JOB_WAITING:
+	case weles.JobStatusWAITING:
 		switch newStatus {
-		case weles.JOB_RUNNING, weles.JOB_CANCELED, weles.JOB_FAILED:
+		case weles.JobStatusRUNNING, weles.JobStatusCANCELED, weles.JobStatusFAILED:
 			return true
 		}
-	case weles.JOB_RUNNING:
+	case weles.JobStatusRUNNING:
 		switch newStatus {
-		case weles.JOB_COMPLETED, weles.JOB_CANCELED, weles.JOB_FAILED:
+		case weles.JobStatusCOMPLETED, weles.JobStatusCANCELED, weles.JobStatusFAILED:
 			return true
 		}
 	}
@@ -162,15 +164,15 @@ func isStatusChangeValid(oldStatus, newStatus weles.JobStatus) bool {
 
 // SetStatusAndInfo changes status of the Job and updates info. Only valid
 // changes are allowed.
-// There are 3 terminal statuses: JOB_FAILED, JOB_CANCELED, JOB_COMPLETED;
-// and 5 non-terminal statuses: JOB_NEW, JOB_PARSING, JOB_DOWNLOADING,
-// JOB_WAITING, JOB_RUNNING.
+// There are 3 terminal statuses: JobStatusFAILED, JobStatusCANCELED, JobStatusCOMPLETED;
+// and 5 non-terminal statuses: JobStatusNEW, JobStatusPARSING, JobStatusDOWNLOADING,
+// JobStatusWAITING, JobStatusRUNNING.
 // Only below changes of statuses are allowed:
-// * JOB_NEW --> {JOB_PARSING, JOB_CANCELED, JOB_FAILED}
-// * JOB_PARSING --> {JOB_DOWNLOADING, JOB_CANCELED, JOB_FAILED}
-// * JOB_DOWNLOADING --> {JOB_WAITING, JOB_CANCELED, JOB_FAILED}
-// * JOB_WAITING --> {JOB_RUNNING, JOB_CANCELED, JOB_FAILED}
-// * JOB_RUNNING --> {JOB_COMPLETED, JOB_CANCELED, JOB_FAILED}
+// * JobStatusNEW --> {JobStatusPARSING, JobStatusCANCELED, JobStatusFAILED}
+// * JobStatusPARSING --> {JobStatusDOWNLOADING, JobStatusCANCELED, JobStatusFAILED}
+// * JobStatusDOWNLOADING --> {JobStatusWAITING, JobStatusCANCELED, JobStatusFAILED}
+// * JobStatusWAITING --> {JobStatusRUNNING, JobStatusCANCELED, JobStatusFAILED}
+// * JobStatusRUNNING --> {JobStatusCOMPLETED, JobStatusCANCELED, JobStatusFAILED}
 func (js *JobsControllerImpl) SetStatusAndInfo(j weles.JobID, newStatus weles.JobStatus, msg string) error {
 	js.mutex.Lock()
 	defer js.mutex.Unlock()
@@ -186,7 +188,7 @@ func (js *JobsControllerImpl) SetStatusAndInfo(j weles.JobID, newStatus weles.Jo
 
 	job.Status = newStatus
 	job.Info = msg
-	job.Updated = time.Now()
+	job.Updated = strfmt.DateTime(time.Now())
 	return nil
 }
 

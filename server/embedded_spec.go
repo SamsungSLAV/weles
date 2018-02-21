@@ -70,6 +70,110 @@ func init() {
     }
   },
   "definitions": {
+    "ArtifactAlias": {
+      "description": "is an alternative name of an artifact.",
+      "type": "string"
+    },
+    "ArtifactDescription": {
+      "description": "contains information needed to create new artifact in ArtifactDB.",
+      "type": "object",
+      "properties": {
+        "Alias": {
+          "$ref": "#/definitions/ArtifactAlias"
+        },
+        "JobID": {
+          "description": "specifies  Job for which artifact was created.",
+          "$ref": "#/definitions/JobID"
+        },
+        "Type": {
+          "$ref": "#/definitions/ArtifactType"
+        },
+        "URI": {
+          "$ref": "#/definitions/ArtifactURI"
+        }
+      }
+    },
+    "ArtifactFilter": {
+      "description": "is used to filter results from ArtifactDB.",
+      "type": "object",
+      "properties": {
+        "Alias": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArtifactAlias"
+          }
+        },
+        "JobID": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JobID"
+          }
+        },
+        "Status": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArtifactStatus"
+          }
+        },
+        "Type": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArtifactType"
+          }
+        }
+      }
+    },
+    "ArtifactInfo": {
+      "description": "describes single artifact stored in ArtifactDB.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ArtifactDescription"
+        }
+      ],
+      "properties": {
+        "Path": {
+          "$ref": "#/definitions/ArtifactPath"
+        },
+        "Status": {
+          "$ref": "#/definitions/ArtifactStatus"
+        },
+        "Timestamp": {
+          "description": "is date of creating the artifact.",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ArtifactPath": {
+      "description": "describes path to artifact in ArtifactDB filesystem.",
+      "type": "string"
+    },
+    "ArtifactStatus": {
+      "description": "describes artifact status and availability.\n\n* DOWNLOADING - artifact is currently being downloaded.\n\n* READY - artifact has been downloaded and is ready to use.\n\n* FAILED - file is not available for use (e.g. download failed).\n\n* PENDING - artifact download has not started yet.\n",
+      "type": "string",
+      "enum": [
+        "DOWNLOADING",
+        "READY",
+        "FAILED",
+        "PENDING"
+      ]
+    },
+    "ArtifactType": {
+      "description": "denotes type and function of an artifact.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n",
+      "type": "string",
+      "enum": [
+        "IMAGE",
+        "RESULT",
+        "TEST",
+        "YAML"
+      ]
+    },
+    "ArtifactURI": {
+      "description": "is used to identify artifact's source.",
+      "type": "string",
+      "format": "uri"
+    },
     "ErrResponse": {
       "description": "is a standard error response containing information about the error. It consists of error type and message.",
       "type": "object",
@@ -81,6 +185,57 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "JobID": {
+      "description": "is a unique identifier for Weles Job.",
+      "type": "integer",
+      "format": "uint64"
+    },
+    "JobInfo": {
+      "description": "contains information about a Job available for public API.",
+      "type": "object",
+      "properties": {
+        "created": {
+          "description": "is the Job creation time in UTC.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "info": {
+          "description": "provides additional information about current state, e.g. cause of failure",
+          "type": "string"
+        },
+        "jobID": {
+          "description": "is a unique Job identifier",
+          "$ref": "#/definitions/JobID"
+        },
+        "name": {
+          "description": "is the Job name acquired from yaml file during Job creation.",
+          "type": "string"
+        },
+        "status": {
+          "description": "specifies current state of the Job.",
+          "$ref": "#/definitions/JobStatus"
+        },
+        "updated": {
+          "description": "is the time of latest Jobs' status modification.",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "JobStatus": {
+      "description": "specifies state of the Job.\n\n* NEW - The new Job has been created.\n\n* PARSING - Provided yaml file is being parsed and interpreted.\n\n* DOWNLOADING - Images and/or files required for the test are being downloaded.\n\n* WAITING - Job is waiting for Boruta worker.\n\n* RUNNING - Job is being executed.\n\n* COMPLETED - Job is completed. This is terminal state.\n\n* FAILED - Job execution has failed. This is terminal state.\n\n* CANCELED -Job has been canceled with API call. This is terminal state.\n",
+      "type": "string",
+      "enum": [
+        "NEW",
+        "PARSING",
+        "DOWNLOADING",
+        "WAITING",
+        "RUNNING",
+        "COMPLETED",
+        "FAILED",
+        "CANCELED"
+      ]
     }
   },
   "responses": {
@@ -137,6 +292,110 @@ func init() {
     }
   },
   "definitions": {
+    "ArtifactAlias": {
+      "description": "is an alternative name of an artifact.",
+      "type": "string"
+    },
+    "ArtifactDescription": {
+      "description": "contains information needed to create new artifact in ArtifactDB.",
+      "type": "object",
+      "properties": {
+        "Alias": {
+          "$ref": "#/definitions/ArtifactAlias"
+        },
+        "JobID": {
+          "description": "specifies  Job for which artifact was created.",
+          "$ref": "#/definitions/JobID"
+        },
+        "Type": {
+          "$ref": "#/definitions/ArtifactType"
+        },
+        "URI": {
+          "$ref": "#/definitions/ArtifactURI"
+        }
+      }
+    },
+    "ArtifactFilter": {
+      "description": "is used to filter results from ArtifactDB.",
+      "type": "object",
+      "properties": {
+        "Alias": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArtifactAlias"
+          }
+        },
+        "JobID": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JobID"
+          }
+        },
+        "Status": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArtifactStatus"
+          }
+        },
+        "Type": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArtifactType"
+          }
+        }
+      }
+    },
+    "ArtifactInfo": {
+      "description": "describes single artifact stored in ArtifactDB.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ArtifactDescription"
+        }
+      ],
+      "properties": {
+        "Path": {
+          "$ref": "#/definitions/ArtifactPath"
+        },
+        "Status": {
+          "$ref": "#/definitions/ArtifactStatus"
+        },
+        "Timestamp": {
+          "description": "is date of creating the artifact.",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ArtifactPath": {
+      "description": "describes path to artifact in ArtifactDB filesystem.",
+      "type": "string"
+    },
+    "ArtifactStatus": {
+      "description": "describes artifact status and availability.\n\n* DOWNLOADING - artifact is currently being downloaded.\n\n* READY - artifact has been downloaded and is ready to use.\n\n* FAILED - file is not available for use (e.g. download failed).\n\n* PENDING - artifact download has not started yet.\n",
+      "type": "string",
+      "enum": [
+        "DOWNLOADING",
+        "READY",
+        "FAILED",
+        "PENDING"
+      ]
+    },
+    "ArtifactType": {
+      "description": "denotes type and function of an artifact.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n",
+      "type": "string",
+      "enum": [
+        "IMAGE",
+        "RESULT",
+        "TEST",
+        "YAML"
+      ]
+    },
+    "ArtifactURI": {
+      "description": "is used to identify artifact's source.",
+      "type": "string",
+      "format": "uri"
+    },
     "ErrResponse": {
       "description": "is a standard error response containing information about the error. It consists of error type and message.",
       "type": "object",
@@ -148,6 +407,57 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "JobID": {
+      "description": "is a unique identifier for Weles Job.",
+      "type": "integer",
+      "format": "uint64"
+    },
+    "JobInfo": {
+      "description": "contains information about a Job available for public API.",
+      "type": "object",
+      "properties": {
+        "created": {
+          "description": "is the Job creation time in UTC.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "info": {
+          "description": "provides additional information about current state, e.g. cause of failure",
+          "type": "string"
+        },
+        "jobID": {
+          "description": "is a unique Job identifier",
+          "$ref": "#/definitions/JobID"
+        },
+        "name": {
+          "description": "is the Job name acquired from yaml file during Job creation.",
+          "type": "string"
+        },
+        "status": {
+          "description": "specifies current state of the Job.",
+          "$ref": "#/definitions/JobStatus"
+        },
+        "updated": {
+          "description": "is the time of latest Jobs' status modification.",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "JobStatus": {
+      "description": "specifies state of the Job.\n\n* NEW - The new Job has been created.\n\n* PARSING - Provided yaml file is being parsed and interpreted.\n\n* DOWNLOADING - Images and/or files required for the test are being downloaded.\n\n* WAITING - Job is waiting for Boruta worker.\n\n* RUNNING - Job is being executed.\n\n* COMPLETED - Job is completed. This is terminal state.\n\n* FAILED - Job execution has failed. This is terminal state.\n\n* CANCELED -Job has been canceled with API call. This is terminal state.\n",
+      "type": "string",
+      "enum": [
+        "NEW",
+        "PARSING",
+        "DOWNLOADING",
+        "WAITING",
+        "RUNNING",
+        "COMPLETED",
+        "FAILED",
+        "CANCELED"
+      ]
     }
   },
   "responses": {

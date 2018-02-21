@@ -52,7 +52,7 @@ func NewParser(j JobsController, a weles.ArtifactManager, p weles.Parser) Parser
 // Parse prepares new Job to be processed by saving yaml file in ArtifactDB,
 // parsing yaml and preparing Job's configuration.
 func (h *ParserImpl) Parse(j weles.JobID) {
-	err := h.jobs.SetStatusAndInfo(j, weles.JOB_PARSING, "")
+	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusPARSING, "")
 	if err != nil {
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s", err.Error()))
 		return
@@ -66,7 +66,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 
 	path, err := h.artifacts.CreateArtifact(weles.ArtifactDescription{
 		JobID: j,
-		Type:  weles.AM_YAMLFILE,
+		Type:  weles.ArtifactTypeYAML,
 	})
 	if err != nil {
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while creating file path in ArtifactDB : %s", err.Error()))

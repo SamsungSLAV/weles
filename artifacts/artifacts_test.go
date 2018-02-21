@@ -64,23 +64,23 @@ With gently smiling jaws!
 
 	var (
 		description = weles.ArtifactDescription{
-			job,
-			weles.AM_IMAGEFILE,
 			"alias",
+			job,
+			weles.ArtifactTypeIMAGE,
 			"uri",
 		}
 
 		dSameJobNType = weles.ArtifactDescription{
-			job,
-			weles.AM_IMAGEFILE,
 			"other alias",
+			job,
+			weles.ArtifactTypeIMAGE,
 			"other uri",
 		}
 
 		dSameJobOtherType = weles.ArtifactDescription{
-			job,
-			weles.AM_YAMLFILE,
 			"another alias",
+			job,
+			weles.ArtifactTypeYAML,
 			"another uri",
 		}
 	)
@@ -226,16 +226,16 @@ With gently smiling jaws!
 			ch chan weles.ArtifactStatusChange
 
 			ad weles.ArtifactDescription = weles.ArtifactDescription{
-				job,
-				weles.AM_IMAGEFILE,
 				"somealias",
+				job,
+				weles.ArtifactTypeIMAGE,
 				validURL,
 			}
 
 			adInvalid weles.ArtifactDescription = weles.ArtifactDescription{
-				job,
-				weles.AM_IMAGEFILE,
 				"somealias",
+				job,
+				weles.ArtifactTypeIMAGE,
 				invalidURL,
 			}
 		)
@@ -255,11 +255,11 @@ With gently smiling jaws!
 
 				Expect(err).ToNot(HaveOccurred())
 
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.AM_PENDING})))
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.AM_DOWNLOADING})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusDOWNLOADING})))
 				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, finalStatus})))
 
-				if finalStatus != weles.AM_FAILED {
+				if finalStatus != weles.ArtifactStatusFAILED {
 					By("Check if file exists and has proper content")
 
 					content, err := ioutil.ReadFile(string(path))
@@ -278,8 +278,8 @@ With gently smiling jaws!
 				By("Check if artifact is in ArtifactDB")
 				Expect(checkPathInDb(path)).To(BeTrue())
 			},
-			Entry("push artifact to db and download file", ad, weles.AM_READY),
-			Entry("do not push an invalid artifact", adInvalid, weles.AM_FAILED),
+			Entry("push artifact to db and download file", ad, weles.ArtifactStatusREADY),
+			Entry("do not push an invalid artifact", adInvalid, weles.ArtifactStatusFAILED),
 		)
 	})
 })

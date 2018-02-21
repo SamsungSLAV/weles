@@ -104,7 +104,7 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath, ch
 
 	change := weles.ArtifactStatusChange{
 		Path:      path,
-		NewStatus: weles.AM_DOWNLOADING,
+		NewStatus: weles.ArtifactStatusDOWNLOADING,
 	}
 	channels := []chan weles.ArtifactStatusChange{ch, d.notification}
 	notify(change, channels)
@@ -112,9 +112,9 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath, ch
 	err := d.getData(URI, path)
 	if err != nil {
 		os.Remove(string(path))
-		change.NewStatus = weles.AM_FAILED
+		change.NewStatus = weles.ArtifactStatusFAILED
 	} else {
-		change.NewStatus = weles.AM_READY
+		change.NewStatus = weles.ArtifactStatusREADY
 	}
 	notify(change, channels)
 }
@@ -123,7 +123,7 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath, ch
 // It puts new downloadJob on the queue.
 func (d *Downloader) Download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange) error {
 	channels := []chan weles.ArtifactStatusChange{ch, d.notification}
-	notify(weles.ArtifactStatusChange{path, weles.AM_PENDING}, channels)
+	notify(weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING}, channels)
 
 	job := downloadJob{
 		path: path,

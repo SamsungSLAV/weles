@@ -109,7 +109,7 @@ func (c *Controller) CreateJob(yaml []byte) (weles.JobID, error) {
 // CancelJob cancels Job identified by argument. Job execution is stopped.
 // It is a part of JobManager implementation.
 func (c *Controller) CancelJob(j weles.JobID) error {
-	err := c.jobs.SetStatusAndInfo(j, weles.JOB_CANCELED, "")
+	err := c.jobs.SetStatusAndInfo(j, weles.JobStatusCANCELED, "")
 	if err != nil {
 		return err
 	}
@@ -165,13 +165,13 @@ func (c *Controller) loop() {
 // fail sets Job in FAILED state and if needed stops Job's execution on Dryad
 // and releases Dryad to Boruta.
 func (c *Controller) fail(j weles.JobID, msg string) {
-	c.jobs.SetStatusAndInfo(j, weles.JOB_FAILED, msg)
+	c.jobs.SetStatusAndInfo(j, weles.JobStatusFAILED, msg)
 	c.dryader.CancelJob(j)
 	c.boruter.Release(j)
 }
 
 // succeed sets Job in COMPLETED state.
 func (c *Controller) succeed(j weles.JobID) {
-	c.jobs.SetStatusAndInfo(j, weles.JOB_COMPLETED, "")
+	c.jobs.SetStatusAndInfo(j, weles.JobStatusCOMPLETED, "")
 	c.boruter.Release(j)
 }

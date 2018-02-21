@@ -24,6 +24,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/go-openapi/strfmt"
+
 	"git.tizen.org/tools/weles"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -43,73 +45,137 @@ var _ = Describe("ArtifactDB", func() {
 
 		artifact = weles.ArtifactInfo{
 			weles.ArtifactDescription{
-				job,
-				weles.AM_IMAGEFILE,
 				"some alias",
+				job,
+				weles.ArtifactTypeIMAGE,
 				"http://example.com",
 			},
 			"path1",
-			weles.AM_PENDING,
-			time.Now().UTC(),
+			weles.ArtifactStatusPENDING,
+			strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
 
 		aImageReady = weles.ArtifactInfo{
 			weles.ArtifactDescription{
-				job + 1,
-				weles.AM_IMAGEFILE,
 				"other alias",
+				job + 1,
+				weles.ArtifactTypeIMAGE,
 				"http://example.com/1",
 			},
 			"path2",
-			weles.AM_READY,
-			time.Now().UTC(),
+			weles.ArtifactStatusREADY,
+			strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
 
 		aYamlFailed = weles.ArtifactInfo{
 			weles.ArtifactDescription{
-				job + 1,
-				weles.AM_YAMLFILE,
 				"other alias",
+				job + 1,
+				weles.ArtifactTypeYAML,
 				"http://example.com/2",
 			},
 			"path3",
-			weles.AM_FAILED,
-			time.Now().UTC(),
+			weles.ArtifactStatusFAILED,
+			strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
 
 		aTestFailed = weles.ArtifactInfo{
 			weles.ArtifactDescription{
-				job + 2,
-				weles.AM_TESTFILE,
 				"alias",
+				job + 2,
+				weles.ArtifactTypeTEST,
 				"http://example.com/2",
 			},
 			"path4",
-			weles.AM_FAILED,
-			time.Unix(3000, 60).UTC(),
+			weles.ArtifactStatusFAILED,
+			strfmt.DateTime(time.Unix(3000, 60).Round(time.Millisecond).UTC()),
 		}
 
 		testArtifacts = []weles.ArtifactInfo{artifact, aImageReady, aYamlFailed, aTestFailed}
 
-		oneJobFilter  = weles.ArtifactFilter{[]weles.JobID{artifact.JobID}, nil, nil, nil}
-		twoJobsFilter = weles.ArtifactFilter{[]weles.JobID{artifact.JobID, aImageReady.JobID}, nil, nil, nil}
-		noJobFilter   = weles.ArtifactFilter{[]weles.JobID{invalidJob}, nil, nil, nil}
+		oneJobFilter = weles.ArtifactFilter{
+			JobID:  []weles.JobID{artifact.JobID},
+			Alias:  nil,
+			Status: nil,
+			Type:   nil}
+		twoJobsFilter = weles.ArtifactFilter{
+			JobID:  []weles.JobID{artifact.JobID, aImageReady.JobID},
+			Alias:  nil,
+			Status: nil,
+			Type:   nil}
+		noJobFilter = weles.ArtifactFilter{
+			JobID:  []weles.JobID{invalidJob},
+			Alias:  nil,
+			Status: nil,
+			Type:   nil}
 
-		oneTypeFilter  = weles.ArtifactFilter{nil, []weles.ArtifactType{aYamlFailed.Type}, nil, nil}
-		twoTypesFilter = weles.ArtifactFilter{nil, []weles.ArtifactType{aYamlFailed.Type, aTestFailed.Type}, nil, nil}
-		noTypeFilter   = weles.ArtifactFilter{nil, []weles.ArtifactType{invalidType}, nil, nil}
+		oneTypeFilter = weles.ArtifactFilter{
+			JobID:  nil,
+			Type:   []weles.ArtifactType{aYamlFailed.Type},
+			Status: nil,
+			Alias:  nil}
 
-		oneStatusFilter = weles.ArtifactFilter{nil, nil, []weles.ArtifactStatus{artifact.Status}, nil}
-		twoStatusFilter = weles.ArtifactFilter{nil, nil, []weles.ArtifactStatus{artifact.Status, aYamlFailed.Status}, nil}
-		noStatusFilter  = weles.ArtifactFilter{nil, nil, []weles.ArtifactStatus{invalidStatus}, nil}
+		twoTypesFilter = weles.ArtifactFilter{
+			JobID:  nil,
+			Type:   []weles.ArtifactType{aYamlFailed.Type, aTestFailed.Type},
+			Status: nil,
+			Alias:  nil}
 
-		oneAliasFilter = weles.ArtifactFilter{nil, nil, nil, []weles.ArtifactAlias{artifact.Alias}}
-		twoAliasFilter = weles.ArtifactFilter{nil, nil, nil, []weles.ArtifactAlias{artifact.Alias, aImageReady.Alias}}
-		noAliasFilter  = weles.ArtifactFilter{nil, nil, nil, []weles.ArtifactAlias{invalidAlias}}
+		noTypeFilter = weles.ArtifactFilter{
+			JobID:  nil,
+			Type:   []weles.ArtifactType{invalidType},
+			Status: nil,
+			Alias:  nil}
 
-		fullFilter    = weles.ArtifactFilter{twoJobsFilter.JobID, twoTypesFilter.Type, twoStatusFilter.Status, twoAliasFilter.Alias}
-		noMatchFilter = weles.ArtifactFilter{oneJobFilter.JobID, oneTypeFilter.Type, nil, nil}
-		emptyFilter   = weles.ArtifactFilter{}
+		oneStatusFilter = weles.ArtifactFilter{
+			JobID:  nil,
+			Type:   nil,
+			Status: []weles.ArtifactStatus{artifact.Status},
+			Alias:  nil}
+
+		twoStatusFilter = weles.ArtifactFilter{
+			JobID:  nil,
+			Type:   nil,
+			Status: []weles.ArtifactStatus{artifact.Status, aYamlFailed.Status},
+			Alias:  nil}
+
+		noStatusFilter = weles.ArtifactFilter{
+			JobID:  nil,
+			Type:   nil,
+			Status: []weles.ArtifactStatus{invalidStatus},
+			Alias:  nil}
+
+		oneAliasFilter = weles.ArtifactFilter{
+			JobID:  nil,
+			Type:   nil,
+			Status: nil,
+			Alias:  []weles.ArtifactAlias{artifact.Alias}}
+
+		twoAliasFilter = weles.ArtifactFilter{
+			JobID:  nil,
+			Type:   nil,
+			Status: nil,
+			Alias:  []weles.ArtifactAlias{artifact.Alias, aImageReady.Alias}}
+
+		noAliasFilter = weles.ArtifactFilter{
+			JobID:  nil,
+			Type:   nil,
+			Status: nil,
+			Alias:  []weles.ArtifactAlias{invalidAlias}}
+
+		fullFilter = weles.ArtifactFilter{
+			JobID:  twoJobsFilter.JobID,
+			Type:   twoTypesFilter.Type,
+			Status: twoStatusFilter.Status,
+			Alias:  twoAliasFilter.Alias}
+
+		noMatchFilter = weles.ArtifactFilter{
+			JobID:  oneJobFilter.JobID,
+			Type:   oneTypeFilter.Type,
+			Status: nil,
+			Alias:  nil}
+
+		emptyFilter = weles.ArtifactFilter{}
 	)
 
 	jobsInDB := func(job weles.JobID) int64 {
@@ -210,17 +276,17 @@ var _ = Describe("ArtifactDB", func() {
 			},
 			// types supported by select.
 			Entry("select JobID", artifact.JobID, nil, artifact),
-			Entry("select Type", weles.AM_YAMLFILE, nil, aYamlFailed),
-			Entry("select Status", weles.AM_READY, nil, aImageReady),
+			Entry("select Type", weles.ArtifactTypeYAML, nil, aYamlFailed),
+			Entry("select Status", weles.ArtifactStatusREADY, nil, aImageReady),
 			Entry("select Alias", artifact.Alias, nil, artifact),
 			// type bool is not supported by select.
 			Entry("select unsupported value", true, ErrUnsupportedQueryType),
 			// test query itsef.
 			Entry("select multiple entries for JobID", aImageReady.JobID, nil, aImageReady, aYamlFailed),
 			Entry("select no entries for invalid JobID", invalidJob, nil),
-			Entry("select multiple entries for Type", weles.AM_IMAGEFILE, nil, artifact, aImageReady),
+			Entry("select multiple entries for Type", weles.ArtifactTypeIMAGE, nil, artifact, aImageReady),
 			Entry("select multiple entries for Alias", aImageReady.Alias, nil, aImageReady, aYamlFailed),
-			Entry("select multiple entries for Status", weles.AM_FAILED, nil, aYamlFailed, aTestFailed),
+			Entry("select multiple entries for Status", weles.ArtifactStatusFAILED, nil, aYamlFailed, aTestFailed),
 		)
 	})
 
@@ -278,8 +344,8 @@ var _ = Describe("ArtifactDB", func() {
 					Expect(a).To(Equal(weles.ArtifactInfo{}))
 				}
 			},
-			Entry("change status of artifact not present in ArtifactDB", weles.ArtifactStatusChange{invalidPath, weles.AM_DOWNLOADING}, sql.ErrNoRows),
-			Entry("change status of artifact present in ArtifactDB", weles.ArtifactStatusChange{artifact.Path, weles.AM_DOWNLOADING}, nil),
+			Entry("change status of artifact not present in ArtifactDB", weles.ArtifactStatusChange{invalidPath, weles.ArtifactStatusDOWNLOADING}, sql.ErrNoRows),
+			Entry("change status of artifact present in ArtifactDB", weles.ArtifactStatusChange{artifact.Path, weles.ArtifactStatusDOWNLOADING}, nil),
 		)
 	})
 })

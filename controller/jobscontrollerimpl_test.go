@@ -21,9 +21,10 @@ import (
 	"net"
 	"time"
 
-	"git.tizen.org/tools/weles"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"git.tizen.org/tools/weles"
 )
 
 var _ = Describe("JobsControllerImpl", func() {
@@ -75,9 +76,9 @@ var _ = Describe("JobsControllerImpl", func() {
 				Expect(ok).To(BeTrue())
 				Expect(job.JobID).To(Equal(j))
 				Expect(job.Created).To(Equal(job.Updated))
-				Expect(job.Created).To(BeTemporally(">=", before))
-				Expect(job.Created).To(BeTemporally("<=", after))
-				Expect(job.Status).To(Equal(weles.JOB_NEW))
+				Expect(time.Time(job.Created)).To(BeTemporally(">=", before))
+				Expect(time.Time(job.Created)).To(BeTemporally("<=", after))
+				Expect(job.Status).To(Equal(weles.JobStatusNEW))
 				Expect(job.yaml).To(Equal(yaml))
 			})
 		})
@@ -95,54 +96,54 @@ var _ = Describe("JobsControllerImpl", func() {
 		})
 		Describe("SetStatus", func() {
 			allStatus := []weles.JobStatus{
-				weles.JOB_NEW,
-				weles.JOB_PARSING,
-				weles.JOB_DOWNLOADING,
-				weles.JOB_WAITING,
-				weles.JOB_RUNNING,
-				weles.JOB_FAILED,
-				weles.JOB_CANCELED,
-				weles.JOB_COMPLETED,
+				weles.JobStatusNEW,
+				weles.JobStatusPARSING,
+				weles.JobStatusDOWNLOADING,
+				weles.JobStatusWAITING,
+				weles.JobStatusRUNNING,
+				weles.JobStatusFAILED,
+				weles.JobStatusCANCELED,
+				weles.JobStatusCOMPLETED,
 			}
 			validChanges := map[weles.JobStatus](map[weles.JobStatus]bool){
-				weles.JOB_NEW: map[weles.JobStatus]bool{
-					weles.JOB_NEW:      true,
-					weles.JOB_PARSING:  true,
-					weles.JOB_FAILED:   true,
-					weles.JOB_CANCELED: true,
+				weles.JobStatusNEW: map[weles.JobStatus]bool{
+					weles.JobStatusNEW:      true,
+					weles.JobStatusPARSING:  true,
+					weles.JobStatusFAILED:   true,
+					weles.JobStatusCANCELED: true,
 				},
-				weles.JOB_PARSING: map[weles.JobStatus]bool{
-					weles.JOB_PARSING:     true,
-					weles.JOB_DOWNLOADING: true,
-					weles.JOB_FAILED:      true,
-					weles.JOB_CANCELED:    true,
+				weles.JobStatusPARSING: map[weles.JobStatus]bool{
+					weles.JobStatusPARSING:     true,
+					weles.JobStatusDOWNLOADING: true,
+					weles.JobStatusFAILED:      true,
+					weles.JobStatusCANCELED:    true,
 				},
-				weles.JOB_DOWNLOADING: map[weles.JobStatus]bool{
-					weles.JOB_DOWNLOADING: true,
-					weles.JOB_WAITING:     true,
-					weles.JOB_FAILED:      true,
-					weles.JOB_CANCELED:    true,
+				weles.JobStatusDOWNLOADING: map[weles.JobStatus]bool{
+					weles.JobStatusDOWNLOADING: true,
+					weles.JobStatusWAITING:     true,
+					weles.JobStatusFAILED:      true,
+					weles.JobStatusCANCELED:    true,
 				},
-				weles.JOB_WAITING: map[weles.JobStatus]bool{
-					weles.JOB_WAITING:  true,
-					weles.JOB_RUNNING:  true,
-					weles.JOB_FAILED:   true,
-					weles.JOB_CANCELED: true,
+				weles.JobStatusWAITING: map[weles.JobStatus]bool{
+					weles.JobStatusWAITING:  true,
+					weles.JobStatusRUNNING:  true,
+					weles.JobStatusFAILED:   true,
+					weles.JobStatusCANCELED: true,
 				},
-				weles.JOB_RUNNING: map[weles.JobStatus]bool{
-					weles.JOB_RUNNING:   true,
-					weles.JOB_FAILED:    true,
-					weles.JOB_CANCELED:  true,
-					weles.JOB_COMPLETED: true,
+				weles.JobStatusRUNNING: map[weles.JobStatus]bool{
+					weles.JobStatusRUNNING:   true,
+					weles.JobStatusFAILED:    true,
+					weles.JobStatusCANCELED:  true,
+					weles.JobStatusCOMPLETED: true,
 				},
-				weles.JOB_FAILED: map[weles.JobStatus]bool{
-					weles.JOB_FAILED: true,
+				weles.JobStatusFAILED: map[weles.JobStatus]bool{
+					weles.JobStatusFAILED: true,
 				},
-				weles.JOB_CANCELED: map[weles.JobStatus]bool{
-					weles.JOB_CANCELED: true,
+				weles.JobStatusCANCELED: map[weles.JobStatus]bool{
+					weles.JobStatusCANCELED: true,
 				},
-				weles.JOB_COMPLETED: map[weles.JobStatus]bool{
-					weles.JOB_COMPLETED: true,
+				weles.JobStatusCOMPLETED: map[weles.JobStatus]bool{
+					weles.JobStatusCOMPLETED: true,
 				},
 			}
 			It("should return error for not existing job", func() {
@@ -172,7 +173,7 @@ var _ = Describe("JobsControllerImpl", func() {
 								Expect(err).NotTo(HaveOccurred())
 								Expect(job.Status).To(Equal(newStatus))
 								Expect(job.Info).To(Equal(info))
-								Expect(job.Updated).To(BeTemporally(">=", oldUpdated))
+								Expect(time.Time(job.Updated)).To(BeTemporally(">=", time.Time(oldUpdated)))
 							})
 						}
 					}
@@ -188,8 +189,8 @@ var _ = Describe("JobsControllerImpl", func() {
 				Expect(err).NotTo(HaveOccurred())
 
 				Expect(jc.(*JobsControllerImpl).jobs[j].config).To(Equal(config))
-				Expect(jc.(*JobsControllerImpl).jobs[j].Updated).To(BeTemporally(">=", before))
-				Expect(jc.(*JobsControllerImpl).jobs[j].Updated).To(BeTemporally("<=", after))
+				Expect(time.Time(jc.(*JobsControllerImpl).jobs[j].Updated)).To(BeTemporally(">=", before))
+				Expect(time.Time(jc.(*JobsControllerImpl).jobs[j].Updated)).To(BeTemporally("<=", after))
 			})
 			It("should return error for not existing job", func() {
 				config := weles.Config{JobName: "Test Job"}

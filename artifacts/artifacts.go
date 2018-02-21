@@ -24,6 +24,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-openapi/strfmt"
+
 	"git.tizen.org/tools/weles"
 	"git.tizen.org/tools/weles/artifacts/database"
 	"git.tizen.org/tools/weles/artifacts/downloader"
@@ -111,7 +113,7 @@ func (s *Storage) PushArtifact(artifact weles.ArtifactDescription, ch chan weles
 
 	err = s.downloader.Download(artifact.URI, path, ch)
 	if err != nil {
-		s.db.SetStatus(weles.ArtifactStatusChange{path, weles.AM_FAILED})
+		s.db.SetStatus(weles.ArtifactStatusChange{path, weles.ArtifactStatusFAILED})
 		return "", err
 	}
 	return path, nil
@@ -124,7 +126,7 @@ func (s *Storage) CreateArtifact(artifact weles.ArtifactDescription) (weles.Arti
 		return "", err
 	}
 
-	err = s.db.InsertArtifactInfo(&weles.ArtifactInfo{artifact, path, "", time.Now().UTC()})
+	err = s.db.InsertArtifactInfo(&weles.ArtifactInfo{artifact, path, "", strfmt.DateTime(time.Now().UTC())})
 	if err != nil {
 		return "", err
 	}

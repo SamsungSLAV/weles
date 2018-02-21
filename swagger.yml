@@ -32,6 +32,157 @@ responses:
     schema:
       $ref: '#/definitions/ErrResponse'
 definitions:
+  JobID:
+    description: is a unique identifier for Weles Job.
+    type: integer
+    format: uint64
+  JobStatus:
+    description: |
+      specifies state of the Job.
+
+      * NEW - The new Job has been created.
+
+      * PARSING - Provided yaml file is being parsed and interpreted.
+
+      * DOWNLOADING - Images and/or files required for the test are being downloaded.
+
+      * WAITING - Job is waiting for Boruta worker.
+
+      * RUNNING - Job is being executed.
+
+      * COMPLETED - Job is completed. This is terminal state.
+
+      * FAILED - Job execution has failed. This is terminal state.
+
+      * CANCELED -Job has been canceled with API call. This is terminal state.
+
+    type: string
+    enum:
+      - NEW
+      - PARSING
+      - DOWNLOADING
+      - WAITING
+      - RUNNING
+      - COMPLETED
+      - FAILED
+      - CANCELED
+  JobInfo:
+    description: contains information about a Job available for public API.
+    type: object
+    properties:
+      jobID:
+        $ref: '#/definitions/JobID'
+        description: is a unique Job identifier
+      name:
+        type: string
+        description: is the Job name acquired from yaml file during Job creation.
+      created:
+        type: string
+        format: date-time
+        description: is the Job creation time in UTC.
+      updated:
+        type: string
+        format: date-time
+        description: is the time of latest Jobs' status modification.
+      status:
+        $ref: '#/definitions/JobStatus'
+        description: specifies current state of the Job.
+      info:
+        type: string
+        description: provides additional information about current state, e.g. cause of failure
+  ArtifactType:
+    description: |
+      denotes type and function of an artifact.
+
+      * IMAGE - image file.
+
+      * RESULT - all outputs, files built during tests, etc.
+
+      * TEST - additional files uploaded by user for conducting test.
+
+      * YAML - yaml file describing Weles Job.
+
+    type: string
+    enum:
+      - IMAGE
+      - RESULT
+      - TEST
+      - YAML
+  ArtifactPath:
+    description: describes path to artifact in ArtifactDB filesystem.
+    type: string
+  ArtifactStatus:
+    description: |
+      describes artifact status and availability.
+
+      * DOWNLOADING - artifact is currently being downloaded.
+
+      * READY - artifact has been downloaded and is ready to use.
+
+      * FAILED - file is not available for use (e.g. download failed).
+
+      * PENDING - artifact download has not started yet.
+
+    type: string
+    enum:
+      - DOWNLOADING
+      - READY
+      - FAILED
+      - PENDING
+  ArtifactURI:
+    description: is used to identify artifact's source.
+    type: string
+    format: uri
+  ArtifactAlias:
+    description: is an alternative name of an artifact.
+    type: string
+  ArtifactDescription:
+    description: contains information needed to create new artifact in ArtifactDB.
+    type: object
+    properties:
+      JobID:
+        $ref: '#/definitions/JobID'
+        description: specifies  Job for which artifact was created.
+      Type:
+        $ref: '#/definitions/ArtifactType'
+      Alias:
+        $ref: '#/definitions/ArtifactAlias'
+      URI:
+        $ref: '#/definitions/ArtifactURI'
+  ArtifactInfo:
+    description: describes single artifact stored in ArtifactDB.
+    type: object
+    allOf:
+     - $ref: '#/definitions/ArtifactDescription'
+    properties:
+      Path:
+        $ref: '#/definitions/ArtifactPath'
+      Status:
+        $ref: '#/definitions/ArtifactStatus'
+      Timestamp:
+        description: is date of creating the artifact.
+        type: string
+        format: date-time
+  ArtifactFilter:
+    description: is used to filter results from ArtifactDB.
+    type: object
+    properties:
+      JobID:
+        type: array
+        items:
+          $ref: '#/definitions/JobID'
+      Type:
+        type: array
+        items:
+          $ref: '#/definitions/ArtifactType'
+      Status:
+        type: array
+        items:
+          $ref: '#/definitions/ArtifactStatus'
+      Alias:
+        type: array
+        items:
+          $ref: '#/definitions/ArtifactAlias'
   ErrResponse:
     description: >-
       is a standard error response containing information about the
