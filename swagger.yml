@@ -1,0 +1,48 @@
+swagger: '2.0'
+info:
+  description: >-
+    This is a Weles server.   You can find out more about Weles at
+    [http://tbd.tbd](http://tbd.tbd).
+  version: 0.0.0
+  title: Weles
+  termsOfService: 'http://tbd.tbd/terms/'
+  contact:
+    email: tbd@tbd.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8088'
+basePath: /
+schemes:
+  - http
+paths:
+  /:
+    get:
+      summary: tbd
+      operationId: tbd
+      description: tbd
+      responses:
+        '204':
+          description: 204 No Content
+        '500':
+          $ref: '#/responses/InternalServer'
+responses:
+  InternalServer:
+    description: 500 Internal Server error
+    schema:
+      $ref: '#/definitions/ErrResponse'
+definitions:
+  ErrResponse:
+    description: >-
+      is a standard error response containing information about the
+      error. It consists of error type and message.
+    type: object
+    properties:
+      type:
+        type: string
+      message:
+        type: string
+externalDocs:
+  description: TBD
+  url: 'http://TBD.tbd'
+

@@ -2,3 +2,5 @@
 /vendor/
 # No binaries should be committed.
 /bin/
+# Built documentation:
+/doc/build/

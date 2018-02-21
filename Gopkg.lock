@@ -98,6 +98,7 @@
   name = "github.com/go-openapi/runtime"
   packages = [
     ".",
+    "flagext",
     "logger",
     "middleware",
     "middleware/denco",
@@ -135,7 +136,7 @@
 [[projects]]
   name = "github.com/go-swagger/go-swagger"
   packages = ["."]
-  revision = "73498993a0a27ed9b0a063d3e94536a6a050fa22"
+  revision = "8c101dc8c12c8e25b5803a6376b7b2b7f09a622f"
 
 [[projects]]
   branch = "master"
@@ -356,7 +357,8 @@
     "html",
     "html/atom",
     "html/charset",
-    "idna"
+    "idna",
+    "netutil"
   ]
   revision = "d0887baf81f4598189d4e12a37c6da86f0bba4d0"
 
@@ -463,6 +465,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "787f26efc1b809ff477e44e17fb7dffd94fa298184dddcaf077fd9cc593b1066"
+  inputs-digest = "f050ff38f150545ac47560626c269a02dd8b5e7dee8896f0ab84568ccc540f9b"
   solver-name = "gps-cdcl"
   solver-version = 1
