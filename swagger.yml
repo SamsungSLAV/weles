@@ -157,6 +157,75 @@ definitions:
       info:
         type: string
         description: provides additional information about current state, e.g. cause of failure
+  JobFilter:
+    description: is used to filter Weles Jobs.
+    type: object
+    properties:
+      JobID:
+        type: array
+        items:
+          $ref: '#/definitions/JobID'
+      Name:
+        type: array
+        items:
+          type: string
+      CreatedAfter:
+        type: string
+        format: date-time
+      CreatedBefore:
+        type: string
+        format: date-time
+      UpdatedAfter:
+        type: string
+        format: date-time
+      UpdatedBefore:
+        type: string
+        format: date-time
+      Status:
+        type: array
+        items:
+          $ref: '#/definitions/JobStatus'
+      Info:
+        type: array
+        items:
+          type: string
+  JobSortBy:
+    description: |
+      denotes key for sorting Jobs list. Jobs are sorted by ID (Ascending) by default.
+      You can sort jobs additionaly by
+
+      * CreatedDate - sorting by date of creation of the weles job.
+
+      * UpdatedDate - sorting by date of update of the weles job.
+
+      * JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.
+      When sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)
+    type: string
+    enum:
+      - CreatedDate
+      - UpdatedDate
+      - JobStatus
+  SortOrder:
+    description: |
+      denotes direction of sorting of weles jobs or artifacts.
+
+      * Ascending - from oldest to newest.
+
+      * Descending - from newest to oldest.
+
+    type: string
+    enum:
+      - Ascending
+      - Descending
+  JobSorter:
+    description: |
+      defines the key for sorting as well as direction of sorting.
+    type: object
+    properties:
+      SortBy:
+        $ref: '#/definitions/JobSortBy'
+      SortOrder:
+        $ref: '#/definitions/SortOrder'
   ArtifactType:
     description: |
       denotes type and function of an artifact.

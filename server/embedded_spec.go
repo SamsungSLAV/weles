@@ -258,6 +258,52 @@ func init() {
         }
       }
     },
+    "JobFilter": {
+      "description": "is used to filter Weles Jobs.",
+      "type": "object",
+      "properties": {
+        "CreatedAfter": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "CreatedBefore": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Info": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "JobID": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JobID"
+          }
+        },
+        "Name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Status": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JobStatus"
+          }
+        },
+        "UpdatedAfter": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "UpdatedBefore": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "JobID": {
       "description": "is a unique identifier for Weles Job.",
       "type": "integer",
@@ -295,6 +341,27 @@ func init() {
         }
       }
     },
+    "JobSortBy": {
+      "description": "denotes key for sorting Jobs list. Jobs are sorted by ID (Ascending) by default.\nYou can sort jobs additionaly by\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
+      "type": "string",
+      "enum": [
+        "CreatedDate",
+        "UpdatedDate",
+        "JobStatus"
+      ]
+    },
+    "JobSorter": {
+      "description": "defines the key for sorting as well as direction of sorting.\n",
+      "type": "object",
+      "properties": {
+        "SortBy": {
+          "$ref": "#/definitions/JobSortBy"
+        },
+        "SortOrder": {
+          "$ref": "#/definitions/SortOrder"
+        }
+      }
+    },
     "JobStatus": {
       "description": "specifies state of the Job.\n\n* NEW - The new Job has been created.\n\n* PARSING - Provided yaml file is being parsed and interpreted.\n\n* DOWNLOADING - Images and/or files required for the test are being downloaded.\n\n* WAITING - Job is waiting for Boruta worker.\n\n* RUNNING - Job is being executed.\n\n* COMPLETED - Job is completed. This is terminal state.\n\n* FAILED - Job execution has failed. This is terminal state.\n\n* CANCELED -Job has been canceled with API call. This is terminal state.\n",
       "type": "string",
@@ -307,6 +374,14 @@ func init() {
         "COMPLETED",
         "FAILED",
         "CANCELED"
+      ]
+    },
+    "SortOrder": {
+      "description": "denotes direction of sorting of weles jobs or artifacts.\n\n* Ascending - from oldest to newest.\n\n* Descending - from newest to oldest.\n",
+      "type": "string",
+      "enum": [
+        "Ascending",
+        "Descending"
       ]
     }
   },
@@ -597,6 +672,52 @@ func init() {
         }
       }
     },
+    "JobFilter": {
+      "description": "is used to filter Weles Jobs.",
+      "type": "object",
+      "properties": {
+        "CreatedAfter": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "CreatedBefore": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Info": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "JobID": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JobID"
+          }
+        },
+        "Name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Status": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JobStatus"
+          }
+        },
+        "UpdatedAfter": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "UpdatedBefore": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "JobID": {
       "description": "is a unique identifier for Weles Job.",
       "type": "integer",
@@ -634,6 +755,27 @@ func init() {
         }
       }
     },
+    "JobSortBy": {
+      "description": "denotes key for sorting Jobs list. Jobs are sorted by ID (Ascending) by default.\nYou can sort jobs additionaly by\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
+      "type": "string",
+      "enum": [
+        "CreatedDate",
+        "UpdatedDate",
+        "JobStatus"
+      ]
+    },
+    "JobSorter": {
+      "description": "defines the key for sorting as well as direction of sorting.\n",
+      "type": "object",
+      "properties": {
+        "SortBy": {
+          "$ref": "#/definitions/JobSortBy"
+        },
+        "SortOrder": {
+          "$ref": "#/definitions/SortOrder"
+        }
+      }
+    },
     "JobStatus": {
       "description": "specifies state of the Job.\n\n* NEW - The new Job has been created.\n\n* PARSING - Provided yaml file is being parsed and interpreted.\n\n* DOWNLOADING - Images and/or files required for the test are being downloaded.\n\n* WAITING - Job is waiting for Boruta worker.\n\n* RUNNING - Job is being executed.\n\n* COMPLETED - Job is completed. This is terminal state.\n\n* FAILED - Job execution has failed. This is terminal state.\n\n* CANCELED -Job has been canceled with API call. This is terminal state.\n",
       "type": "string",
@@ -646,6 +788,14 @@ func init() {
         "COMPLETED",
         "FAILED",
         "CANCELED"
+      ]
+    },
+    "SortOrder": {
+      "description": "denotes direction of sorting of weles jobs or artifacts.\n\n* Ascending - from oldest to newest.\n\n* Descending - from newest to oldest.\n",
+      "type": "string",
+      "enum": [
+        "Ascending",
+        "Descending"
       ]
     }
   },
