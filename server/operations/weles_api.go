@@ -55,6 +55,9 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
 		JSONProducer:          runtime.JSONProducer(),
+		JobsJobCancelerHandler: jobs.JobCancelerHandlerFunc(func(params jobs.JobCancelerParams) middleware.Responder {
+			return middleware.NotImplemented("operation JobsJobCanceler has not yet been implemented")
+		}),
 		JobsJobCreatorHandler: jobs.JobCreatorHandlerFunc(func(params jobs.JobCreatorParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobCreator has not yet been implemented")
 		}),
@@ -91,6 +94,8 @@ type WelesAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
+	// JobsJobCancelerHandler sets the operation handler for the job canceler operation
+	JobsJobCancelerHandler jobs.JobCancelerHandler
 	// JobsJobCreatorHandler sets the operation handler for the job creator operation
 	JobsJobCreatorHandler jobs.JobCreatorHandler
 
@@ -158,6 +163,10 @@ func (o *WelesAPI) Validate() error {
 
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
+	}
+
+	if o.JobsJobCancelerHandler == nil {
+		unregistered = append(unregistered, "jobs.JobCancelerHandler")
 	}
 
 	if o.JobsJobCreatorHandler == nil {
@@ -264,6 +273,11 @@ func (o *WelesAPI) initHandlerCache() {
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/jobs/{JobID}/cancel"] = jobs.NewJobCanceler(o.context, o.JobsJobCancelerHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

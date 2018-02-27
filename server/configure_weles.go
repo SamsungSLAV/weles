@@ -44,10 +44,12 @@ func welesConfigureAPI(api *operations.WelesAPI, m *Managers) http.Handler {
 	api.ServeError = errors.ServeError
 
 	api.MultipartformConsumer = runtime.DiscardConsumer
+	api.JSONConsumer = runtime.JSONConsumer()
 
 	api.JSONProducer = runtime.JSONProducer()
 
 	api.JobsJobCreatorHandler = jobs.JobCreatorHandlerFunc(m.JobCreator)
+	api.JobsJobCancelerHandler = jobs.JobCancelerHandlerFunc(m.JobCanceller)
 
 	api.ServerShutdown = func() {}
 

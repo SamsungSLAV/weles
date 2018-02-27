@@ -51,7 +51,41 @@ paths:
           $ref: '#/responses/UnprocessableEntity'
         '500':
           $ref: '#/responses/InternalServer'
+  '/jobs/{JobID}/cancel':
+    post:
+      tags:
+        - jobs
+      summary: Cancel existing job
+      description: JobCanceler stops execution of Job identified by JobID.
+      operationId: JobCanceler
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          required: true
+          name: JobID
+          type: integer
+          format: uint64
+      responses:
+        '204':
+          description: No Content
+        '404':
+          $ref: '#/responses/NotFound'
+        '403':
+          $ref: '#/responses/Forbidden'
+        '500':
+          $ref: '#/responses/InternalServer'
 responses:
+  NotFound:
+    description: Not Found
+    schema:
+      $ref: '#/definitions/ErrResponse'
+  Forbidden:
+    description: Forbidden
+    schema:
+      $ref: '#/definitions/ErrResponse'
   UnsupportedMediaType:
     description: Unsupported media type
     schema:

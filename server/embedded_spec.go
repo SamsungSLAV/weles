@@ -100,6 +100,45 @@ func init() {
           }
         }
       }
+    },
+    "/jobs/{JobID}/cancel": {
+      "post": {
+        "description": "JobCanceler stops execution of Job identified by JobID.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Cancel existing job",
+        "operationId": "JobCanceler",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "uint64",
+            "name": "JobID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServer"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -272,8 +311,20 @@ func init() {
     }
   },
   "responses": {
+    "Forbidden": {
+      "description": "Forbidden",
+      "schema": {
+        "$ref": "#/definitions/ErrResponse"
+      }
+    },
     "InternalServer": {
       "description": "Internal Server error",
+      "schema": {
+        "$ref": "#/definitions/ErrResponse"
+      }
+    },
+    "NotFound": {
+      "description": "Not Found",
       "schema": {
         "$ref": "#/definitions/ErrResponse"
       }
@@ -367,6 +418,54 @@ func init() {
           },
           "422": {
             "description": "Unprocessable entity",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{JobID}/cancel": {
+      "post": {
+        "description": "JobCanceler stops execution of Job identified by JobID.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Cancel existing job",
+        "operationId": "JobCanceler",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "uint64",
+            "name": "JobID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/ErrResponse"
             }
@@ -551,8 +650,20 @@ func init() {
     }
   },
   "responses": {
+    "Forbidden": {
+      "description": "Forbidden",
+      "schema": {
+        "$ref": "#/definitions/ErrResponse"
+      }
+    },
     "InternalServer": {
       "description": "Internal Server error",
+      "schema": {
+        "$ref": "#/definitions/ErrResponse"
+      }
+    },
+    "NotFound": {
+      "description": "Not Found",
       "schema": {
         "$ref": "#/definitions/ErrResponse"
       }
