@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,4 +23,6 @@ import "errors"
 var (
 	// ErrConnectionClosed is returned when caller tries to close already closed connection to Dryad.
 	ErrConnectionClosed = errors.New("attempt to close already closed connection")
+	// ErrNotMounted is returned when the check for sshfs mount fails.
+	ErrNotMounted = errors.New("filesystem not mounted")
 )
