@@ -229,3 +229,27 @@ func (js *JobsControllerImpl) GetDryad(j weles.JobID) (weles.Dryad, error) {
 
 	return job.dryad, nil
 }
+
+// List returns information about Jobs. If argument is a nil/empty slice
+// information about all Jobs is returned. Otherwise result is filtered
+// and contains information about requested Jobs only.
+func (js *JobsControllerImpl) List(filter []weles.JobID) ([]weles.JobInfo, error) {
+	js.mutex.RLock()
+	defer js.mutex.RUnlock()
+	ret := make([]weles.JobInfo, 0, len(js.jobs))
+	if len(filter) == 0 {
+		// Get all Jobs.
+		for _, job := range js.jobs {
+			ret = append(ret, job.JobInfo)
+		}
+	} else {
+		// Get filtered Jobs.
+		for _, j := range filter {
+			job, ok := js.jobs[j]
+			if ok {
+				ret = append(ret, job.JobInfo)
+			}
+		}
+	}
+	return ret, nil
+}

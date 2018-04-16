@@ -146,12 +146,20 @@ var _ = Describe("Controller", func() {
 		})
 	})
 	Describe("ListJobs", func() {
-		It("should not be implemented yet", func() {
+		It("should call JobsController method", func() {
 			filter := []weles.JobID{2, 3, 5}
-			info, err := h.ListJobs(filter)
+			list := []weles.JobInfo{
+				weles.JobInfo{
+					JobID: weles.JobID(3),
+					Name:  "test name",
+				},
+			}
+			jc.EXPECT().List(filter).Return(list, testErr)
 
-			Expect(err).To(Equal(weles.ErrNotImplemented))
-			Expect(info).To(BeZero())
+			ret, retErr := h.ListJobs(filter)
+
+			Expect(retErr).To(Equal(testErr))
+			Expect(ret).To(Equal(list))
 		})
 	})
 	Describe("Actions", func() {

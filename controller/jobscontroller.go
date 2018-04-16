@@ -50,4 +50,8 @@ type JobsController interface {
 	SetDryad(weles.JobID, weles.Dryad) error
 	// GetDryad returns Dryad acquired for the Job.
 	GetDryad(weles.JobID) (weles.Dryad, error)
+	// List returns information about Jobs. If argument is a nil/empty slice
+	// information about all Jobs is returned. Otherwise result is filtered
+	// and contains information about requested Jobs only.
+	List([]weles.JobID) ([]weles.JobInfo, error)
 }

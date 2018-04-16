@@ -105,7 +105,7 @@ func (c *Controller) CancelJob(j weles.JobID) error {
 // and contains information about requested Jobs only.
 // It is a part of JobManager implementation.
 func (c *Controller) ListJobs(filter []weles.JobID) ([]weles.JobInfo, error) {
-	return nil, weles.ErrNotImplemented
+	return c.jobs.List(filter)
 }
 
 // loop implements main loop of the Controller reacting to different events

@@ -72,6 +72,19 @@ func (mr *MockJobsControllerMockRecorder) GetYaml(arg0 interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetYaml", reflect.TypeOf((*MockJobsController)(nil).GetYaml), arg0)
 }
 
+// List mocks base method
+func (m *MockJobsController) List(arg0 []weles.JobID) ([]weles.JobInfo, error) {
+	ret := m.ctrl.Call(m, "List", arg0)
+	ret0, _ := ret[0].([]weles.JobInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// List indicates an expected call of List
+func (mr *MockJobsControllerMockRecorder) List(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockJobsController)(nil).List), arg0)
+}
+
 // NewJob mocks base method
 func (m *MockJobsController) NewJob(arg0 []byte) (weles.JobID, error) {
 	ret := m.ctrl.Call(m, "NewJob", arg0)

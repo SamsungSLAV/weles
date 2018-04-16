@@ -245,5 +245,48 @@ var _ = Describe("JobsControllerImpl", func() {
 				Expect(dryad).To(BeZero())
 			})
 		})
+
+		Describe("List", func() {
+			var jobids []weles.JobID
+			const elems int = 5
+			expectIDs := func(result []weles.JobInfo, expected []weles.JobID) {
+				Expect(len(result)).To(Equal(len(expected)))
+				for _, j := range expected {
+					Expect(result).To(ContainElement(WithTransform(func(info weles.JobInfo) weles.JobID {
+						return info.JobID
+					}, Equal(j))))
+				}
+			}
+			BeforeEach(func() {
+				jobids = []weles.JobID{j}
+				for i := 1; i <= elems; i++ {
+					j, err := jc.NewJob(yaml)
+					Expect(err).NotTo(HaveOccurred())
+					jobids = append(jobids, j)
+				}
+			})
+			It("should return all Jobs if filter is nil", func() {
+				list, err := jc.List(nil)
+				Expect(err).NotTo(HaveOccurred())
+				expectIDs(list, jobids)
+			})
+			It("should return all Jobs if filter is empty", func() {
+				list, err := jc.List([]weles.JobID{})
+				Expect(err).NotTo(HaveOccurred())
+				expectIDs(list, jobids)
+			})
+			It("should return only filtered Jobs", func() {
+				filter := []weles.JobID{jobids[1], jobids[2]}
+				list, err := jc.List(filter)
+				Expect(err).NotTo(HaveOccurred())
+				expectIDs(list, filter)
+			})
+			It("should ignore not existing Jobs listed in filter", func() {
+				filter := []weles.JobID{jobids[1], jobids[2]}
+				list, err := jc.List(append(filter, weles.JobID(0x0BCA)))
+				Expect(err).NotTo(HaveOccurred())
+				expectIDs(list, filter)
+			})
+		})
 	})
 })
