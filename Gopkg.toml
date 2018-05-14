@@ -1,6 +1,34 @@
+# Packages which are not part of Weles dependencies but are required for development of it are
+# added below in the required block. Required packages are downloaded to the vendor directory but
+# are not installed. Installation of those packages should be performed using Makefile.
 required = [
   "github.com/golang/mock/mockgen",
   "github.com/golang/mock/mockgen/model",
+# start of go-swagger dependencies
+  "github.com/coreos/go-oidc",
+  "github.com/davecgh/go-spew/spew",
+  "github.com/dgrijalva/jwt-go",
+  "github.com/docker/go-units",
+  "github.com/go-openapi/analysis",
+  "github.com/go-openapi/errors",
+  "github.com/go-openapi/inflect",
+  "github.com/go-openapi/loads",
+  "github.com/go-openapi/loads/fmts",
+  "github.com/go-openapi/runtime",
+  "github.com/go-openapi/runtime/middleware",
+  "github.com/go-openapi/validate",
+  "github.com/gorilla/handlers",
+  "github.com/go-swagger/go-swagger",
+  "github.com/go-swagger/scan-repo-boundary/makeplans",
+  "github.com/jessevdk/go-flags",
+  "github.com/kr/pretty",
+  "github.com/spf13/pflag",
+  "github.com/spf13/viper",
+  "github.com/toqueteos/webbrowser",
+  "github.com/tylerb/graceful",
+  "golang.org/x/tools/go/loader",
+  "golang.org/x/tools/imports",
+# end of go-swagger dependencies
            ]
 
 # Due to lack of go get functionality on tizen.org boruta cannot be managed via dep.
@@ -13,6 +41,14 @@ ignored = [
 [[constraint]]
 name = "github.com/golang/mock"
 version = "v1.1.1"
+
+# Constraint go-swagger version to use one of the latest patches from master branch.
+# Without this constraint last tagged version 0.13.0 is used, which is not compatible with changes
+# in other required packages (which do not have stable version tagged)
+[[constraint]]
+name = "github.com/go-swagger/go-swagger"
+revision = "73498993a0a27ed9b0a063d3e94536a6a050fa22"
+#version = "0.14.0"
 
 # WARNING!
 # Do not uncomment below lines

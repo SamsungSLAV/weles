@@ -1,9 +1,10 @@
 DEV_TOOLS_DIR = ./bin/dev-tools
 
-DEV_TOOLS = ./vendor/github.com/golang/mock/mockgen
+DEV_TOOLS = ./vendor/github.com/golang/mock/mockgen ./vendor/github.com/go-swagger/go-swagger/cmd/swagger
 MOCKGEN_BIN = $(DEV_TOOLS_DIR)/mockgen
+SWAGGER_BIN = $(DEV_TOOLS_DIR)/swagger
 
-DEV_TOOLS_BIN = $(MOCKGEN_BIN)
+DEV_TOOLS_BIN = $(MOCKGEN_BIN) $(SWAGGER_BIN)
 
 vendor: Gopkg.lock
 	dep ensure -v -vendor-only
