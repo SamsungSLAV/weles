@@ -1,0 +1,22 @@
+required = [
+
+           ]
+
+# Due to lack of go get functionality on tizen.org boruta cannot be managed via dep.
+# Move of the project to github.com is expected to resolve the issue.
+# TODO: remove boruta from ignored after migration.
+ignored = [
+            "git.tizen.org/tools/boruta"
+          ]
+
+# WARNING!
+# Do not uncomment below lines
+# [prune]
+#  unused-packages = true
+#  non-go = true
+#  go-tests = true
+# Prune option is set to false by default, setting it explicitly produces an error.
+# If prune would be enabled, all development tools that we plan to add to required rule would be
+# removed on dep ensure call (as they are not imported directly by any Weles package).
+# Due to usage of code generator (go-swagger) we need to be able to lock its version
+# to ensure repoducible results between developers.
