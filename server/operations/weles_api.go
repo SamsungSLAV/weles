@@ -61,6 +61,9 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 		JobsJobCreatorHandler: jobs.JobCreatorHandlerFunc(func(params jobs.JobCreatorParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobCreator has not yet been implemented")
 		}),
+		JobsJobListerHandler: jobs.JobListerHandlerFunc(func(params jobs.JobListerParams) middleware.Responder {
+			return middleware.NotImplemented("operation JobsJobLister has not yet been implemented")
+		}),
 	}
 }
 
@@ -98,6 +101,8 @@ type WelesAPI struct {
 	JobsJobCancelerHandler jobs.JobCancelerHandler
 	// JobsJobCreatorHandler sets the operation handler for the job creator operation
 	JobsJobCreatorHandler jobs.JobCreatorHandler
+	// JobsJobListerHandler sets the operation handler for the job lister operation
+	JobsJobListerHandler jobs.JobListerHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -171,6 +176,10 @@ func (o *WelesAPI) Validate() error {
 
 	if o.JobsJobCreatorHandler == nil {
 		unregistered = append(unregistered, "jobs.JobCreatorHandler")
+	}
+
+	if o.JobsJobListerHandler == nil {
+		unregistered = append(unregistered, "jobs.JobListerHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -283,6 +292,11 @@ func (o *WelesAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/jobs"] = jobs.NewJobCreator(o.context, o.JobsJobCreatorHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/jobs/list"] = jobs.NewJobLister(o.context, o.JobsJobListerHandler)
 
 }
 

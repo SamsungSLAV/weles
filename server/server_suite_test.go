@@ -15,16 +15,22 @@
 package server_test
 
 import (
+	"math/rand"
 	"net/http/httptest"
 	"testing"
+	"time"
 
-	"git.tizen.org/tools/weles/mock"
-	"git.tizen.org/tools/weles/server"
-	"git.tizen.org/tools/weles/server/operations"
 	"github.com/go-openapi/loads"
+	"github.com/go-openapi/strfmt"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/tideland/golib/audit"
+
+	"git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles/mock"
+	"git.tizen.org/tools/weles/server"
+	"git.tizen.org/tools/weles/server/operations"
 )
 
 const (
@@ -37,15 +43,42 @@ func TestServer(t *testing.T) {
 	RunSpecs(t, "Server Suite")
 }
 
-func testServerSetup() (mockCtrl *gomock.Controller, mockJobManager *mock.MockJobManager, mockArtifactManager *mock.MockArtifactManager, mockManagers *server.Managers, testserver *httptest.Server) {
+func testServerSetup() (mockCtrl *gomock.Controller, mockJobManager *mock.MockJobManager, mockArtifactManager *mock.MockArtifactManager, apiDefaults *server.APIDefaults, testserver *httptest.Server) {
 	mockCtrl = gomock.NewController(GinkgoT())
 	mockJobManager = mock.NewMockJobManager(mockCtrl)
 	mockArtifactManager = mock.NewMockArtifactManager(mockCtrl)
 	swaggerSpec, _ := loads.Analyzed(server.SwaggerJSON, "")
 	api := operations.NewWelesAPI(swaggerSpec)
 	srv := server.NewServer(api)
-	mockManagers = server.NewManagers(mockJobManager, mockArtifactManager)
-	srv.WelesConfigureAPI(mockManagers)
+	apiDefaults = &server.APIDefaults{Managers: server.NewManagers(mockJobManager, mockArtifactManager)}
+	srv.WelesConfigureAPI(apiDefaults)
 	testserver = httptest.NewServer(srv.GetHandler())
 	return
+}
+
+// createJobInfoSlice is a function to create random data for tests of JobLister
+func createJobInfoSlice(sliceLenght int) (ret []weles.JobInfo) {
+	// checking for errors omitted due to fixed input.
+	dateTimeIter, _ := time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", "Tue Jan 2 15:04:05 +0100 CET 1900")
+	durationIncrement, _ := time.ParseDuration("+25h")
+	durationIncrement2, _ := time.ParseDuration("+100h")
+	jobInfo := make([]weles.JobInfo, sliceLenght)
+	gen := audit.NewGenerator(rand.New(rand.NewSource(time.Now().UTC().UnixNano())))
+	for i, _ := range jobInfo {
+		tmp := weles.JobInfo{}
+		createdTime := gen.Time(time.Local, dateTimeIter, durationIncrement)
+		tmp.Created = strfmt.DateTime(createdTime)
+		tmp.Updated = strfmt.DateTime(gen.Time(time.Local, createdTime, durationIncrement2))
+		tmp.Info = gen.Sentence()
+		tmp.Name = gen.Word()
+		tmp.Status = weles.JobStatus(gen.OneStringOf(string(weles.JobStatusNEW),
+			string(weles.JobStatusPARSING), string(weles.JobStatusDOWNLOADING),
+			string(weles.JobStatusWAITING), string(weles.JobStatusRUNNING),
+			string(weles.JobStatusCOMPLETED), string(weles.JobStatusFAILED),
+			string(weles.JobStatusCANCELED)))
+		tmp.JobID = weles.JobID(i + 1)
+		dateTimeIter = dateTimeIter.Add(durationIncrement)
+		jobInfo[i] = tmp
+	}
+	return jobInfo
 }

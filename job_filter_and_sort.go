@@ -31,22 +31,22 @@ import (
 // swagger:model JobFilterAndSort
 type JobFilterAndSort struct {
 
-	// job filter
-	JobFilter *JobFilter `json:"JobFilter,omitempty"`
+	// filter
+	Filter *JobFilter `json:"Filter,omitempty"`
 
-	// job sorter
-	JobSorter *JobSorter `json:"JobSorter,omitempty"`
+	// sorter
+	Sorter *JobSorter `json:"Sorter,omitempty"`
 }
 
 // Validate validates this job filter and sort
 func (m *JobFilterAndSort) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateJobFilter(formats); err != nil {
+	if err := m.validateFilter(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateJobSorter(formats); err != nil {
+	if err := m.validateSorter(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -56,16 +56,16 @@ func (m *JobFilterAndSort) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *JobFilterAndSort) validateJobFilter(formats strfmt.Registry) error {
+func (m *JobFilterAndSort) validateFilter(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.JobFilter) { // not required
+	if swag.IsZero(m.Filter) { // not required
 		return nil
 	}
 
-	if m.JobFilter != nil {
-		if err := m.JobFilter.Validate(formats); err != nil {
+	if m.Filter != nil {
+		if err := m.Filter.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("JobFilter")
+				return ve.ValidateName("Filter")
 			}
 			return err
 		}
@@ -74,16 +74,16 @@ func (m *JobFilterAndSort) validateJobFilter(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *JobFilterAndSort) validateJobSorter(formats strfmt.Registry) error {
+func (m *JobFilterAndSort) validateSorter(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.JobSorter) { // not required
+	if swag.IsZero(m.Sorter) { // not required
 		return nil
 	}
 
-	if m.JobSorter != nil {
-		if err := m.JobSorter.Validate(formats); err != nil {
+	if m.Sorter != nil {
+		if err := m.Sorter.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("JobSorter")
+				return ve.ValidateName("Sorter")
 			}
 			return err
 		}

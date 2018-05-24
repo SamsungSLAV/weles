@@ -33,23 +33,27 @@ func configureFlags(api *operations.WelesAPI) {
 }
 
 // WelesConfigureAPI configures the API and handlers.
-func (s *Server) WelesConfigureAPI(m *Managers) {
+func (s *Server) WelesConfigureAPI(a *APIDefaults) {
 	if s.api != nil {
-		s.handler = welesConfigureAPI(s.api, m)
+		s.handler = welesConfigureAPI(s.api, a)
 	}
 }
 
-func welesConfigureAPI(api *operations.WelesAPI, m *Managers) http.Handler {
+func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
-	api.MultipartformConsumer = runtime.DiscardConsumer
 	api.JSONConsumer = runtime.JSONConsumer()
+	api.MultipartformConsumer = runtime.DiscardConsumer
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.JobsJobCreatorHandler = jobs.JobCreatorHandlerFunc(m.JobCreator)
-	api.JobsJobCancelerHandler = jobs.JobCancelerHandlerFunc(m.JobCanceller)
+	api.SetDefaultProduces("application/json")
+	api.SetDefaultConsumes("application/json")
+
+	api.JobsJobCreatorHandler = jobs.JobCreatorHandlerFunc(a.Managers.JobCreator)
+	api.JobsJobCancelerHandler = jobs.JobCancelerHandlerFunc(a.Managers.JobCanceller)
+	api.JobsJobListerHandler = jobs.JobListerHandlerFunc(a.JobLister)
 
 	api.ServerShutdown = func() {}
 

@@ -58,11 +58,15 @@ func main() {
 	exitOnErr("failed to load embedded swagger spec", err)
 
 	var srv *server.Server // make sure init is called
+	var apiDefaults server.APIDefaults
 
+	flag.Int32Var(&apiDefaults.PageLimit, "page-limit", 0, "Default limit of page size returned by Weles API. If set to 0 pagination will be turned off")
 	flag.StringVar(&borutaAddress, "boruta-address", ":8487", "Boruta address")
 	flag.DurationVar(&borutaRefreshPeriod, "boruta-refresh-period", 2*time.Second, "Boruta refresh period")
 	flag.StringVar(&artifactDBName, "db-file", "weles.db", "name of *.db file. Should be located in --db-location")
 	flag.StringVar(&artifactDBLocation, "db-location", "/tmp/weles/", "location of *.db file and place where Weles will store artifacts.")
+	//TODO: when cyberdryads or testlab instance will be present, performance tests should be done
+	// to set default values of below:
 	flag.IntVar(&artifactDownloadQueueCap, "artifact-download-queue-cap", 100, "Capacity of artifact download queue")
 	flag.IntVar(&activeWorkersCap, "active-workers-cap", 16, "Maximum number of active workers.")
 	flag.IntVar(&notifierChannelCap, "notifier-channel-cap", 100, "Notifier channel capacity.")
@@ -101,9 +105,10 @@ func main() {
 	srv = server.NewServer(api)
 
 	defer srv.Shutdown()
-	managers := server.NewManagers(jm, am)
 
-	srv.WelesConfigureAPI(managers)
+	apiDefaults.Managers = server.NewManagers(jm, am)
+
+	srv.WelesConfigureAPI(&apiDefaults)
 	err = srv.Serve()
 	exitOnErr("failed to serve the API", err)
 }

@@ -24,6 +24,12 @@ type Managers struct {
 	AM weles.ArtifactManager
 }
 
+// APIDefaults contains interface implementations (Managers) and default values (set via CLI flags) for the API.
+type APIDefaults struct {
+	Managers  *Managers
+	PageLimit int32
+}
+
 // NewManagers creates managers struct and assigns JobManager and ArtifactManager implementation
 // to it.
 func NewManagers(jm weles.JobManager, am weles.ArtifactManager) (m *Managers) {

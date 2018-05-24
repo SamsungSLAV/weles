@@ -323,6 +323,12 @@
   version = "v1.0.2"
 
 [[projects]]
+  name = "github.com/tideland/golib"
+  packages = ["audit"]
+  revision = "b56169c6bd620eeb7cfc4b9b4027fc10d2934c84"
+  version = "v4.24.2"
+
+[[projects]]
   name = "github.com/toqueteos/webbrowser"
   packages = ["."]
   revision = "3232c91b8ede8ca86e8962981d881af78875542f"
@@ -465,6 +471,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "242f59bc520307a1b4c134fd58a2e05909f6b22e5043d14fc566468e99a14530"
+  inputs-digest = "a5e864a9f1537b8cb1a6fdceb4224e969cec77a4e1f692f62b019f7f640638b5"
   solver-name = "gps-cdcl"
   solver-version = 1

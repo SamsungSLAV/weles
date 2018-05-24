@@ -77,7 +77,100 @@ paths:
           $ref: '#/responses/Forbidden'
         '500':
           $ref: '#/responses/InternalServer'
+  /jobs/list:
+    post:
+      tags:
+        - jobs
+      summary: List jobs with filter and sort features
+      description: JobLister returns information on filtered Weles Jobs.
+      operationId: JobLister
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: jobFilterAndSort
+          description: Job Filter and Sort object.
+          required: false
+          schema:
+            $ref: '#/definitions/JobFilterAndSort'
+        - in: query
+          name: after
+          description: JobID of the last element from previous page.
+          type: integer
+          format: uint64
+        - in: query
+          name: before
+          description: JobID of first element from next page.
+          type: integer
+          format: uint64
+        - in: query
+          name: limit
+          description: Custom page limit. Denotes number of JobInfo structures that will be returned.
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/JobInfo'
+          headers:
+            Previous:
+              type: string
+              format: URI
+              description: >
+                URI to request previous page of data. Please note that the same body must be used as in initial request.
+            Next:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            TotalRecords:
+              type: integer
+              format: uint64
+              description: >
+                count of records currently fulfilling the requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+        '206':
+          description: Partial Content
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/JobInfo'
+          headers:
+            Previous:
+              type: string
+              format: URI
+              description: >
+                URI to request previous page of data. Please note that the same body must be used as in initial request.
+            Next:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            TotalRecords:
+              type: integer
+              format: uint64
+              description: >
+                 count of records currently fulfilling requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+            RemainingRecords:
+              type: integer
+              format: uint64
+              description: >
+                number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.
+        '400':
+          $ref: '#/responses/BadRequest'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/InternalServer'
 responses:
+  BadRequest:
+    description: Bad Request
+    schema:
+      $ref: '#/definitions/ErrResponse'
   NotFound:
     description: Not Found
     schema:
@@ -226,6 +319,14 @@ definitions:
         $ref: '#/definitions/JobSortBy'
       SortOrder:
         $ref: '#/definitions/SortOrder'
+  JobFilterAndSort:
+    description: Data for filtering and sorting Weles Jobs lists.
+    type: object
+    properties:
+      Filter:
+        $ref: '#/definitions/JobFilter'
+      Sorter:
+        $ref: '#/definitions/JobSorter'
   ArtifactType:
     description: |
       denotes type and function of an artifact.

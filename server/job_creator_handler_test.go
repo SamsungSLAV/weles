@@ -40,12 +40,12 @@ var _ = Describe("JobCreatorHandler", func() {
 	var (
 		mockCtrl       *gomock.Controller
 		mockJobManager *mock.MockJobManager
-		mockManagers   *server.Managers
+		apiDefaults    *server.APIDefaults
 		testserver     *httptest.Server
 	)
 
 	BeforeEach(func() {
-		mockCtrl, mockJobManager, _, mockManagers, testserver = testServerSetup()
+		mockCtrl, mockJobManager, _, apiDefaults, testserver = testServerSetup()
 	})
 
 	AfterEach(func() {
@@ -138,7 +138,7 @@ var _ = Describe("JobCreatorHandler", func() {
 				Expect(err).ToNot(HaveOccurred())
 				params := jobs.JobCreatorParams{Yamlfile: errReader(0), HTTPRequest: req}
 
-				ret := mockManagers.JobCreator(params)
+				ret := apiDefaults.Managers.JobCreator(params)
 				Expect(ret.(*jobs.JobCreatorUnprocessableEntity).Payload).To(Equal(&weles.ErrResponse{Message: "reader error"}))
 
 			})

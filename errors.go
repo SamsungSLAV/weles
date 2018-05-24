@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,9 @@ var (
 	// ErrJobStatusChangeNotAllowed is returned when Job status change is not
 	// possible. It suggests internal Weles logic error.
 	ErrJobStatusChangeNotAllowed = errors.New("job status change not allowed")
+	// ErrBeforeAfterNotAllowed is returned when client places request for a list
+	// with both before and after parameters.
+	ErrBeforeAfterNotAllowed = errors.New("setting both before and after qeury parameters is not allowed")
 )
 
 // ErrInvalidArgument is returned when argument passed to public API cannot

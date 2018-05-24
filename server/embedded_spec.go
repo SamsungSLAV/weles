@@ -101,6 +101,121 @@ func init() {
         }
       }
     },
+    "/jobs/list": {
+      "post": {
+        "description": "JobLister returns information on filtered Weles Jobs.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "jobs"
+        ],
+        "summary": "List jobs with filter and sort features",
+        "operationId": "JobLister",
+        "parameters": [
+          {
+            "description": "Job Filter and Sort object.",
+            "name": "jobFilterAndSort",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/JobFilterAndSort"
+            }
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "description": "JobID of the last element from previous page.",
+            "name": "after",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "description": "JobID of first element from next page.",
+            "name": "before",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "description": "Custom page limit. Denotes number of JobInfo structures that will be returned.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/JobInfo"
+              }
+            },
+            "headers": {
+              "Next": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "Previous": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request previous page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "TotalRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "count of records currently fulfilling the requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              }
+            }
+          },
+          "206": {
+            "description": "Partial Content",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/JobInfo"
+              }
+            },
+            "headers": {
+              "Next": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "Previous": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request previous page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "RemainingRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              },
+              "TotalRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "count of records currently fulfilling requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServer"
+          }
+        }
+      }
+    },
     "/jobs/{JobID}/cancel": {
       "post": {
         "description": "JobCanceler stops execution of Job identified by JobID.",
@@ -304,6 +419,18 @@ func init() {
         }
       }
     },
+    "JobFilterAndSort": {
+      "description": "Data for filtering and sorting Weles Jobs lists.",
+      "type": "object",
+      "properties": {
+        "Filter": {
+          "$ref": "#/definitions/JobFilter"
+        },
+        "Sorter": {
+          "$ref": "#/definitions/JobSorter"
+        }
+      }
+    },
     "JobID": {
       "description": "is a unique identifier for Weles Job.",
       "type": "integer",
@@ -386,6 +513,12 @@ func init() {
     }
   },
   "responses": {
+    "BadRequest": {
+      "description": "Bad Request",
+      "schema": {
+        "$ref": "#/definitions/ErrResponse"
+      }
+    },
     "Forbidden": {
       "description": "Forbidden",
       "schema": {
@@ -493,6 +626,130 @@ func init() {
           },
           "422": {
             "description": "Unprocessable entity",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          }
+        }
+      }
+    },
+    "/jobs/list": {
+      "post": {
+        "description": "JobLister returns information on filtered Weles Jobs.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "jobs"
+        ],
+        "summary": "List jobs with filter and sort features",
+        "operationId": "JobLister",
+        "parameters": [
+          {
+            "description": "Job Filter and Sort object.",
+            "name": "jobFilterAndSort",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/JobFilterAndSort"
+            }
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "description": "JobID of the last element from previous page.",
+            "name": "after",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "description": "JobID of first element from next page.",
+            "name": "before",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "description": "Custom page limit. Denotes number of JobInfo structures that will be returned.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/JobInfo"
+              }
+            },
+            "headers": {
+              "Next": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "Previous": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request previous page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "TotalRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "count of records currently fulfilling the requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              }
+            }
+          },
+          "206": {
+            "description": "Partial Content",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/JobInfo"
+              }
+            },
+            "headers": {
+              "Next": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "Previous": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request previous page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "RemainingRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              },
+              "TotalRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "count of records currently fulfilling requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/ErrResponse"
             }
@@ -718,6 +975,18 @@ func init() {
         }
       }
     },
+    "JobFilterAndSort": {
+      "description": "Data for filtering and sorting Weles Jobs lists.",
+      "type": "object",
+      "properties": {
+        "Filter": {
+          "$ref": "#/definitions/JobFilter"
+        },
+        "Sorter": {
+          "$ref": "#/definitions/JobSorter"
+        }
+      }
+    },
     "JobID": {
       "description": "is a unique identifier for Weles Job.",
       "type": "integer",
@@ -800,6 +1069,12 @@ func init() {
     }
   },
   "responses": {
+    "BadRequest": {
+      "description": "Bad Request",
+      "schema": {
+        "$ref": "#/definitions/ErrResponse"
+      }
+    },
     "Forbidden": {
       "description": "Forbidden",
       "schema": {

@@ -29,6 +29,7 @@ required = [
   "golang.org/x/tools/go/loader",
   "golang.org/x/tools/imports",
 # end of go-swagger dependencies
+  "github.com/tideland/golib/audit"
            ]
 
 # Due to lack of go get functionality on tizen.org boruta cannot be managed via dep.
