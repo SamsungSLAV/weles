@@ -33,6 +33,12 @@ var (
 
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "schemes": [
     "http"
   ],
@@ -51,16 +57,43 @@ func init() {
     "version": "0.0.0"
   },
   "host": "localhost:8088",
-  "basePath": "/",
+  "basePath": "/api/v1",
   "paths": {
-    "/": {
-      "get": {
-        "description": "tbd",
-        "summary": "tbd",
-        "operationId": "tbd",
+    "/jobs": {
+      "post": {
+        "description": "adds new Job in Weles using recipe passed in YAML format.",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Add new job",
+        "operationId": "JobCreator",
+        "parameters": [
+          {
+            "type": "file",
+            "description": "is Job description yaml file.",
+            "name": "yamlfile",
+            "in": "formData",
+            "required": true
+          }
+        ],
         "responses": {
-          "204": {
-            "description": "204 No Content"
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/JobID"
+            }
+          },
+          "415": {
+            "$ref": "#/responses/UnsupportedMediaType"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
           },
           "500": {
             "$ref": "#/responses/InternalServer"
@@ -240,18 +273,42 @@ func init() {
   },
   "responses": {
     "InternalServer": {
-      "description": "500 Internal Server error",
+      "description": "Internal Server error",
+      "schema": {
+        "$ref": "#/definitions/ErrResponse"
+      }
+    },
+    "UnprocessableEntity": {
+      "description": "Unprocessable entity",
+      "schema": {
+        "$ref": "#/definitions/ErrResponse"
+      }
+    },
+    "UnsupportedMediaType": {
+      "description": "Unsupported media type",
       "schema": {
         "$ref": "#/definitions/ErrResponse"
       }
     }
   },
+  "tags": [
+    {
+      "description": "Info and management of Weles jobs.",
+      "name": "jobs"
+    }
+  ],
   "externalDocs": {
     "description": "TBD",
     "url": "http://TBD.tbd"
   }
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "schemes": [
     "http"
   ],
@@ -270,19 +327,52 @@ func init() {
     "version": "0.0.0"
   },
   "host": "localhost:8088",
-  "basePath": "/",
+  "basePath": "/api/v1",
   "paths": {
-    "/": {
-      "get": {
-        "description": "tbd",
-        "summary": "tbd",
-        "operationId": "tbd",
+    "/jobs": {
+      "post": {
+        "description": "adds new Job in Weles using recipe passed in YAML format.",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Add new job",
+        "operationId": "JobCreator",
+        "parameters": [
+          {
+            "type": "file",
+            "description": "is Job description yaml file.",
+            "name": "yamlfile",
+            "in": "formData",
+            "required": true
+          }
+        ],
         "responses": {
-          "204": {
-            "description": "204 No Content"
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/JobID"
+            }
+          },
+          "415": {
+            "description": "Unsupported media type",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
           },
           "500": {
-            "description": "500 Internal Server error",
+            "description": "Internal Server error",
             "schema": {
               "$ref": "#/definitions/ErrResponse"
             }
@@ -462,12 +552,30 @@ func init() {
   },
   "responses": {
     "InternalServer": {
-      "description": "500 Internal Server error",
+      "description": "Internal Server error",
+      "schema": {
+        "$ref": "#/definitions/ErrResponse"
+      }
+    },
+    "UnprocessableEntity": {
+      "description": "Unprocessable entity",
+      "schema": {
+        "$ref": "#/definitions/ErrResponse"
+      }
+    },
+    "UnsupportedMediaType": {
+      "description": "Unsupported media type",
       "schema": {
         "$ref": "#/definitions/ErrResponse"
       }
     }
   },
+  "tags": [
+    {
+      "description": "Info and management of Weles jobs.",
+      "name": "jobs"
+    }
+  ],
   "externalDocs": {
     "description": "TBD",
     "url": "http://TBD.tbd"

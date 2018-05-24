@@ -1,0 +1,12 @@
+# Contents of this file are not an example.
+# This is just a text file for tests.
+---
+timeout: 18000
+job_name: kvm-test
+device_type: kvm
+target: kvm01
+actions:
+- command: deploy_linaro_image
+  parameters:
+    image: file:///path/to/kvm.img
+- command: boot_linaro_image

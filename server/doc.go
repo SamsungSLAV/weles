@@ -27,13 +27,14 @@ http://tbd.tbd/terms/
     Schemes:
       http
     Host: localhost:8088
-    BasePath: /
+    BasePath: /api/v1
     Version: 0.0.0
     License: Apache 2.0 http://www.apache.org/licenses/LICENSE-2.0.html
     Contact: <tbd@tbd.com>
 
     Consumes:
     - application/json
+    - multipart/form-data
 
     Produces:
     - application/json

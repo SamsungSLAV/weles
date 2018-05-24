@@ -23,32 +23,31 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/runtime/middleware"
 
 	"git.tizen.org/tools/weles/server/operations"
+	"git.tizen.org/tools/weles/server/operations/jobs"
 )
 
 func configureFlags(api *operations.WelesAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.WelesAPI) http.Handler {
+// WelesConfigureAPI configures the API and handlers.
+func (s *Server) WelesConfigureAPI(m *Managers) {
+	if s.api != nil {
+		s.handler = welesConfigureAPI(s.api, m)
+	}
+}
+
+func welesConfigureAPI(api *operations.WelesAPI, m *Managers) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
-	// Set your custom logger if needed. Default one is log.Printf
-	// Expected interface func(string, ...interface{})
-	//
-	// Example:
-	// api.Logger = log.Printf
-
-	api.JSONConsumer = runtime.JSONConsumer()
+	api.MultipartformConsumer = runtime.DiscardConsumer
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.TbdHandler = operations.TbdHandlerFunc(func(params operations.TbdParams) middleware.Responder {
-		return middleware.NotImplemented("operation .Tbd has not yet been implemented")
-	})
+	api.JobsJobCreatorHandler = jobs.JobCreatorHandlerFunc(m.JobCreator)
 
 	api.ServerShutdown = func() {}
 
@@ -77,4 +76,12 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	return handler
+}
+
+func configureAPI(api *operations.WelesAPI) http.Handler {
+	// WARNING
+	// as go-swagger generated code (server.go) includes calls to this function its definition
+	// must be present. This function should not be called anywhere.
+
+	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }

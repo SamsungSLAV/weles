@@ -33,27 +33,30 @@ import (
 	spec "github.com/go-openapi/spec"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	"git.tizen.org/tools/weles/server/operations/jobs"
 )
 
 // NewWelesAPI creates a new Weles instance
 func NewWelesAPI(spec *loads.Document) *WelesAPI {
 	return &WelesAPI{
-		handlers:            make(map[string]map[string]http.Handler),
-		formats:             strfmt.Default,
-		defaultConsumes:     "application/json",
-		defaultProduces:     "application/json",
-		customConsumers:     make(map[string]runtime.Consumer),
-		customProducers:     make(map[string]runtime.Producer),
-		ServerShutdown:      func() {},
-		spec:                spec,
-		ServeError:          errors.ServeError,
-		BasicAuthenticator:  security.BasicAuth,
-		APIKeyAuthenticator: security.APIKeyAuth,
-		BearerAuthenticator: security.BearerAuth,
-		JSONConsumer:        runtime.JSONConsumer(),
-		JSONProducer:        runtime.JSONProducer(),
-		TbdHandler: TbdHandlerFunc(func(params TbdParams) middleware.Responder {
-			return middleware.NotImplemented("operation Tbd has not yet been implemented")
+		handlers:              make(map[string]map[string]http.Handler),
+		formats:               strfmt.Default,
+		defaultConsumes:       "application/json",
+		defaultProduces:       "application/json",
+		customConsumers:       make(map[string]runtime.Consumer),
+		customProducers:       make(map[string]runtime.Producer),
+		ServerShutdown:        func() {},
+		spec:                  spec,
+		ServeError:            errors.ServeError,
+		BasicAuthenticator:    security.BasicAuth,
+		APIKeyAuthenticator:   security.APIKeyAuth,
+		BearerAuthenticator:   security.BearerAuth,
+		JSONConsumer:          runtime.JSONConsumer(),
+		MultipartformConsumer: runtime.DiscardConsumer,
+		JSONProducer:          runtime.JSONProducer(),
+		JobsJobCreatorHandler: jobs.JobCreatorHandlerFunc(func(params jobs.JobCreatorParams) middleware.Responder {
+			return middleware.NotImplemented("operation JobsJobCreator has not yet been implemented")
 		}),
 	}
 }
@@ -82,12 +85,14 @@ type WelesAPI struct {
 
 	// JSONConsumer registers a consumer for a "application/json" mime type
 	JSONConsumer runtime.Consumer
+	// MultipartformConsumer registers a consumer for a "multipart/form-data" mime type
+	MultipartformConsumer runtime.Consumer
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
-	// TbdHandler sets the operation handler for the tbd operation
-	TbdHandler TbdHandler
+	// JobsJobCreatorHandler sets the operation handler for the job creator operation
+	JobsJobCreatorHandler jobs.JobCreatorHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -147,12 +152,16 @@ func (o *WelesAPI) Validate() error {
 		unregistered = append(unregistered, "JSONConsumer")
 	}
 
+	if o.MultipartformConsumer == nil {
+		unregistered = append(unregistered, "MultipartformConsumer")
+	}
+
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.TbdHandler == nil {
-		unregistered = append(unregistered, "TbdHandler")
+	if o.JobsJobCreatorHandler == nil {
+		unregistered = append(unregistered, "jobs.JobCreatorHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -190,6 +199,9 @@ func (o *WelesAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer
 
 		case "application/json":
 			result["application/json"] = o.JSONConsumer
+
+		case "multipart/form-data":
+			result["multipart/form-data"] = o.MultipartformConsumer
 
 		}
 
@@ -253,10 +265,10 @@ func (o *WelesAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"][""] = NewTbd(o.context, o.TbdHandler)
+	o.handlers["POST"]["/jobs"] = jobs.NewJobCreator(o.context, o.JobsJobCreatorHandler)
 
 }
 

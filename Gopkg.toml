@@ -36,6 +36,7 @@ required = [
 # TODO: remove boruta from ignored after migration.
 ignored = [
   "git.tizen.org/tools/boruta",
+  "git.tizen.org/tools/boruta/http/client",
           ]
 
 [[constraint]]

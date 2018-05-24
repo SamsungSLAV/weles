@@ -12,23 +12,56 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 host: 'localhost:8088'
-basePath: /
+basePath: /api/v1
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: jobs
+    description: Info and management of Weles jobs.
 schemes:
   - http
 paths:
-  /:
-    get:
-      summary: tbd
-      operationId: tbd
-      description: tbd
+  /jobs:
+    post:
+      tags:
+        - jobs
+      summary: Add new job
+      description: adds new Job in Weles using recipe passed in YAML format.
+      operationId: JobCreator
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: yamlfile
+          type: file
+          required: true
+          description: is Job description yaml file.
+      produces:
+        - application/json
       responses:
-        '204':
-          description: 204 No Content
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/JobID'
+        '415':
+          $ref: '#/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/responses/UnprocessableEntity'
         '500':
           $ref: '#/responses/InternalServer'
 responses:
+  UnsupportedMediaType:
+    description: Unsupported media type
+    schema:
+      $ref: '#/definitions/ErrResponse'
+  UnprocessableEntity:
+    description: Unprocessable entity
+    schema:
+      $ref: '#/definitions/ErrResponse'
   InternalServer:
-    description: 500 Internal Server error
+    description: Internal Server error
     schema:
       $ref: '#/definitions/ErrResponse'
 definitions:
