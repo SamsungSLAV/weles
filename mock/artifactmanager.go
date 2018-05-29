@@ -33,6 +33,18 @@ func (m *MockArtifactManager) EXPECT() *MockArtifactManagerMockRecorder {
 	return m.recorder
 }
 
+// Close mocks base method
+func (m *MockArtifactManager) Close() error {
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Close indicates an expected call of Close
+func (mr *MockArtifactManagerMockRecorder) Close() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockArtifactManager)(nil).Close))
+}
+
 // CreateArtifact mocks base method
 func (m *MockArtifactManager) CreateArtifact(arg0 weles.ArtifactDescription) (weles.ArtifactPath, error) {
 	ret := m.ctrl.Call(m, "CreateArtifact", arg0)

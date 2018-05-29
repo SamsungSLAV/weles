@@ -1,3 +1,10 @@
+DEV_TOOLS_DIR = ./bin/dev-tools
+
+DEV_TOOLS = ./vendor/github.com/golang/mock/mockgen
+MOCKGEN_BIN = $(DEV_TOOLS_DIR)/mockgen
+
+DEV_TOOLS_BIN = $(MOCKGEN_BIN)
+
 vendor: Gopkg.lock
 	dep ensure -v -vendor-only
 
@@ -16,3 +23,20 @@ dep-update: clean-vendor
 .PHONY: clean-vendor
 clean-vendor:
 	rm -rf vendor
+
+# Due to lack of standard approach to naming and separation of both interfaces and generated mock files
+# below recipe does not have any file dependencies and is PHONY. Interface changes should be rare thus
+# it is up to the developer to regenerate mocks after interface changes.
+.PHONY: mocks
+mocks: tools
+	go generate ./mock
+	go generate ./manager
+	go generate ./controller/mock
+
+.PHONY: tools
+tools: vendor $(DEV_TOOLS_BIN)
+
+# This recipe will rebuild all tools on vendor directory change.
+# Due to short build time it is not treated as issue.
+$(DEV_TOOLS_DIR)/%: $(DEV_TOOLS)
+	go build -o $@ $(filter %$(@F),$(DEV_TOOLS))

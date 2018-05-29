@@ -1,13 +1,18 @@
 required = [
-
+  "github.com/golang/mock/mockgen",
+  "github.com/golang/mock/mockgen/model",
            ]
 
 # Due to lack of go get functionality on tizen.org boruta cannot be managed via dep.
 # Move of the project to github.com is expected to resolve the issue.
 # TODO: remove boruta from ignored after migration.
 ignored = [
-            "git.tizen.org/tools/boruta"
+  "git.tizen.org/tools/boruta",
           ]
+
+[[constraint]]
+name = "github.com/golang/mock"
+version = "v1.1.1"
 
 # WARNING!
 # Do not uncomment below lines
