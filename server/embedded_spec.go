@@ -336,6 +336,26 @@ func init() {
       "description": "describes path to artifact in ArtifactDB filesystem.",
       "type": "string"
     },
+    "ArtifactSortBy": {
+      "description": "denotes the key for sorting list of all artifacts.\n* ID - sorting by artifact ID.\n",
+      "type": "string",
+      "default": "ID",
+      "enum": [
+        "ID"
+      ]
+    },
+    "ArtifactSorter": {
+      "description": "defines the key for sorting as well as direction of sorting.\n",
+      "type": "object",
+      "properties": {
+        "SortBy": {
+          "$ref": "#/definitions/ArtifactSortBy"
+        },
+        "SortOrder": {
+          "$ref": "#/definitions/SortOrder"
+        }
+      }
+    },
     "ArtifactStatus": {
       "description": "describes artifact status and availability.\n\n* DOWNLOADING - artifact is currently being downloaded.\n\n* READY - artifact has been downloaded and is ready to use.\n\n* FAILED - file is not available for use (e.g. download failed).\n\n* PENDING - artifact download has not started yet.\n",
       "type": "string",
@@ -891,6 +911,26 @@ func init() {
     "ArtifactPath": {
       "description": "describes path to artifact in ArtifactDB filesystem.",
       "type": "string"
+    },
+    "ArtifactSortBy": {
+      "description": "denotes the key for sorting list of all artifacts.\n* ID - sorting by artifact ID.\n",
+      "type": "string",
+      "default": "ID",
+      "enum": [
+        "ID"
+      ]
+    },
+    "ArtifactSorter": {
+      "description": "defines the key for sorting as well as direction of sorting.\n",
+      "type": "object",
+      "properties": {
+        "SortBy": {
+          "$ref": "#/definitions/ArtifactSortBy"
+        },
+        "SortOrder": {
+          "$ref": "#/definitions/SortOrder"
+        }
+      }
     },
     "ArtifactStatus": {
       "description": "describes artifact status and availability.\n\n* DOWNLOADING - artifact is currently being downloaded.\n\n* READY - artifact has been downloaded and is ready to use.\n\n* FAILED - file is not available for use (e.g. download failed).\n\n* PENDING - artifact download has not started yet.\n",

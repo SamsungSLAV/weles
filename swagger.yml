@@ -430,6 +430,25 @@ definitions:
         type: string
       message:
         type: string
+  ArtifactSortBy:
+    description: >
+      denotes the key for sorting list of all artifacts.
+
+      * ID - sorting by artifact ID.
+
+    type: string
+    enum:
+      - ID
+    default: ID
+  ArtifactSorter:
+    description: |
+      defines the key for sorting as well as direction of sorting.
+    type: object
+    properties:
+      SortBy:
+        $ref: '#/definitions/ArtifactSortBy'
+      SortOrder:
+        $ref: '#/definitions/SortOrder'
 externalDocs:
   description: TBD
   url: 'http://TBD.tbd'
