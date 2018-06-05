@@ -38,6 +38,7 @@ func CreateArtifactInfoSlice(sliceLength int) []weles.ArtifactInfo {
 		tmp := weles.ArtifactInfo{}
 		timestamp := gen.Time(time.Local, dateTimeIter, durationIncrement)
 		tmp.Timestamp = strfmt.DateTime(timestamp)
+		tmp.ID = int64(i + 1)
 		tmp.ArtifactDescription.Alias = weles.ArtifactAlias(gen.Word())
 		tmp.ArtifactDescription.JobID = weles.JobID(i + 1)
 		tmp.ArtifactDescription.Type = weles.ArtifactType(gen.OneStringOf(

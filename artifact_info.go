@@ -34,6 +34,9 @@ import (
 type ArtifactInfo struct {
 	ArtifactDescription
 
+	// ID in the artifacts database
+	ID int64 `json:"ID,omitempty" db:",primarykey, autoincrement"`
+
 	// path
 	Path ArtifactPath `json:"Path,omitempty"`
 

@@ -23,7 +23,7 @@ package weles
 // It is responsible for downloading job artifacts to ArtifactDB.
 type ArtifactManager interface {
 	// List filters ArtifactDB and returns list of all matching artifacts.
-	ListArtifact(filter ArtifactFilter) ([]ArtifactInfo, error)
+	ListArtifact(filter ArtifactFilter, sorter ArtifactSorter, paginator ArtifactPagination) ([]ArtifactInfo, ListInfo, error)
 
 	// Push inserts artifact to ArtifactDB and returns its path.
 	PushArtifact(artifact ArtifactDescription, ch chan ArtifactStatusChange) (ArtifactPath, error)

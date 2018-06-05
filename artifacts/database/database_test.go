@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,51 +44,51 @@ var _ = Describe("ArtifactDB", func() {
 		tmpDir        string
 
 		artifact = weles.ArtifactInfo{
-			weles.ArtifactDescription{
-				"some alias",
-				job,
-				weles.ArtifactTypeIMAGE,
-				"http://example.com",
+			ArtifactDescription: weles.ArtifactDescription{
+				Alias: "some alias",
+				JobID: job,
+				Type:  weles.ArtifactTypeIMAGE,
+				URI:   "http://example.com",
 			},
-			"path1",
-			weles.ArtifactStatusPENDING,
-			strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
+			Path:      "path1",
+			Status:    weles.ArtifactStatusPENDING,
+			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
 
 		aImageReady = weles.ArtifactInfo{
-			weles.ArtifactDescription{
-				"other alias",
-				job + 1,
-				weles.ArtifactTypeIMAGE,
-				"http://example.com/1",
+			ArtifactDescription: weles.ArtifactDescription{
+				Alias: "other alias",
+				JobID: job + 1,
+				Type:  weles.ArtifactTypeIMAGE,
+				URI:   "http://example.com/1",
 			},
-			"path2",
-			weles.ArtifactStatusREADY,
-			strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
+			Path:      "path2",
+			Status:    weles.ArtifactStatusREADY,
+			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
 
 		aYamlFailed = weles.ArtifactInfo{
-			weles.ArtifactDescription{
-				"other alias",
-				job + 1,
-				weles.ArtifactTypeYAML,
-				"http://example.com/2",
+			ArtifactDescription: weles.ArtifactDescription{
+				Alias: "other alias",
+				JobID: job + 1,
+				Type:  weles.ArtifactTypeYAML,
+				URI:   "http://example.com/2",
 			},
-			"path3",
-			weles.ArtifactStatusFAILED,
-			strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
+			Path:      "path3",
+			Status:    weles.ArtifactStatusFAILED,
+			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
 
 		aTestFailed = weles.ArtifactInfo{
-			weles.ArtifactDescription{
-				"alias",
-				job + 2,
-				weles.ArtifactTypeTEST,
-				"http://example.com/2",
+			ArtifactDescription: weles.ArtifactDescription{
+				Alias: "alias",
+				JobID: job + 2,
+				Type:  weles.ArtifactTypeTEST,
+				URI:   "http://example.com/3",
 			},
-			"path4",
-			weles.ArtifactStatusFAILED,
-			strfmt.DateTime(time.Unix(3000, 60).Round(time.Millisecond).UTC()),
+			Path:      "path4",
+			Status:    weles.ArtifactStatusFAILED,
+			Timestamp: strfmt.DateTime(time.Unix(3000, 60).Round(time.Millisecond).UTC()),
 		}
 
 		testArtifacts = []weles.ArtifactInfo{artifact, aImageReady, aYamlFailed, aTestFailed}
@@ -164,7 +164,7 @@ var _ = Describe("ArtifactDB", func() {
 			Alias:  []weles.ArtifactAlias{invalidAlias}}
 
 		fullFilter = weles.ArtifactFilter{
-			JobID:  twoJobsFilter.JobID,
+			JobID:  []weles.JobID{artifact.JobID, aImageReady.JobID, aYamlFailed.JobID},
 			Type:   twoTypesFilter.Type,
 			Status: twoStatusFilter.Status,
 			Alias:  twoAliasFilter.Alias}
@@ -176,6 +176,8 @@ var _ = Describe("ArtifactDB", func() {
 			Alias:  nil}
 
 		emptyFilter = weles.ArtifactFilter{}
+		//default values of sorter passed by server
+		defaultSorter = weles.ArtifactSorter{SortOrder: weles.SortOrderDescending, SortBy: weles.ArtifactSortByID}
 	)
 
 	jobsInDB := func(job weles.JobID) int64 {
@@ -246,6 +248,7 @@ var _ = Describe("ArtifactDB", func() {
 				} else {
 					Expect(err).ToNot(HaveOccurred())
 				}
+				expectedArtifact.ID = result.ID
 				Expect(result).To(Equal(expectedArtifact))
 			},
 			Entry("retrieve artifact based on path", artifact.Path, nil, artifact),
@@ -256,8 +259,11 @@ var _ = Describe("ArtifactDB", func() {
 	Describe("Select", func() {
 
 		BeforeEach(func() {
+			trans, err := goldenUnicorn.dbmap.Begin()
+			Expect(err).ToNot(HaveOccurred())
+			defer trans.Commit()
 			for _, a := range testArtifacts {
-				err := goldenUnicorn.InsertArtifactInfo(&a)
+				err := trans.Insert(&a)
 				Expect(err).ToNot(HaveOccurred())
 			}
 		})
@@ -271,7 +277,12 @@ var _ = Describe("ArtifactDB", func() {
 					Expect(result).To(BeNil())
 				} else {
 					Expect(err).ToNot(HaveOccurred())
-					Expect(result).To(Equal(expectedResult))
+					for i := range result {
+						Expect(result[i].ArtifactDescription).To(Equal(expectedResult[i].ArtifactDescription))
+						Expect(result[i].Path).To(Equal(expectedResult[i].Path))
+						Expect(result[i].Status).To(Equal(expectedResult[i].Status))
+						Expect(result[i].Timestamp).To(Equal(expectedResult[i].Timestamp))
+					}
 				}
 			},
 			// types supported by select.
@@ -292,15 +303,29 @@ var _ = Describe("ArtifactDB", func() {
 
 	Describe("List", func() {
 		BeforeEach(func() {
+			trans, err := goldenUnicorn.dbmap.Begin()
+			Expect(err).ToNot(HaveOccurred())
+			defer trans.Commit()
 			for _, a := range testArtifacts {
-				err := goldenUnicorn.InsertArtifactInfo(&a)
+				err := trans.Insert(&a)
 				Expect(err).ToNot(HaveOccurred())
 			}
 		})
 		DescribeTable("list artifacts matching filter",
 			func(filter weles.ArtifactFilter, expected ...weles.ArtifactInfo) {
-				results, err := goldenUnicorn.Filter(filter)
+				results, _, err := goldenUnicorn.Filter(filter, defaultSorter, weles.ArtifactPagination{})
 				Expect(err).ToNot(HaveOccurred())
+				//TODO: match all fields except ID.
+				for i := range results {
+					for j := range expected {
+						if results[i].JobID == expected[j].JobID {
+							if results[i].URI == expected[j].URI {
+								expected[j].ID = results[i].ID
+							}
+						}
+					}
+
+				}
 				Expect(results).To(ConsistOf(expected))
 			},
 			Entry("filter one JobID", oneJobFilter, artifact),
@@ -344,8 +369,8 @@ var _ = Describe("ArtifactDB", func() {
 					Expect(a).To(Equal(weles.ArtifactInfo{}))
 				}
 			},
-			Entry("change status of artifact not present in ArtifactDB", weles.ArtifactStatusChange{invalidPath, weles.ArtifactStatusDOWNLOADING}, sql.ErrNoRows),
-			Entry("change status of artifact present in ArtifactDB", weles.ArtifactStatusChange{artifact.Path, weles.ArtifactStatusDOWNLOADING}, nil),
+			Entry("change status of artifact not present in ArtifactDB", weles.ArtifactStatusChange{Path: invalidPath, NewStatus: weles.ArtifactStatusDOWNLOADING}, sql.ErrNoRows),
+			Entry("change status of artifact present in ArtifactDB", weles.ArtifactStatusChange{Path: artifact.Path, NewStatus: weles.ArtifactStatusDOWNLOADING}, nil),
 		)
 	})
 })

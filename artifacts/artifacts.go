@@ -83,8 +83,8 @@ func NewArtifactManager(db, dir string, notifierCap, workersCount, queueCap int)
 }
 
 // ListArtifact is part of implementation of ArtifactManager interface.
-func (s *Storage) ListArtifact(filter weles.ArtifactFilter) ([]weles.ArtifactInfo, error) {
-	return s.db.Filter(filter)
+func (s *Storage) ListArtifact(filter weles.ArtifactFilter, sorter weles.ArtifactSorter, paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+	return s.db.Filter(filter, sorter, paginator)
 }
 
 // PushArtifact is part of implementation of ArtifactManager interface.
@@ -109,7 +109,7 @@ func (s *Storage) CreateArtifact(artifact weles.ArtifactDescription) (weles.Arti
 		return "", err
 	}
 
-	err = s.db.InsertArtifactInfo(&weles.ArtifactInfo{artifact, path, "", strfmt.DateTime(time.Now().UTC())})
+	err = s.db.InsertArtifactInfo(&weles.ArtifactInfo{ArtifactDescription: artifact, Path: path, Status: "", Timestamp: strfmt.DateTime(time.Now().UTC())})
 	if err != nil {
 		return "", err
 	}

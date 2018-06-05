@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"strings"
 
 	"git.tizen.org/tools/weles"
@@ -28,11 +29,6 @@ import (
 	// with the standard library sql interface.
 	_ "github.com/mattn/go-sqlite3"
 )
-
-type artifactInfoRecord struct {
-	ID int64 `db:",primarykey, autoincrement"`
-	weles.ArtifactInfo
-}
 
 // ArtifactDB is responsible for database connection and queries.
 type ArtifactDB struct {
@@ -55,7 +51,7 @@ func (aDB *ArtifactDB) Open(dbPath string) error {
 // initDB initializes tables.
 func (aDB *ArtifactDB) initDB() error {
 	// Add tables.
-	aDB.dbmap.AddTableWithName(artifactInfoRecord{}, "artifacts").SetKeys(true, "ID")
+	aDB.dbmap.AddTableWithName(weles.ArtifactInfo{}, "artifacts").SetKeys(true, "ID")
 
 	return aDB.dbmap.CreateTablesIfNotExists()
 }
@@ -67,30 +63,38 @@ func (aDB *ArtifactDB) Close() error {
 
 // InsertArtifactInfo inserts information about artifact to database.
 func (aDB *ArtifactDB) InsertArtifactInfo(ai *weles.ArtifactInfo) error {
-	ar := artifactInfoRecord{
-		ArtifactInfo: *ai,
-	}
-	return aDB.dbmap.Insert(&ar)
+	return aDB.dbmap.Insert(ai)
 }
 
 // SelectPath selects artifact from database based on its path.
 func (aDB *ArtifactDB) SelectPath(path weles.ArtifactPath) (weles.ArtifactInfo, error) {
-	ar := artifactInfoRecord{}
-	err := aDB.dbmap.SelectOne(&ar, "select * from artifacts where Path=?", path)
+	//	ar := artifactInfoRecord{}
+	ai := weles.ArtifactInfo{}
+	err := aDB.dbmap.SelectOne(&ai, "select * from artifacts where Path=?", path)
 	if err != nil {
 		return weles.ArtifactInfo{}, err
 	}
-	return ar.ArtifactInfo, nil
+	return ai, nil
 }
 
 // prepareQuery prepares query based on given filter.
 // TODO code duplication
-func prepareQuery(filter weles.ArtifactFilter) (string, []interface{}) {
+func prepareQuery(
+	filter weles.ArtifactFilter,
+	sorter weles.ArtifactSorter,
+	paginator weles.ArtifactPagination,
+	getTotal, getRemaining bool, offset int64) (string, []interface{}) {
 	var (
 		conditions []string
-		query      = "select * from artifacts "
+		query      string
 		args       []interface{}
 	)
+	if getTotal == false && getRemaining == false {
+		query = "select * from artifacts "
+	} else {
+		query = "select count(*) from artifacts "
+	}
+
 	if len(filter.JobID) > 0 {
 		q := make([]string, len(filter.JobID))
 		for i, job := range filter.JobID {
@@ -123,36 +127,82 @@ func prepareQuery(filter weles.ArtifactFilter) (string, []interface{}) {
 		}
 		conditions = append(conditions, " Alias in ("+strings.Join(q, ",")+")")
 	}
+	if getTotal == false && paginator.ID != 0 {
+		if (paginator.Forward == true && sorter.SortOrder == weles.SortOrderDescending) || (paginator.Forward == false && (sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "")) {
+			conditions = append(conditions, " ID < ? ")
+			args = append(args, paginator.ID)
+		} else {
+			conditions = append(conditions, " ID > ? ")
+			args = append(args, paginator.ID)
+		}
+	}
+
 	if len(conditions) > 0 {
 		query += " where " + strings.Join(conditions, " AND ")
+	}
+	//TODO: make timestamp also db key, add to where clause and order by as described in:
+	// https://www.sqlite.org/rowvalue.html#scrolling_window_queries
+	if sorter.SortOrder == weles.SortOrderDescending {
+		query += " ORDER BY ID DESC "
+	} else if sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "" {
+		query += " ORDER BY ID ASC "
+	}
+	if paginator.Limit != 0 {
+		if offset == 0 {
+			query += " LIMIT ? "
+			args = append(args, paginator.Limit)
+		} else {
+			query += " LIMIT ? OFFSET ?"
+			args = append(args, paginator.Limit, offset)
+		}
 	}
 	return query, args
 }
 
 // Filter fetches elements matching ArtifactFilter from database.
-func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter) ([]weles.ArtifactInfo, error) {
-	results := []artifactInfoRecord{}
-
-	query, args := prepareQuery(filter)
-
+func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.ArtifactSorter, paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+	results := []weles.ArtifactInfo{}
+	var tr, rr int64
 	// TODO gorp doesn't support passing list of arguments to where in(...) clause yet.
 	// Thats why it's done with the use prepareQuery.
-	_, err := aDB.dbmap.Select(&results, query, args...)
+	trans, err := aDB.dbmap.Begin()
 	if err != nil {
-		return nil, err
+		return nil, weles.ListInfo{}, errors.New("Failed to open transaction while filtering " + err.Error())
 	}
-	artifacts := make([]weles.ArtifactInfo, len(results))
-	for i, res := range results {
-		artifacts[i] = res.ArtifactInfo
-	}
-	return artifacts, nil
+	queryForTotal, argsForTotal := prepareQuery(filter, sorter, paginator, true, false, 0)
+	queryForRemaining, argsForRemaining := prepareQuery(filter, sorter, paginator, false, true, 0)
+	var offset int64
 
+	rr, err = aDB.dbmap.SelectInt(queryForRemaining, argsForRemaining...)
+	if err != nil {
+		return nil, weles.ListInfo{}, errors.New("Failed to get remaining records " + err.Error())
+	}
+
+	tr, err = aDB.dbmap.SelectInt(queryForTotal, argsForTotal...)
+	if err != nil {
+		return nil, weles.ListInfo{}, errors.New("Failed to get total records " + err.Error())
+	}
+
+	if paginator.Forward == false {
+		offset = rr - int64(paginator.Limit)
+	}
+
+	queryForData, argsForData := prepareQuery(filter, sorter, paginator, false, false, offset)
+	_, err = aDB.dbmap.Select(&results, queryForData, argsForData...)
+	if err != nil {
+		return nil, weles.ListInfo{}, err
+	}
+	if err := trans.Commit(); err != nil {
+		return nil, weles.ListInfo{}, errors.New("Failed to commit transaction while filtering " + err.Error())
+
+	}
+	return results, weles.ListInfo{TotalRecords: uint64(tr), RemainingRecords: uint64(rr - int64(len(results)))}, nil
 }
 
 // Select fetches artifacts from ArtifactDB.
 func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []weles.ArtifactInfo, err error) {
 	var (
-		results []artifactInfoRecord
+		results []weles.ArtifactInfo
 		query   string
 	)
 	// TODO prepare efficient way of executing generic select.
@@ -168,16 +218,13 @@ func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []weles.ArtifactInfo, 
 	default:
 		return nil, ErrUnsupportedQueryType
 	}
+	query += " ORDER BY id"
 
 	_, err = aDB.dbmap.Select(&results, query, arg)
 	if err != nil {
 		return nil, err
 	}
-	artifacts = make([]weles.ArtifactInfo, len(results))
-	for i, res := range results {
-		artifacts[i] = res.ArtifactInfo
-	}
-	return artifacts, nil
+	return results, nil
 }
 
 // getID fetches ID of an artifact with provided path.
@@ -195,17 +242,14 @@ func (aDB *ArtifactDB) SetStatus(change weles.ArtifactStatusChange) error {
 	if err != nil {
 		return err
 	}
-	ar := artifactInfoRecord{
-		ArtifactInfo: ai,
-	}
 
-	id, err := aDB.getID(ar.Path)
+	id, err := aDB.getID(ai.Path)
 	if err != nil {
 		return err
 	}
-	ar.ID = id
+	ai.ID = id
 
-	ar.Status = change.NewStatus
-	_, err = aDB.dbmap.Update(&ar)
+	ai.Status = change.NewStatus
+	_, err = aDB.dbmap.Update(&ai)
 	return err
 }

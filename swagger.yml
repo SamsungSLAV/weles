@@ -400,6 +400,11 @@ definitions:
         description: is date of creating the artifact.
         type: string
         format: date-time
+      ID:
+        description: unique identification of the artifact.
+        type: integer
+        format: int64
+        x-go-custom-tag: "db:\",primarykey, autoincrement\""
   ArtifactFilter:
     description: is used to filter results from ArtifactDB.
     type: object

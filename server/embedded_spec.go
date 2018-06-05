@@ -319,6 +319,12 @@ func init() {
         }
       ],
       "properties": {
+        "ID": {
+          "description": "unique identification of the artifact.",
+          "type": "integer",
+          "format": "int64",
+          "x-go-custom-tag": "db:\",primarykey, autoincrement\""
+        },
         "Path": {
           "$ref": "#/definitions/ArtifactPath"
         },
@@ -895,6 +901,12 @@ func init() {
         }
       ],
       "properties": {
+        "ID": {
+          "description": "unique identification of the artifact.",
+          "type": "integer",
+          "format": "int64",
+          "x-go-custom-tag": "db:\",primarykey, autoincrement\""
+        },
         "Path": {
           "$ref": "#/definitions/ArtifactPath"
         },
