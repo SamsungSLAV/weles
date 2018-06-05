@@ -59,6 +59,121 @@ func init() {
   "host": "localhost:8088",
   "basePath": "/api/v1",
   "paths": {
+    "/artifacts/list": {
+      "post": {
+        "description": "ArtifactLister returns information on filtered Weles artifacts.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "List artifacts with filter and sort features",
+        "operationId": "ArtifactLister",
+        "parameters": [
+          {
+            "description": "Artifact Filter and Sort object.",
+            "name": "artifactFilterAndSort",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ArtifactFilterAndSort"
+            }
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the last element from previous page.",
+            "name": "after",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of first element from next page.",
+            "name": "before",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "description": "Custom page limit. Denotes number of ArtifactInfo structures that will be returned.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ArtifactInfo"
+              }
+            },
+            "headers": {
+              "Next": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "Previous": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "TotalRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              }
+            }
+          },
+          "206": {
+            "description": "Partial Content",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ArtifactInfo"
+              }
+            },
+            "headers": {
+              "Next": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "Previous": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "RemainingRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              },
+              "TotalRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServer"
+          }
+        }
+      }
+    },
     "/jobs": {
       "post": {
         "description": "adds new Job in Weles using recipe passed in YAML format.",
@@ -307,6 +422,18 @@ func init() {
           "items": {
             "$ref": "#/definitions/ArtifactType"
           }
+        }
+      }
+    },
+    "ArtifactFilterAndSort": {
+      "description": "Data for filtering and sorting Weles Jobs lists.",
+      "type": "object",
+      "properties": {
+        "Filter": {
+          "$ref": "#/definitions/ArtifactFilter"
+        },
+        "Sorter": {
+          "$ref": "#/definitions/ArtifactSorter"
         }
       }
     },
@@ -579,6 +706,10 @@ func init() {
     {
       "description": "Info and management of Weles jobs.",
       "name": "jobs"
+    },
+    {
+      "description": "Info about all artifacts used by Weles jobs.",
+      "name": "artifacts"
     }
   ],
   "externalDocs": {
@@ -613,6 +744,130 @@ func init() {
   "host": "localhost:8088",
   "basePath": "/api/v1",
   "paths": {
+    "/artifacts/list": {
+      "post": {
+        "description": "ArtifactLister returns information on filtered Weles artifacts.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "List artifacts with filter and sort features",
+        "operationId": "ArtifactLister",
+        "parameters": [
+          {
+            "description": "Artifact Filter and Sort object.",
+            "name": "artifactFilterAndSort",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ArtifactFilterAndSort"
+            }
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the last element from previous page.",
+            "name": "after",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of first element from next page.",
+            "name": "before",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "description": "Custom page limit. Denotes number of ArtifactInfo structures that will be returned.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ArtifactInfo"
+              }
+            },
+            "headers": {
+              "Next": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "Previous": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "TotalRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              }
+            }
+          },
+          "206": {
+            "description": "Partial Content",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ArtifactInfo"
+              }
+            },
+            "headers": {
+              "Next": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "Previous": {
+                "type": "string",
+                "format": "URI",
+                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+              },
+              "RemainingRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              },
+              "TotalRecords": {
+                "type": "integer",
+                "format": "uint64",
+                "description": "count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          }
+        }
+      }
+    },
     "/jobs": {
       "post": {
         "description": "adds new Job in Weles using recipe passed in YAML format.",
@@ -891,6 +1146,18 @@ func init() {
         }
       }
     },
+    "ArtifactFilterAndSort": {
+      "description": "Data for filtering and sorting Weles Jobs lists.",
+      "type": "object",
+      "properties": {
+        "Filter": {
+          "$ref": "#/definitions/ArtifactFilter"
+        },
+        "Sorter": {
+          "$ref": "#/definitions/ArtifactSorter"
+        }
+      }
+    },
     "ArtifactInfo": {
       "description": "describes single artifact stored in ArtifactDB.",
       "type": "object",
@@ -1160,6 +1427,10 @@ func init() {
     {
       "description": "Info and management of Weles jobs.",
       "name": "jobs"
+    },
+    {
+      "description": "Info about all artifacts used by Weles jobs.",
+      "name": "artifacts"
     }
   ],
   "externalDocs": {

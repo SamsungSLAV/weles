@@ -20,6 +20,8 @@ produces:
 tags:
   - name: jobs
     description: Info and management of Weles jobs.
+  - name: artifacts
+    description: Info about all artifacts used by Weles jobs.
 schemes:
   - http
 paths:
@@ -155,6 +157,95 @@ paths:
               format: uint64
               description: >
                  count of records currently fulfilling requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+            RemainingRecords:
+              type: integer
+              format: uint64
+              description: >
+                number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.
+        '400':
+          $ref: '#/responses/BadRequest'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/InternalServer'
+  /artifacts/list:
+    post:
+      tags:
+        - artifacts
+      summary: List artifacts with filter and sort features
+      description: ArtifactLister returns information on filtered Weles artifacts.
+      operationId: ArtifactLister
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: artifactFilterAndSort
+          description: Artifact Filter and Sort object.
+          required: false
+          schema:
+            $ref: '#/definitions/ArtifactFilterAndSort'
+        - in: query
+          name: after
+          description: ID of the last element from previous page.
+          type: integer
+          format: int64
+        - in: query
+          name: before
+          description: ID of first element from next page.
+          type: integer
+          format: int64
+        - in: query
+          name: limit
+          description: Custom page limit. Denotes number of ArtifactInfo structures that will be returned.
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ArtifactInfo'
+          headers:
+            Previous:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            Next:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            TotalRecords:
+              type: integer
+              format: uint64
+              description: >
+                count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+        '206':
+          description: Partial Content
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ArtifactInfo'
+          headers:
+            Previous:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            Next:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            TotalRecords:
+              type: integer
+              format: uint64
+              description: >
+                count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.
             RemainingRecords:
               type: integer
               format: uint64
@@ -454,6 +545,14 @@ definitions:
         $ref: '#/definitions/ArtifactSortBy'
       SortOrder:
         $ref: '#/definitions/SortOrder'
+  ArtifactFilterAndSort:
+    description: Data for filtering and sorting Weles Jobs lists.
+    type: object
+    properties:
+      Filter:
+        $ref: '#/definitions/ArtifactFilter'
+      Sorter:
+        $ref: '#/definitions/ArtifactSorter'
 externalDocs:
   description: TBD
   url: 'http://TBD.tbd'

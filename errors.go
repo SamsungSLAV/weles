@@ -34,6 +34,8 @@ var (
 	// ErrBeforeAfterNotAllowed is returned when client places request for a list
 	// with both before and after parameters.
 	ErrBeforeAfterNotAllowed = errors.New("setting both before and after qeury parameters is not allowed")
+	// ErrArtifactNotFound is returned by API when no artifact is returned by ArtifactManager
+	ErrArtifactNotFound = errors.New("artifact not found")
 )
 
 // ErrInvalidArgument is returned when argument passed to public API cannot

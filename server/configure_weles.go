@@ -25,6 +25,7 @@ import (
 	"github.com/go-openapi/runtime"
 
 	"git.tizen.org/tools/weles/server/operations"
+	"git.tizen.org/tools/weles/server/operations/artifacts"
 	"git.tizen.org/tools/weles/server/operations/jobs"
 )
 
@@ -54,6 +55,8 @@ func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 	api.JobsJobCreatorHandler = jobs.JobCreatorHandlerFunc(a.Managers.JobCreator)
 	api.JobsJobCancelerHandler = jobs.JobCancelerHandlerFunc(a.Managers.JobCanceller)
 	api.JobsJobListerHandler = jobs.JobListerHandlerFunc(a.JobLister)
+
+	api.ArtifactsArtifactListerHandler = artifacts.ArtifactListerHandlerFunc(a.ArtifactLister)
 
 	api.ServerShutdown = func() {}
 

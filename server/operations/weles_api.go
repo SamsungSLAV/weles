@@ -34,6 +34,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"git.tizen.org/tools/weles/server/operations/artifacts"
 	"git.tizen.org/tools/weles/server/operations/jobs"
 )
 
@@ -55,6 +56,9 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
 		JSONProducer:          runtime.JSONProducer(),
+		ArtifactsArtifactListerHandler: artifacts.ArtifactListerHandlerFunc(func(params artifacts.ArtifactListerParams) middleware.Responder {
+			return middleware.NotImplemented("operation ArtifactsArtifactLister has not yet been implemented")
+		}),
 		JobsJobCancelerHandler: jobs.JobCancelerHandlerFunc(func(params jobs.JobCancelerParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobCanceler has not yet been implemented")
 		}),
@@ -97,6 +101,8 @@ type WelesAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
+	// ArtifactsArtifactListerHandler sets the operation handler for the artifact lister operation
+	ArtifactsArtifactListerHandler artifacts.ArtifactListerHandler
 	// JobsJobCancelerHandler sets the operation handler for the job canceler operation
 	JobsJobCancelerHandler jobs.JobCancelerHandler
 	// JobsJobCreatorHandler sets the operation handler for the job creator operation
@@ -168,6 +174,10 @@ func (o *WelesAPI) Validate() error {
 
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
+	}
+
+	if o.ArtifactsArtifactListerHandler == nil {
+		unregistered = append(unregistered, "artifacts.ArtifactListerHandler")
 	}
 
 	if o.JobsJobCancelerHandler == nil {
@@ -282,6 +292,11 @@ func (o *WelesAPI) initHandlerCache() {
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/artifacts/list"] = artifacts.NewArtifactLister(o.context, o.ArtifactsArtifactListerHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
