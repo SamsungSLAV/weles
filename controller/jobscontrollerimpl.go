@@ -20,6 +20,8 @@
 package controller
 
 import (
+	"regexp"
+	"strings"
 	"sync"
 	"time"
 
@@ -244,10 +246,127 @@ func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorte
 	js.mutex.RLock()
 	defer js.mutex.RUnlock()
 	ret := make([]weles.JobInfo, 0, len(js.jobs))
-	// Get all Jobs ignoring filter and sorter.
-	for _, job := range js.jobs {
-		ret = append(ret, job.JobInfo)
+
+	f, err := prepareFilter(&filter)
+	if err != nil {
+		return nil, weles.ListInfo{}, err
 	}
-	info := weles.ListInfo{TotalRecords: uint64(len(js.jobs)), RemainingRecords: 0}
+
+	// Get all Jobs ignoring sorter and paginator.
+	for _, job := range js.jobs {
+		if job.passesFilter(f) {
+			ret = append(ret, job.JobInfo)
+		}
+	}
+	info := weles.ListInfo{TotalRecords: uint64(len(ret)), RemainingRecords: 0}
 	return ret, info, nil
+}
+
+type filter struct {
+	CreatedAfter  time.Time
+	CreatedBefore time.Time
+	UpdatedAfter  time.Time
+	UpdatedBefore time.Time
+	Info          *regexp.Regexp
+	JobID         map[weles.JobID]interface{}
+	Name          *regexp.Regexp
+	Status        map[weles.JobStatus]interface{}
+}
+
+func prepareFilterRegexp(arr []string) (*regexp.Regexp, error) {
+	if len(arr) == 0 {
+		return nil, nil
+	}
+
+	var size int
+	for _, s := range arr {
+		size += 3 + len(s)
+	}
+
+	var str strings.Builder
+	str.Grow(size)
+	for _, s := range arr {
+		str.WriteString("|(" + s + ")")
+	}
+
+	return regexp.Compile(str.String()[1:])
+}
+
+func prepareFilter(in *weles.JobFilter) (out *filter, err error) {
+	var regErr error
+
+	out = new(filter)
+
+	out.CreatedAfter = time.Time(in.CreatedAfter)
+	out.CreatedBefore = time.Time(in.CreatedBefore)
+	out.Info, regErr = prepareFilterRegexp(in.Info)
+	if regErr != nil {
+		return nil, weles.ErrInvalidArgument("cannot compile regex from Info: " + regErr.Error())
+	}
+	if len(in.JobID) > 0 {
+		out.JobID = make(map[weles.JobID]interface{})
+		for _, x := range in.JobID {
+			out.JobID[x] = nil
+		}
+	}
+	out.Name, regErr = prepareFilterRegexp(in.Name)
+	if regErr != nil {
+		return nil, weles.ErrInvalidArgument("cannot compile regex from Name: " + regErr.Error())
+	}
+	if len(in.Status) > 0 {
+		out.Status = make(map[weles.JobStatus]interface{})
+		for _, x := range in.Status {
+			out.Status[x] = nil
+		}
+	}
+	out.UpdatedAfter = time.Time(in.UpdatedAfter)
+	out.UpdatedBefore = time.Time(in.UpdatedBefore)
+
+	return out, nil
+}
+
+func (job *Job) passesFilter(f *filter) bool {
+	if !f.CreatedAfter.IsZero() {
+		if !time.Time(job.JobInfo.Created).After(f.CreatedAfter) {
+			return false
+		}
+	}
+	if !f.CreatedBefore.IsZero() {
+		if !time.Time(job.JobInfo.Created).Before(f.CreatedBefore) {
+			return false
+		}
+	}
+	if !f.UpdatedAfter.IsZero() {
+		if !time.Time(job.JobInfo.Updated).After(f.UpdatedAfter) {
+			return false
+		}
+	}
+	if !f.UpdatedBefore.IsZero() {
+		if !time.Time(job.JobInfo.Updated).Before(f.UpdatedBefore) {
+			return false
+		}
+	}
+	if f.Info != nil {
+		if !f.Info.MatchString(job.JobInfo.Info) {
+			return false
+		}
+	}
+	if f.JobID != nil {
+		_, present := f.JobID[job.JobInfo.JobID]
+		if !present {
+			return false
+		}
+	}
+	if f.Name != nil {
+		if !f.Name.MatchString(job.JobInfo.Name) {
+			return false
+		}
+	}
+	if f.Status != nil {
+		_, present := f.Status[job.JobInfo.Status]
+		if !present {
+			return false
+		}
+	}
+	return true
 }

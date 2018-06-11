@@ -20,6 +20,7 @@ package weles
 
 import (
 	"errors"
+	"fmt"
 )
 
 var (
@@ -31,3 +32,11 @@ var (
 	// possible. It suggests internal Weles logic error.
 	ErrJobStatusChangeNotAllowed = errors.New("job status change not allowed")
 )
+
+// ErrInvalidArgument is returned when argument passed to public API cannot
+// be parsed.
+type ErrInvalidArgument string
+
+func (err ErrInvalidArgument) Error() string {
+	return fmt.Sprintf("invalid argument: %s", string(err))
+}
