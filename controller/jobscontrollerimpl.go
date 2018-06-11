@@ -21,6 +21,7 @@ package controller
 
 import (
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -252,12 +253,27 @@ func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorte
 		return nil, weles.ListInfo{}, err
 	}
 
-	// Get all Jobs ignoring sorter and paginator.
+	// Filter jobs.
 	for _, job := range js.jobs {
 		if job.passesFilter(f) {
 			ret = append(ret, job.JobInfo)
 		}
 	}
+	// Sort jobs.
+	ps := &jobSorter{
+		jobs: ret,
+		by:   byJobIDAsc,
+	}
+	switch sorter.SortBy {
+	case weles.JobSortByCreatedDate:
+		ps.setByFunction(sorter.SortOrder, byCreatedAsc, byCreatedDesc)
+	case weles.JobSortByUpdatedDate:
+		ps.setByFunction(sorter.SortOrder, byUpdatedAsc, byUpdatedDesc)
+	case weles.JobSortByJobStatus:
+		ps.setByFunction(sorter.SortOrder, byStatusAsc, byStatusDesc)
+	}
+	sort.Sort(ps)
+	// TODO Use paginator.
 	info := weles.ListInfo{TotalRecords: uint64(len(ret)), RemainingRecords: 0}
 	return ret, info, nil
 }
@@ -369,4 +385,82 @@ func (job *Job) passesFilter(f *filter) bool {
 		}
 	}
 	return true
+}
+
+func byCreatedAsc(i1, i2 *weles.JobInfo) bool {
+	if time.Time(i1.Created).Equal(time.Time(i2.Created)) {
+		return byJobIDAsc(i1, i2)
+	}
+	return time.Time(i1.Created).Before(time.Time(i2.Created))
+}
+
+func byCreatedDesc(i1, i2 *weles.JobInfo) bool {
+	if time.Time(i1.Created).Equal(time.Time(i2.Created)) {
+		return byJobIDAsc(i1, i2)
+	}
+	return time.Time(i1.Created).After(time.Time(i2.Created))
+}
+
+func byUpdatedAsc(i1, i2 *weles.JobInfo) bool {
+	if time.Time(i1.Updated).Equal(time.Time(i2.Updated)) {
+		return byJobIDAsc(i1, i2)
+	}
+	return time.Time(i1.Updated).Before(time.Time(i2.Updated))
+}
+
+func byUpdatedDesc(i1, i2 *weles.JobInfo) bool {
+	if time.Time(i1.Updated).Equal(time.Time(i2.Updated)) {
+		return byJobIDAsc(i1, i2)
+	}
+	return time.Time(i1.Updated).After(time.Time(i2.Updated))
+}
+
+func byStatusAsc(i1, i2 *weles.JobInfo) bool {
+	if i1.Status.ToInt() == i2.Status.ToInt() {
+		return byJobIDAsc(i1, i2)
+	}
+	return i1.Status.ToInt() < i2.Status.ToInt()
+}
+
+func byStatusDesc(i1, i2 *weles.JobInfo) bool {
+	if i1.Status.ToInt() == i2.Status.ToInt() {
+		return byJobIDAsc(i1, i2)
+	}
+	return i1.Status.ToInt() > i2.Status.ToInt()
+}
+
+func byJobIDAsc(i1, i2 *weles.JobInfo) bool {
+	return i1.JobID < i2.JobID
+}
+
+type jobSorter struct {
+	jobs []weles.JobInfo
+	by   func(i1, i2 *weles.JobInfo) bool
+}
+
+// Len is part of sort.Interface.
+func (s *jobSorter) Len() int {
+	return len(s.jobs)
+}
+
+// Swap is part of sort.Interface.
+func (s *jobSorter) Swap(i, j int) {
+	s.jobs[i], s.jobs[j] = s.jobs[j], s.jobs[i]
+}
+
+// Less is part of sort.Interface. It is implemented by calling the "by" closure in the sorter.
+func (s *jobSorter) Less(i, j int) bool {
+	return s.by(&s.jobs[i], &s.jobs[j])
+}
+
+// by is the type of a "less" function that defines the ordering of its JobInfo arguments.
+type by func(p1, p2 *weles.JobInfo) bool
+
+func (s *jobSorter) setByFunction(order weles.SortOrder, asc, desc by) {
+	switch order {
+	case weles.SortOrderAscending:
+		s.by = asc
+	case weles.SortOrderDescending:
+		s.by = desc
+	}
 }

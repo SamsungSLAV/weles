@@ -22,6 +22,7 @@ import (
 	"time"
 
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -478,6 +479,130 @@ var _ = Describe("JobsControllerImpl", func() {
 						expectIDs(list, info, []weles.JobID{jobids[0]})
 					})
 				})
+			})
+			Describe("Sorter", func() {
+				jobids := []weles.JobID{}
+				checkOrder := func(result []weles.JobInfo, info weles.ListInfo, expected []weles.JobID, order []int) {
+					Expect(len(result)).To(Equal(len(expected)))
+					for i := range result {
+						ExpectWithOffset(1, result[i].JobID).To(Equal(expected[order[i]]))
+					}
+					ExpectWithOffset(1, info.TotalRecords).To(Equal(uint64(len(expected))))
+					ExpectWithOffset(1, info.RemainingRecords).To(BeZero())
+				}
+				BeforeEach(func() {
+					jobids = []weles.JobID{}
+					elems = 10
+					for i := 1; i <= elems; i++ {
+						j, err := jc.NewJob(yaml)
+						Expect(err).NotTo(HaveOccurred())
+						jobids = append(jobids, j)
+					}
+					// Manipulate data so the sort effect will be visible.
+					jc.(*JobsControllerImpl).mutex.Lock()
+					defer jc.(*JobsControllerImpl).mutex.Unlock()
+					jc.(*JobsControllerImpl).jobs[jobids[0]].JobInfo = weles.JobInfo{
+						JobID:   jobids[0],
+						Created: strfmt.DateTime(magicDate.AddDate(5, 0, 0)),
+						Updated: strfmt.DateTime(magicDate.AddDate(3, 0, 0)),
+						Status:  weles.JobStatusNEW,
+					}
+					jc.(*JobsControllerImpl).jobs[jobids[1]].JobInfo = weles.JobInfo{
+						JobID:   jobids[1],
+						Created: strfmt.DateTime(magicDate.AddDate(4, 0, 0)),
+						Updated: strfmt.DateTime(magicDate.AddDate(1, 0, 0)),
+						Status:  weles.JobStatusWAITING,
+					}
+					jc.(*JobsControllerImpl).jobs[jobids[2]].JobInfo = weles.JobInfo{
+						JobID:   jobids[2],
+						Created: strfmt.DateTime(magicDate.AddDate(2, 0, 0)),
+						Updated: strfmt.DateTime(magicDate.AddDate(2, 0, 0)),
+						Status:  weles.JobStatusCANCELED,
+					}
+					jc.(*JobsControllerImpl).jobs[jobids[3]].JobInfo = weles.JobInfo{
+						JobID:   jobids[3],
+						Created: strfmt.DateTime(magicDate.AddDate(3, 0, 0)),
+						Updated: strfmt.DateTime(magicDate.AddDate(4, 0, 0)),
+						Status:  weles.JobStatusPARSING,
+					}
+					jc.(*JobsControllerImpl).jobs[jobids[4]].JobInfo = weles.JobInfo{
+						JobID:   jobids[4],
+						Created: strfmt.DateTime(magicDate.AddDate(1, 0, 0)),
+						Updated: strfmt.DateTime(magicDate.AddDate(5, 0, 0)),
+						Status:  weles.JobStatusDOWNLOADING,
+					}
+
+					jc.(*JobsControllerImpl).jobs[jobids[5]].JobInfo = weles.JobInfo{
+						JobID:   jobids[5],
+						Created: strfmt.DateTime(magicDate.AddDate(6, 0, 0)),
+						Updated: strfmt.DateTime(magicDate.AddDate(6, 0, 0)),
+						Status:  weles.JobStatusRUNNING,
+					}
+					jc.(*JobsControllerImpl).jobs[jobids[6]].JobInfo = weles.JobInfo{
+						JobID:   jobids[6],
+						Created: strfmt.DateTime(magicDate.AddDate(6, 1, 0)),
+						Updated: strfmt.DateTime(magicDate.AddDate(6, 1, 0)),
+						Status:  weles.JobStatusFAILED,
+					}
+					jc.(*JobsControllerImpl).jobs[jobids[7]].JobInfo = weles.JobInfo{
+						JobID:   jobids[7],
+						Created: strfmt.DateTime(magicDate.AddDate(6, 2, 0)),
+						Updated: strfmt.DateTime(magicDate.AddDate(6, 2, 0)),
+						Status:  weles.JobStatusCOMPLETED,
+					}
+					jc.(*JobsControllerImpl).jobs[jobids[8]].JobInfo = weles.JobInfo{
+						JobID:   jobids[8],
+						Created: strfmt.DateTime(magicDate.AddDate(6, 3, 0)),
+						Updated: strfmt.DateTime(magicDate.AddDate(6, 3, 0)),
+						Status:  weles.JobStatus("InvalidJobStatus"),
+					}
+					jc.(*JobsControllerImpl).jobs[jobids[9]].JobInfo = weles.JobInfo{
+						JobID:   jobids[9],
+						Created: strfmt.DateTime(magicDate.AddDate(1, 0, 0)),
+						Updated: strfmt.DateTime(magicDate.AddDate(5, 0, 0)),
+						Status:  weles.JobStatusDOWNLOADING,
+					}
+				})
+				DescribeTable("sorter",
+					func(s weles.JobSorter, order []int) {
+						list, info, err := jc.List(weles.JobFilter{}, s, defaultPagination)
+						Expect(err).NotTo(HaveOccurred())
+						checkOrder(list, info, jobids, order)
+					},
+					Entry("should sort by JobID if Sorter is empty",
+						weles.JobSorter{},
+						[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
+					Entry("should sort by JobID if SortBy is invalid",
+						weles.JobSorter{SortBy: weles.JobSortBy("InvalidSortBy")},
+						[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
+					Entry("should sort by JobID if SortBy is CreatedDate and SortOrder is invalid ",
+						weles.JobSorter{SortBy: weles.JobSortByCreatedDate, SortOrder: weles.SortOrder("InvalidSortOrder")},
+						[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
+					Entry("should sort by JobID if SortBy is UpdatedDate and SortOrder is invalid ",
+						weles.JobSorter{SortBy: weles.JobSortByUpdatedDate, SortOrder: weles.SortOrder("InvalidSortOrder")},
+						[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
+					Entry("should sort by JobID if SortBy is Status and SortOrder is invalid ",
+						weles.JobSorter{SortBy: weles.JobSortByJobStatus, SortOrder: weles.SortOrder("InvalidSortOrder")},
+						[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
+					Entry("should sort by CreatedAsc",
+						weles.JobSorter{SortBy: weles.JobSortByCreatedDate, SortOrder: weles.SortOrderAscending},
+						[]int{4, 9, 2, 3, 1, 0, 5, 6, 7, 8}),
+					Entry("should sort by CreatedDesc",
+						weles.JobSorter{SortBy: weles.JobSortByCreatedDate, SortOrder: weles.SortOrderDescending},
+						[]int{8, 7, 6, 5, 0, 1, 3, 2, 4, 9}),
+					Entry("should sort by UpdatedAsc",
+						weles.JobSorter{SortBy: weles.JobSortByUpdatedDate, SortOrder: weles.SortOrderAscending},
+						[]int{1, 2, 0, 3, 4, 9, 5, 6, 7, 8}),
+					Entry("should sort by UpdatesDesc",
+						weles.JobSorter{SortBy: weles.JobSortByUpdatedDate, SortOrder: weles.SortOrderDescending},
+						[]int{8, 7, 6, 5, 4, 9, 3, 0, 2, 1}),
+					Entry("should sort by StatusAsc",
+						weles.JobSorter{SortBy: weles.JobSortByJobStatus, SortOrder: weles.SortOrderAscending},
+						[]int{8, 0, 3, 4, 9, 1, 5, 7, 6, 2}),
+					Entry("should sort by StatusDesc",
+						weles.JobSorter{SortBy: weles.JobSortByJobStatus, SortOrder: weles.SortOrderDescending},
+						[]int{2, 6, 7, 5, 1, 4, 9, 3, 0, 8}),
+				)
 			})
 		})
 	})
