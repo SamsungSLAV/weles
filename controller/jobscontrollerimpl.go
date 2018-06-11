@@ -20,6 +20,7 @@
 package controller
 
 import (
+	"fmt"
 	"regexp"
 	"sort"
 	"strings"
@@ -255,7 +256,7 @@ func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorte
 
 	// Filter jobs.
 	for _, job := range js.jobs {
-		if job.passesFilter(f) {
+		if job.passesFilter(f) || job.JobID == paginator.JobID {
 			ret = append(ret, job.JobInfo)
 		}
 	}
@@ -273,9 +274,48 @@ func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorte
 		ps.setByFunction(sorter.SortOrder, byStatusAsc, byStatusDesc)
 	}
 	sort.Sort(ps)
-	// TODO Use paginator.
-	info := weles.ListInfo{TotalRecords: uint64(len(ret)), RemainingRecords: 0}
-	return ret, info, nil
+
+	// Pagination.
+	var index, elems, total, left int
+	if paginator.JobID == weles.JobID(0) {
+		total = len(ret)
+		elems = min(int(paginator.Limit), total)
+		left = total - elems
+	} else {
+		index = -1
+		for i, job := range ret {
+			if job.JobID == paginator.JobID {
+				index = i
+				break
+			}
+		}
+		if index == -1 {
+			return nil, weles.ListInfo{}, weles.ErrInvalidArgument(fmt.Sprintf("JobID: %d not found", paginator.JobID))
+		}
+		if paginator.Forward {
+			index++
+			total = len(ret)
+			elems = min(int(paginator.Limit), total-index)
+			left = total - index - elems
+		} else {
+			total = len(ret)
+			elems = min(int(paginator.Limit), index)
+			left = index - elems
+			index -= elems
+		}
+		if !js.jobs[paginator.JobID].passesFilter(f) {
+			total--
+		}
+	}
+	info := weles.ListInfo{TotalRecords: uint64(total), RemainingRecords: uint64(left)}
+	return ret[index : index+elems], info, nil
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 type filter struct {

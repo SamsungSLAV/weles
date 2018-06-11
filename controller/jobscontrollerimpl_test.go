@@ -604,6 +604,171 @@ var _ = Describe("JobsControllerImpl", func() {
 						[]int{2, 6, 7, 5, 1, 4, 9, 3, 0, 8}),
 				)
 			})
+			Describe("Paginator", func() {
+				jobids := []weles.JobID{}
+				evenjobids := []weles.JobID{}
+				elems = 10
+				for i := 0; i < elems; i++ {
+					j := weles.JobID(i + 100)
+					jobids = append(jobids, j)
+					if i%2 == 0 {
+						evenjobids = append(evenjobids, j)
+					}
+				}
+				evenFilter := weles.JobFilter{JobID: evenjobids}
+				singleFilter := weles.JobFilter{JobID: []weles.JobID{jobids[3]}}
+				emptyFilter := weles.JobFilter{JobID: []weles.JobID{invalidID}}
+
+				BeforeEach(func() {
+					jc.(*JobsControllerImpl).mutex.Lock()
+					defer jc.(*JobsControllerImpl).mutex.Unlock()
+					for i := 0; i < elems; i++ {
+						j := jobids[i]
+						jc.(*JobsControllerImpl).jobs[j] = &Job{
+							JobInfo: weles.JobInfo{
+								JobID: j,
+							},
+						}
+					}
+				})
+				DescribeTable("paginator",
+					func(f weles.JobFilter, p weles.JobPagination, expected []weles.JobID, total int, remaining int) {
+						list, info, err := jc.List(f, weles.JobSorter{}, p)
+						Expect(err).NotTo(HaveOccurred())
+						expectIDsFull(list, info, expected, total, remaining)
+					},
+					Entry("should return no records if page size is empty",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 0},
+						[]weles.JobID{}, 10, 10),
+					Entry("should return slice of records if page is too small",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 3},
+						jobids[:3], 10, 7),
+					Entry("should return all records if page fits exactly",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 10},
+						jobids, 10, 0),
+					Entry("should return all records if page is big",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 100},
+						jobids, 10, 0),
+
+					Entry("when iterating forward should return no records if page size is empty",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 0, JobID: jobids[3], Forward: true},
+						[]weles.JobID{}, 10, 6),
+					Entry("when iterating forward should return slice of records if page is too small",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 3, JobID: jobids[3], Forward: true},
+						jobids[4:7], 10, 3),
+					Entry("when iterating forward should return all records if page fits exactly",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 6, JobID: jobids[3], Forward: true},
+						jobids[4:], 10, 0),
+					Entry("when iterating forward should return all records if page is big",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 100, JobID: jobids[3], Forward: true},
+						jobids[4:], 10, 0),
+
+					Entry("when iterating backwards should return no records if page size is empty",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 0, JobID: jobids[3], Forward: false},
+						[]weles.JobID{}, 10, 3),
+					Entry("when iterating backwards should return slice of records if page is too small",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 1, JobID: jobids[3], Forward: false},
+						jobids[2:3], 10, 2),
+					Entry("when iterating backwards should return all records if page fits exactly",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 3, JobID: jobids[3], Forward: false},
+						jobids[:3], 10, 0),
+					Entry("when iterating backwards should return all records if page is big",
+						weles.JobFilter{},
+						weles.JobPagination{Limit: 100, JobID: jobids[3], Forward: false},
+						jobids[:3], 10, 0),
+
+					Entry("should return no records if page size is empty with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 0},
+						[]weles.JobID{}, 5, 5),
+					Entry("should return slice of records if page is too small with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 3},
+						evenjobids[:3], 5, 2),
+					Entry("should return all records if page fits exactly with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 5},
+						evenjobids, 5, 0),
+					Entry("should return all records if page is big with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 100},
+						evenjobids, 5, 0),
+
+					Entry("when iterating forward should return no records if page size is empty with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 0, JobID: jobids[3], Forward: true},
+						[]weles.JobID{}, 5, 3),
+					Entry("when iterating forward should return slice of records if page is too small with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 2, JobID: jobids[3], Forward: true},
+						[]weles.JobID{jobids[4], jobids[6]}, 5, 1),
+					Entry("when iterating forward should return all records if page fits exactly with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 3, JobID: jobids[3], Forward: true},
+						[]weles.JobID{jobids[4], jobids[6], jobids[8]}, 5, 0),
+					Entry("when iterating forward should return all records if page is big with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 100, JobID: jobids[3], Forward: true},
+						[]weles.JobID{jobids[4], jobids[6], jobids[8]}, 5, 0),
+
+					Entry("when iterating backwards should return no records if page size is empty with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 0, JobID: jobids[3], Forward: false},
+						[]weles.JobID{}, 5, 2),
+					Entry("when iterating backwards should return slice of records if page is too small with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 1, JobID: jobids[3], Forward: false},
+						[]weles.JobID{jobids[2]}, 5, 1),
+					Entry("when iterating backwards should return all records if page fits exactly with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 2, JobID: jobids[3], Forward: false},
+						[]weles.JobID{jobids[0], jobids[2]}, 5, 0),
+					Entry("when iterating backwards should return all records if page is big with filter",
+						evenFilter,
+						weles.JobPagination{Limit: 100, JobID: jobids[3], Forward: false},
+						[]weles.JobID{jobids[0], jobids[2]}, 5, 0),
+
+					Entry("when iterating forward should return no records with single filter",
+						singleFilter,
+						weles.JobPagination{Limit: 100, JobID: jobids[3], Forward: true},
+						[]weles.JobID{}, 1, 0),
+					Entry("when iterating forward should return no records with empty filter",
+						emptyFilter,
+						weles.JobPagination{Limit: 100, JobID: jobids[3], Forward: true},
+						[]weles.JobID{}, 0, 0),
+					Entry("when iterating backwards should return no records with single filter",
+						singleFilter,
+						weles.JobPagination{Limit: 100, JobID: jobids[3], Forward: false},
+						[]weles.JobID{}, 1, 0),
+					Entry("when iterating backwards should return no records with empty filter",
+						emptyFilter,
+						weles.JobPagination{Limit: 100, JobID: jobids[3], Forward: false},
+						[]weles.JobID{}, 0, 0),
+				)
+				It("when iterating forward should return error when JobID does not exist", func() {
+					list, info, err := jc.List(weles.JobFilter{}, weles.JobSorter{}, weles.JobPagination{Limit: 100, JobID: invalidID, Forward: true})
+					Expect(err).To(Equal(weles.ErrInvalidArgument(fmt.Sprintf("JobID: %d not found", invalidID))))
+					Expect(list).To(BeNil())
+					Expect(info).To(BeZero())
+				})
+				It("when iterating backwards should return error when JobID does not exist", func() {
+					list, info, err := jc.List(weles.JobFilter{}, weles.JobSorter{}, weles.JobPagination{Limit: 100, JobID: invalidID, Forward: false})
+					Expect(err).To(Equal(weles.ErrInvalidArgument(fmt.Sprintf("JobID: %d not found", invalidID))))
+					Expect(list).To(BeNil())
+					Expect(info).To(BeZero())
+				})
+			})
 		})
 	})
 })
