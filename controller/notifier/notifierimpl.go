@@ -22,7 +22,7 @@
 package notifier
 
 import (
-	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles"
 )
 
 // Impl implements Notifier interface
@@ -45,7 +45,7 @@ func (h *Impl) Listen() <-chan Notification {
 }
 
 // SendFail notifies Controller about failure.
-func (h *Impl) SendFail(j JobID, msg string) {
+func (h *Impl) SendFail(j weles.JobID, msg string) {
 	h.channel <- Notification{
 		JobID: j,
 		OK:    false,
@@ -54,7 +54,7 @@ func (h *Impl) SendFail(j JobID, msg string) {
 }
 
 // SendOK notifies Controller about success.
-func (h *Impl) SendOK(j JobID) {
+func (h *Impl) SendOK(j weles.JobID) {
 	h.channel <- Notification{
 		JobID: j,
 		OK:    true,

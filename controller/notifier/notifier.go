@@ -20,7 +20,7 @@
 package notifier
 
 import (
-	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles"
 )
 
 // Notifier defines interface providing channel for notifying Controller.
@@ -30,8 +30,8 @@ type Notifier interface {
 	Listen() <-chan Notification
 
 	// SendFail notifies Controller about failure.
-	SendFail(j JobID, msg string)
+	SendFail(j weles.JobID, msg string)
 
 	// SendOK notifies Controller about success.
-	SendOK(j JobID)
+	SendOK(j weles.JobID)
 }
