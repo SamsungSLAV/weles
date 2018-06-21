@@ -87,30 +87,6 @@ func (mr *MockSessionProviderMockRecorder) PowerTick() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PowerTick", reflect.TypeOf((*MockSessionProvider)(nil).PowerTick))
 }
 
-// ReceiveFile mocks base method
-func (m *MockSessionProvider) ReceiveFile(arg0, arg1 string) error {
-	ret := m.ctrl.Call(m, "ReceiveFile", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ReceiveFile indicates an expected call of ReceiveFile
-func (mr *MockSessionProviderMockRecorder) ReceiveFile(arg0, arg1 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReceiveFile", reflect.TypeOf((*MockSessionProvider)(nil).ReceiveFile), arg0, arg1)
-}
-
-// SendFile mocks base method
-func (m *MockSessionProvider) SendFile(arg0, arg1 string) error {
-	ret := m.ctrl.Call(m, "SendFile", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SendFile indicates an expected call of SendFile
-func (mr *MockSessionProviderMockRecorder) SendFile(arg0, arg1 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendFile", reflect.TypeOf((*MockSessionProvider)(nil).SendFile), arg0, arg1)
-}
-
 // TS mocks base method
 func (m *MockSessionProvider) TS() error {
 	ret := m.ctrl.Call(m, "TS")

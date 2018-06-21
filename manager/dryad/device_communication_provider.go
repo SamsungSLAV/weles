@@ -17,8 +17,7 @@
 package dryad
 
 import (
-	"path/filepath"
-	"strings"
+	"fmt"
 )
 
 // prefixPath is a parent directory DUT scripts.
@@ -48,22 +47,10 @@ func (d *deviceCommunicationProvider) Login(credentials Credentials) error {
 // CopyFilesTo function is a part of DeviceCommunicationProvider interface.
 // It uses tmpfs of MuxPi so caller must take into consideration size of all files that are to be copied.
 func (d *deviceCommunicationProvider) CopyFilesTo(src []string, dest string) error {
-	if !strings.HasSuffix(dest, "/") {
-		dest += "/"
-	}
-
 	for _, path := range src {
-		fileName := filepath.Base(path)
-		tmpDst := "/tmp/weles_cft_" + fileName
-
-		err := d.sessionProvider.SendFile(path, tmpDst)
+		_, _, err := d.sessionProvider.Exec(prefixPath+"dut_copyto.sh", path, dest)
 		if err != nil {
-			return err
-		}
-
-		_, _, err = d.sessionProvider.Exec(prefixPath+"dut_copyto.sh", tmpDst, dest+fileName)
-		if err != nil {
-			return err
+			return fmt.Errorf("failed to copy %s to %s: %v", path, dest, err)
 		}
 	}
 	return nil
@@ -73,17 +60,9 @@ func (d *deviceCommunicationProvider) CopyFilesTo(src []string, dest string) err
 // It uses tmpfs of MuxPi so caller must take into consideration size of all files that are to be copied.
 func (d *deviceCommunicationProvider) CopyFilesFrom(src []string, dest string) error {
 	for _, path := range src {
-		fileName := filepath.Base(path)
-		tmpDst := "/tmp/weles_cff_" + fileName
-
-		_, _, err := d.sessionProvider.Exec(prefixPath+"dut_copyfrom.sh", path, tmpDst)
+		_, _, err := d.sessionProvider.Exec(prefixPath+"dut_copyfrom.sh", path, dest)
 		if err != nil {
-			return err
-		}
-
-		err = d.sessionProvider.ReceiveFile(tmpDst, dest+fileName)
-		if err != nil {
-			return err
+			return fmt.Errorf("failed to copy %s to %s: %v", path, dest, err)
 		}
 	}
 	return nil

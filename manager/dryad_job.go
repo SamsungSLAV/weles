@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,7 +55,8 @@ func newDryadJobWithCancel(job JobID, changes chan<- DryadJobStatusChange,
 // newDryadJob creates an instance of dryadJob and starts a goroutine
 // executing phases of given job implemented by provider of DryadJobRunner interface.
 func newDryadJob(job JobID, rusalka Dryad, changes chan<- DryadJobStatusChange) *dryadJob {
-	session := dryad.NewSessionProvider(rusalka)
+	// FIXME: It should use the proper path to the artifactory.
+	session := dryad.NewSessionProvider(rusalka, "")
 	device := dryad.NewDeviceCommunicationProvider(session)
 
 	ctx, cancel := context.WithCancel(context.Background())

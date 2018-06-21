@@ -18,10 +18,8 @@ package dryad
 
 import (
 	"bytes"
+	"context"
 	"fmt"
-	"io"
-	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -46,6 +44,7 @@ type sessionProvider struct {
 	SessionProvider
 	dryad      Dryad
 	connection *sshClient
+	sshfs      *reverseSSHFS
 }
 
 func prepareSSHConfig(userName string, key rsa.PrivateKey) *ssh.ClientConfig {
@@ -63,7 +62,14 @@ func prepareSSHConfig(userName string, key rsa.PrivateKey) *ssh.ClientConfig {
 
 func (d *sessionProvider) connect() (err error) {
 	d.connection.client, err = ssh.Dial("tcp", d.dryad.Addr.String(), d.connection.config)
-	return
+	if err != nil {
+		return err
+	}
+	session, err := d.connection.client.NewSession()
+	if err != nil {
+		return err
+	}
+	return d.sshfs.open(session)
 }
 
 func (d *sessionProvider) newSession() (*ssh.Session, error) {
@@ -98,7 +104,7 @@ func (d *sessionProvider) executeRemoteCommand(cmd string) ([]byte, []byte, erro
 }
 
 // NewSessionProvider returns new instance of SessionProvider.
-func NewSessionProvider(dryad Dryad) SessionProvider {
+func NewSessionProvider(dryad Dryad, workdir string) SessionProvider {
 	cfg := prepareSSHConfig(dryad.Username, dryad.Key)
 
 	return &sessionProvider{
@@ -106,12 +112,24 @@ func NewSessionProvider(dryad Dryad) SessionProvider {
 		connection: &sshClient{
 			config: cfg,
 		},
+		sshfs: newReverseSSHFS(context.Background(), workdir, workdir),
 	}
 }
 
 // Exec is a part of SessionProvider interface.
 // cmd parameter is used as is. Quotations should be added by the user as needed.
 func (d *sessionProvider) Exec(cmd ...string) ([]byte, []byte, error) {
+	session, err := d.newSession()
+	if err != nil {
+		return nil, nil, err
+	}
+	defer session.Close()
+
+	err = d.sshfs.check(session)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	return d.executeRemoteCommand(strings.Join(cmd, " "))
 }
 
@@ -151,104 +169,9 @@ func (d *sessionProvider) Close() error {
 		return nil
 	}
 
+	d.sshfs.close()
+	//TODO: log error.
 	err := d.connection.client.Close()
 	d.connection.client = nil
 	return err
-}
-
-// SendFile is a part of SessionProvider interface.
-func (d *sessionProvider) SendFile(src, dst string) error {
-	f, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	s, err := f.Stat()
-	if err != nil {
-		return err
-	}
-
-	session, err := d.newSession()
-	if err != nil {
-		return err
-	}
-	defer session.Close()
-
-	filename := filepath.Base(dst)
-	directory := filepath.Dir(dst)
-
-	w, err := session.StdinPipe()
-	if err != nil {
-		return err
-	}
-	defer w.Close()
-
-	var stdout, stderr bytes.Buffer
-	session.Stdout = &stdout
-	session.Stderr = &stderr
-
-	// Trigger SCP sink mode
-	err = session.Start("scp -t " + directory)
-	if err != nil {
-		return err
-	}
-
-	_, err = fmt.Fprintln(w, "C0755", s.Size(), filename)
-	if err != nil {
-		return err
-	}
-
-	_, err = io.Copy(w, f)
-	if err != nil {
-		return err
-	}
-
-	_, err = fmt.Fprintln(w, "\x00")
-	if err != nil {
-		return err
-	}
-
-	err = session.Wait()
-
-	// FIXME: unexpected <newline> is reported by scp every time the transfer is finished properly. Needs to be solved.
-	// Bellow we have a very lousy trick. I hope it will be fixed in the future.
-	// I don't know what is the reason or how to fix it. Has to wait a little bit. Or maybe someone else will find the solution.
-	// First candidate sshfs -o slave
-	if strings.Contains(stdout.String(), "unexpected <newline>") {
-		return nil
-	}
-	return err
-}
-
-// ReceiveFile is a part of SessionProvider interface.
-func (d *sessionProvider) ReceiveFile(src, dst string) error {
-	session, err := d.newSession()
-	if err != nil {
-		return err
-	}
-	defer session.Close()
-
-	r, err := session.StdoutPipe()
-	if err != nil {
-		return err
-	}
-
-	file, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	err = session.Start("scp " + src + " /dev/stdout")
-	if err != nil {
-		return err
-	}
-
-	_, err = io.Copy(file, r)
-	if err != nil {
-		return err
-	}
-
-	return session.Wait()
 }

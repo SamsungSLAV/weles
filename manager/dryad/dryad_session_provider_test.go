@@ -17,6 +17,8 @@
 package dryad
 
 import (
+	"io/ioutil"
+	"os"
 	"strings"
 
 	. "github.com/onsi/ginkgo"
@@ -37,17 +39,27 @@ And the gasses it makes!`
 )
 
 var _ = Describe("SessionProvider", func() {
-	var sp SessionProvider
+	var (
+		sp      SessionProvider
+		testDir string
+	)
 
 	BeforeEach(func() {
 		if !accessInfoGiven {
 			Skip("No valid access info to Dryad")
 		}
-		sp = NewSessionProvider(dryadInfo)
+		var err error
+		testDir, err = ioutil.TempDir("", "test")
+		Expect(err).ToNot(HaveOccurred())
+
+		sp = NewSessionProvider(dryadInfo, testDir)
 	})
 
 	AfterEach(func() {
 		sp.Close()
+
+		err := os.RemoveAll(testDir)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("should write poem to a file and read from it", func() {
@@ -63,6 +75,20 @@ var _ = Describe("SessionProvider", func() {
 
 		_, _, err = sp.Exec("rm", flyingCowsPath)
 		Expect(err).ToNot(HaveOccurred())
+	})
+
+	It("should read local file from remote", func() {
+		content := []byte("test file contents")
+		tmpfile, err := ioutil.TempFile(testDir, "testfile")
+		Expect(err).ToNot(HaveOccurred())
+		_, err = tmpfile.Write(content)
+		Expect(err).ToNot(HaveOccurred())
+		tmpfile.Close()
+
+		stdout, stderr, err := sp.Exec("cat", tmpfile.Name())
+		Expect(err).ToNot(HaveOccurred())
+		Expect(stdout).To(Equal(content))
+		Expect(stderr).To(BeEmpty())
 	})
 
 	It("should not read poem from nonexistent file", func() {
@@ -82,25 +108,5 @@ var _ = Describe("SessionProvider", func() {
 
 	It("should switch to TS", func() {
 		Expect(sp.TS()).ToNot(HaveOccurred())
-	})
-
-	It("should transfer file to Dryad", func() {
-		err := sp.SendFile(keyFile, "/tmp/"+keyFile)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
-	It("should not transfer file to Dryad - insufficient permissions", func() {
-		err := sp.SendFile(keyFile, "/root/"+keyFile)
-		Expect(err).To(HaveOccurred())
-	})
-
-	It("should transfer file from Dryad", func() {
-		err := sp.ReceiveFile("/tmp/"+keyFile, "/tmp/dl-"+keyFile)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
-	It("should not transfer nonexistent file from Dryad", func() {
-		err := sp.ReceiveFile("/tmp/"+keyFile+"noway", "/tmp/dl-"+keyFile)
-		Expect(err).To(HaveOccurred())
 	})
 })

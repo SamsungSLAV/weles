@@ -59,5 +59,32 @@ var _ = Describe("DeviceCommunicationProvider", func() {
 		Expect(stderr).To(BeEmpty())
 	})
 
+	It("should transfer files to and from DUT", func() {
+		file1 := "a"
+		file2 := "b"
+		file3 := "c"
+		files := []string{file1, file2, file3}
+		target := "/tmp/dl"
+		gomock.InOrder(
+			mockSession.EXPECT().Exec("/usr/local/bin/dut_copyto.sh", file1, target),
+			mockSession.EXPECT().Exec("/usr/local/bin/dut_copyto.sh", file2, target),
+			mockSession.EXPECT().Exec("/usr/local/bin/dut_copyto.sh", file3, target),
+		)
+
+		By("Sending files to DUT")
+		err := dcp.CopyFilesTo(files, target)
+		Expect(err).ToNot(HaveOccurred())
+
+		gomock.InOrder(
+			mockSession.EXPECT().Exec("/usr/local/bin/dut_copyfrom.sh", file1, target),
+			mockSession.EXPECT().Exec("/usr/local/bin/dut_copyfrom.sh", file2, target),
+			mockSession.EXPECT().Exec("/usr/local/bin/dut_copyfrom.sh", file3, target),
+		)
+
+		By("Receiving files from DUT")
+		err = dcp.CopyFilesFrom(files, target)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	//TODO: Test error paths.
 })
