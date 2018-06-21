@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,17 +42,6 @@ var (
 	port         int
 	userName     string
 	keyFile      string
-
-	flyingCows = `Cows called Daisy
-Are often lazy.
-But cows called Brian
-They be flyin'
-Up in the air
-And out into space
-Because of the grass
-And the gasses it makes!`
-
-	flyingCowsPath = "/tmp/flyingCow.txt"
 
 	dryadInfo       Dryad
 	accessInfoGiven bool

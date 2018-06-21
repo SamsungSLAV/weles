@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ package dryad
 import (
 	"path/filepath"
 	"strings"
-	"time"
 )
+
+// prefixPath is a parent directory DUT scripts.
+const prefixPath = "/usr/local/bin/"
 
 // deviceCommunicationProvider implements DeviceCommunicationProvider interface.
 type deviceCommunicationProvider struct {
@@ -39,7 +41,7 @@ func NewDeviceCommunicationProvider(session SessionProvider) DeviceCommunication
 // Login is a part of DeviceCommunicationProvider interface.
 func (d *deviceCommunicationProvider) Login(credentials Credentials) error {
 	d.credentials = credentials
-	_, _, err := d.sessionProvider.Exec([]string{"dut_login.sh", d.credentials.Username, d.credentials.Password})
+	_, _, err := d.sessionProvider.Exec(prefixPath+"dut_login.sh", d.credentials.Username, d.credentials.Password)
 	return err
 }
 
@@ -59,7 +61,7 @@ func (d *deviceCommunicationProvider) CopyFilesTo(src []string, dest string) err
 			return err
 		}
 
-		_, _, err = d.sessionProvider.Exec([]string{"dut_copyto.sh", tmpDst, dest + fileName})
+		_, _, err = d.sessionProvider.Exec(prefixPath+"dut_copyto.sh", tmpDst, dest+fileName)
 		if err != nil {
 			return err
 		}
@@ -74,7 +76,7 @@ func (d *deviceCommunicationProvider) CopyFilesFrom(src []string, dest string) e
 		fileName := filepath.Base(path)
 		tmpDst := "/tmp/weles_cff_" + fileName
 
-		_, _, err := d.sessionProvider.Exec([]string{"dut_copyfrom.sh", path, tmpDst})
+		_, _, err := d.sessionProvider.Exec(prefixPath+"dut_copyfrom.sh", path, tmpDst)
 		if err != nil {
 			return err
 		}
@@ -88,8 +90,8 @@ func (d *deviceCommunicationProvider) CopyFilesFrom(src []string, dest string) e
 }
 
 // Exec function is a part of DeviceCommunicationProvider interface.
-func (d *deviceCommunicationProvider) Exec(cmd []string, timeout time.Duration) (stdout, stderr []byte, err error) {
-	return d.sessionProvider.Exec(append([]string{"dut_exec.sh"}, cmd...))
+func (d *deviceCommunicationProvider) Exec(cmd ...string) (stdout, stderr []byte, err error) {
+	return d.sessionProvider.Exec(append([]string{prefixPath + "dut_exec.sh"}, cmd...)...)
 }
 
 // Close function is a part of DeviceCommunicationProvider interface.

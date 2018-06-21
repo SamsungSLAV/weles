@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import (
 )
 
 const (
-	stmCommand = "/usr/local/stm"
+	stmCommand = "/usr/local/bin/stm"
 )
 
 type sshClient struct {
@@ -110,18 +110,9 @@ func NewSessionProvider(dryad Dryad) SessionProvider {
 }
 
 // Exec is a part of SessionProvider interface.
-// FIXME: Exec function checks every argument and if contains space (except surrounding ones) surrounds the argument
-// with double quotes. Caller must be aware of such functionality because it may break some special arguments.
-func (d *sessionProvider) Exec(cmd []string) (stdout, stderr []byte, err error) {
-	joinedCommand := cmd[0] + " "
-	for i := 1; i < len(cmd); i++ {
-		if strings.Contains(strings.Trim(cmd[i], " "), " ") {
-			joinedCommand += `"` + cmd[i] + `" `
-		} else {
-			joinedCommand += cmd[i] + " "
-		}
-	}
-	return d.executeRemoteCommand(joinedCommand)
+// cmd parameter is used as is. Quotations should be added by the user as needed.
+func (d *sessionProvider) Exec(cmd ...string) ([]byte, []byte, error) {
+	return d.executeRemoteCommand(strings.Join(cmd, " "))
 }
 
 // DUT is a part of SessionProvider interface.
@@ -129,7 +120,7 @@ func (d *sessionProvider) Exec(cmd []string) (stdout, stderr []byte, err error) 
 func (d *sessionProvider) DUT() error {
 	_, stderr, err := d.executeRemoteCommand(stmCommand + " -dut")
 	if err != nil {
-		return fmt.Errorf("DUT command failed: %s : %s", err, stderr)
+		return fmt.Errorf("DUT command failed: %s: %s", err, stderr)
 	}
 	return nil
 }
@@ -139,7 +130,7 @@ func (d *sessionProvider) DUT() error {
 func (d *sessionProvider) TS() error {
 	_, stderr, err := d.executeRemoteCommand(stmCommand + " -ts")
 	if err != nil {
-		return fmt.Errorf("TS command failed: %s : %s", err, stderr)
+		return fmt.Errorf("TS command failed: %s: %s", err, stderr)
 	}
 	return nil
 }
@@ -149,7 +140,7 @@ func (d *sessionProvider) TS() error {
 func (d *sessionProvider) PowerTick() error {
 	_, stderr, err := d.executeRemoteCommand(stmCommand + " -tick")
 	if err != nil {
-		return fmt.Errorf("PowerTick command failed: %s : %s", err, stderr)
+		return fmt.Errorf("PowerTick command failed: %s: %s", err, stderr)
 	}
 	return nil
 }

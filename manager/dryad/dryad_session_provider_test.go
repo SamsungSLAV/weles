@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,19 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+const (
+	flyingCows = `Cows called Daisy
+Are often lazy.
+But cows called Brian
+They be flyin'
+Up in the air
+And out into space
+Because of the grass
+And the gasses it makes!`
+
+	flyingCowsPath = "flyingCow.txt"
+)
+
 var _ = Describe("SessionProvider", func() {
 	var sp SessionProvider
 
@@ -37,22 +50,23 @@ var _ = Describe("SessionProvider", func() {
 		sp.Close()
 	})
 
-	It("should write poem to a file", func() {
-		stdout, stderr, err := sp.Exec([]string{"echo", flyingCows, " > ", flyingCowsPath})
+	It("should write poem to a file and read from it", func() {
+		stdout, stderr, err := sp.Exec("echo", "\""+flyingCows+"\"", " > ", flyingCowsPath)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(stdout).To(BeEmpty())
 		Expect(stderr).To(BeEmpty())
-	})
 
-	It("should read poem from a file", func() {
-		stdout, stderr, err := sp.Exec([]string{"cat", flyingCowsPath})
+		stdout, stderr, err = sp.Exec("cat", flyingCowsPath)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(strings.TrimRight(string(stdout), "\n")).To(BeIdenticalTo(flyingCows))
 		Expect(stderr).To(BeEmpty())
+
+		_, _, err = sp.Exec("rm", flyingCowsPath)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("should not read poem from nonexistent file", func() {
-		stdout, stderr, err := sp.Exec([]string{"cat", "/Ihopethispathdoesnotexist/" + flyingCowsPath + ".txt"})
+		stdout, stderr, err := sp.Exec("cat", "/Ihopethispathdoesnotexist/"+flyingCowsPath+".txt")
 		Expect(err).To(HaveOccurred())
 		Expect(stdout).To(BeEmpty())
 		Expect(stderr).ToNot(BeEmpty())

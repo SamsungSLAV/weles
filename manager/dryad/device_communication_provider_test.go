@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,117 +16,48 @@
 
 package dryad
 
+//go:generate mockgen --package=dryad --destination=mock_session_provider_test.go git.tizen.org/tools/weles/manager/dryad SessionProvider
+
 import (
-	"io/ioutil"
-	"strconv"
-	"time"
-
-	"os"
-	"path/filepath"
-
+	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("DeviceCommunicationProvider", func() {
-	var dcp DeviceCommunicationProvider
-	timeout := time.Second * 30
-	onelineCows := `Cows called Daisy Are often lazy. But cows called Brian They be flyin Up in the air And out into space Because of the grass And the gasses it makes!`
-
-	var testFiles []string
-	for i := 1; i < 6; i++ {
-		buff := make([]byte, i*1024*1024)
-		fileName := "/tmp/weles_test_file_" + strconv.FormatUint(uint64(i), 10) + ".bin"
-		ioutil.WriteFile(fileName, buff, 0644)
-		testFiles = append(testFiles, fileName)
-	}
+	var (
+		ctrl        *gomock.Controller
+		mockSession *MockSessionProvider
+		dcp         DeviceCommunicationProvider
+	)
 
 	BeforeEach(func() {
-		if !accessInfoGiven {
-			Skip("No valid access info to Dryad")
-		}
-		sp := NewSessionProvider(dryadInfo)
-		dcp = NewDeviceCommunicationProvider(sp)
-		sp.DUT()
-		time.Sleep(2 * time.Second)
-		for t := 0; t < 3; t++ { // Try to boot DUT 3 times. For some reason Odroid U3 won't boot every time.
-			sp.PowerTick()
-			for i := 0; i < 10; i++ {
-				time.Sleep(10 * time.Second)
-				if dcp.Login(Credentials{"", ""}) == nil {
-					return
-				}
-			}
-		}
-
-		Skip("Target device (DUT) not available.")
+		ctrl = gomock.NewController(GinkgoT())
+		mockSession = NewMockSessionProvider(ctrl)
+		dcp = NewDeviceCommunicationProvider(mockSession)
 	})
 
 	AfterEach(func() {
-		dcp.Close()
+		ctrl.Finish()
 	})
 
-	It("should 'login' to DUT", func() {
-		err := dcp.Login(Credentials{"", ""})
+	It("should call dut_login", func() {
+		user := "username"
+		pass := "password"
+		mockSession.EXPECT().Exec("/usr/local/bin/dut_login.sh", user, pass)
+
+		err := dcp.Login(Credentials{user, pass})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("should list / dir", func() {
-		stdout, stderr, err := dcp.Exec([]string{"ls", "-al", "/"}, timeout)
+	It("should list call dut_exec", func() {
+		mockSession.EXPECT().Exec("/usr/local/bin/dut_exec.sh", "ls", "-al", "/").Return([]byte("not-empty"), nil, nil)
+
+		stdout, stderr, err := dcp.Exec("ls", "-al", "/")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(stdout).ToNot(BeEmpty())
 		Expect(stderr).To(BeEmpty())
 	})
 
-	It("should write and read poem from a file", func() {
-		By("Writing poem to a file")
-		stdout, stderr, err := dcp.Exec([]string{"echo", onelineCows, " \">\" ", flyingCowsPath}, timeout)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(stdout).To(BeEmpty())
-		Expect(stderr).To(BeEmpty())
-
-		By("Reading poem from a file")
-		stdout, stderr, err = dcp.Exec([]string{"cat", flyingCowsPath}, timeout)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(string(stdout[:len(stdout)-2])).To(BeIdenticalTo(onelineCows))
-		Expect(stderr).To(BeEmpty())
-	})
-
-	It("should not read poem from nonexistent file", func() {
-		stdout, stderr, err := dcp.Exec([]string{"cat", flyingCowsPath + ".txt"}, timeout)
-		Expect(err).ToNot(HaveOccurred())                   // When sdb is used no error is returned.
-		Expect(stdout).To(ContainSubstring("No such file")) // And stderr are redirected to stdout.
-		Expect(stderr).To(BeEmpty())
-	})
-
-	It("should transfer files to and from DUT", func() {
-		os.Mkdir("/tmp/dl", 0755)
-
-		By("Sending files to DUT")
-		err := dcp.CopyFilesTo(testFiles, "/tmp/")
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Receiving files from DUT")
-		err = dcp.CopyFilesFrom(testFiles, "/tmp/dl/")
-		Expect(err).ToNot(HaveOccurred())
-		for _, path := range testFiles {
-			fl, _ := os.Open(path)
-			ls, _ := fl.Stat()
-			fr, _ := os.Open("/tmp/dl/" + filepath.Base(path))
-			rs, _ := fr.Stat()
-			Expect(ls.Size()).To(BeIdenticalTo(rs.Size()))
-			fl.Close()
-			fr.Close()
-		}
-	})
-
-	It("should not transfer files to Dryad's nonexistent directory", func() {
-		err := dcp.CopyFilesTo(testFiles, "/nonexistent_dir/")
-		Expect(err).To(HaveOccurred())
-	})
-
-	It("should not transfer nonexistent file from Dryad's", func() {
-		err := dcp.CopyFilesFrom([]string{"/nonexistent_dir/nonexistent_file"}, "/tmp/dl/")
-		Expect(err).To(HaveOccurred())
-	})
+	//TODO: Test error paths.
 })
