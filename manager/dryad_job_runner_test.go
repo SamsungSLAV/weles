@@ -62,8 +62,7 @@ var _ = Describe("DryadJobRunner", func() {
 
 		By("Boot")
 		gomock.InOrder(
-			mockSession.EXPECT().DUT(),
-			mockSession.EXPECT().PowerTick(),
+			mockDevice.EXPECT().Boot(),
 			mockDevice.EXPECT().Login(dryad.Credentials{basicConfig.Action.Boot.Login, basicConfig.Action.Boot.Password}),
 		)
 

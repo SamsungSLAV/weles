@@ -80,12 +80,8 @@ func (d *dryadJobRunner) Deploy() (err error) {
 
 // Boot is part of DryadJobRunner interface.
 func (d *dryadJobRunner) Boot() (err error) {
-	// Attempt to start a device boot.
-	err = d.rusalka.DUT()
-	if err != nil {
-		return
-	}
-	err = d.rusalka.PowerTick()
+	// Start DUT.
+	err = d.device.Boot()
 	if err != nil {
 		return
 	}

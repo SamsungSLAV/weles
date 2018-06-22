@@ -41,6 +41,13 @@ var _ = Describe("DeviceCommunicationProvider", func() {
 		ctrl.Finish()
 	})
 
+	It("should call dut_boot", func() {
+		mockSession.EXPECT().Exec("/usr/local/bin/dut_boot.sh")
+
+		err := dcp.Boot()
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	It("should call dut_login", func() {
 		user := "username"
 		pass := "password"
