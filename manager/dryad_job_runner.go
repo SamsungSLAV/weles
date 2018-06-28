@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,6 +57,6 @@ func (d *dryadJobRunner) Boot() error {
 // Test is part of DryadJobRunner interface.
 func (d *dryadJobRunner) Test() error {
 	// TODO(amistewicz): implement.
-	_, _, err := d.rusalka.Exec([]string{"echo", "healthcheck"})
+	_, _, err := d.rusalka.Exec("echo", "healthcheck")
 	return err
 }

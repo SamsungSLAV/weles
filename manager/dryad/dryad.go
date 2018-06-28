@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 // Package dryad provides Dryad Manager.
 package dryad
 
-import "time"
-
 // SessionProvider is used to execute steps
 // from job definition that require communication with Dryad.
 //
@@ -26,7 +24,7 @@ import "time"
 type SessionProvider interface {
 	// Exec runs a cmd on Dryad.
 	// Execution time is limited by default timeout of the session.
-	Exec(cmd []string) (stdout, stderr []byte, err error)
+	Exec(cmd ...string) (stdout, stderr []byte, err error)
 
 	// DUT switches connections of SDcard and power supply to Device Under Test (DUT).
 	//
@@ -85,7 +83,7 @@ type DeviceCommunicationProvider interface {
 	// command may be terminated if the stdout and stderr is too large, err will be set.
 	//
 	// Large outputs should be redirected to files.
-	Exec(cmd []string, timeout time.Duration) (stdout, stderr []byte, err error)
+	Exec(cmd ...string) (stdout, stderr []byte, err error)
 
 	// Close terminates session to Device.
 	Close() error
