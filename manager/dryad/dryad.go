@@ -54,6 +54,11 @@ type Credentials struct {
 // DeviceCommunicationProvider is used to execute steps
 // from job definition that require communication with DUT.
 type DeviceCommunicationProvider interface {
+	// Boot starts DUT and prepares communication so that Login could work.
+	//
+	// It can be called more than once to reset DUT's state.
+	Boot() error
+
 	// Login changes user which is used by remaining methods of this interface.
 	//
 	// In case of serial it is simple login to terminal.

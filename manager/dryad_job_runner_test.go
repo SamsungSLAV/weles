@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ package manager
 
 import (
 	"context"
-	"errors"
+
+	"git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles/manager/dryad"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -39,70 +41,42 @@ var _ = Describe("DryadJobRunner", func() {
 		ctrl = gomock.NewController(GinkgoT())
 		mockSession = NewMockSessionProvider(ctrl)
 		mockDevice = NewMockDeviceCommunicationProvider(ctrl)
-		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice)
+		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, weles.Config{})
 	})
 
 	AfterEach(func() {
 		ctrl.Finish()
 	})
 
-	Describe("Deploy", func() {
-		var tsCall *gomock.Call
+	It("should execute the basic weles job definition", func() {
+		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, basicConfig)
+		By("Deploy")
+		gomock.InOrder(
+			mockSession.EXPECT().TS(),
+			mockSession.EXPECT().Exec("echo", "'{\"image name_1\":\"1\",\"image_name 2\":\"2\"}'", ">", fotaFilePath),
+			mockSession.EXPECT().Exec(newFotaCmd(fotaSDCardPath, fotaFilePath,
+				[]string{basicConfig.Action.Deploy.Images[0].Path, basicConfig.Action.Deploy.Images[1].Path}).GetCmd()),
+		)
 
-		BeforeEach(func() {
-			tsCall = mockSession.EXPECT().TS().Times(1)
-		})
+		Expect(djr.Deploy()).To(Succeed())
 
-		It("should switch to TS", func() {
-			err := djr.Deploy()
-			Expect(err).ToNot(HaveOccurred())
-		})
+		By("Boot")
+		gomock.InOrder(
+			mockDevice.EXPECT().Boot(),
+			mockDevice.EXPECT().Login(dryad.Credentials{basicConfig.Action.Boot.Login, basicConfig.Action.Boot.Password}),
+		)
 
-		It("should fail if TS fails", func() {
-			tsCall.Return(errors.New("TS failed"))
+		Expect(djr.Boot()).To(Succeed())
 
-			err := djr.Deploy()
-			Expect(err).To(HaveOccurred())
-		})
-	})
+		By("Test")
+		gomock.InOrder(
+			mockDevice.EXPECT().CopyFilesTo([]string{basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Path},
+				basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Dest),
+			mockDevice.EXPECT().Exec("command to be run"),
+			mockDevice.EXPECT().CopyFilesFrom([]string{basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Src},
+				basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Path),
+		)
 
-	Describe("Boot", func() {
-		var dutCall *gomock.Call
-
-		BeforeEach(func() {
-			dutCall = mockSession.EXPECT().DUT().Times(1)
-		})
-
-		It("should switch to DUT", func() {
-			err := djr.Boot()
-			Expect(err).ToNot(HaveOccurred())
-		})
-
-		It("should fail if DUT fails", func() {
-			dutCall.Return(errors.New("DUT failed"))
-
-			err := djr.Boot()
-			Expect(err).To(HaveOccurred())
-		})
-	})
-
-	Describe("Test", func() {
-		var execCall *gomock.Call
-
-		BeforeEach(func() {
-			execCall = mockSession.EXPECT().Exec([]string{"echo", "healthcheck"})
-		})
-
-		It("should exec echo healthcheck", func() {
-			err := djr.Test()
-			Expect(err).ToNot(HaveOccurred())
-		})
-
-		It("should fail if Exec fails", func() {
-			execCall.Return(nil, nil, errors.New("exec failed"))
-
-			err := djr.Test()
-			Expect(err).To(HaveOccurred())
-		})
+		Expect(djr.Test()).To(Succeed())
 	})
 })

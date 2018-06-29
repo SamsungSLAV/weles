@@ -39,6 +39,7 @@ var _ = Describe("DryaderImpl", func() {
 	j := weles.JobID(0xCAFE)
 	dryad := weles.Dryad{Addr: &net.IPNet{IP: net.IPv4(1, 2, 3, 4), Mask: net.IPv4Mask(5, 6, 7, 8)}}
 	err := errors.New("test error")
+	conf := weles.Config{JobName: "test123"}
 
 	expectRegistered := func(offset int) {
 		h.(*DryaderImpl).mutex.Lock()
@@ -93,14 +94,16 @@ var _ = Describe("DryaderImpl", func() {
 	Describe("StartJob", func() {
 		It("should register job successfully", func() {
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
-			djm.EXPECT().Create(j, dryad, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener))
+			jc.EXPECT().GetConfig(j).Return(conf, nil)
+			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener))
 
 			h.StartJob(j)
 			expectRegistered(1)
 		})
 		It("should fail if DryadJobManager.Create fails", func() {
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
-			djm.EXPECT().Create(j, dryad, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener)).Return(err)
+			jc.EXPECT().GetConfig(j).Return(conf, nil)
+			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener)).Return(err)
 
 			h.StartJob(j)
 
@@ -132,7 +135,8 @@ var _ = Describe("DryaderImpl", func() {
 		}
 		BeforeEach(func() {
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
-			djm.EXPECT().Create(j, dryad, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener))
+			jc.EXPECT().GetConfig(j).Return(conf, nil)
+			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener))
 
 			h.StartJob(j)
 

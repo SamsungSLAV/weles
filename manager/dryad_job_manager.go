@@ -40,7 +40,7 @@ func NewDryadJobManager() DryadJobManager {
 }
 
 // Create is part of DryadJobManager interface.
-func (d *DryadJobs) Create(job JobID, rusalka Dryad, changes chan<- DryadJobStatusChange) error {
+func (d *DryadJobs) Create(job JobID, rusalka Dryad, conf Config, changes chan<- DryadJobStatusChange) error {
 	_, ok := d.jobs[job]
 	if ok {
 		return ErrDuplicated
@@ -48,7 +48,7 @@ func (d *DryadJobs) Create(job JobID, rusalka Dryad, changes chan<- DryadJobStat
 	d.jobsMutex.Lock()
 	defer d.jobsMutex.Unlock()
 	// FIXME(amistewicz): dryadJobs should not be stored indefinitely.
-	d.jobs[job] = newDryadJob(job, rusalka, changes)
+	d.jobs[job] = newDryadJob(job, rusalka, conf, changes)
 	return nil
 }
 

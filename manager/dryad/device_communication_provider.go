@@ -37,6 +37,12 @@ func NewDeviceCommunicationProvider(session SessionProvider) DeviceCommunication
 	}
 }
 
+// Boot function is a part of DeviceCommunicationProvider interface.
+func (d *deviceCommunicationProvider) Boot() (err error) {
+	_, _, err = d.sessionProvider.Exec(prefixPath + "dut_boot.sh")
+	return
+}
+
 // Login is a part of DeviceCommunicationProvider interface.
 func (d *deviceCommunicationProvider) Login(credentials Credentials) error {
 	d.credentials = credentials

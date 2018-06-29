@@ -122,6 +122,18 @@ func (m *MockDeviceCommunicationProvider) EXPECT() *MockDeviceCommunicationProvi
 	return m.recorder
 }
 
+// Boot mocks base method
+func (m *MockDeviceCommunicationProvider) Boot() error {
+	ret := m.ctrl.Call(m, "Boot")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Boot indicates an expected call of Boot
+func (mr *MockDeviceCommunicationProviderMockRecorder) Boot() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Boot", reflect.TypeOf((*MockDeviceCommunicationProvider)(nil).Boot))
+}
+
 // Close mocks base method
 func (m *MockDeviceCommunicationProvider) Close() error {
 	ret := m.ctrl.Call(m, "Close")
