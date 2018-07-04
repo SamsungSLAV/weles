@@ -21,7 +21,7 @@ import (
 	"database/sql"
 	"strings"
 
-	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles"
 
 	"github.com/go-gorp/gorp"
 	// sqlite3 is imported for side-effects and will be used
@@ -31,7 +31,7 @@ import (
 
 type artifactInfoRecord struct {
 	ID int64 `db:",primarykey, autoincrement"`
-	ArtifactInfo
+	weles.ArtifactInfo
 }
 
 // ArtifactDB is responsible for database connection and queries.
@@ -66,7 +66,7 @@ func (aDB *ArtifactDB) Close() error {
 }
 
 // InsertArtifactInfo inserts information about artifact to database.
-func (aDB *ArtifactDB) InsertArtifactInfo(ai *ArtifactInfo) error {
+func (aDB *ArtifactDB) InsertArtifactInfo(ai *weles.ArtifactInfo) error {
 	ar := artifactInfoRecord{
 		ArtifactInfo: *ai,
 	}
@@ -74,18 +74,18 @@ func (aDB *ArtifactDB) InsertArtifactInfo(ai *ArtifactInfo) error {
 }
 
 // SelectPath selects artifact from database based on its path.
-func (aDB *ArtifactDB) SelectPath(path ArtifactPath) (ArtifactInfo, error) {
+func (aDB *ArtifactDB) SelectPath(path weles.ArtifactPath) (weles.ArtifactInfo, error) {
 	ar := artifactInfoRecord{}
 	err := aDB.dbmap.SelectOne(&ar, "select * from artifacts where Path=?", path)
 	if err != nil {
-		return ArtifactInfo{}, err
+		return weles.ArtifactInfo{}, err
 	}
 	return ar.ArtifactInfo, nil
 }
 
 // prepareQuery prepares query based on given filter.
 // TODO code duplication
-func prepareQuery(filter ArtifactFilter) (string, []interface{}) {
+func prepareQuery(filter weles.ArtifactFilter) (string, []interface{}) {
 	var (
 		conditions []string
 		query      = "select * from artifacts "
@@ -130,7 +130,7 @@ func prepareQuery(filter ArtifactFilter) (string, []interface{}) {
 }
 
 // Filter fetches elements matching ArtifactFilter from database.
-func (aDB *ArtifactDB) Filter(filter ArtifactFilter) ([]ArtifactInfo, error) {
+func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter) ([]weles.ArtifactInfo, error) {
 	results := []artifactInfoRecord{}
 
 	query, args := prepareQuery(filter)
@@ -141,7 +141,7 @@ func (aDB *ArtifactDB) Filter(filter ArtifactFilter) ([]ArtifactInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	artifacts := make([]ArtifactInfo, len(results))
+	artifacts := make([]weles.ArtifactInfo, len(results))
 	for i, res := range results {
 		artifacts[i] = res.ArtifactInfo
 	}
@@ -150,20 +150,20 @@ func (aDB *ArtifactDB) Filter(filter ArtifactFilter) ([]ArtifactInfo, error) {
 }
 
 // Select fetches artifacts from ArtifactDB.
-func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []ArtifactInfo, err error) {
+func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []weles.ArtifactInfo, err error) {
 	var (
 		results []artifactInfoRecord
 		query   string
 	)
 	// TODO prepare efficient way of executing generic select.
 	switch arg.(type) {
-	case JobID:
+	case weles.JobID:
 		query = "select * from artifacts where JobID = ?"
-	case ArtifactType:
+	case weles.ArtifactType:
 		query = "select * from artifacts where Type = ?"
-	case ArtifactAlias:
+	case weles.ArtifactAlias:
 		query = "select * from artifacts where Alias = ?"
-	case ArtifactStatus:
+	case weles.ArtifactStatus:
 		query = "select * from artifacts where Status = ?"
 	default:
 		return nil, ErrUnsupportedQueryType
@@ -173,7 +173,7 @@ func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []ArtifactInfo, err er
 	if err != nil {
 		return nil, err
 	}
-	artifacts = make([]ArtifactInfo, len(results))
+	artifacts = make([]weles.ArtifactInfo, len(results))
 	for i, res := range results {
 		artifacts[i] = res.ArtifactInfo
 	}
@@ -181,7 +181,7 @@ func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []ArtifactInfo, err er
 }
 
 // getID fetches ID of an artifact with provided path.
-func (aDB *ArtifactDB) getID(path ArtifactPath) (int64, error) {
+func (aDB *ArtifactDB) getID(path weles.ArtifactPath) (int64, error) {
 	res, err := aDB.dbmap.SelectInt("select ID from artifacts where Path=?", path)
 	if err != nil {
 		return 0, err
@@ -190,7 +190,7 @@ func (aDB *ArtifactDB) getID(path ArtifactPath) (int64, error) {
 }
 
 // SetStatus changes artifact's status in ArtifactDB.
-func (aDB *ArtifactDB) SetStatus(change ArtifactStatusChange) error {
+func (aDB *ArtifactDB) SetStatus(change weles.ArtifactStatusChange) error {
 	ai, err := aDB.SelectPath(change.Path)
 	if err != nil {
 		return err

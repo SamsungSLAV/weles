@@ -24,28 +24,28 @@ import (
 	"os"
 	"sync"
 
-	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles"
 )
 
 // Downloader implements ArtifactDownloader interface.
 type Downloader struct {
-	notification chan ArtifactStatusChange // can be used to monitor ArtifactStatusChanges.
+	notification chan weles.ArtifactStatusChange // can be used to monitor ArtifactStatusChanges.
 	queue        chan downloadJob
 	wg           sync.WaitGroup
 }
 
 // downloadJob provides necessary info for download to be done.
 type downloadJob struct {
-	path ArtifactPath
-	uri  ArtifactURI
-	ch   chan ArtifactStatusChange
+	path weles.ArtifactPath
+	uri  weles.ArtifactURI
+	ch   chan weles.ArtifactStatusChange
 }
 
 // queueCap is the default length of download queue.
 const queueCap = 100
 
 // newDownloader returns initilized Downloader.
-func newDownloader(notification chan ArtifactStatusChange, workers int, queueSize int) *Downloader {
+func newDownloader(notification chan weles.ArtifactStatusChange, workers int, queueSize int) *Downloader {
 
 	d := &Downloader{
 		notification: notification,
@@ -61,7 +61,7 @@ func newDownloader(notification chan ArtifactStatusChange, workers int, queueSiz
 }
 
 // NewDownloader returns Downloader initialized  with default queue length
-func NewDownloader(notification chan ArtifactStatusChange, workerCount int) *Downloader {
+func NewDownloader(notification chan weles.ArtifactStatusChange, workerCount int) *Downloader {
 	return newDownloader(notification, workerCount, queueCap)
 }
 
@@ -73,7 +73,7 @@ func (d *Downloader) Close() {
 }
 
 // getData downloads file from provided location and saves it in a prepared path.
-func (d *Downloader) getData(URI ArtifactURI, path ArtifactPath) error {
+func (d *Downloader) getData(URI weles.ArtifactURI, path weles.ArtifactPath) error {
 	resp, err := http.Get(string(URI))
 	if err != nil {
 		return err
@@ -97,33 +97,33 @@ func (d *Downloader) getData(URI ArtifactURI, path ArtifactPath) error {
 // download downloads artifact from provided URI and saves it to specified path.
 // It sends notification about status changes to two channels - Downloader's notification
 // channel, and other one, that can be specified passed as an argument.
-func (d *Downloader) download(URI ArtifactURI, path ArtifactPath, ch chan ArtifactStatusChange) {
+func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange) {
 	if path == "" {
 		return
 	}
 
-	change := ArtifactStatusChange{
+	change := weles.ArtifactStatusChange{
 		Path:      path,
-		NewStatus: AM_DOWNLOADING,
+		NewStatus: weles.AM_DOWNLOADING,
 	}
-	channels := []chan ArtifactStatusChange{ch, d.notification}
+	channels := []chan weles.ArtifactStatusChange{ch, d.notification}
 	notify(change, channels)
 
 	err := d.getData(URI, path)
 	if err != nil {
 		os.Remove(string(path))
-		change.NewStatus = AM_FAILED
+		change.NewStatus = weles.AM_FAILED
 	} else {
-		change.NewStatus = AM_READY
+		change.NewStatus = weles.AM_READY
 	}
 	notify(change, channels)
 }
 
 // Download is part of implementation of ArtifactDownloader interface.
 // It puts new downloadJob on the queue.
-func (d *Downloader) Download(URI ArtifactURI, path ArtifactPath, ch chan ArtifactStatusChange) error {
-	channels := []chan ArtifactStatusChange{ch, d.notification}
-	notify(ArtifactStatusChange{path, AM_PENDING}, channels)
+func (d *Downloader) Download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange) error {
+	channels := []chan weles.ArtifactStatusChange{ch, d.notification}
+	notify(weles.ArtifactStatusChange{path, weles.AM_PENDING}, channels)
 
 	job := downloadJob{
 		path: path,
@@ -148,12 +148,12 @@ func (d *Downloader) work() {
 
 // CheckInCache is part of implementation of ArtifactDownloader interface.
 // TODO implement.
-func (d *Downloader) CheckInCache(URI ArtifactURI) (ArtifactInfo, error) {
-	return ArtifactInfo{}, ErrNotImplemented
+func (d *Downloader) CheckInCache(URI weles.ArtifactURI) (weles.ArtifactInfo, error) {
+	return weles.ArtifactInfo{}, weles.ErrNotImplemented
 }
 
 // notify sends ArtifactStatusChange to all specified channels.
-func notify(change ArtifactStatusChange, channels []chan ArtifactStatusChange) {
+func notify(change weles.ArtifactStatusChange, channels []chan weles.ArtifactStatusChange) {
 	for _, ch := range channels {
 		ch <- change
 	}
