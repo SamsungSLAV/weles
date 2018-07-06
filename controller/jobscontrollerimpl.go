@@ -232,26 +232,22 @@ func (js *JobsControllerImpl) GetDryad(j weles.JobID) (weles.Dryad, error) {
 	return job.dryad, nil
 }
 
-// List returns information about Jobs. If argument is a nil/empty slice
-// information about all Jobs is returned. Otherwise result is filtered
-// and contains information about requested Jobs only.
-func (js *JobsControllerImpl) List(filter []weles.JobID) ([]weles.JobInfo, error) {
+// List returns information on Jobs. It takes 3 arguments:
+// - JobFilter containing filters
+// - JobSorter containing sorting key and sorting direction
+// - JobPagination containing element after/before which a page should be returned. It also
+// contains information about direction of listing and the size of the returned page which
+// must always be set.
+func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorter,
+	paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) {
+
 	js.mutex.RLock()
 	defer js.mutex.RUnlock()
 	ret := make([]weles.JobInfo, 0, len(js.jobs))
-	if len(filter) == 0 {
-		// Get all Jobs.
-		for _, job := range js.jobs {
-			ret = append(ret, job.JobInfo)
-		}
-	} else {
-		// Get filtered Jobs.
-		for _, j := range filter {
-			job, ok := js.jobs[j]
-			if ok {
-				ret = append(ret, job.JobInfo)
-			}
-		}
+	// Get all Jobs ignoring filter and sorter.
+	for _, job := range js.jobs {
+		ret = append(ret, job.JobInfo)
 	}
-	return ret, nil
+	info := weles.ListInfo{TotalRecords: uint64(len(js.jobs)), RemainingRecords: 0}
+	return ret, info, nil
 }

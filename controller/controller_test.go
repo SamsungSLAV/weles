@@ -167,18 +167,22 @@ var _ = Describe("Controller", func() {
 	})
 	Describe("ListJobs", func() {
 		It("should call JobsController method", func() {
-			filter := []weles.JobID{2, 3, 5}
+			filter := weles.JobFilter{}
+			sorter := weles.JobSorter{}
+			paginator := weles.JobPagination{}
 			list := []weles.JobInfo{
 				weles.JobInfo{
 					JobID: weles.JobID(3),
 					Name:  "test name",
 				},
 			}
-			jc.EXPECT().List(filter).Return(list, testErr)
+			info := weles.ListInfo{}
+			jc.EXPECT().List(filter, sorter, paginator).Return(list, info, testErr)
 
-			ret, retErr := h.ListJobs(filter)
+			ret, retInfo, retErr := h.ListJobs(filter, sorter, paginator)
 
 			Expect(retErr).To(Equal(testErr))
+			Expect(retInfo).To(Equal(info))
 			Expect(ret).To(Equal(list))
 		})
 	})

@@ -266,27 +266,12 @@ var _ = Describe("JobsControllerImpl", func() {
 					jobids = append(jobids, j)
 				}
 			})
-			It("should return all Jobs if filter is nil", func() {
-				list, err := jc.List(nil)
+			It("should return all Jobs", func() {
+				list, info, err := jc.List(weles.JobFilter{}, weles.JobSorter{}, weles.JobPagination{})
 				Expect(err).NotTo(HaveOccurred())
 				expectIDs(list, jobids)
-			})
-			It("should return all Jobs if filter is empty", func() {
-				list, err := jc.List([]weles.JobID{})
-				Expect(err).NotTo(HaveOccurred())
-				expectIDs(list, jobids)
-			})
-			It("should return only filtered Jobs", func() {
-				filter := []weles.JobID{jobids[1], jobids[2]}
-				list, err := jc.List(filter)
-				Expect(err).NotTo(HaveOccurred())
-				expectIDs(list, filter)
-			})
-			It("should ignore not existing Jobs listed in filter", func() {
-				filter := []weles.JobID{jobids[1], jobids[2]}
-				list, err := jc.List(append(filter, weles.JobID(0x0BCA)))
-				Expect(err).NotTo(HaveOccurred())
-				expectIDs(list, filter)
+				Expect(info.TotalRecords).To(Equal(uint64(elems + 1)))
+				Expect(info.RemainingRecords).To(BeZero())
 			})
 		})
 	})

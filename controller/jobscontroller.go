@@ -50,8 +50,11 @@ type JobsController interface {
 	SetDryad(weles.JobID, weles.Dryad) error
 	// GetDryad returns Dryad acquired for the Job.
 	GetDryad(weles.JobID) (weles.Dryad, error)
-	// List returns information about Jobs. If argument is a nil/empty slice
-	// information about all Jobs is returned. Otherwise result is filtered
-	// and contains information about requested Jobs only.
-	List([]weles.JobID) ([]weles.JobInfo, error)
+	// List returns information on Jobs. It takes 3 arguments:
+	// - JobFilter containing filters
+	// - JobSorter containing sorting key and sorting direction
+	// - JobPagination containing element after/before which a page should be returned. It also
+	// contains information about direction of pagination and the size of the returned page which
+	// must always be set.
+	List(filter weles.JobFilter, sorter weles.JobSorter, paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error)
 }

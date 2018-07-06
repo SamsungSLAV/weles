@@ -118,12 +118,11 @@ func (c *Controller) CancelJob(j weles.JobID) error {
 	return nil
 }
 
-// ListJobs returns information on Jobs. If argument is a nil/empty slice
-// information about all Jobs is returned. Otherwise result is filtered
-// and contains information about requested Jobs only.
+// ListJobs returns information on Jobs.
 // It is a part of JobManager implementation.
-func (c *Controller) ListJobs(filter []weles.JobID) ([]weles.JobInfo, error) {
-	return c.jobs.List(filter)
+func (c *Controller) ListJobs(filter weles.JobFilter, sorter weles.JobSorter,
+	paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) {
+	return c.jobs.List(filter, sorter, paginator)
 }
 
 // loop implements main loop of the Controller reacting to different events

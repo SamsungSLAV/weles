@@ -26,8 +26,11 @@ type JobManager interface {
 	CreateJob(yaml []byte) (JobID, error)
 	// CancelJob stops execution of Job identified by JobID.
 	CancelJob(JobID) error
-	// ListJobs returns information on Jobs. If argument is a nil/empty slice
-	// information about all Jobs is returned. Otherwise result is filtered
-	// and contains information about requested Jobs only.
-	ListJobs([]JobID) ([]JobInfo, error)
+	// ListJobs returns information on Jobs. It takes 3 arguments:
+	// - JobFilter containing filters
+	// - JobSorter containing sorting key and sorting direction
+	// - JobPagination containing element after/before which a page should be returned. It also
+	// contains information about direction of listing and the size of the returned page which
+	// must always be set.
+	ListJobs(JobFilter, JobSorter, JobPagination) ([]JobInfo, ListInfo, error)
 }
