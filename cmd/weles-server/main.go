@@ -63,6 +63,10 @@ func main() {
 	flag.DurationVar(&borutaRefreshPeriod, "boruta-refresh-period", 2*time.Second, "Boruta refresh period")
 	flag.StringVar(&artifactDBName, "db-file", "weles.db", "name of *.db file. Should be located in --db-location")
 	flag.StringVar(&artifactDBLocation, "db-location", "/tmp/weles/", "location of *.db file and place where Weles will store artifacts.")
+	flag.IntVar(&artifactDownloadQueueCap, "artifact-download-queue-cap", 100, "Capacity of artifact download queue")
+	flag.IntVar(&activeWorkersCap, "active-workers-cap", 16, "Maximum number of active workers.")
+	flag.IntVar(&notifierChannelCap, "notifier-channel-cap", 100, "Notifier channel capacity.")
+
 	//TODO: input validation
 
 	flag.Usage = func() {
@@ -81,7 +85,12 @@ func main() {
 	flag.Parse()
 
 	var yap parser.Parser
-	am, err := artifacts.NewArtifactManager(artifactDBName, artifactDBLocation)
+	am, err := artifacts.NewArtifactManager(
+		artifactDBName,
+		artifactDBLocation,
+		notifierChannelCap,
+		activeWorkersCap,
+		artifactDownloadQueueCap)
 	exitOnErr("failed to initialize ArtifactManager ", err)
 	bor := client.NewBorutaClient(borutaAddress)
 	djm := manager.NewDryadJobManager()

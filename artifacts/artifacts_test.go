@@ -90,7 +90,8 @@ With gently smiling jaws!
 		Expect(err).ToNot(HaveOccurred())
 		dbPath = filepath.Join(testDir, "test.db")
 
-		silverKangaroo, err = newArtifactManager(dbPath, testDir)
+		silverKangaroo, err = newArtifactManager(dbPath, testDir, 100, 16, 100)
+		//TODO add tests against different notifier cap, queue cap and workers count.
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -195,7 +196,8 @@ With gently smiling jaws!
 		)
 
 		DescribeTable("NewArtifactManager()", func(db, dir string) {
-			copperPanda, err := NewArtifactManager(db, dir)
+			copperPanda, err := NewArtifactManager(db, dir, 100, 16, 100)
+			//TODO: add tests against different notifier cap and workers count.
 			Expect(err).ToNot(HaveOccurred())
 
 			if db == "" {
@@ -215,7 +217,6 @@ With gently smiling jaws!
 			Expect(err).ToNot(HaveOccurred())
 		},
 			Entry("create database in default directory", defaultDb, defaultDir),
-			Entry("create database in default directory, when arguments are empty", "", ""),
 			Entry("create database in custom directory", customDb, customDir),
 		)
 	})

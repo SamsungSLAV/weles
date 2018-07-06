@@ -54,18 +54,7 @@ type Storage struct {
 	notifier   chan weles.ArtifactStatusChange
 }
 
-const (
-	// defaultDb is default ArtifactDB name.
-	defaultDb = "weles.db"
-	// defaultDir is default directory for ArtifactManager storage.
-	defaultDir = "/tmp/weles/"
-	// notifierCap is default notifier channel capacity.
-	notifierCap = 100
-	// workersCount is default number of workers.
-	workersCount = 16
-)
-
-func newArtifactManager(db, dir string) (weles.ArtifactManager, error) {
+func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int) (weles.ArtifactManager, error) {
 	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
 		return nil, err
@@ -74,7 +63,7 @@ func newArtifactManager(db, dir string) (weles.ArtifactManager, error) {
 
 	am := Storage{
 		dir:        dir,
-		downloader: downloader.NewDownloader(notifier, workersCount),
+		downloader: downloader.NewDownloader(notifier, workersCount, queueCap),
 		notifier:   notifier,
 	}
 	err = am.db.Open(db)
@@ -89,14 +78,8 @@ func newArtifactManager(db, dir string) (weles.ArtifactManager, error) {
 
 // NewArtifactManager returns initialized Storage implementing ArtifactManager interface.
 // If db or dir is empy, default value will be used.
-func NewArtifactManager(db, dir string) (weles.ArtifactManager, error) {
-	if db == "" {
-		db = defaultDb
-	}
-	if dir == "" {
-		dir = defaultDir
-	}
-	return newArtifactManager(filepath.Join(dir, db), dir)
+func NewArtifactManager(db, dir string, notifierCap, workersCount, queueCap int) (weles.ArtifactManager, error) {
+	return newArtifactManager(filepath.Join(dir, db), dir, notifierCap, workersCount, queueCap)
 }
 
 // ListArtifact is part of implementation of ArtifactManager interface.

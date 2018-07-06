@@ -41,9 +41,6 @@ type downloadJob struct {
 	ch   chan weles.ArtifactStatusChange
 }
 
-// queueCap is the default length of download queue.
-const queueCap = 100
-
 // newDownloader returns initilized Downloader.
 func newDownloader(notification chan weles.ArtifactStatusChange, workers int, queueSize int) *Downloader {
 
@@ -61,7 +58,7 @@ func newDownloader(notification chan weles.ArtifactStatusChange, workers int, qu
 }
 
 // NewDownloader returns Downloader initialized  with default queue length
-func NewDownloader(notification chan weles.ArtifactStatusChange, workerCount int) *Downloader {
+func NewDownloader(notification chan weles.ArtifactStatusChange, workerCount, queueCap int) *Downloader {
 	return newDownloader(notification, workerCount, queueCap)
 }
 

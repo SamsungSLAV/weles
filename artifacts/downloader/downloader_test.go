@@ -55,6 +55,7 @@ I call it stupid of the pig.
 		notifyCap    int = 100 // notitication channel capacity.
 		notification chan weles.ArtifactStatusChange
 		workersCount = 8
+		queueCap     = 100
 	)
 
 	checkChannels := func(ch1, ch2 chan weles.ArtifactStatusChange, change weles.ArtifactStatusChange) {
@@ -67,7 +68,7 @@ I call it stupid of the pig.
 		var err error
 		// prepare Downloader.
 		notification = make(chan weles.ArtifactStatusChange, notifyCap)
-		platinumKoala = NewDownloader(notification, workersCount)
+		platinumKoala = NewDownloader(notification, workersCount, queueCap)
 
 		// prepare temporary directories.
 		tmpDir, err = ioutil.TempDir("", "weles-")
