@@ -23,6 +23,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/rs/cors"
 
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/server/operations"
@@ -95,7 +96,14 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
-	return handler
+	corsHandler := cors.New(cors.Options{
+		Debug:          false,
+		AllowedHeaders: []string{"*"},
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"POST", "OPTIONS"},
+		MaxAge:         1000,
+	})
+	return corsHandler.Handler(handler)
 }
 
 func configureAPI(api *operations.WelesAPI) http.Handler {
