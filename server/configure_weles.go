@@ -23,6 +23,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/rs/cors"
 
 	"github.com/SamsungSLAV/weles"
@@ -63,6 +64,14 @@ func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 	api.JobsJobCreatorHandler = jobs.JobCreatorHandlerFunc(a.Managers.JobCreator)
 	api.JobsJobCancelerHandler = jobs.JobCancelerHandlerFunc(a.Managers.JobCanceller)
 	api.JobsJobListerHandler = jobs.JobListerHandlerFunc(a.JobLister)
+
+	api.JobsJobCreatorOptionsHandler = jobs.JobCreatorOptionsHandlerFunc(
+		func(params jobs.JobCreatorOptionsParams) middleware.Responder {
+			return jobs.NewJobCreatorOptionsOK().
+				WithAccessControlAllowMethods([]string{"POST", "OPTIONS"}).
+				WithAccessControlAllowHeaders([]string{"*"}).
+				WithAccessControlAllowOrigin("*")
+		})
 
 	api.ArtifactsArtifactListerHandler = artifacts.ArtifactListerHandlerFunc(a.ArtifactLister)
 

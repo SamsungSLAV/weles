@@ -28,6 +28,28 @@ schemes:
   - http
 paths:
   /jobs:
+    options:
+      tags:
+        - jobs
+      summary: OPTIONS path for CORS.
+      description: ""
+      operationId: JobCreatorOptions
+      responses:
+         '200':
+          description: 200 OK
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Headers:
+              type: array
+              items:
+                type: string
+              collectionFormat: csv
+            Access-Control-Allow-Methods:
+              type: array
+              items:
+                type: string
+              collectionFormat: csv
     post:
       tags:
         - jobs

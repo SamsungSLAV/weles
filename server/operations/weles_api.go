@@ -66,6 +66,9 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 		JobsJobCreatorHandler: jobs.JobCreatorHandlerFunc(func(params jobs.JobCreatorParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobCreator has not yet been implemented")
 		}),
+		JobsJobCreatorOptionsHandler: jobs.JobCreatorOptionsHandlerFunc(func(params jobs.JobCreatorOptionsParams) middleware.Responder {
+			return middleware.NotImplemented("operation JobsJobCreatorOptions has not yet been implemented")
+		}),
 		JobsJobListerHandler: jobs.JobListerHandlerFunc(func(params jobs.JobListerParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobLister has not yet been implemented")
 		}),
@@ -111,6 +114,8 @@ type WelesAPI struct {
 	JobsJobCancelerHandler jobs.JobCancelerHandler
 	// JobsJobCreatorHandler sets the operation handler for the job creator operation
 	JobsJobCreatorHandler jobs.JobCreatorHandler
+	// JobsJobCreatorOptionsHandler sets the operation handler for the job creator options operation
+	JobsJobCreatorOptionsHandler jobs.JobCreatorOptionsHandler
 	// JobsJobListerHandler sets the operation handler for the job lister operation
 	JobsJobListerHandler jobs.JobListerHandler
 	// GeneralVersionHandler sets the operation handler for the version operation
@@ -192,6 +197,10 @@ func (o *WelesAPI) Validate() error {
 
 	if o.JobsJobCreatorHandler == nil {
 		unregistered = append(unregistered, "jobs.JobCreatorHandler")
+	}
+
+	if o.JobsJobCreatorOptionsHandler == nil {
+		unregistered = append(unregistered, "jobs.JobCreatorOptionsHandler")
 	}
 
 	if o.JobsJobListerHandler == nil {
@@ -317,6 +326,11 @@ func (o *WelesAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/jobs"] = jobs.NewJobCreator(o.context, o.JobsJobCreatorHandler)
+
+	if o.handlers["OPTIONS"] == nil {
+		o.handlers["OPTIONS"] = make(map[string]http.Handler)
+	}
+	o.handlers["OPTIONS"]["/jobs"] = jobs.NewJobCreatorOptions(o.context, o.JobsJobCreatorOptionsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
