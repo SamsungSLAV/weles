@@ -223,6 +223,37 @@ func init() {
             "$ref": "#/responses/InternalServer"
           }
         }
+      },
+      "options": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "OPTIONS path for CORS.",
+        "operationId": "JobCreatorOptions",
+        "responses": {
+          "200": {
+            "description": "200 OK",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          }
+        }
       }
     },
     "/jobs/list": {
@@ -983,6 +1014,37 @@ func init() {
             "description": "Internal Server error",
             "schema": {
               "$ref": "#/definitions/ErrResponse"
+            }
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "OPTIONS path for CORS.",
+        "operationId": "JobCreatorOptions",
+        "responses": {
+          "200": {
+            "description": "200 OK",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
             }
           }
         }
