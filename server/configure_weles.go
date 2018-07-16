@@ -81,6 +81,14 @@ func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 				WithAccessControlAllowOrigin("*")
 		})
 
+	api.JobsJobListerOptionsHandler = jobs.JobListerOptionsHandlerFunc(
+		func(params jobs.JobListerOptionsParams) middleware.Responder {
+			return jobs.NewJobListerOptionsOK().
+				WithAccessControlAllowMethods([]string{"POST", "OPTIONS"}).
+				WithAccessControlAllowHeaders([]string{"*"}).
+				WithAccessControlAllowOrigin("*")
+		})
+
 	api.ArtifactsArtifactListerHandler = artifacts.ArtifactListerHandlerFunc(a.ArtifactLister)
 
 	api.GeneralVersionHandler = general.VersionHandlerFunc(a.Version)
@@ -114,7 +122,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	corsHandler := cors.New(cors.Options{
-		Debug:          false,
+		Debug:          true,
 		AllowedHeaders: []string{"*"},
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"POST", "OPTIONS"},
