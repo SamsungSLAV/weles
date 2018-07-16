@@ -19,7 +19,6 @@ package server
 
 import (
 	"crypto/tls"
-	"fmt"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -85,6 +84,14 @@ func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 	api.JobsJobListerOptionsHandler = jobs.JobListerOptionsHandlerFunc(
 		func(params jobs.JobListerOptionsParams) middleware.Responder {
 			return jobs.NewJobListerOptionsOK().
+				WithAccessControlAllowMethods([]string{"POST", "OPTIONS"}).
+				WithAccessControlAllowHeaders([]string{"*"}).
+				WithAccessControlAllowOrigin("*")
+		})
+
+	api.ArtifactsArtifactListerOptionsHandler = artifacts.ArtifactListerOptionsHandlerFunc(
+		func(params artifacts.ArtifactListerOptionsParams) middleware.Responder {
+			return artifacts.NewArtifactListerOptionsOK().
 				WithAccessControlAllowMethods([]string{"POST", "OPTIONS"}).
 				WithAccessControlAllowHeaders([]string{"*"}).
 				WithAccessControlAllowOrigin("*")

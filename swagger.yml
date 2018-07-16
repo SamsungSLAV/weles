@@ -249,6 +249,28 @@ paths:
         '500':
           $ref: '#/responses/InternalServer'
   /artifacts/list:
+    options:
+      tags:
+        - artifacts
+      summary: OPTIONS path for CORS.
+      description: ""
+      operationId: ArtifactListerOptions
+      responses:
+         '200':
+          description: 200 OK
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Headers:
+              type: array
+              items:
+                type: string
+              collectionFormat: csv
+            Access-Control-Allow-Methods:
+              type: array
+              items:
+                type: string
+              collectionFormat: csv
     post:
       tags:
         - artifacts
