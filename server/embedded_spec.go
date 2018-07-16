@@ -181,6 +181,37 @@ func init() {
             "$ref": "#/responses/InternalServer"
           }
         }
+      },
+      "options": {
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "OPTIONS path for CORS.",
+        "operationId": "ArtifactListerOptions",
+        "responses": {
+          "200": {
+            "description": "200 OK",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          }
+        }
       }
     },
     "/jobs": {
@@ -1034,6 +1065,37 @@ func init() {
             "description": "Internal Server error",
             "schema": {
               "$ref": "#/definitions/ErrResponse"
+            }
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "OPTIONS path for CORS.",
+        "operationId": "ArtifactListerOptions",
+        "responses": {
+          "200": {
+            "description": "200 OK",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
             }
           }
         }

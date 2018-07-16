@@ -89,6 +89,14 @@ func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 				WithAccessControlAllowOrigin("*")
 		})
 
+	api.ArtifactsArtifactListerOptionsHandler = artifacts.ArtifactListerOptionsHandlerFunc(
+		func(params artifacts.ArtifactListerOptionsParams) middleware.Responder {
+			return artifacts.NewArtifactListerOptionsOK().
+				WithAccessControlAllowMethods([]string{"POST", "OPTIONS"}).
+				WithAccessControlAllowHeaders([]string{"*"}).
+				WithAccessControlAllowOrigin("*")
+		})
+
 	api.ArtifactsArtifactListerHandler = artifacts.ArtifactListerHandlerFunc(a.ArtifactLister)
 
 	api.GeneralVersionHandler = general.VersionHandlerFunc(a.Version)

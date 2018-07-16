@@ -60,6 +60,9 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 		ArtifactsArtifactListerHandler: artifacts.ArtifactListerHandlerFunc(func(params artifacts.ArtifactListerParams) middleware.Responder {
 			return middleware.NotImplemented("operation ArtifactsArtifactLister has not yet been implemented")
 		}),
+		ArtifactsArtifactListerOptionsHandler: artifacts.ArtifactListerOptionsHandlerFunc(func(params artifacts.ArtifactListerOptionsParams) middleware.Responder {
+			return middleware.NotImplemented("operation ArtifactsArtifactListerOptions has not yet been implemented")
+		}),
 		JobsJobCancelerHandler: jobs.JobCancelerHandlerFunc(func(params jobs.JobCancelerParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobCanceler has not yet been implemented")
 		}),
@@ -116,6 +119,8 @@ type WelesAPI struct {
 
 	// ArtifactsArtifactListerHandler sets the operation handler for the artifact lister operation
 	ArtifactsArtifactListerHandler artifacts.ArtifactListerHandler
+	// ArtifactsArtifactListerOptionsHandler sets the operation handler for the artifact lister options operation
+	ArtifactsArtifactListerOptionsHandler artifacts.ArtifactListerOptionsHandler
 	// JobsJobCancelerHandler sets the operation handler for the job canceler operation
 	JobsJobCancelerHandler jobs.JobCancelerHandler
 	// JobsJobCancelerOptionsHandler sets the operation handler for the job canceler options operation
@@ -199,6 +204,10 @@ func (o *WelesAPI) Validate() error {
 
 	if o.ArtifactsArtifactListerHandler == nil {
 		unregistered = append(unregistered, "artifacts.ArtifactListerHandler")
+	}
+
+	if o.ArtifactsArtifactListerOptionsHandler == nil {
+		unregistered = append(unregistered, "artifacts.ArtifactListerOptionsHandler")
 	}
 
 	if o.JobsJobCancelerHandler == nil {
@@ -334,6 +343,11 @@ func (o *WelesAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/artifacts/list"] = artifacts.NewArtifactLister(o.context, o.ArtifactsArtifactListerHandler)
+
+	if o.handlers["OPTIONS"] == nil {
+		o.handlers["OPTIONS"] = make(map[string]http.Handler)
+	}
+	o.handlers["OPTIONS"]["/artifacts/list"] = artifacts.NewArtifactListerOptions(o.context, o.ArtifactsArtifactListerOptionsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
