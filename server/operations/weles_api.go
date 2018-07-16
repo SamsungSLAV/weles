@@ -63,6 +63,9 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 		JobsJobCancelerHandler: jobs.JobCancelerHandlerFunc(func(params jobs.JobCancelerParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobCanceler has not yet been implemented")
 		}),
+		JobsJobCancelerOptionsHandler: jobs.JobCancelerOptionsHandlerFunc(func(params jobs.JobCancelerOptionsParams) middleware.Responder {
+			return middleware.NotImplemented("operation JobsJobCancelerOptions has not yet been implemented")
+		}),
 		JobsJobCreatorHandler: jobs.JobCreatorHandlerFunc(func(params jobs.JobCreatorParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobCreator has not yet been implemented")
 		}),
@@ -112,6 +115,8 @@ type WelesAPI struct {
 	ArtifactsArtifactListerHandler artifacts.ArtifactListerHandler
 	// JobsJobCancelerHandler sets the operation handler for the job canceler operation
 	JobsJobCancelerHandler jobs.JobCancelerHandler
+	// JobsJobCancelerOptionsHandler sets the operation handler for the job canceler options operation
+	JobsJobCancelerOptionsHandler jobs.JobCancelerOptionsHandler
 	// JobsJobCreatorHandler sets the operation handler for the job creator operation
 	JobsJobCreatorHandler jobs.JobCreatorHandler
 	// JobsJobCreatorOptionsHandler sets the operation handler for the job creator options operation
@@ -193,6 +198,10 @@ func (o *WelesAPI) Validate() error {
 
 	if o.JobsJobCancelerHandler == nil {
 		unregistered = append(unregistered, "jobs.JobCancelerHandler")
+	}
+
+	if o.JobsJobCancelerOptionsHandler == nil {
+		unregistered = append(unregistered, "jobs.JobCancelerOptionsHandler")
 	}
 
 	if o.JobsJobCreatorHandler == nil {
@@ -321,6 +330,11 @@ func (o *WelesAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/jobs/{JobID}/cancel"] = jobs.NewJobCanceler(o.context, o.JobsJobCancelerHandler)
+
+	if o.handlers["OPTIONS"] == nil {
+		o.handlers["OPTIONS"] = make(map[string]http.Handler)
+	}
+	o.handlers["OPTIONS"]["/jobs/{JobID}/cancel"] = jobs.NewJobCancelerOptions(o.context, o.JobsJobCancelerOptionsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
