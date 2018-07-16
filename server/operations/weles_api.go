@@ -75,6 +75,9 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 		JobsJobListerHandler: jobs.JobListerHandlerFunc(func(params jobs.JobListerParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobLister has not yet been implemented")
 		}),
+		JobsJobListerOptionsHandler: jobs.JobListerOptionsHandlerFunc(func(params jobs.JobListerOptionsParams) middleware.Responder {
+			return middleware.NotImplemented("operation JobsJobListerOptions has not yet been implemented")
+		}),
 		GeneralVersionHandler: general.VersionHandlerFunc(func(params general.VersionParams) middleware.Responder {
 			return middleware.NotImplemented("operation GeneralVersion has not yet been implemented")
 		}),
@@ -123,6 +126,8 @@ type WelesAPI struct {
 	JobsJobCreatorOptionsHandler jobs.JobCreatorOptionsHandler
 	// JobsJobListerHandler sets the operation handler for the job lister operation
 	JobsJobListerHandler jobs.JobListerHandler
+	// JobsJobListerOptionsHandler sets the operation handler for the job lister options operation
+	JobsJobListerOptionsHandler jobs.JobListerOptionsHandler
 	// GeneralVersionHandler sets the operation handler for the version operation
 	GeneralVersionHandler general.VersionHandler
 
@@ -214,6 +219,10 @@ func (o *WelesAPI) Validate() error {
 
 	if o.JobsJobListerHandler == nil {
 		unregistered = append(unregistered, "jobs.JobListerHandler")
+	}
+
+	if o.JobsJobListerOptionsHandler == nil {
+		unregistered = append(unregistered, "jobs.JobListerOptionsHandler")
 	}
 
 	if o.GeneralVersionHandler == nil {
@@ -350,6 +359,11 @@ func (o *WelesAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/jobs/list"] = jobs.NewJobLister(o.context, o.JobsJobListerHandler)
+
+	if o.handlers["OPTIONS"] == nil {
+		o.handlers["OPTIONS"] = make(map[string]http.Handler)
+	}
+	o.handlers["OPTIONS"]["/jobs/list"] = jobs.NewJobListerOptions(o.context, o.JobsJobListerOptionsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
