@@ -73,6 +73,14 @@ func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 				WithAccessControlAllowOrigin("*")
 		})
 
+	api.JobsJobCancelerOptionsHandler = jobs.JobCancelerOptionsHandlerFunc(
+		func(params jobs.JobCancelerOptionsParams) middleware.Responder {
+			return jobs.NewJobCancelerOptionsOK().
+				WithAccessControlAllowMethods([]string{"POST", "OPTIONS"}).
+				WithAccessControlAllowHeaders([]string{"*"}).
+				WithAccessControlAllowOrigin("*")
+		})
+
 	api.ArtifactsArtifactListerHandler = artifacts.ArtifactListerHandlerFunc(a.ArtifactLister)
 
 	api.GeneralVersionHandler = general.VersionHandlerFunc(a.Version)

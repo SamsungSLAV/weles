@@ -417,6 +417,46 @@ func init() {
             "$ref": "#/responses/InternalServer"
           }
         }
+      },
+      "options": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "OPTIONS path for CORS.",
+        "operationId": "JobCancelerOptions",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "uint64",
+            "name": "JobID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 OK",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          }
+        }
       }
     },
     "/version": {
@@ -1226,6 +1266,46 @@ func init() {
             "description": "Internal Server error",
             "schema": {
               "$ref": "#/definitions/ErrResponse"
+            }
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "OPTIONS path for CORS.",
+        "operationId": "JobCancelerOptions",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "uint64",
+            "name": "JobID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 OK",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "collectionFormat": "csv"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
             }
           }
         }
