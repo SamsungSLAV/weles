@@ -1,5 +1,6 @@
-DEV_TOOLS_DIR = ./bin/dev-tools
+BIN_DIR = bin
 
+DEV_TOOLS_DIR = $(BIN_DIR)/dev-tools
 DEV_TOOLS = ./vendor/github.com/golang/mock/mockgen ./vendor/github.com/go-swagger/go-swagger/cmd/swagger
 MOCKGEN_BIN = $(DEV_TOOLS_DIR)/mockgen
 SWAGGER_BIN = $(DEV_TOOLS_DIR)/swagger
@@ -11,7 +12,41 @@ rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst 
 WELES_FILES = $(filter-out *_test.go, $(call rwildcard, , *.go))
 
 SERVER_MAIN = cmd/weles-server/main.go
-SERVER_BIN = bin/weles-server
+SERVER_BIN = $(BIN_DIR)/weles
+
+BUILD_DOCKER_IMAGE = weles-build-img
+BUILD_DOCKER_CONTAINER = weles-build
+
+.PHONY: all
+all: docker-build
+
+.PHONY: clean
+clean: clean-docker-build
+
+.PHONY: docker-build
+docker-build: $(SERVER_BIN)
+	docker rm $(BUILD_DOCKER_CONTAINER)
+
+$(SERVER_BIN): docker-container | $(BIN_DIR)
+	docker cp "$(BUILD_DOCKER_CONTAINER):/$(@F)" $(@)
+
+.PHONY: docker-container
+docker-container: docker-build-img
+	docker create --name "$(BUILD_DOCKER_CONTAINER)" "$(BUILD_DOCKER_IMAGE)"
+
+.PHONY: docker-build-img
+docker-build-img:
+	docker build --tag "$(BUILD_DOCKER_IMAGE)" .
+
+$(BIN_DIR):
+	mkdir -p "$(BIN_DIR)"
+
+.PHONY: clean-docker-build
+clean-docker-build:
+	-docker rm $(BUILD_DOCKER_CONTAINER)
+	-docker rmi $(BUILD_DOCKER_IMAGE)
+	-rm -f "$(SERVER_BIN)"
+	-rmdir "$(BIN_DIR)"
 
 .PHONY: server
 server: vendor $(WELES_FILES)
