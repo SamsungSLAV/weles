@@ -21,6 +21,8 @@ package weles
 // supplied JobID.
 // In both cases, returned page should not include supplied JobID.
 // Limit denotes the number of records to be returned on the page.
+// When Limit is set to 0, pagination is disabled, JobID and Forward fields are ignored
+// and all records are returned.
 type JobPagination struct {
 	JobID   JobID
 	Forward bool

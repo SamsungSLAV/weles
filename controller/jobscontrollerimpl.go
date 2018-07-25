@@ -256,7 +256,7 @@ func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorte
 
 	// Filter jobs.
 	for _, job := range js.jobs {
-		if job.passesFilter(f) || job.JobID == paginator.JobID {
+		if job.passesFilter(f) || (paginator.Limit != 0 && job.JobID == paginator.JobID) {
 			ret = append(ret, job.JobInfo)
 		}
 	}
@@ -277,7 +277,12 @@ func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorte
 
 	// Pagination.
 	var index, elems, total, left int
-	if paginator.JobID == weles.JobID(0) {
+	if paginator.Limit == 0 {
+		// Pagination is disabled. Return all records.
+		total = len(ret)
+		elems = total
+		left = 0
+	} else if paginator.JobID == weles.JobID(0) {
 		total = len(ret)
 		elems = min(int(paginator.Limit), total)
 		left = total - elems
