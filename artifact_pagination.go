@@ -22,6 +22,8 @@ package weles
 // supplied ID.
 // In both cases, returned page should not include supplied ID.
 // Limit denotes the number of records to be returned on the page.
+// When Limit is set to 0, pagination is disabled, ID and Forward fields are ignored
+// and all records are returned.
 type ArtifactPagination struct {
 	ID      int64
 	Forward bool

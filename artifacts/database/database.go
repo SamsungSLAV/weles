@@ -182,6 +182,11 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	if err != nil {
 		return nil, weles.ListInfo{}, errors.New("Failed to get total records " + err.Error())
 	}
+	// TODO: refactor this file. below is to ignore pagination object when pagination is turned off.
+	if paginator.Limit == 0 {
+		paginator.Forward = true
+		paginator.ID = 0
+	}
 
 	if paginator.Forward == false {
 		offset = rr - int64(paginator.Limit)
