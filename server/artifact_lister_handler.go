@@ -84,7 +84,7 @@ func responderArtifact206(
 	artifactListerURL.After = &tmp
 
 	if defaultPageLimit != paginator.Limit {
-		tmp := int32(paginator.Limit)
+		tmp := paginator.Limit
 		artifactListerURL.Limit = &tmp
 	}
 	responder.SetNext(artifactListerURL.String())
@@ -95,7 +95,7 @@ func responderArtifact206(
 		tmp = artifactInfoReturned[0].ID
 		artifactListerURL.Before = &tmp
 		if defaultPageLimit != paginator.Limit {
-			tmp := int32(paginator.Limit)
+			tmp := paginator.Limit
 			artifactListerURL.Limit = &tmp
 		}
 		responder.SetPrevious(artifactListerURL.String())
@@ -120,7 +120,7 @@ func responderArtifact200(
 			tmp := artifactInfoReturned[0].ID
 			artifactListerURL.Before = &tmp
 			if defaultPageLimit != paginator.Limit {
-				tmp := int32(paginator.Limit)
+				tmp := paginator.Limit
 				artifactListerURL.Limit = &tmp
 			}
 			responder.SetPrevious(artifactListerURL.String())
@@ -129,7 +129,7 @@ func responderArtifact200(
 			tmp := artifactInfoReturned[len(artifactInfoReturned)-1].ID
 			artifactListerURL.After = &tmp
 			if defaultPageLimit != paginator.Limit {
-				tmp2 := int32(paginator.Limit)
+				tmp2 := paginator.Limit
 				artifactListerURL.Limit = &tmp2
 			}
 			responder.SetNext(artifactListerURL.String())

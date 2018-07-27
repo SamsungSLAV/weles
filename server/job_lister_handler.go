@@ -76,7 +76,7 @@ func responder206(listInfo weles.ListInfo, paginator weles.JobPagination, jobInf
 	jobListerURL.After = &tmp
 
 	if defaultPageLimit != paginator.Limit {
-		tmp := int32(paginator.Limit)
+		tmp := paginator.Limit
 		jobListerURL.Limit = &tmp
 	}
 	responder.SetNext(jobListerURL.String())
@@ -85,7 +85,7 @@ func responder206(listInfo weles.ListInfo, paginator weles.JobPagination, jobInf
 		tmp = uint64(jobInfoReturned[0].JobID)
 		jobListerURL.Before = &tmp
 		if defaultPageLimit != paginator.Limit {
-			tmp := int32(paginator.Limit)
+			tmp := paginator.Limit
 			jobListerURL.Limit = &tmp
 		}
 		responder.SetPrevious(jobListerURL.String())
@@ -104,7 +104,7 @@ func responder200(listInfo weles.ListInfo, paginator weles.JobPagination, jobInf
 			tmp := uint64(jobInfoReturned[0].JobID)
 			jobListerURL.Before = &tmp
 			if defaultPageLimit != paginator.Limit {
-				tmp := int32(paginator.Limit)
+				tmp := paginator.Limit
 				jobListerURL.Limit = &tmp
 			}
 			responder.SetPrevious(jobListerURL.String())
@@ -113,7 +113,7 @@ func responder200(listInfo weles.ListInfo, paginator weles.JobPagination, jobInf
 			tmp := uint64(jobInfoReturned[len(jobInfoReturned)-1].JobID)
 			jobListerURL.After = &tmp
 			if defaultPageLimit != paginator.Limit {
-				tmp := int32(paginator.Limit)
+				tmp := paginator.Limit
 				jobListerURL.Limit = &tmp
 			}
 			responder.SetNext(jobListerURL.String())
