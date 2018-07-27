@@ -61,7 +61,7 @@ func main() {
 	var apiDefaults server.APIDefaults
 
 	flag.Int32Var(&apiDefaults.PageLimit, "page-limit", 0, "Default limit of page size returned by Weles API. If set to 0 pagination will be turned off")
-	flag.StringVar(&borutaAddress, "boruta-address", ":8487", "Boruta address")
+	flag.StringVar(&borutaAddress, "boruta-address", "http://127.0.0.1:8487", "Boruta address. Must contain protocol.")
 	flag.DurationVar(&borutaRefreshPeriod, "boruta-refresh-period", 2*time.Second, "Boruta refresh period")
 	flag.StringVar(&artifactDBName, "db-file", "weles.db", "name of *.db file. Should be located in --db-location")
 	flag.StringVar(&artifactDBLocation, "db-location", "/tmp/weles/", "location of *.db file and place where Weles will store artifacts.")
