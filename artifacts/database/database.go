@@ -83,18 +83,50 @@ func prepareQuery(
 	filter weles.ArtifactFilter,
 	sorter weles.ArtifactSorter,
 	paginator weles.ArtifactPagination,
-	totalRecords, remainingRecords bool, offset int64) (string, []interface{}) {
-	var (
-		conditions []string
-		query      string
-		args       []interface{}
-	)
+	totalRecords, remainingRecords bool, offset int64) (query string, args []interface{}) {
+
 	if !totalRecords && !remainingRecords {
 		query = "select * from artifacts "
 	} else {
 		query = "select count(*) from artifacts "
 	}
 
+	var conditions []string
+	conditions, args = prepareQueryFilter(filter)
+
+	if !totalRecords && paginator.ID != 0 {
+		if (paginator.Forward && sorter.SortOrder == weles.SortOrderDescending) || (!paginator.Forward && (sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "")) {
+			conditions = append(conditions, " ID < ? ")
+			args = append(args, paginator.ID)
+		} else {
+			conditions = append(conditions, " ID > ? ")
+			args = append(args, paginator.ID)
+		}
+	}
+
+	if len(conditions) > 0 {
+		query += " where " + strings.Join(conditions, " AND ")
+	}
+	//TODO: make timestamp also db key, add to where clause and order by as described in:
+	// https://www.sqlite.org/rowvalue.html#scrolling_window_queries
+	if sorter.SortOrder == weles.SortOrderDescending {
+		query += " ORDER BY ID DESC "
+	} else if sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "" {
+		query += " ORDER BY ID ASC "
+	}
+	if paginator.Limit != 0 {
+		if offset == 0 {
+			query += " LIMIT ? "
+			args = append(args, paginator.Limit)
+		} else {
+			query += " LIMIT ? OFFSET ?"
+			args = append(args, paginator.Limit, offset)
+		}
+	}
+	return
+}
+
+func prepareQueryFilter(filter weles.ArtifactFilter) (conditions []string, args []interface{}) {
 	if len(filter.JobID) > 0 {
 		q := make([]string, len(filter.JobID))
 		for i, job := range filter.JobID {
@@ -127,36 +159,8 @@ func prepareQuery(
 		}
 		conditions = append(conditions, " Alias in ("+strings.Join(q, ",")+")")
 	}
-	if !totalRecords && paginator.ID != 0 {
-		if (paginator.Forward && sorter.SortOrder == weles.SortOrderDescending) || (!paginator.Forward && (sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "")) {
-			conditions = append(conditions, " ID < ? ")
-			args = append(args, paginator.ID)
-		} else {
-			conditions = append(conditions, " ID > ? ")
-			args = append(args, paginator.ID)
-		}
-	}
 
-	if len(conditions) > 0 {
-		query += " where " + strings.Join(conditions, " AND ")
-	}
-	//TODO: make timestamp also db key, add to where clause and order by as described in:
-	// https://www.sqlite.org/rowvalue.html#scrolling_window_queries
-	if sorter.SortOrder == weles.SortOrderDescending {
-		query += " ORDER BY ID DESC "
-	} else if sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "" {
-		query += " ORDER BY ID ASC "
-	}
-	if paginator.Limit != 0 {
-		if offset == 0 {
-			query += " LIMIT ? "
-			args = append(args, paginator.Limit)
-		} else {
-			query += " LIMIT ? OFFSET ?"
-			args = append(args, paginator.Limit, offset)
-		}
-	}
-	return query, args
+	return
 }
 
 // Filter fetches elements matching ArtifactFilter from database.
