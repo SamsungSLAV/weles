@@ -25,7 +25,7 @@ import (
 
 	"crypto/rsa"
 
-	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -42,7 +42,7 @@ type sshClient struct {
 // FIXME: When the connection is broken after it is established, all client functions stall. This provider has to be rewritten.
 type sessionProvider struct {
 	SessionProvider
-	dryad      Dryad
+	dryad      weles.Dryad
 	connection *sshClient
 	sshfs      *reverseSSHFS
 }
@@ -104,7 +104,7 @@ func (d *sessionProvider) executeRemoteCommand(cmd string) ([]byte, []byte, erro
 }
 
 // NewSessionProvider returns new instance of SessionProvider.
-func NewSessionProvider(dryad Dryad, workdir string) SessionProvider {
+func NewSessionProvider(dryad weles.Dryad, workdir string) SessionProvider {
 	cfg := prepareSSHConfig(dryad.Username, dryad.Key)
 
 	return &sessionProvider{
