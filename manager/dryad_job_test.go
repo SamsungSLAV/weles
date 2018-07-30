@@ -74,7 +74,7 @@ var _ = Describe("dryadJob", func() {
 
 	It("should go through proper states", func() {
 		djSync <- struct{}{}
-		states := []DryadJobStatus{DJ_NEW, DJ_DEPLOY, DJ_BOOT, DJ_TEST, DJ_OK}
+		states := []DryadJobStatus{DryadJobStatusNEW, DryadJobStatusDEPLOY, DryadJobStatusBOOT, DryadJobStatusTEST, DryadJobStatusOK}
 		for _, state := range states {
 			change := DryadJobStatusChange{Job: jobID, Status: state}
 			Eventually(changes).Should(Receive(Equal(change)))
@@ -85,7 +85,7 @@ var _ = Describe("dryadJob", func() {
 		c.Return(err).Times(times)
 	}
 	registerErr := func(deployErr, bootErr, testErr error) []DryadJobStatus {
-		ret := []DryadJobStatus{DJ_NEW, DJ_DEPLOY}
+		ret := []DryadJobStatus{DryadJobStatusNEW, DryadJobStatusDEPLOY}
 		switch {
 		case deployErr != nil:
 			registerPhaseErr(deploy, deployErr, 1)
@@ -94,16 +94,16 @@ var _ = Describe("dryadJob", func() {
 		case bootErr != nil:
 			registerPhaseErr(deploy, deployErr, 1)
 			registerPhaseErr(boot, bootErr, 1)
-			ret = append(ret, DJ_BOOT)
+			ret = append(ret, DryadJobStatusBOOT)
 			registerPhaseErr(test, testErr, 0)
 		case testErr != nil:
 			registerPhaseErr(deploy, deployErr, 1)
 			registerPhaseErr(boot, bootErr, 1)
-			ret = append(ret, DJ_BOOT)
+			ret = append(ret, DryadJobStatusBOOT)
 			registerPhaseErr(test, testErr, 1)
-			ret = append(ret, DJ_TEST)
+			ret = append(ret, DryadJobStatusTEST)
 		}
-		ret = append(ret, DJ_FAIL)
+		ret = append(ret, DryadJobStatusFAIL)
 		djSync <- struct{}{}
 		return ret
 	}
@@ -130,7 +130,7 @@ var _ = Describe("dryadJob", func() {
 		func(f func()) {
 			f()
 			djSync <- struct{}{}
-			fail := DryadJobStatusChange{Job: jobID, Status: DJ_FAIL}
+			fail := DryadJobStatusChange{Job: jobID, Status: DryadJobStatusFAIL}
 			Eventually(changes).Should(Receive(Equal(fail)))
 		},
 		Entry("deploy", func() {

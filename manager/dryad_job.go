@@ -48,7 +48,7 @@ func newDryadJobWithCancel(job JobID, changes chan<- DryadJobStatusChange,
 		notify: changes,
 		cancel: cancel,
 	}
-	dJob.changeStatus(DJ_NEW)
+	dJob.changeStatus(DryadJobStatusNEW)
 	return dJob
 }
 
@@ -103,12 +103,12 @@ func (d *dryadJob) run(ctx context.Context) {
 			} else {
 				d.failReason = fmt.Sprintf("run panicked: %v", r)
 			}
-			d.changeStatus(DJ_FAIL)
+			d.changeStatus(DryadJobStatusFAIL)
 			return
 		}
-		d.changeStatus(DJ_OK)
+		d.changeStatus(DryadJobStatusOK)
 	}()
-	d.executePhase(DJ_DEPLOY, d.runner.Deploy)
-	d.executePhase(DJ_BOOT, d.runner.Boot)
-	d.executePhase(DJ_TEST, d.runner.Test)
+	d.executePhase(DryadJobStatusDEPLOY, d.runner.Deploy)
+	d.executePhase(DryadJobStatusBOOT, d.runner.Boot)
+	d.executePhase(DryadJobStatusTEST, d.runner.Test)
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -81,10 +81,10 @@ var _ = Describe("DryadJobManager", func() {
 
 		BeforeEach(func() {
 			list = make([]DryadJobInfo, 0, 11)
-			createN(0, 2, DJ_NEW)
-			createN(3, 5, DJ_DEPLOY)
-			createN(6, 8, DJ_BOOT)
-			createN(9, 11, DJ_TEST)
+			createN(0, 2, DryadJobStatusNEW)
+			createN(3, 5, DryadJobStatusDEPLOY)
+			createN(6, 8, DryadJobStatusBOOT)
+			createN(9, 11, DryadJobStatusTEST)
 		})
 
 		It("should list created jobs", func() {
@@ -106,11 +106,11 @@ var _ = Describe("DryadJobManager", func() {
 					Expect(j.Job).To(BeNumerically("<=", end))
 				}
 			},
-			Entry("NEW", 0, 2, []DryadJobStatus{DJ_NEW}),
-			Entry("DEPLOY", 3, 5, []DryadJobStatus{DJ_DEPLOY}),
-			Entry("BOOT", 6, 8, []DryadJobStatus{DJ_BOOT}),
-			Entry("TEST", 9, 11, []DryadJobStatus{DJ_TEST}),
-			Entry("NEW and DEPLOY", 0, 5, []DryadJobStatus{DJ_NEW, DJ_DEPLOY}),
+			Entry("NEW", 0, 2, []DryadJobStatus{DryadJobStatusNEW}),
+			Entry("DEPLOY", 3, 5, []DryadJobStatus{DryadJobStatusDEPLOY}),
+			Entry("BOOT", 6, 8, []DryadJobStatus{DryadJobStatusBOOT}),
+			Entry("TEST", 9, 11, []DryadJobStatus{DryadJobStatusTEST}),
+			Entry("NEW and DEPLOY", 0, 5, []DryadJobStatus{DryadJobStatusNEW, DryadJobStatusDEPLOY}),
 		)
 
 		DescribeTable("list of jobs with id",
@@ -149,11 +149,11 @@ var _ = Describe("DryadJobManager", func() {
 			},
 			Entry("NEW - 2, 3", DryadJobFilter{
 				References: []JobID{2, 3},
-				Statuses:   []DryadJobStatus{DJ_NEW},
+				Statuses:   []DryadJobStatus{DryadJobStatusNEW},
 			}, []int{2}),
 			Entry("NEW, TEST - 0, 6, 8, 10, 11", DryadJobFilter{
 				References: []JobID{0, 6, 8, 10, 11},
-				Statuses:   []DryadJobStatus{DJ_NEW, DJ_TEST},
+				Statuses:   []DryadJobStatus{DryadJobStatusNEW, DryadJobStatusTEST},
 			}, []int{0, 10, 11}),
 		)
 	})

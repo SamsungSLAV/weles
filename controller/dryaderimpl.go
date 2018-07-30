@@ -114,18 +114,18 @@ func (h *DryaderImpl) loop() {
 			}
 
 			switch change.Status {
-			case weles.DJ_NEW:
+			case weles.DryadJobStatusNEW:
 				h.setStatus(change.Job, "Started")
-			case weles.DJ_DEPLOY:
+			case weles.DryadJobStatusDEPLOY:
 				h.setStatus(change.Job, "Deploying")
-			case weles.DJ_BOOT:
+			case weles.DryadJobStatusBOOT:
 				h.setStatus(change.Job, "Booting")
-			case weles.DJ_TEST:
+			case weles.DryadJobStatusTEST:
 				h.setStatus(change.Job, "Testing")
-			case weles.DJ_FAIL:
+			case weles.DryadJobStatusFAIL:
 				h.remove(change.Job)
 				h.SendFail(change.Job, "Failed to execute test on Dryad.")
-			case weles.DJ_OK:
+			case weles.DryadJobStatusOK:
 				h.remove(change.Job)
 				h.SendOK(change.Job)
 			}

@@ -122,10 +122,10 @@ var _ = Describe("DryaderImpl", func() {
 
 	Describe("With registered request", func() {
 		updateStates := []weles.DryadJobStatus{
-			weles.DJ_NEW,
-			weles.DJ_DEPLOY,
-			weles.DJ_BOOT,
-			weles.DJ_TEST,
+			weles.DryadJobStatusNEW,
+			weles.DryadJobStatusDEPLOY,
+			weles.DryadJobStatusBOOT,
+			weles.DryadJobStatusTEST,
 		}
 		updateMsgs := []string{
 			"Started",
@@ -145,12 +145,12 @@ var _ = Describe("DryaderImpl", func() {
 
 		It("should ignore ID of not registered request", func() {
 			states := []weles.DryadJobStatus{
-				weles.DJ_NEW,
-				weles.DJ_DEPLOY,
-				weles.DJ_BOOT,
-				weles.DJ_TEST,
-				weles.DJ_FAIL,
-				weles.DJ_OK,
+				weles.DryadJobStatusNEW,
+				weles.DryadJobStatusDEPLOY,
+				weles.DryadJobStatusBOOT,
+				weles.DryadJobStatusTEST,
+				weles.DryadJobStatusFAIL,
+				weles.DryadJobStatusOK,
 			}
 			for _, s := range states {
 				change := weles.DryadJobInfo{Job: weles.JobID(0x0BCA), Status: s}
@@ -190,7 +190,7 @@ var _ = Describe("DryaderImpl", func() {
 		)
 
 		It("should fail if Dryad Job fails", func() {
-			change := weles.DryadJobInfo{Job: j, Status: weles.DJ_FAIL}
+			change := weles.DryadJobInfo{Job: j, Status: weles.DryadJobStatusFAIL}
 
 			h.(*DryaderImpl).listener <- weles.DryadJobStatusChange(change)
 
@@ -198,7 +198,7 @@ var _ = Describe("DryaderImpl", func() {
 			eventuallyEmpty(1)
 		})
 		It("should notify about successfully completed Dryad Job", func() {
-			change := weles.DryadJobInfo{Job: j, Status: weles.DJ_OK}
+			change := weles.DryadJobInfo{Job: j, Status: weles.DryadJobStatusOK}
 
 			h.(*DryaderImpl).listener <- weles.DryadJobStatusChange(change)
 

@@ -29,19 +29,19 @@ import (
 type DryadJobStatus string
 
 const (
-	// DJ_NEW - initial status of DryadJob after call to Create.
-	DJ_NEW DryadJobStatus = "CREATED"
-	// DJ_DEPLOY - DryadJob is executing deploy section of job definition.
-	DJ_DEPLOY DryadJobStatus = "DEPLOYING"
-	// DJ_BOOT - DryadJob is executing boot section of job definition.
-	DJ_BOOT DryadJobStatus = "BOOTING"
-	// DJ_TEST - DryadJob is executing test section of job definition.
-	DJ_TEST DryadJobStatus = "EXECUTING TESTS"
-	// DJ_FAIL - an irrecoverable error has been encountered
+	// DryadJobStatusNEW - initial status of DryadJob after call to Create.
+	DryadJobStatusNEW DryadJobStatus = "CREATED"
+	// DryadJobStatusDEPLOY - DryadJob is executing deploy section of job definition.
+	DryadJobStatusDEPLOY DryadJobStatus = "DEPLOYING"
+	// DryadJobStatusBOOT - DryadJob is executing boot section of job definition.
+	DryadJobStatusBOOT DryadJobStatus = "BOOTING"
+	// DryadJobStatusTEST - DryadJob is executing test section of job definition.
+	DryadJobStatusTEST DryadJobStatus = "EXECUTING TESTS"
+	// DryadJobStatusFAIL - an irrecoverable error has been encountered
 	// and execution had to be stopped early.
-	DJ_FAIL DryadJobStatus = "ERROR OCCURRED"
-	// DJ_OK - DryadJob has finished execution successfully.
-	DJ_OK DryadJobStatus = "DONE"
+	DryadJobStatusFAIL DryadJobStatus = "ERROR OCCURRED"
+	// DryadJobStatusOK - DryadJob has finished execution successfully.
+	DryadJobStatusOK DryadJobStatus = "DONE"
 )
 
 // DryadJobInfo contains information about DryadJob.
