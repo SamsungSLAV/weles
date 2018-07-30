@@ -116,7 +116,7 @@ func responderArtifact200(
 	if paginator.ID != 0 { //not the first page
 		// keep in mind that ArtifactPath in paginator is taken from query parameter,
 		// not ArtifactManager
-		if paginator.Forward == true {
+		if paginator.Forward {
 			tmp := artifactInfoReturned[0].ID
 			artifactListerURL.Before = &tmp
 			if defaultPageLimit != paginator.Limit {
@@ -124,8 +124,7 @@ func responderArtifact200(
 				artifactListerURL.Limit = &tmp
 			}
 			responder.SetPrevious(artifactListerURL.String())
-		}
-		if paginator.Forward == false {
+		} else {
 			tmp := artifactInfoReturned[len(artifactInfoReturned)-1].ID
 			artifactListerURL.After = &tmp
 			if defaultPageLimit != paginator.Limit {

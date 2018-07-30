@@ -83,13 +83,13 @@ func prepareQuery(
 	filter weles.ArtifactFilter,
 	sorter weles.ArtifactSorter,
 	paginator weles.ArtifactPagination,
-	getTotal, getRemaining bool, offset int64) (string, []interface{}) {
+	totalRecords, remainingRecords bool, offset int64) (string, []interface{}) {
 	var (
 		conditions []string
 		query      string
 		args       []interface{}
 	)
-	if getTotal == false && getRemaining == false {
+	if !totalRecords && !remainingRecords {
 		query = "select * from artifacts "
 	} else {
 		query = "select count(*) from artifacts "
@@ -127,8 +127,8 @@ func prepareQuery(
 		}
 		conditions = append(conditions, " Alias in ("+strings.Join(q, ",")+")")
 	}
-	if getTotal == false && paginator.ID != 0 {
-		if (paginator.Forward == true && sorter.SortOrder == weles.SortOrderDescending) || (paginator.Forward == false && (sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "")) {
+	if !totalRecords && paginator.ID != 0 {
+		if (paginator.Forward && sorter.SortOrder == weles.SortOrderDescending) || (!paginator.Forward && (sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "")) {
 			conditions = append(conditions, " ID < ? ")
 			args = append(args, paginator.ID)
 		} else {
@@ -188,7 +188,7 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 		paginator.ID = 0
 	}
 
-	if paginator.Forward == false {
+	if !paginator.Forward {
 		offset = rr - int64(paginator.Limit)
 	}
 
