@@ -265,7 +265,7 @@ func (h *BoruterImpl) getDeadline(config weles.Config) time.Time {
 
 // Request registers new request in Boruta and adds it to monitored requests.
 func (h *BoruterImpl) Request(j weles.JobID) {
-	err := h.jobs.SetStatusAndInfo(j, weles.JOB_WAITING, "")
+	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 	if err != nil {
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s", err.Error()))
 		return

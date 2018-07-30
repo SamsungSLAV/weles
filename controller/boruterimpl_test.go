@@ -120,7 +120,7 @@ var _ = Describe("BoruterImpl", func() {
 		It("should ignore ListRequests errors", func() {
 			counter := 5
 			mutex := &sync.Mutex{}
-			jc.EXPECT().SetStatusAndInfo(j, weles.JOB_WAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(rid, nil)
 			req.EXPECT().ListRequests(nil).AnyTimes().Return([]boruta.ReqInfo{}, err).Do(func(boruta.ListFilter) {
@@ -142,7 +142,7 @@ var _ = Describe("BoruterImpl", func() {
 	Describe("Request", func() {
 		It("should register job successfully", func() {
 			var va, dl time.Time
-			jc.EXPECT().SetStatusAndInfo(j, weles.JOB_WAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(rid, nil).Do(
 				func(c boruta.Capabilities, p boruta.Priority, ui boruta.UserInfo, validAfter time.Time, deadline time.Time) {
@@ -167,7 +167,7 @@ var _ = Describe("BoruterImpl", func() {
 			config.Timeouts.JobTimeout = weles.ValidPeriod(0)
 			defaultDelay := 24 * time.Hour
 
-			jc.EXPECT().SetStatusAndInfo(j, weles.JOB_WAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(rid, nil).Do(
 				func(c boruta.Capabilities, p boruta.Priority, ui boruta.UserInfo, validAfter time.Time, deadline time.Time) {
@@ -188,7 +188,7 @@ var _ = Describe("BoruterImpl", func() {
 			expectRegistered(1)
 		})
 		It("should fail if NewRequest fails", func() {
-			jc.EXPECT().SetStatusAndInfo(j, weles.JOB_WAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(boruta.ReqID(0), err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
@@ -199,7 +199,7 @@ var _ = Describe("BoruterImpl", func() {
 			eventuallyEmpty(1)
 		})
 		It("should fail if GetConfig fails", func() {
-			jc.EXPECT().SetStatusAndInfo(j, weles.JOB_WAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(weles.Config{}, err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
 
@@ -209,7 +209,7 @@ var _ = Describe("BoruterImpl", func() {
 			eventuallyEmpty(1)
 		})
 		It("should fail if SetStatusAndInfo fails", func() {
-			jc.EXPECT().SetStatusAndInfo(j, weles.JOB_WAITING, "").Return(err)
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "").Return(err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
 
 			h.Request(j)
@@ -219,7 +219,7 @@ var _ = Describe("BoruterImpl", func() {
 		})
 		It("should call NewRequest with empty caps if no device type provided", func() {
 			config.DeviceType = ""
-			jc.EXPECT().SetStatusAndInfo(j, weles.JOB_WAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(boruta.Capabilities{}, priority, owner, gomock.Any(), gomock.Any()).Return(boruta.ReqID(0), err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
@@ -238,7 +238,7 @@ var _ = Describe("BoruterImpl", func() {
 			}
 			for k, v := range m {
 				config.Priority = k
-				jc.EXPECT().SetStatusAndInfo(j, weles.JOB_WAITING, "")
+				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 				jc.EXPECT().GetConfig(j).Return(config, nil)
 				req.EXPECT().NewRequest(caps, v, owner, gomock.Any(), gomock.Any()).Return(boruta.ReqID(0), err)
 				req.EXPECT().ListRequests(nil).AnyTimes()
@@ -264,7 +264,7 @@ var _ = Describe("BoruterImpl", func() {
 		ai := boruta.AccessInfo{Addr: &net.IPNet{IP: net.IPv4(1, 2, 3, 4), Mask: net.IPv4Mask(5, 6, 7, 8)}}
 		BeforeEach(func() {
 			var va, dl time.Time
-			jc.EXPECT().SetStatusAndInfo(j, weles.JOB_WAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(rid, nil).Do(
 				func(c boruta.Capabilities, p boruta.Priority, ui boruta.UserInfo, validAfter time.Time, deadline time.Time) {

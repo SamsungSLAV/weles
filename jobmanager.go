@@ -14,55 +14,9 @@
  *  limitations under the License
  */
 
-// File jobmanager.go provides JobManager interface with Job related
-// structures.
+// File jobmanager.go provides JobManager interface.
 
 package weles
-
-import "time"
-
-// JobStatus specifies state of the Job.
-type JobStatus string
-
-const (
-	// JOB_NEW - The new Job has been created.
-	JOB_NEW JobStatus = "NEW"
-	// JOB_PARSING - Provided yaml file is being parsed and interpreted.
-	JOB_PARSING JobStatus = "PARSING"
-	// JOB_DOWNLOADING - Images and/or files required for the test are being
-	// downloaded.
-	JOB_DOWNLOADING JobStatus = "DOWNLOADING"
-	// JOB_WAITING - Job is waiting for Boruta worker.
-	JOB_WAITING JobStatus = "WAITING"
-	// JOB_RUNNING - Job is being executed.
-	JOB_RUNNING JobStatus = "RUNNING"
-	// JOB_COMPLETED - Job is completed.
-	// This is a terminal state.
-	JOB_COMPLETED JobStatus = "COMPLETED"
-	// JOB_FAILED - Job execution has failed.
-	// This is a terminal state.
-	JOB_FAILED JobStatus = "FAILED"
-	// JOB_CANCELED - Job has been canceled with API call.
-	// This is a terminal state.
-	JOB_CANCELED JobStatus = "CANCELED"
-)
-
-// JobInfo contains Job information available for public API.
-type JobInfo struct {
-	// JobID is a unique Job identifier.
-	JobID JobID
-	// Name is the Job name acquired from yaml file during Job creation.
-	Name string
-	// Created is the Job creation time in UTC.
-	Created time.Time
-	// Updated is the time of latest Jobs' status modification.
-	Updated time.Time
-	// Status specifies current state of the Job.
-	Status JobStatus
-	// Info provides additional information about current state,
-	// e.g. cause of failure.
-	Info string
-}
 
 // JobManager interface defines API for actions that can be called on Weles' Jobs
 // by external modules. These methods are intended to be used by HTTP server.
@@ -72,8 +26,11 @@ type JobManager interface {
 	CreateJob(yaml []byte) (JobID, error)
 	// CancelJob stops execution of Job identified by JobID.
 	CancelJob(JobID) error
-	// ListJobs returns information on Jobs. If argument is a nil/empty slice
-	// information about all Jobs is returned. Otherwise result is filtered
-	// and contains information about requested Jobs only.
-	ListJobs([]JobID) ([]JobInfo, error)
+	// ListJobs returns information on Jobs. It takes 3 arguments:
+	// - JobFilter containing filters
+	// - JobSorter containing sorting key and sorting direction
+	// - JobPagination containing element after/before which a page should be returned. It also
+	// contains information about direction of listing and the size of the returned page which
+	// must always be set.
+	ListJobs(JobFilter, JobSorter, JobPagination) ([]JobInfo, ListInfo, error)
 }

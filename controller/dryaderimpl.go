@@ -90,7 +90,7 @@ func (h *DryaderImpl) remove(j weles.JobID) {
 
 // setStatus sets Jobs status to RUNNING and updates info.
 func (h *DryaderImpl) setStatus(j weles.JobID, msg string) {
-	err := h.jobs.SetStatusAndInfo(j, weles.JOB_RUNNING, msg)
+	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusRUNNING, msg)
 	if err != nil {
 		h.remove(j)
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s", err.Error()))

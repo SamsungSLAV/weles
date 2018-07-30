@@ -24,18 +24,20 @@ import (
 	"strconv"
 	"time"
 
-	. "git.tizen.org/tools/weles"
-	. "git.tizen.org/tools/weles/artifacts/database"
-	. "git.tizen.org/tools/weles/artifacts/downloader"
+	"github.com/go-openapi/strfmt"
+
+	"git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles/artifacts/database"
+	"git.tizen.org/tools/weles/artifacts/downloader"
 )
 
 // ArtifactDownloader downloads requested file if there is need to.
 type ArtifactDownloader interface {
 	// Download starts downloading requested artifact.
-	Download(URI ArtifactURI, path ArtifactPath, ch chan ArtifactStatusChange) error
+	Download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange) error
 
 	// CheckInCache checks if file already exists in ArtifactDB.
-	CheckInCache(URI ArtifactURI) (ArtifactInfo, error)
+	CheckInCache(URI weles.ArtifactURI) (weles.ArtifactInfo, error)
 
 	// Close waits for all jobs to finish, and gracefully closes ArtifactDownloader.
 	Close()
@@ -45,34 +47,23 @@ type ArtifactDownloader interface {
 // or information about artifacts stored there.
 // Storage implements ArtifactManager interface.
 type Storage struct {
-	ArtifactManager
-	db         ArtifactDB
+	weles.ArtifactManager
+	db         database.ArtifactDB
 	dir        string
 	downloader ArtifactDownloader
-	notifier   chan ArtifactStatusChange
+	notifier   chan weles.ArtifactStatusChange
 }
 
-const (
-	// defaultDb is default ArtifactDB name.
-	defaultDb = "weles.db"
-	// defaultDir is default directory for ArtifactManager storage.
-	defaultDir = "/tmp/weles/"
-	// notifierCap is default notifier channel capacity.
-	notifierCap = 100
-	// workersCount is default number of workers.
-	workersCount = 16
-)
-
-func newArtifactManager(db, dir string) (ArtifactManager, error) {
+func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int) (weles.ArtifactManager, error) {
 	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
 		return nil, err
 	}
-	notifier := make(chan ArtifactStatusChange, notifierCap)
+	notifier := make(chan weles.ArtifactStatusChange, notifierCap)
 
 	am := Storage{
 		dir:        dir,
-		downloader: NewDownloader(notifier, workersCount),
+		downloader: downloader.NewDownloader(notifier, workersCount, queueCap),
 		notifier:   notifier,
 	}
 	err = am.db.Open(db)
@@ -87,23 +78,17 @@ func newArtifactManager(db, dir string) (ArtifactManager, error) {
 
 // NewArtifactManager returns initialized Storage implementing ArtifactManager interface.
 // If db or dir is empy, default value will be used.
-func NewArtifactManager(db, dir string) (ArtifactManager, error) {
-	if db == "" {
-		db = defaultDb
-	}
-	if dir == "" {
-		dir = defaultDir
-	}
-	return newArtifactManager(filepath.Join(dir, db), dir)
+func NewArtifactManager(db, dir string, notifierCap, workersCount, queueCap int) (weles.ArtifactManager, error) {
+	return newArtifactManager(filepath.Join(dir, db), dir, notifierCap, workersCount, queueCap)
 }
 
 // ListArtifact is part of implementation of ArtifactManager interface.
-func (s *Storage) ListArtifact(filter ArtifactFilter) ([]ArtifactInfo, error) {
-	return s.db.Filter(filter)
+func (s *Storage) ListArtifact(filter weles.ArtifactFilter, sorter weles.ArtifactSorter, paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+	return s.db.Filter(filter, sorter, paginator)
 }
 
 // PushArtifact is part of implementation of ArtifactManager interface.
-func (s *Storage) PushArtifact(artifact ArtifactDescription, ch chan ArtifactStatusChange) (ArtifactPath, error) {
+func (s *Storage) PushArtifact(artifact weles.ArtifactDescription, ch chan weles.ArtifactStatusChange) (weles.ArtifactPath, error) {
 	path, err := s.CreateArtifact(artifact)
 	if err != nil {
 		return "", err
@@ -111,20 +96,20 @@ func (s *Storage) PushArtifact(artifact ArtifactDescription, ch chan ArtifactSta
 
 	err = s.downloader.Download(artifact.URI, path, ch)
 	if err != nil {
-		s.db.SetStatus(ArtifactStatusChange{path, AM_FAILED})
+		s.db.SetStatus(weles.ArtifactStatusChange{path, weles.ArtifactStatusFAILED})
 		return "", err
 	}
 	return path, nil
 }
 
 // CreateArtifact is part of implementation of ArtifactManager interface.
-func (s *Storage) CreateArtifact(artifact ArtifactDescription) (ArtifactPath, error) {
+func (s *Storage) CreateArtifact(artifact weles.ArtifactDescription) (weles.ArtifactPath, error) {
 	path, err := s.getNewPath(artifact)
 	if err != nil {
 		return "", err
 	}
 
-	err = s.db.InsertArtifactInfo(&ArtifactInfo{artifact, path, "", time.Now().UTC()})
+	err = s.db.InsertArtifactInfo(&weles.ArtifactInfo{ArtifactDescription: artifact, Path: path, Status: "", Timestamp: strfmt.DateTime(time.Now().UTC())})
 	if err != nil {
 		return "", err
 	}
@@ -132,7 +117,7 @@ func (s *Storage) CreateArtifact(artifact ArtifactDescription) (ArtifactPath, er
 }
 
 // GetArtifactInfo is part of implementation of ArtifactManager interface.
-func (s *Storage) GetArtifactInfo(path ArtifactPath) (ArtifactInfo, error) {
+func (s *Storage) GetArtifactInfo(path weles.ArtifactPath) (weles.ArtifactInfo, error) {
 	return s.db.SelectPath(path)
 }
 
@@ -144,7 +129,7 @@ func (s *Storage) Close() error {
 }
 
 // getNewPath prepares new path for artifact.
-func (s *Storage) getNewPath(ad ArtifactDescription) (ArtifactPath, error) {
+func (s *Storage) getNewPath(ad weles.ArtifactDescription) (weles.ArtifactPath, error) {
 	var (
 		jobDir  = filepath.Join(s.dir, strconv.FormatUint(uint64(ad.JobID), 10))
 		typeDir = filepath.Join(jobDir, string(ad.Type))
@@ -163,7 +148,7 @@ func (s *Storage) getNewPath(ad ArtifactDescription) (ArtifactPath, error) {
 		return "", err
 	}
 	defer f.Close()
-	return ArtifactPath(f.Name()), err
+	return weles.ArtifactPath(f.Name()), err
 }
 
 // listenToChanges updates artifact's status in db every time Storage is notified

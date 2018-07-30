@@ -109,7 +109,7 @@ func (c *Controller) CreateJob(yaml []byte) (weles.JobID, error) {
 // CancelJob cancels Job identified by argument. Job execution is stopped.
 // It is a part of JobManager implementation.
 func (c *Controller) CancelJob(j weles.JobID) error {
-	err := c.jobs.SetStatusAndInfo(j, weles.JOB_CANCELED, "")
+	err := c.jobs.SetStatusAndInfo(j, weles.JobStatusCANCELED, "")
 	if err != nil {
 		return err
 	}
@@ -118,12 +118,11 @@ func (c *Controller) CancelJob(j weles.JobID) error {
 	return nil
 }
 
-// ListJobs returns information on Jobs. If argument is a nil/empty slice
-// information about all Jobs is returned. Otherwise result is filtered
-// and contains information about requested Jobs only.
+// ListJobs returns information on Jobs.
 // It is a part of JobManager implementation.
-func (c *Controller) ListJobs(filter []weles.JobID) ([]weles.JobInfo, error) {
-	return c.jobs.List(filter)
+func (c *Controller) ListJobs(filter weles.JobFilter, sorter weles.JobSorter,
+	paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) {
+	return c.jobs.List(filter, sorter, paginator)
 }
 
 // loop implements main loop of the Controller reacting to different events
@@ -165,13 +164,13 @@ func (c *Controller) loop() {
 // fail sets Job in FAILED state and if needed stops Job's execution on Dryad
 // and releases Dryad to Boruta.
 func (c *Controller) fail(j weles.JobID, msg string) {
-	c.jobs.SetStatusAndInfo(j, weles.JOB_FAILED, msg)
+	c.jobs.SetStatusAndInfo(j, weles.JobStatusFAILED, msg)
 	c.dryader.CancelJob(j)
 	c.boruter.Release(j)
 }
 
 // succeed sets Job in COMPLETED state.
 func (c *Controller) succeed(j weles.JobID) {
-	c.jobs.SetStatusAndInfo(j, weles.JOB_COMPLETED, "")
+	c.jobs.SetStatusAndInfo(j, weles.JobStatusCOMPLETED, "")
 	c.boruter.Release(j)
 }

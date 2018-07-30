@@ -73,16 +73,17 @@ func (mr *MockJobsControllerMockRecorder) GetYaml(arg0 interface{}) *gomock.Call
 }
 
 // List mocks base method
-func (m *MockJobsController) List(arg0 []weles.JobID) ([]weles.JobInfo, error) {
-	ret := m.ctrl.Call(m, "List", arg0)
+func (m *MockJobsController) List(arg0 weles.JobFilter, arg1 weles.JobSorter, arg2 weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) {
+	ret := m.ctrl.Call(m, "List", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]weles.JobInfo)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(weles.ListInfo)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // List indicates an expected call of List
-func (mr *MockJobsControllerMockRecorder) List(arg0 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockJobsController)(nil).List), arg0)
+func (mr *MockJobsControllerMockRecorder) List(arg0, arg1, arg2 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockJobsController)(nil).List), arg0, arg1, arg2)
 }
 
 // NewJob mocks base method

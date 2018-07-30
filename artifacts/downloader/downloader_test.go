@@ -55,6 +55,7 @@ I call it stupid of the pig.
 		notifyCap    int = 100 // notitication channel capacity.
 		notification chan weles.ArtifactStatusChange
 		workersCount = 8
+		queueCap     = 100
 	)
 
 	checkChannels := func(ch1, ch2 chan weles.ArtifactStatusChange, change weles.ArtifactStatusChange) {
@@ -67,7 +68,7 @@ I call it stupid of the pig.
 		var err error
 		// prepare Downloader.
 		notification = make(chan weles.ArtifactStatusChange, notifyCap)
-		platinumKoala = NewDownloader(notification, workersCount)
+		platinumKoala = NewDownloader(notification, workersCount, queueCap)
 
 		// prepare temporary directories.
 		tmpDir, err = ioutil.TempDir("", "weles-")
@@ -125,10 +126,10 @@ I call it stupid of the pig.
 			}
 
 		},
-		Entry("download valid file to valid path", validURL, true, weles.AM_READY),
-		Entry("fail when url is invalid", invalidURL, true, weles.AM_FAILED),
-		Entry("fail when path is invalid", validURL, false, weles.AM_FAILED),
-		Entry("fail when url and path are invalid", invalidURL, false, weles.AM_FAILED),
+		Entry("download valid file to valid path", validURL, true, weles.ArtifactStatusREADY),
+		Entry("fail when url is invalid", invalidURL, true, weles.ArtifactStatusFAILED),
+		Entry("fail when path is invalid", validURL, false, weles.ArtifactStatusFAILED),
+		Entry("fail when url and path are invalid", invalidURL, false, weles.ArtifactStatusFAILED),
 	)
 
 	DescribeTable("download(): Notify channels and save data to file",
@@ -142,11 +143,11 @@ I call it stupid of the pig.
 			}
 			filename := weles.ArtifactPath(filepath.Join(dir, "test"))
 
-			status := weles.ArtifactStatusChange{filename, weles.AM_DOWNLOADING}
+			status := weles.ArtifactStatusChange{filename, weles.ArtifactStatusDOWNLOADING}
 
 			platinumKoala.download(weles.ArtifactURI(ts.URL), weles.ArtifactPath(filename), ch)
 
-			status.NewStatus = weles.AM_DOWNLOADING
+			status.NewStatus = weles.ArtifactStatusDOWNLOADING
 			checkChannels(ch, platinumKoala.notification, status)
 
 			status.NewStatus = finalResult
@@ -161,10 +162,10 @@ I call it stupid of the pig.
 			}
 
 		},
-		Entry("download valid file to valid path", validURL, true, weles.AM_READY),
-		Entry("fail when url is invalid", invalidURL, true, weles.AM_FAILED),
-		Entry("fail when path is invalid", validURL, false, weles.AM_FAILED),
-		Entry("fail when url and path are invalid", invalidURL, false, weles.AM_FAILED),
+		Entry("download valid file to valid path", validURL, true, weles.ArtifactStatusREADY),
+		Entry("fail when url is invalid", invalidURL, true, weles.ArtifactStatusFAILED),
+		Entry("fail when path is invalid", validURL, false, weles.ArtifactStatusFAILED),
+		Entry("fail when url and path are invalid", invalidURL, false, weles.ArtifactStatusFAILED),
 	)
 
 	DescribeTable("Download(): Notify ch channel about any changes",
@@ -181,19 +182,19 @@ I call it stupid of the pig.
 			err := platinumKoala.Download(weles.ArtifactURI(ts.URL), path, ch)
 			Expect(err).ToNot(HaveOccurred())
 
-			status := weles.ArtifactStatusChange{path, weles.AM_PENDING}
+			status := weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING}
 			Eventually(ch).Should(Receive(Equal(status)))
 
-			status.NewStatus = weles.AM_DOWNLOADING
+			status.NewStatus = weles.ArtifactStatusDOWNLOADING
 			Eventually(ch).Should(Receive(Equal(status)))
 
 			status.NewStatus = finalResult
 			Eventually(ch).Should(Receive(Equal(status)))
 		},
-		Entry("download valid file to valid path", validURL, true, weles.AM_READY),
-		Entry("fail when url is invalid", invalidURL, true, weles.AM_FAILED),
-		Entry("fail when path is invalid", validURL, false, weles.AM_FAILED),
-		Entry("fail when url and path are invalid", invalidURL, false, weles.AM_FAILED),
+		Entry("download valid file to valid path", validURL, true, weles.ArtifactStatusREADY),
+		Entry("fail when url is invalid", invalidURL, true, weles.ArtifactStatusFAILED),
+		Entry("fail when path is invalid", validURL, false, weles.ArtifactStatusFAILED),
+		Entry("fail when url and path are invalid", invalidURL, false, weles.ArtifactStatusFAILED),
 	)
 
 	DescribeTable("Download(): Download files to specified path.",
@@ -206,16 +207,16 @@ I call it stupid of the pig.
 			err := platinumKoala.Download(weles.ArtifactURI(ts.URL), path, ch)
 			Expect(err).ToNot(HaveOccurred())
 
-			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.AM_PENDING})))
-			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.AM_DOWNLOADING})))
+			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING})))
+			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusDOWNLOADING})))
 
 			if poem != "" {
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.AM_READY})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusREADY})))
 				content, err := ioutil.ReadFile(string(path))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(string(content)).To(BeIdenticalTo(poem))
 			} else {
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.AM_FAILED})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusFAILED})))
 				content, err := ioutil.ReadFile(string(path))
 				Expect(err).To(HaveOccurred())
 				Expect(content).To(BeNil())

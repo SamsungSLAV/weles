@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package weles
 
 import (
 	"errors"
+	"fmt"
 )
 
 var (
@@ -30,4 +31,17 @@ var (
 	// ErrJobStatusChangeNotAllowed is returned when Job status change is not
 	// possible. It suggests internal Weles logic error.
 	ErrJobStatusChangeNotAllowed = errors.New("job status change not allowed")
+	// ErrBeforeAfterNotAllowed is returned when client places request for a list
+	// with both before and after parameters.
+	ErrBeforeAfterNotAllowed = errors.New("setting both before and after qeury parameters is not allowed")
+	// ErrArtifactNotFound is returned by API when no artifact is returned by ArtifactManager
+	ErrArtifactNotFound = errors.New("artifact not found")
 )
+
+// ErrInvalidArgument is returned when argument passed to public API cannot
+// be parsed.
+type ErrInvalidArgument string
+
+func (err ErrInvalidArgument) Error() string {
+	return fmt.Sprintf("invalid argument: %s", string(err))
+}

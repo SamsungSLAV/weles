@@ -1,0 +1,64 @@
+# Packages which are not part of Weles dependencies but are required for development of it are
+# added below in the required block. Required packages are downloaded to the vendor directory but
+# are not installed. Installation of those packages should be performed using Makefile.
+required = [
+  "github.com/golang/mock/mockgen",
+  "github.com/golang/mock/mockgen/model",
+# start of go-swagger dependencies
+  "github.com/coreos/go-oidc",
+  "github.com/davecgh/go-spew/spew",
+  "github.com/dgrijalva/jwt-go",
+  "github.com/docker/go-units",
+  "github.com/go-openapi/analysis",
+  "github.com/go-openapi/errors",
+  "github.com/go-openapi/inflect",
+  "github.com/go-openapi/loads",
+  "github.com/go-openapi/loads/fmts",
+  "github.com/go-openapi/runtime",
+  "github.com/go-openapi/runtime/middleware",
+  "github.com/go-openapi/validate",
+  "github.com/gorilla/handlers",
+  "github.com/go-swagger/go-swagger",
+  "github.com/go-swagger/scan-repo-boundary/makeplans",
+  "github.com/jessevdk/go-flags",
+  "github.com/kr/pretty",
+  "github.com/spf13/pflag",
+  "github.com/spf13/viper",
+  "github.com/toqueteos/webbrowser",
+  "github.com/tylerb/graceful",
+  "golang.org/x/tools/go/loader",
+  "golang.org/x/tools/imports",
+# end of go-swagger dependencies
+  "github.com/tideland/golib/audit"
+           ]
+
+# Due to lack of go get functionality on tizen.org boruta cannot be managed via dep.
+# Move of the project to github.com is expected to resolve the issue.
+# TODO: remove boruta from ignored after migration.
+ignored = [
+  "git.tizen.org/tools/boruta",
+  "git.tizen.org/tools/boruta/http/client",
+          ]
+
+[[constraint]]
+name = "github.com/golang/mock"
+version = "v1.1.1"
+
+# Constraint go-swagger version to use one of the latest patches from master branch.
+# Without this constraint last tagged version 0.13.0 is used, which is not compatible with changes
+# in other required packages (which do not have stable version tagged)
+[[constraint]]
+name = "github.com/go-swagger/go-swagger"
+revision = "8c101dc8c12c8e25b5803a6376b7b2b7f09a622f"
+
+# WARNING!
+# Do not uncomment below lines
+# [prune]
+#  unused-packages = true
+#  non-go = true
+#  go-tests = true
+# Prune option is set to false by default, setting it explicitly produces an error.
+# If prune would be enabled, all development tools that we plan to add to required rule would be
+# removed on dep ensure call (as they are not imported directly by any Weles package).
+# Due to usage of code generator (go-swagger) we need to be able to lock its version
+# to ensure repoducible results between developers.

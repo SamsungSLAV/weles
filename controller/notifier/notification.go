@@ -20,7 +20,7 @@
 package notifier
 
 import (
-	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles"
 )
 
 // BuffSize is the default channel buffer size for channels passing
@@ -31,7 +31,7 @@ const BuffSize = 32
 // It is passed to Controller's listening channels.
 type Notification struct {
 	// JobID identifies Job.
-	JobID
+	weles.JobID
 	// Ok reports if Job processing stage has ended with success.
 	OK bool
 	// Msg contains additional information for the final user.

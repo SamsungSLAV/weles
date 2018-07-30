@@ -149,7 +149,7 @@ var _ = Describe("Controller", func() {
 
 	Describe("CancelJob", func() {
 		It("should cancel Job, stop execution on Dryad and release Dryad to Boruta", func() {
-			jc.EXPECT().SetStatusAndInfo(j, weles.JOB_CANCELED, "")
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusCANCELED, "")
 			dry.EXPECT().CancelJob(j)
 			bor.EXPECT().Release(j)
 
@@ -158,7 +158,7 @@ var _ = Describe("Controller", func() {
 			Expect(retErr).To(BeNil())
 		})
 		It("should return error if Job fails to be cancelled", func() {
-			jc.EXPECT().SetStatusAndInfo(j, weles.JOB_CANCELED, "").Return(testErr)
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusCANCELED, "").Return(testErr)
 
 			retErr := h.CancelJob(j)
 
@@ -167,18 +167,22 @@ var _ = Describe("Controller", func() {
 	})
 	Describe("ListJobs", func() {
 		It("should call JobsController method", func() {
-			filter := []weles.JobID{2, 3, 5}
+			filter := weles.JobFilter{}
+			sorter := weles.JobSorter{}
+			paginator := weles.JobPagination{}
 			list := []weles.JobInfo{
 				weles.JobInfo{
 					JobID: weles.JobID(3),
 					Name:  "test name",
 				},
 			}
-			jc.EXPECT().List(filter).Return(list, testErr)
+			info := weles.ListInfo{}
+			jc.EXPECT().List(filter, sorter, paginator).Return(list, info, testErr)
 
-			ret, retErr := h.ListJobs(filter)
+			ret, retInfo, retErr := h.ListJobs(filter, sorter, paginator)
 
 			Expect(retErr).To(Equal(testErr))
+			Expect(retInfo).To(Equal(info))
 			Expect(ret).To(Equal(list))
 		})
 	})
@@ -203,13 +207,13 @@ var _ = Describe("Controller", func() {
 				}, &borChan),
 			Entry("should complete Job after Dryad Job is done",
 				func() {
-					jc.EXPECT().SetStatusAndInfo(j, weles.JOB_COMPLETED, "")
+					jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusCOMPLETED, "")
 					bor.EXPECT().Release(j).Do(setDone)
 				}, &dryChan),
 		)
 		DescribeTable("Action fail",
 			func(cnn *chan notifier.Notification) {
-				jc.EXPECT().SetStatusAndInfo(j, weles.JOB_FAILED, testMsg)
+				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusFAILED, testMsg)
 				dry.EXPECT().CancelJob(j)
 				bor.EXPECT().Release(j)
 				*cnn <- notiFail

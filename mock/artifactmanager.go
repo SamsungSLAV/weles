@@ -33,6 +33,18 @@ func (m *MockArtifactManager) EXPECT() *MockArtifactManagerMockRecorder {
 	return m.recorder
 }
 
+// Close mocks base method
+func (m *MockArtifactManager) Close() error {
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Close indicates an expected call of Close
+func (mr *MockArtifactManagerMockRecorder) Close() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockArtifactManager)(nil).Close))
+}
+
 // CreateArtifact mocks base method
 func (m *MockArtifactManager) CreateArtifact(arg0 weles.ArtifactDescription) (weles.ArtifactPath, error) {
 	ret := m.ctrl.Call(m, "CreateArtifact", arg0)
@@ -60,16 +72,17 @@ func (mr *MockArtifactManagerMockRecorder) GetArtifactInfo(arg0 interface{}) *go
 }
 
 // ListArtifact mocks base method
-func (m *MockArtifactManager) ListArtifact(arg0 weles.ArtifactFilter) ([]weles.ArtifactInfo, error) {
-	ret := m.ctrl.Call(m, "ListArtifact", arg0)
+func (m *MockArtifactManager) ListArtifact(arg0 weles.ArtifactFilter, arg1 weles.ArtifactSorter, arg2 weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+	ret := m.ctrl.Call(m, "ListArtifact", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]weles.ArtifactInfo)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(weles.ListInfo)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // ListArtifact indicates an expected call of ListArtifact
-func (mr *MockArtifactManagerMockRecorder) ListArtifact(arg0 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListArtifact", reflect.TypeOf((*MockArtifactManager)(nil).ListArtifact), arg0)
+func (mr *MockArtifactManagerMockRecorder) ListArtifact(arg0, arg1, arg2 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListArtifact", reflect.TypeOf((*MockArtifactManager)(nil).ListArtifact), arg0, arg1, arg2)
 }
 
 // PushArtifact mocks base method

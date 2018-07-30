@@ -1,0 +1,559 @@
+swagger: '2.0'
+info:
+  description: >-
+    This is a Weles server.   You can find out more about Weles at
+    [http://tbd.tbd](http://tbd.tbd).
+  version: 0.0.0
+  title: Weles
+  termsOfService: 'http://tbd.tbd/terms/'
+  contact:
+    email: tbd@tbd.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8088'
+basePath: /api/v1
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: jobs
+    description: Info and management of Weles jobs.
+  - name: artifacts
+    description: Info about all artifacts used by Weles jobs.
+schemes:
+  - http
+paths:
+  /jobs:
+    post:
+      tags:
+        - jobs
+      summary: Add new job
+      description: adds new Job in Weles using recipe passed in YAML format.
+      operationId: JobCreator
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: yamlfile
+          type: file
+          required: true
+          description: is Job description yaml file.
+      produces:
+        - application/json
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/JobID'
+        '415':
+          $ref: '#/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/responses/InternalServer'
+  '/jobs/{JobID}/cancel':
+    post:
+      tags:
+        - jobs
+      summary: Cancel existing job
+      description: JobCanceler stops execution of Job identified by JobID.
+      operationId: JobCanceler
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          required: true
+          name: JobID
+          type: integer
+          format: uint64
+      responses:
+        '204':
+          description: No Content
+        '404':
+          $ref: '#/responses/NotFound'
+        '403':
+          $ref: '#/responses/Forbidden'
+        '500':
+          $ref: '#/responses/InternalServer'
+  /jobs/list:
+    post:
+      tags:
+        - jobs
+      summary: List jobs with filter and sort features
+      description: JobLister returns information on filtered Weles Jobs.
+      operationId: JobLister
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: jobFilterAndSort
+          description: Job Filter and Sort object.
+          required: false
+          schema:
+            $ref: '#/definitions/JobFilterAndSort'
+        - in: query
+          name: after
+          description: JobID of the last element from previous page.
+          type: integer
+          format: uint64
+        - in: query
+          name: before
+          description: JobID of first element from next page.
+          type: integer
+          format: uint64
+        - in: query
+          name: limit
+          description: Custom page limit. Denotes number of JobInfo structures that will be returned.
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/JobInfo'
+          headers:
+            Previous:
+              type: string
+              format: URI
+              description: >
+                URI to request previous page of data. Please note that the same body must be used as in initial request.
+            Next:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            TotalRecords:
+              type: integer
+              format: uint64
+              description: >
+                count of records currently fulfilling the requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+        '206':
+          description: Partial Content
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/JobInfo'
+          headers:
+            Previous:
+              type: string
+              format: URI
+              description: >
+                URI to request previous page of data. Please note that the same body must be used as in initial request.
+            Next:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            TotalRecords:
+              type: integer
+              format: uint64
+              description: >
+                 count of records currently fulfilling requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+            RemainingRecords:
+              type: integer
+              format: uint64
+              description: >
+                number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.
+        '400':
+          $ref: '#/responses/BadRequest'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/InternalServer'
+  /artifacts/list:
+    post:
+      tags:
+        - artifacts
+      summary: List artifacts with filter and sort features
+      description: ArtifactLister returns information on filtered Weles artifacts.
+      operationId: ArtifactLister
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: artifactFilterAndSort
+          description: Artifact Filter and Sort object.
+          required: false
+          schema:
+            $ref: '#/definitions/ArtifactFilterAndSort'
+        - in: query
+          name: after
+          description: ID of the last element from previous page.
+          type: integer
+          format: int64
+        - in: query
+          name: before
+          description: ID of first element from next page.
+          type: integer
+          format: int64
+        - in: query
+          name: limit
+          description: Custom page limit. Denotes number of ArtifactInfo structures that will be returned.
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ArtifactInfo'
+          headers:
+            Previous:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            Next:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            TotalRecords:
+              type: integer
+              format: uint64
+              description: >
+                count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+        '206':
+          description: Partial Content
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ArtifactInfo'
+          headers:
+            Previous:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            Next:
+              type: string
+              format: URI
+              description: >
+                URI to request next page of data. Please note that the same body must be used as in initial request.
+            TotalRecords:
+              type: integer
+              format: uint64
+              description: >
+                count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+            RemainingRecords:
+              type: integer
+              format: uint64
+              description: >
+                number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.
+        '400':
+          $ref: '#/responses/BadRequest'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/InternalServer'
+responses:
+  BadRequest:
+    description: Bad Request
+    schema:
+      $ref: '#/definitions/ErrResponse'
+  NotFound:
+    description: Not Found
+    schema:
+      $ref: '#/definitions/ErrResponse'
+  Forbidden:
+    description: Forbidden
+    schema:
+      $ref: '#/definitions/ErrResponse'
+  UnsupportedMediaType:
+    description: Unsupported media type
+    schema:
+      $ref: '#/definitions/ErrResponse'
+  UnprocessableEntity:
+    description: Unprocessable entity
+    schema:
+      $ref: '#/definitions/ErrResponse'
+  InternalServer:
+    description: Internal Server error
+    schema:
+      $ref: '#/definitions/ErrResponse'
+definitions:
+  JobID:
+    description: is a unique identifier for Weles Job.
+    type: integer
+    format: uint64
+  JobStatus:
+    description: |
+      specifies state of the Job.
+
+      * NEW - The new Job has been created.
+
+      * PARSING - Provided yaml file is being parsed and interpreted.
+
+      * DOWNLOADING - Images and/or files required for the test are being downloaded.
+
+      * WAITING - Job is waiting for Boruta worker.
+
+      * RUNNING - Job is being executed.
+
+      * COMPLETED - Job is completed. This is terminal state.
+
+      * FAILED - Job execution has failed. This is terminal state.
+
+      * CANCELED -Job has been canceled with API call. This is terminal state.
+
+    type: string
+    enum:
+      - NEW
+      - PARSING
+      - DOWNLOADING
+      - WAITING
+      - RUNNING
+      - COMPLETED
+      - FAILED
+      - CANCELED
+  JobInfo:
+    description: contains information about a Job available for public API.
+    type: object
+    properties:
+      jobID:
+        $ref: '#/definitions/JobID'
+        description: is a unique Job identifier
+      name:
+        type: string
+        description: is the Job name acquired from yaml file during Job creation.
+      created:
+        type: string
+        format: date-time
+        description: is the Job creation time in UTC.
+      updated:
+        type: string
+        format: date-time
+        description: is the time of latest Jobs' status modification.
+      status:
+        $ref: '#/definitions/JobStatus'
+        description: specifies current state of the Job.
+      info:
+        type: string
+        description: provides additional information about current state, e.g. cause of failure
+  JobFilter:
+    description: is used to filter Weles Jobs.
+    type: object
+    properties:
+      JobID:
+        type: array
+        items:
+          $ref: '#/definitions/JobID'
+      Name:
+        type: array
+        items:
+          type: string
+      CreatedAfter:
+        type: string
+        format: date-time
+      CreatedBefore:
+        type: string
+        format: date-time
+      UpdatedAfter:
+        type: string
+        format: date-time
+      UpdatedBefore:
+        type: string
+        format: date-time
+      Status:
+        type: array
+        items:
+          $ref: '#/definitions/JobStatus'
+      Info:
+        type: array
+        items:
+          type: string
+  JobSortBy:
+    description: |
+      denotes key for sorting Jobs list. Jobs are sorted by ID (Ascending) by default.
+      You can sort jobs additionaly by
+
+      * CreatedDate - sorting by date of creation of the weles job.
+
+      * UpdatedDate - sorting by date of update of the weles job.
+
+      * JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.
+      When sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)
+    type: string
+    enum:
+      - CreatedDate
+      - UpdatedDate
+      - JobStatus
+  SortOrder:
+    description: |
+      denotes direction of sorting of weles jobs or artifacts.
+
+      * Ascending - from oldest to newest.
+
+      * Descending - from newest to oldest.
+
+    type: string
+    enum:
+      - Ascending
+      - Descending
+  JobSorter:
+    description: |
+      defines the key for sorting as well as direction of sorting.
+    type: object
+    properties:
+      SortBy:
+        $ref: '#/definitions/JobSortBy'
+      SortOrder:
+        $ref: '#/definitions/SortOrder'
+  JobFilterAndSort:
+    description: Data for filtering and sorting Weles Jobs lists.
+    type: object
+    properties:
+      Filter:
+        $ref: '#/definitions/JobFilter'
+      Sorter:
+        $ref: '#/definitions/JobSorter'
+  ArtifactType:
+    description: |
+      denotes type and function of an artifact.
+
+      * IMAGE - image file.
+
+      * RESULT - all outputs, files built during tests, etc.
+
+      * TEST - additional files uploaded by user for conducting test.
+
+      * YAML - yaml file describing Weles Job.
+
+    type: string
+    enum:
+      - IMAGE
+      - RESULT
+      - TEST
+      - YAML
+  ArtifactPath:
+    description: describes path to artifact in ArtifactDB filesystem.
+    type: string
+  ArtifactStatus:
+    description: |
+      describes artifact status and availability.
+
+      * DOWNLOADING - artifact is currently being downloaded.
+
+      * READY - artifact has been downloaded and is ready to use.
+
+      * FAILED - file is not available for use (e.g. download failed).
+
+      * PENDING - artifact download has not started yet.
+
+    type: string
+    enum:
+      - DOWNLOADING
+      - READY
+      - FAILED
+      - PENDING
+  ArtifactURI:
+    description: is used to identify artifact's source.
+    type: string
+    format: uri
+  ArtifactAlias:
+    description: is an alternative name of an artifact.
+    type: string
+  ArtifactDescription:
+    description: contains information needed to create new artifact in ArtifactDB.
+    type: object
+    properties:
+      JobID:
+        $ref: '#/definitions/JobID'
+        description: specifies  Job for which artifact was created.
+      Type:
+        $ref: '#/definitions/ArtifactType'
+      Alias:
+        $ref: '#/definitions/ArtifactAlias'
+      URI:
+        $ref: '#/definitions/ArtifactURI'
+  ArtifactInfo:
+    description: describes single artifact stored in ArtifactDB.
+    type: object
+    allOf:
+     - $ref: '#/definitions/ArtifactDescription'
+    properties:
+      Path:
+        $ref: '#/definitions/ArtifactPath'
+      Status:
+        $ref: '#/definitions/ArtifactStatus'
+      Timestamp:
+        description: is date of creating the artifact.
+        type: string
+        format: date-time
+      ID:
+        description: unique identification of the artifact.
+        type: integer
+        format: int64
+        x-go-custom-tag: "db:\",primarykey, autoincrement\""
+  ArtifactFilter:
+    description: is used to filter results from ArtifactDB.
+    type: object
+    properties:
+      JobID:
+        type: array
+        items:
+          $ref: '#/definitions/JobID'
+      Type:
+        type: array
+        items:
+          $ref: '#/definitions/ArtifactType'
+      Status:
+        type: array
+        items:
+          $ref: '#/definitions/ArtifactStatus'
+      Alias:
+        type: array
+        items:
+          $ref: '#/definitions/ArtifactAlias'
+  ErrResponse:
+    description: >-
+      is a standard error response containing information about the
+      error. It consists of error type and message.
+    type: object
+    properties:
+      type:
+        type: string
+      message:
+        type: string
+  ArtifactSortBy:
+    description: >
+      denotes the key for sorting list of all artifacts.
+
+      * ID - sorting by artifact ID.
+
+    type: string
+    enum:
+      - ID
+  ArtifactSorter:
+    description: |
+      defines the key for sorting as well as direction of sorting.
+      When ArtifactSorter is empty, artifacts are sorted by ID, Ascending.
+    type: object
+    properties:
+      SortBy:
+        $ref: '#/definitions/ArtifactSortBy'
+      SortOrder:
+        $ref: '#/definitions/SortOrder'
+  ArtifactFilterAndSort:
+    description: Data for filtering and sorting Weles Jobs lists.
+    type: object
+    properties:
+      Filter:
+        $ref: '#/definitions/ArtifactFilter'
+      Sorter:
+        $ref: '#/definitions/ArtifactSorter'
+externalDocs:
+  description: TBD
+  url: 'http://TBD.tbd'
+

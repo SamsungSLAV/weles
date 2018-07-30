@@ -99,10 +99,10 @@ func (h *DownloaderImpl) pathStatusChange(path string, status weles.ArtifactStat
 		return
 	}
 	switch status {
-	case weles.AM_READY:
+	case weles.ArtifactStatusREADY:
 		i.ready++
 		info = fmt.Sprintf(formatReady, i.ready, i.paths)
-	case weles.AM_FAILED:
+	case weles.ArtifactStatusFAILED:
 		i.failed++
 		info = "Failed to download artifact"
 	default:
@@ -136,7 +136,7 @@ func (h *DownloaderImpl) loop() {
 			continue
 		}
 
-		err := h.jobs.SetStatusAndInfo(j, weles.JOB_DOWNLOADING, info)
+		err := h.jobs.SetStatusAndInfo(j, weles.JobStatusDOWNLOADING, info)
 		if err != nil {
 			h.removePath(string(change.Path))
 			h.fail(j, fmt.Sprintf(formatJobStatus, err.Error()))
@@ -211,7 +211,7 @@ func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias string,
 func (h *DownloaderImpl) pullCreate(j weles.JobID, alias string) (string, error) {
 	p, err := h.artifacts.CreateArtifact(weles.ArtifactDescription{
 		JobID: j,
-		Type:  weles.AM_TESTFILE,
+		Type:  weles.ArtifactTypeTEST,
 		Alias: weles.ArtifactAlias(alias),
 	})
 	return string(p), err
@@ -272,7 +272,7 @@ func (h *DownloaderImpl) sendIfReady(j weles.JobID) {
 func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 	h.initializeJobInfo(j)
 
-	err := h.jobs.SetStatusAndInfo(j, weles.JOB_DOWNLOADING, "")
+	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusDOWNLOADING, "")
 	if err != nil {
 		h.fail(j, fmt.Sprintf(formatJobStatus, err.Error()))
 		return
@@ -286,7 +286,7 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 
 	for i, image := range config.Action.Deploy.Images {
 		if image.URI != "" {
-			path, err := h.push(j, weles.AM_IMAGEFILE, fmt.Sprintf("Image_%d", i), image.URI)
+			path, err := h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("Image_%d", i), image.URI)
 			if err != nil {
 				h.fail(j, fmt.Sprintf(formatURI, image.URI, err.Error()))
 				return
@@ -294,7 +294,7 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 			config.Action.Deploy.Images[i].Path = path
 		}
 		if image.ChecksumURI != "" {
-			path, err := h.push(j, weles.AM_IMAGEFILE, fmt.Sprintf("ImageMD5_%d", i), image.ChecksumURI)
+			path, err := h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("ImageMD5_%d", i), image.ChecksumURI)
 			if err != nil {
 				h.fail(j, fmt.Sprintf(formatURI, image.ChecksumURI, err.Error()))
 				return
@@ -307,7 +307,7 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 			switch ta.(type) {
 			case weles.Push:
 				action := ta.(weles.Push)
-				path, err := h.push(j, weles.AM_TESTFILE, action.Alias, action.URI)
+				path, err := h.push(j, weles.ArtifactTypeTEST, action.Alias, action.URI)
 				if err != nil {
 					h.fail(j, fmt.Sprintf(formatURI, action.URI, err.Error()))
 					return

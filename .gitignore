@@ -1,0 +1,6 @@
+# Gopkg.lock file contains all necessary information for dep to download vendor/ directory
+/vendor/
+# No binaries should be committed.
+/bin/
+# Built documentation:
+/doc/build/
