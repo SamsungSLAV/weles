@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ var _ = Describe("dryadJob", func() {
 		djSync <- struct{}{}
 		states := []DryadJobStatus{DJ_NEW, DJ_DEPLOY, DJ_BOOT, DJ_TEST, DJ_OK}
 		for _, state := range states {
-			change := DryadJobStatusChange{jobID, state}
+			change := DryadJobStatusChange{Job: jobID, Status: state}
 			Eventually(changes).Should(Receive(Equal(change)))
 		}
 	})
@@ -111,7 +111,7 @@ var _ = Describe("dryadJob", func() {
 		func(f func() []DryadJobStatus) {
 			states := f()
 			for _, state := range states {
-				change := DryadJobStatusChange{jobID, state}
+				change := DryadJobStatusChange{Job: jobID, Status: state}
 				Eventually(changes).Should(Receive(Equal(change)))
 			}
 		},
@@ -130,7 +130,7 @@ var _ = Describe("dryadJob", func() {
 		func(f func()) {
 			f()
 			djSync <- struct{}{}
-			fail := DryadJobStatusChange{jobID, DJ_FAIL}
+			fail := DryadJobStatusChange{Job: jobID, Status: DJ_FAIL}
 			Eventually(changes).Should(Receive(Equal(fail)))
 		},
 		Entry("deploy", func() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -143,7 +143,10 @@ I call it stupid of the pig.
 			}
 			filename := weles.ArtifactPath(filepath.Join(dir, "test"))
 
-			status := weles.ArtifactStatusChange{filename, weles.ArtifactStatusDOWNLOADING}
+			status := weles.ArtifactStatusChange{
+				Path:      filename,
+				NewStatus: weles.ArtifactStatusDOWNLOADING,
+			}
 
 			platinumKoala.download(weles.ArtifactURI(ts.URL), weles.ArtifactPath(filename), ch)
 
@@ -182,7 +185,10 @@ I call it stupid of the pig.
 			err := platinumKoala.Download(weles.ArtifactURI(ts.URL), path, ch)
 			Expect(err).ToNot(HaveOccurred())
 
-			status := weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING}
+			status := weles.ArtifactStatusChange{
+				Path:      path,
+				NewStatus: weles.ArtifactStatusPENDING,
+			}
 			Eventually(ch).Should(Receive(Equal(status)))
 
 			status.NewStatus = weles.ArtifactStatusDOWNLOADING
@@ -207,16 +213,28 @@ I call it stupid of the pig.
 			err := platinumKoala.Download(weles.ArtifactURI(ts.URL), path, ch)
 			Expect(err).ToNot(HaveOccurred())
 
-			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING})))
-			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusDOWNLOADING})))
+			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+				Path:      path,
+				NewStatus: weles.ArtifactStatusPENDING,
+			})))
+			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+				Path:      path,
+				NewStatus: weles.ArtifactStatusDOWNLOADING,
+			})))
 
 			if poem != "" {
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusREADY})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: weles.ArtifactStatusREADY,
+				})))
 				content, err := ioutil.ReadFile(string(path))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(string(content)).To(BeIdenticalTo(poem))
 			} else {
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusFAILED})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: weles.ArtifactStatusFAILED,
+				})))
 				content, err := ioutil.ReadFile(string(path))
 				Expect(err).To(HaveOccurred())
 				Expect(content).To(BeNil())

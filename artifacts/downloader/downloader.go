@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath, ch
 // It puts new downloadJob on the queue.
 func (d *Downloader) Download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange) error {
 	channels := []chan weles.ArtifactStatusChange{ch, d.notification}
-	notify(weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING}, channels)
+	notify(weles.ArtifactStatusChange{Path: path, NewStatus: weles.ArtifactStatusPENDING}, channels)
 
 	job := downloadJob{
 		path: path,

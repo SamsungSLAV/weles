@@ -73,7 +73,7 @@ var _ = BeforeSuite(func() {
 		}
 
 		dryadInfo = Dryad{
-			Addr:     &net.TCPAddr{net.ParseIP(dryadAddress), port, ""},
+			Addr:     &net.TCPAddr{IP: net.ParseIP(dryadAddress), Port: port, Zone: ""},
 			Username: userName,
 			Key:      *key,
 		}

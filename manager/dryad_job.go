@@ -81,7 +81,7 @@ func (d *dryadJob) changeStatus(state DryadJobStatus) {
 	defer d.mutex.Unlock()
 	d.info.Status = state
 	select {
-	case d.notify <- DryadJobStatusChange{d.info.Job, state}:
+	case d.notify <- DryadJobStatusChange{Job: d.info.Job, Status: state}:
 	default:
 	}
 }

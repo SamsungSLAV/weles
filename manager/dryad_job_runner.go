@@ -88,7 +88,7 @@ func (d *dryadJobRunner) Boot() (err error) {
 
 	// Login to the device only if credentials were specified.
 	if username, password := d.conf.Action.Boot.Login, d.conf.Action.Boot.Password; username != "" && password != "" {
-		return d.device.Login(dryad.Credentials{username, password})
+		return d.device.Login(dryad.Credentials{Username: username, Password: password})
 	}
 	return nil
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,24 +64,24 @@ With gently smiling jaws!
 
 	var (
 		description = weles.ArtifactDescription{
-			"alias",
-			job,
-			weles.ArtifactTypeIMAGE,
-			"uri",
+			Alias: "alias",
+			JobID: job,
+			Type:  weles.ArtifactTypeIMAGE,
+			URI:   "uri",
 		}
 
 		dSameJobNType = weles.ArtifactDescription{
-			"other alias",
-			job,
-			weles.ArtifactTypeIMAGE,
-			"other uri",
+			Alias: "other alias",
+			JobID: job,
+			Type:  weles.ArtifactTypeIMAGE,
+			URI:   "other uri",
 		}
 
 		dSameJobOtherType = weles.ArtifactDescription{
-			"another alias",
-			job,
-			weles.ArtifactTypeYAML,
-			"another uri",
+			Alias: "another alias",
+			JobID: job,
+			Type:  weles.ArtifactTypeYAML,
+			URI:   "another uri",
 		}
 	)
 
@@ -227,17 +227,17 @@ With gently smiling jaws!
 			ch chan weles.ArtifactStatusChange
 
 			ad weles.ArtifactDescription = weles.ArtifactDescription{
-				"somealias",
-				job,
-				weles.ArtifactTypeIMAGE,
-				validURL,
+				Alias: "somealias",
+				JobID: job,
+				Type:  weles.ArtifactTypeIMAGE,
+				URI:   validURL,
 			}
 
 			adInvalid weles.ArtifactDescription = weles.ArtifactDescription{
-				"somealias",
-				job,
-				weles.ArtifactTypeIMAGE,
-				invalidURL,
+				Alias: "somealias",
+				JobID: job,
+				Type:  weles.ArtifactTypeIMAGE,
+				URI:   invalidURL,
 			}
 		)
 
@@ -256,9 +256,18 @@ With gently smiling jaws!
 
 				Expect(err).ToNot(HaveOccurred())
 
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING})))
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusDOWNLOADING})))
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, finalStatus})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: weles.ArtifactStatusPENDING,
+				})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: weles.ArtifactStatusDOWNLOADING,
+				})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: finalStatus,
+				})))
 
 				if finalStatus != weles.ArtifactStatusFAILED {
 					By("Check if file exists and has proper content")
