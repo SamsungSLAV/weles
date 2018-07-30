@@ -107,13 +107,9 @@ func prepareQuery(
 	if len(conditions) > 0 {
 		query += " where " + strings.Join(conditions, " AND ")
 	}
-	//TODO: make timestamp also db key, add to where clause and order by as described in:
-	// https://www.sqlite.org/rowvalue.html#scrolling_window_queries
-	if sorter.SortOrder == weles.SortOrderDescending {
-		query += " ORDER BY ID DESC "
-	} else if sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "" {
-		query += " ORDER BY ID ASC "
-	}
+
+	query += prepareQuerySorter(sorter)
+
 	if paginator.Limit != 0 {
 		if offset == 0 {
 			query += " LIMIT ? "
@@ -124,6 +120,15 @@ func prepareQuery(
 		}
 	}
 	return
+}
+
+func prepareQuerySorter(sorter weles.ArtifactSorter) string {
+	//TODO: make timestamp also db key, add to where clause and order by as described in:
+	// https://www.sqlite.org/rowvalue.html#scrolling_window_queries
+	if sorter.SortOrder == weles.SortOrderDescending {
+		return " ORDER BY ID DESC "
+	}
+	return " ORDER BY ID ASC "
 }
 
 func prepareQueryFilter(filter weles.ArtifactFilter) (conditions []string, args []interface{}) {
