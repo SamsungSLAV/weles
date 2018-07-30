@@ -444,10 +444,10 @@ definitions:
     type: string
     enum:
       - ID
-    default: ID
   ArtifactSorter:
     description: |
       defines the key for sorting as well as direction of sorting.
+      When ArtifactSorter is empty, artifacts are sorted by ID, Ascending.
     type: object
     properties:
       SortBy:

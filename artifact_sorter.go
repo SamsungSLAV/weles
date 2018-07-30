@@ -28,6 +28,7 @@ import (
 )
 
 // ArtifactSorter defines the key for sorting as well as direction of sorting.
+// When ArtifactSorter is empty, artifacts are sorted by ID, Ascending.
 //
 // swagger:model ArtifactSorter
 type ArtifactSorter struct {

@@ -345,13 +345,12 @@ func init() {
     "ArtifactSortBy": {
       "description": "denotes the key for sorting list of all artifacts.\n* ID - sorting by artifact ID.\n",
       "type": "string",
-      "default": "ID",
       "enum": [
         "ID"
       ]
     },
     "ArtifactSorter": {
-      "description": "defines the key for sorting as well as direction of sorting.\n",
+      "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, artifacts are sorted by ID, Ascending.\n",
       "type": "object",
       "properties": {
         "SortBy": {
@@ -927,13 +926,12 @@ func init() {
     "ArtifactSortBy": {
       "description": "denotes the key for sorting list of all artifacts.\n* ID - sorting by artifact ID.\n",
       "type": "string",
-      "default": "ID",
       "enum": [
         "ID"
       ]
     },
     "ArtifactSorter": {
-      "description": "defines the key for sorting as well as direction of sorting.\n",
+      "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, artifacts are sorted by ID, Ascending.\n",
       "type": "object",
       "properties": {
         "SortBy": {
