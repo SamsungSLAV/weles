@@ -436,7 +436,7 @@ var _ = Describe("JobListerHandler", func() {
 					apiDefaults.PageLimit = 100
 					paginator := weles.JobPagination{Limit: apiDefaults.PageLimit}
 					//prepare data for first call
-					jobInfoStartingPage := []weles.JobInfo{}
+					var jobInfoStartingPage []weles.JobInfo
 					var startingPageQuery string
 					listInfo := weles.ListInfo{}
 					if startingPageNo == pages {
@@ -496,7 +496,7 @@ var _ = Describe("JobListerHandler", func() {
 
 					//prepare data for second call based on previous
 
-					jobInfo2 := []weles.JobInfo{}
+					var jobInfo2 []weles.JobInfo
 					paginator2 := weles.JobPagination{Limit: apiDefaults.PageLimit, Forward: false, JobID: jobInfoStartingPage[0].JobID}
 					listInfo2 := weles.ListInfo{TotalRecords: listInfo.TotalRecords}
 					if startingPageNo == pages {

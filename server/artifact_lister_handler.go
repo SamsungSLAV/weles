@@ -28,8 +28,8 @@ func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) midd
 			Message: weles.ErrBeforeAfterNotAllowed.Error()})
 	}
 
-	artifactInfoReceived := []weles.ArtifactInfo{}
-	listInfo := weles.ListInfo{}
+	var artifactInfoReceived []weles.ArtifactInfo
+	var listInfo weles.ListInfo
 	var err error
 	paginator := weles.ArtifactPagination{}
 	if a.PageLimit != 0 {

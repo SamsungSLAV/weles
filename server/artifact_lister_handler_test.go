@@ -432,7 +432,7 @@ var _ = Describe("ArtifactListerHandler", func() {
 					apiDefaults.PageLimit = 100
 					paginator := weles.ArtifactPagination{Limit: apiDefaults.PageLimit}
 					//prepare data for first call
-					artifactInfoStartingPage := []weles.ArtifactInfo{}
+					var artifactInfoStartingPage []weles.ArtifactInfo
 					var startingPageQuery string
 					listInfo := weles.ListInfo{}
 					if startingPageNo == pages {
@@ -493,7 +493,7 @@ var _ = Describe("ArtifactListerHandler", func() {
 
 					//prepare data for second call based on previous
 
-					artifactInfo2 := []weles.ArtifactInfo{}
+					var artifactInfo2 []weles.ArtifactInfo
 					paginator2 := weles.ArtifactPagination{Limit: apiDefaults.PageLimit, Forward: false, ID: artifactInfoStartingPage[0].ID}
 					listInfo2 := weles.ListInfo{TotalRecords: listInfo.TotalRecords}
 					if startingPageNo == pages {
