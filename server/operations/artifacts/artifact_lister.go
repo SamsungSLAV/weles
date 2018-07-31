@@ -23,7 +23,12 @@ package artifacts
 import (
 	"net/http"
 
+	errors "github.com/go-openapi/errors"
 	middleware "github.com/go-openapi/runtime/middleware"
+	strfmt "github.com/go-openapi/strfmt"
+	swag "github.com/go-openapi/swag"
+
+	weles "git.tizen.org/tools/weles"
 )
 
 // ArtifactListerHandlerFunc turns a function with the right signature into a artifact lister handler
@@ -72,4 +77,87 @@ func (o *ArtifactLister) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
+}
+
+// ArtifactListerBody Data for filtering and sorting Weles Jobs lists.
+// swagger:model ArtifactListerBody
+type ArtifactListerBody struct {
+
+	// filter
+	Filter *weles.ArtifactFilter `json:"Filter,omitempty"`
+
+	// sorter
+	Sorter *weles.ArtifactSorter `json:"Sorter,omitempty"`
+}
+
+// Validate validates this artifact lister body
+func (o *ArtifactListerBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFilter(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateSorter(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *ArtifactListerBody) validateFilter(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Filter) { // not required
+		return nil
+	}
+
+	if o.Filter != nil {
+		if err := o.Filter.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("artifactFilterAndSort" + "." + "Filter")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *ArtifactListerBody) validateSorter(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Sorter) { // not required
+		return nil
+	}
+
+	if o.Sorter != nil {
+		if err := o.Sorter.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("artifactFilterAndSort" + "." + "Sorter")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *ArtifactListerBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *ArtifactListerBody) UnmarshalBinary(b []byte) error {
+	var res ArtifactListerBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
 }

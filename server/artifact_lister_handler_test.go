@@ -34,6 +34,7 @@ import (
 	"git.tizen.org/tools/weles/fixtures"
 	"git.tizen.org/tools/weles/mock"
 	"git.tizen.org/tools/weles/server"
+	"git.tizen.org/tools/weles/server/operations/artifacts"
 )
 
 var _ = Describe("ArtifactListerHandler", func() {
@@ -72,7 +73,7 @@ var _ = Describe("ArtifactListerHandler", func() {
 		filterSorterReqBody := func(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
 			contentH string) (rb *bytes.Reader) {
 
-			artifactFilterSort := weles.ArtifactFilterAndSort{
+			artifactFilterSort := artifacts.ArtifactListerBody{
 				Filter: &filter,
 				Sorter: &sorter}
 

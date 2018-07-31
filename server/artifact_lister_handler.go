@@ -36,7 +36,7 @@ func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) midd
 		paginator = setArtifactPaginator(params, a.PageLimit)
 	}
 
-	if params.ArtifactFilterAndSort != nil {
+	if params.ArtifactFilterAndSort.Filter != nil || params.ArtifactFilterAndSort.Sorter != nil {
 		artifactInfoReceived, listInfo, err = a.Managers.AM.ListArtifact(
 			*params.ArtifactFilterAndSort.Filter, *params.ArtifactFilterAndSort.Sorter, paginator)
 	} else {

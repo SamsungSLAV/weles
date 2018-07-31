@@ -79,7 +79,16 @@ func init() {
             "name": "artifactFilterAndSort",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/ArtifactFilterAndSort"
+              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "type": "object",
+              "properties": {
+                "Filter": {
+                  "$ref": "#/definitions/ArtifactFilter"
+                },
+                "Sorter": {
+                  "$ref": "#/definitions/ArtifactSorter"
+                }
+              }
             }
           },
           {
@@ -425,18 +434,6 @@ func init() {
         }
       }
     },
-    "ArtifactFilterAndSort": {
-      "description": "Data for filtering and sorting Weles Jobs lists.",
-      "type": "object",
-      "properties": {
-        "Filter": {
-          "$ref": "#/definitions/ArtifactFilter"
-        },
-        "Sorter": {
-          "$ref": "#/definitions/ArtifactSorter"
-        }
-      }
-    },
     "ArtifactInfo": {
       "description": "describes single artifact stored in ArtifactDB.",
       "type": "object",
@@ -764,7 +761,16 @@ func init() {
             "name": "artifactFilterAndSort",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/ArtifactFilterAndSort"
+              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "type": "object",
+              "properties": {
+                "Filter": {
+                  "$ref": "#/definitions/ArtifactFilter"
+                },
+                "Sorter": {
+                  "$ref": "#/definitions/ArtifactSorter"
+                }
+              }
             }
           },
           {
@@ -1143,18 +1149,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/ArtifactType"
           }
-        }
-      }
-    },
-    "ArtifactFilterAndSort": {
-      "description": "Data for filtering and sorting Weles Jobs lists.",
-      "type": "object",
-      "properties": {
-        "Filter": {
-          "$ref": "#/definitions/ArtifactFilter"
-        },
-        "Sorter": {
-          "$ref": "#/definitions/ArtifactSorter"
         }
       }
     },
