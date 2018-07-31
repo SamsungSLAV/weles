@@ -123,7 +123,8 @@ var _ = Describe("ArtifactListerHandler", func() {
 				weles.ArtifactTypeRESULT,
 				weles.ArtifactTypeYAML}}
 
-		filledSorterA1 := weles.ArtifactSorter{
+		//empty sorter marshalls to default sorter.
+		defaultSorterA := weles.ArtifactSorter{
 			SortBy:    weles.ArtifactSortByID,
 			SortOrder: weles.SortOrderAscending}
 
@@ -191,6 +192,12 @@ var _ = Describe("ArtifactListerHandler", func() {
 							TotalRecords:     uint64(len(artifactInfo420)),
 							RemainingRecords: 0}
 
+						if sorter.SortOrder == "" {
+							sorter.SortOrder = weles.SortOrderAscending
+						}
+						if sorter.SortBy == "" {
+							sorter.SortBy = weles.ArtifactSortByID
+						}
 						mockArtifactManager.EXPECT().ListArtifact(
 							filter, sorter, emptyPaginatorA).Return(
 							artifactInfo420, listInfo, nil)
@@ -227,7 +234,7 @@ var _ = Describe("ArtifactListerHandler", func() {
 						filledFilterA1, emptySorterA, curr.query),
 
 					Entry("a: given empty filter and filled sorter",
-						emptyFilterA, filledSorterA1, curr.query),
+						emptyFilterA, defaultSorterA, curr.query),
 				)
 			}
 		})
@@ -258,7 +265,7 @@ var _ = Describe("ArtifactListerHandler", func() {
 								RemainingRecords: 0}
 
 							mockArtifactManager.EXPECT().ListArtifact(
-								filter, sorter, paginator).Return(
+								filter, defaultSorterA, paginator).Return(
 								artifactInfo, listInfo, nil)
 
 							reqBody := filterSorterReqBody(filter, sorter, JSON)
@@ -292,7 +299,7 @@ var _ = Describe("ArtifactListerHandler", func() {
 
 						Entry("given filled filter, when AM returns same amount of filtered jobs"+
 							" as Default Page Size",
-							artifactInfoAll, filledFilterA1, filledSorterA2, curr.paginator,
+							artifactInfoAll, filledFilterA1, emptySorterA, curr.paginator,
 							curr.query, currgl),
 					)
 				}
@@ -335,7 +342,7 @@ var _ = Describe("ArtifactListerHandler", func() {
 					}
 
 					first := mockArtifactManager.EXPECT().ListArtifact(
-						filter, sorter, paginator).Return(artifactInfoStartingPage, listInfo, nil)
+						filter, defaultSorterA, paginator).Return(artifactInfoStartingPage, listInfo, nil)
 
 					reqBody := filterSorterReqBody(filter, sorter, JSON)
 					req := createRequest(reqBody, "", startingPageQuery, JSON, JSON)
@@ -399,10 +406,11 @@ var _ = Describe("ArtifactListerHandler", func() {
 						listInfo2.RemainingRecords = uint64(tmp)
 					}
 					//filter and sorter should stay the same.
-					mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator2).Return(
+					mockArtifactManager.EXPECT().ListArtifact(filter, defaultSorterA, paginator2).Return(
 						artifactInfo2, listInfo2, nil).After(first)
 
 					client2 := testserver.Client()
+					reqBody = filterSorterReqBody(filter, sorter, JSON)
 					req2 := createRequest(reqBody, nextPage, "", JSON, JSON)
 					req2.Close = true
 					resp2, err := client2.Do(req2)
@@ -488,7 +496,7 @@ var _ = Describe("ArtifactListerHandler", func() {
 
 					}
 
-					first := mockArtifactManager.EXPECT().ListArtifact(filter, sorter,
+					first := mockArtifactManager.EXPECT().ListArtifact(filter, defaultSorterA,
 						paginator).Return(artifactInfoStartingPage, listInfo, nil)
 
 					reqBody := filterSorterReqBody(filter, sorter, JSON)
@@ -562,9 +570,10 @@ var _ = Describe("ArtifactListerHandler", func() {
 						listInfo2.RemainingRecords = uint64(apiDefaults.PageLimit)
 					}
 
-					mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator2).Return(
+					mockArtifactManager.EXPECT().ListArtifact(filter, defaultSorterA, paginator2).Return(
 						artifactInfo2, listInfo2, nil).After(first)
 					client2 := testserver.Client()
+					reqBody = filterSorterReqBody(filter, sorter, JSON)
 					req2 := createRequest(reqBody, prevPage, "", JSON, JSON)
 					req2.Close = true
 					resp2, err := client2.Do(req2)
@@ -630,7 +639,7 @@ var _ = Describe("ArtifactListerHandler", func() {
 						RemainingRecords: 0,
 					}
 
-					mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator).Return(
+					mockArtifactManager.EXPECT().ListArtifact(filter, defaultSorterA, paginator).Return(
 						artifactInfo, listInfo, amerr)
 					reqBody := filterSorterReqBody(filter, sorter, JSON)
 					client := testserver.Client()
@@ -704,8 +713,6 @@ var _ = Describe("ArtifactListerHandler", func() {
 				Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
 
 			},
-			Entry("a: json, pagination off",
-				int32(0), "?before=10&after=20", emptyFilterA, emptySorterA),
 			Entry("a: json, pagination on",
 				int32(100), "?before=10&after=20", emptyFilterA, emptySorterA),
 		)

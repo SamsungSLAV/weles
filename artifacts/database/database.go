@@ -95,8 +95,7 @@ func prepareQuery(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
 
 	if !totalRecords && paginator.ID != 0 {
 		if (paginator.Forward && sorter.SortOrder == weles.SortOrderDescending) ||
-			(!paginator.Forward && (sorter.SortOrder == weles.SortOrderAscending ||
-				sorter.SortOrder == "")) {
+			(!paginator.Forward && sorter.SortOrder == weles.SortOrderAscending) {
 			conditions = append(conditions, " ID < ? ")
 			args = append(args, paginator.ID)
 		} else {
