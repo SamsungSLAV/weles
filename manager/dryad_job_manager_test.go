@@ -29,9 +29,10 @@ import (
 var _ = Describe("DryadJobManager", func() {
 	var djm DryadJobManager
 	jobID := JobID(666)
+	artifactDBPath := "/artifact/db/path"
 
 	BeforeEach(func() {
-		djm = NewDryadJobManager()
+		djm = NewDryadJobManager(artifactDBPath)
 	})
 
 	create := func() {
