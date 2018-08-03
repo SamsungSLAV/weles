@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,4 +26,14 @@ var (
 	// ErrUnsupportedQueryType is returned when wrong type of argument is passed to
 	// ArtifactDB's Select().
 	ErrUnsupportedQueryType = errors.New("unsupported argument type")
+)
+
+const (
+	dbOpenFail         = "failed to open artifacts database: "
+	whileFilter        = "while filtering, "
+	dbTransOpenFail    = "failed to open transaction with artifacts database: "
+	dbTransCommitFail  = "failed to commit transaction to artifacts database: "
+	dbRemainingFail    = "failed to get remaining records count: "
+	dbTotalFail        = "failed to get total records count: "
+	dbArtifactInfoFail = "failed to get ArtifactInfo records: "
 )

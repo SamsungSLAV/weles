@@ -20,6 +20,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"log"
 	"strings"
 
 	"git.tizen.org/tools/weles"
@@ -41,7 +42,7 @@ func (aDB *ArtifactDB) Open(dbPath string) error {
 	var err error
 	aDB.handler, err = sql.Open("sqlite3", dbPath)
 	if err != nil {
-		return err
+		return errors.New(dbOpenFail + err.Error())
 	}
 
 	aDB.dbmap = &gorp.DbMap{Db: aDB.handler, Dialect: gorp.SqliteDialect{}}
@@ -180,8 +181,7 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	// Thats why it's done with the use prepareQuery.
 	trans, err := aDB.dbmap.Begin()
 	if err != nil {
-		return nil, weles.ListInfo{},
-			errors.New("Failed to open transaction while filtering " + err.Error())
+		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTransOpenFail + err.Error())
 	}
 	queryForTotal, argsForTotal := prepareQuery(filter, sorter, paginator, true, false, 0)
 	queryForRemaining, argsForRemaining := prepareQuery(filter, sorter, paginator, false, true, 0)
@@ -189,12 +189,12 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 
 	rr, err = aDB.dbmap.SelectInt(queryForRemaining, argsForRemaining...)
 	if err != nil {
-		return nil, weles.ListInfo{}, errors.New("Failed to get remaining records " + err.Error())
+		return nil, weles.ListInfo{}, errors.New(whileFilter + dbRemainingFail + err.Error())
 	}
 
 	tr, err = aDB.dbmap.SelectInt(queryForTotal, argsForTotal...)
 	if err != nil {
-		return nil, weles.ListInfo{}, errors.New("Failed to get total records " + err.Error())
+		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTotalFail + err.Error())
 	}
 	// TODO: refactor this file. below is to ignore pagination object when pagination is turned off.
 	if paginator.Limit == 0 {
@@ -209,11 +209,12 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	queryForData, argsForData := prepareQuery(filter, sorter, paginator, false, false, offset)
 	_, err = aDB.dbmap.Select(&results, queryForData, argsForData...)
 	if err != nil {
-		return nil, weles.ListInfo{}, err
+		return nil, weles.ListInfo{}, errors.New(whileFilter + dbArtifactInfoFail + err.Error())
 	}
 	if err := trans.Commit(); err != nil {
-		return nil, weles.ListInfo{},
-			errors.New("Failed to commit transaction while filtering " + err.Error())
+		return nil,
+			weles.ListInfo{},
+			errors.New(whileFilter + dbTransCommitFail + err.Error())
 
 	}
 	return results,
@@ -252,29 +253,18 @@ func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []weles.ArtifactInfo, 
 	return results, nil
 }
 
-// getID fetches ID of an artifact with provided path.
-func (aDB *ArtifactDB) getID(path weles.ArtifactPath) (int64, error) {
-	res, err := aDB.dbmap.SelectInt("select ID from artifacts where Path=?", path)
-	if err != nil {
-		return 0, err
-	}
-	return res, nil
-}
-
 // SetStatus changes artifact's status in ArtifactDB.
 func (aDB *ArtifactDB) SetStatus(change weles.ArtifactStatusChange) error {
 	ai, err := aDB.SelectPath(change.Path)
 	if err != nil {
-		return err
+		log.Println("failed to retrieve artifact based on its path: " + err.Error())
+		return err //TODO: aalexanderr - log  error and continue
 	}
-
-	id, err := aDB.getID(ai.Path)
-	if err != nil {
-		return err
-	}
-	ai.ID = id
 
 	ai.Status = change.NewStatus
-	_, err = aDB.dbmap.Update(&ai)
+	if _, err = aDB.dbmap.Update(&ai); err != nil {
+		log.Println("failed to update database" + err.Error())
+		// TODO: aalexanderr - log critical, stop weles gracefully
+	}
 	return err
 }

@@ -18,7 +18,9 @@
 package artifacts
 
 import (
+	"errors"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -103,11 +105,16 @@ func (s *Storage) PushArtifact(artifact weles.ArtifactDescription,
 
 	err = s.downloader.Download(artifact.URI, path, ch)
 	if err != nil {
-		s.db.SetStatus(weles.ArtifactStatusChange{
+		err2 := s.db.SetStatus(weles.ArtifactStatusChange{
 			Path:      path,
 			NewStatus: weles.ArtifactStatusFAILED,
 		})
-		return "", err
+		if err2 != nil {
+			return "", errors.New(
+				"failed to download artifact: " + err.Error() +
+					" and failed to set artifacts status to failed: " + err2.Error())
+		}
+		return "", errors.New("failed to download artifact: " + err.Error())
 	}
 	return path, nil
 }
@@ -162,7 +169,13 @@ func (s *Storage) getNewPath(ad weles.ArtifactDescription) (weles.ArtifactPath, 
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+
+	defer func() {
+		if err = f.Close(); err != nil {
+			log.Println("failed to close file")
+			//TODO: aalexanderr log
+		}
+	}()
 	return weles.ArtifactPath(f.Name()), err
 }
 
@@ -170,7 +183,7 @@ func (s *Storage) getNewPath(ad weles.ArtifactDescription) (weles.ArtifactPath, 
 // about status change.
 func (s *Storage) listenToChanges() {
 	for change := range s.notifier {
-		// TODO handle errors returned by SetStatus
-		s.db.SetStatus(change)
+		// Error handled in SetStatus function.
+		_ = s.db.SetStatus(change) //nolint: gas, gosec
 	}
 }

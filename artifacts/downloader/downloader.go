@@ -20,6 +20,7 @@ package downloader
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"sync"
@@ -76,17 +77,28 @@ func (d *Downloader) getData(URI weles.ArtifactURI, path weles.ArtifactPath) err
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
+	defer func() {
+		if erro := resp.Body.Close(); erro != nil {
+			log.Println("failed to close response body after downloading file from: "+string(URI),
+				erro.Error())
+		}
+	}()
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("server error %v %v", URI, resp.Status)
+		return fmt.Errorf("while downloading: %v server returned %v status code, expected 200 ",
+			URI, resp.Status)
 	}
 
 	file, err := os.Create(string(path))
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+
+	defer func() {
+		if erro := file.Close(); erro != nil {
+			log.Println("failed to close file: " + string(path) + " " + erro.Error())
+		}
+	}()
 
 	_, err = io.Copy(file, resp.Body)
 	return err
@@ -111,7 +123,9 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath,
 
 	err := d.getData(URI, path)
 	if err != nil {
-		os.Remove(string(path))
+		if err = os.Remove(string(path)); err != nil {
+			log.Println("failed to remove an artifact: ", path, " due to: "+err.Error())
+		}
 		change.NewStatus = weles.ArtifactStatusFAILED
 	} else {
 		change.NewStatus = weles.ArtifactStatusREADY
