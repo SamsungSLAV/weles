@@ -289,20 +289,27 @@ var _ = Describe("ArtifactDB", func() {
 			},
 			Entry("filter one JobID", oneJobFilter, artifact),
 			Entry("filter more than one JobIDs", twoJobsFilter, artifact, aImageReady, aYamlFailed),
-			Entry("filter JobID not in db", noJobFilter),
 			Entry("filter one Type", oneTypeFilter, aYamlFailed),
 			Entry("filter more than one Type", twoTypesFilter, aYamlFailed, aTestFailed),
-			Entry("filter Type not in db", noTypeFilter),
 			Entry("filter one Status", oneStatusFilter, artifact),
 			Entry("filter more than one Status", twoStatusFilter, artifact, aTestFailed,
 				aYamlFailed),
-			Entry("filter Status not in db", noStatusFilter),
 			Entry("filter one Alias", oneAliasFilter, artifact),
 			Entry("filter more than one Alias", twoAliasFilter, artifact, aImageReady, aYamlFailed),
-			Entry("filter Alias not in db", noAliasFilter),
 			Entry("filter is completly set up", fullFilter, aYamlFailed),
-			Entry("no artifact in db matches filter", noMatchFilter),
 			Entry("filter is empty", emptyFilter, artifact, aImageReady, aYamlFailed, aTestFailed),
+		)
+
+		DescribeTable("return artifact not found error",
+			func(filter weles.ArtifactFilter, expected ...weles.ArtifactInfo) {
+				_, _, err := goldenUnicorn.Filter(filter, defaultSorter, weles.ArtifactPagination{})
+				Expect(err).To(Equal(weles.ErrArtifactNotFound))
+			},
+			Entry("filter JobID not in db", noJobFilter),
+			Entry("filter Type not in db", noTypeFilter),
+			Entry("filter Status not in db", noStatusFilter),
+			Entry("filter Alias not in db", noAliasFilter),
+			Entry("no artifact in db matches filter", noMatchFilter),
 		)
 	})
 	Describe("SetStatus", func() {

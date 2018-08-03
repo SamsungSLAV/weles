@@ -44,12 +44,6 @@ func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) midd
 			weles.ArtifactFilter{}, weles.ArtifactSorter{}, paginator)
 	}
 
-	// TODO: remove this when artifactmanager will return this.
-	if len(artifactInfoReceived) == 0 {
-		return artifacts.NewArtifactListerNotFound().WithPayload(
-			&weles.ErrResponse{Message: weles.ErrArtifactNotFound.Error()})
-	}
-
 	switch err {
 	default:
 		return artifacts.NewArtifactListerInternalServerError().WithPayload(

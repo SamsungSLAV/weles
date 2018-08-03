@@ -80,11 +80,9 @@ func (aDB *ArtifactDB) SelectPath(path weles.ArtifactPath) (weles.ArtifactInfo, 
 
 // prepareQuery prepares query based on given filter.
 // TODO code duplication
-func prepareQuery(
-	filter weles.ArtifactFilter,
-	sorter weles.ArtifactSorter,
-	paginator weles.ArtifactPagination,
-	totalRecords, remainingRecords bool, offset int64) (query string, args []interface{}) {
+func prepareQuery(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
+	paginator weles.ArtifactPagination, totalRecords, remainingRecords bool, offset int64,
+) (query string, args []interface{}) {
 
 	if !totalRecords && !remainingRecords {
 		query = "select * from artifacts "
@@ -196,10 +194,9 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	if err != nil {
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTotalFail + err.Error())
 	}
-	// TODO: refactor this file. below is to ignore pagination object when pagination is turned off.
-	if paginator.Limit == 0 {
-		paginator.Forward = true
-		paginator.ID = 0
+
+	if tr == 0 {
+		return []weles.ArtifactInfo{}, weles.ListInfo{}, weles.ErrArtifactNotFound
 	}
 
 	if !paginator.Forward {
@@ -212,9 +209,7 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbArtifactInfoFail + err.Error())
 	}
 	if err := trans.Commit(); err != nil {
-		return nil,
-			weles.ListInfo{},
-			errors.New(whileFilter + dbTransCommitFail + err.Error())
+		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTransCommitFail + err.Error())
 
 	}
 	return results,
