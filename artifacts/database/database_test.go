@@ -365,16 +365,16 @@ var _ = Describe("ArtifactDB", func() {
 		DescribeTable("artifact status change",
 			func(change weles.ArtifactStatusChange, expectedErr error) {
 
+				var a weles.ArtifactInfo
 				err := goldenUnicorn.SetStatus(change)
 				if expectedErr == nil {
 					Expect(err).ToNot(HaveOccurred())
-
-					a, err := goldenUnicorn.SelectPath(change.Path)
+					a, err = goldenUnicorn.SelectPath(change.Path)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(a.Status).To(Equal(change.NewStatus))
 				} else {
 					Expect(err).To(Equal(expectedErr))
-					a, err := goldenUnicorn.SelectPath(change.Path)
+					a, err = goldenUnicorn.SelectPath(change.Path)
 					Expect(err).To(HaveOccurred())
 					Expect(a).To(Equal(weles.ArtifactInfo{}))
 				}

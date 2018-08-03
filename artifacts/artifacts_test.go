@@ -52,7 +52,6 @@ With gently smiling jaws!
 	var (
 		testDir string
 		dbPath  string
-		err     error
 	)
 
 	var (
@@ -86,6 +85,7 @@ With gently smiling jaws!
 	)
 
 	BeforeEach(func() {
+		var err error
 		testDir, err = ioutil.TempDir("", "test-weles-")
 		Expect(err).ToNot(HaveOccurred())
 		dbPath = filepath.Join(testDir, "test.db")
@@ -126,13 +126,13 @@ With gently smiling jaws!
 
 	It("should create new temp directory for artifacts", func() {
 		var path, pathSame, pathType weles.ArtifactPath
-
 		jobDir := filepath.Join(testDir, strconv.Itoa(int(description.JobID)))
 		typeDir := filepath.Join(jobDir, string(description.Type))
 		newTypeDir := filepath.Join(jobDir, string(dSameJobOtherType.Type))
 
 		Expect(jobDir).ToNot(BeADirectory())
 
+		var err error
 		By("CreateArtifact", func() {
 			path, err = silverKangaroo.CreateArtifact(description)
 			Expect(err).ToNot(HaveOccurred())
@@ -271,9 +271,9 @@ With gently smiling jaws!
 
 				if finalStatus != weles.ArtifactStatusFAILED {
 					By("Check if file exists and has proper content")
+					content, erro := ioutil.ReadFile(string(path))
 
-					content, err := ioutil.ReadFile(string(path))
-					Expect(err).ToNot(HaveOccurred())
+					Expect(erro).ToNot(HaveOccurred())
 					Expect(string(content)).To(BeIdenticalTo(poem))
 
 				} else {

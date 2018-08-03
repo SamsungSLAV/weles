@@ -92,15 +92,16 @@ I call it stupid of the pig.
 	})
 
 	prepareServer := func(url weles.ArtifactURI) *httptest.Server {
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if url == validURL {
-				w.WriteHeader(http.StatusOK)
-				fmt.Fprint(w, pigs)
-			} else {
-				w.WriteHeader(http.StatusNotFound)
-			}
-		}))
-		return ts
+		testServer := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if url == validURL {
+					w.WriteHeader(http.StatusOK)
+					fmt.Fprint(w, pigs)
+				} else {
+					w.WriteHeader(http.StatusNotFound)
+				}
+			}))
+		return testServer
 	}
 
 	DescribeTable("getData(): Notify channels and save data to file",
