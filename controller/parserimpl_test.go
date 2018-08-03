@@ -68,7 +68,11 @@ var _ = Describe("ParserImpl", func() {
 			gomock.InOrder(
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
-				am.EXPECT().CreateArtifact(weles.ArtifactDescription{JobID: j, Type: weles.ArtifactTypeYAML}).Return(goodpath, nil),
+				am.EXPECT().CreateArtifact(
+					weles.ArtifactDescription{
+						JobID: j,
+						Type:  weles.ArtifactTypeYAML,
+					}).Return(goodpath, nil),
 				yp.EXPECT().ParseYaml(yaml).Return(&config, nil),
 				jc.EXPECT().SetConfig(j, config),
 			)
@@ -84,7 +88,11 @@ var _ = Describe("ParserImpl", func() {
 			gomock.InOrder(
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
-				am.EXPECT().CreateArtifact(weles.ArtifactDescription{JobID: j, Type: weles.ArtifactTypeYAML}).Return(goodpath, nil),
+				am.EXPECT().CreateArtifact(
+					weles.ArtifactDescription{
+						JobID: j,
+						Type:  weles.ArtifactTypeYAML,
+					}).Return(goodpath, nil),
 				yp.EXPECT().ParseYaml(yaml).Return(&config, nil),
 				jc.EXPECT().SetConfig(j, config).Return(err),
 			)
@@ -102,7 +110,11 @@ var _ = Describe("ParserImpl", func() {
 			gomock.InOrder(
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
-				am.EXPECT().CreateArtifact(weles.ArtifactDescription{JobID: j, Type: weles.ArtifactTypeYAML}).Return(goodpath, nil),
+				am.EXPECT().CreateArtifact(
+					weles.ArtifactDescription{
+						JobID: j,
+						Type:  weles.ArtifactTypeYAML,
+					}).Return(goodpath, nil),
 				yp.EXPECT().ParseYaml(yaml).Return(&weles.Config{}, err),
 			)
 
@@ -119,7 +131,11 @@ var _ = Describe("ParserImpl", func() {
 			gomock.InOrder(
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
-				am.EXPECT().CreateArtifact(weles.ArtifactDescription{JobID: j, Type: weles.ArtifactTypeYAML}).Return(badpath, nil),
+				am.EXPECT().CreateArtifact(
+					weles.ArtifactDescription{
+						JobID: j,
+						Type:  weles.ArtifactTypeYAML,
+					}).Return(badpath, nil),
 			)
 
 			h.Parse(j)
@@ -127,7 +143,8 @@ var _ = Describe("ParserImpl", func() {
 			expectedNotification := notifier.Notification{
 				JobID: j,
 				OK:    false,
-				Msg:   "Internal Weles error while saving file in ArtifactDB : " + "open " + string(badpath) + ": no such file or directory",
+				Msg: "Internal Weles error while saving file in ArtifactDB : " +
+					"open " + string(badpath) + ": no such file or directory",
 			}
 			Eventually(r).Should(Receive(Equal(expectedNotification)))
 		})
@@ -135,7 +152,11 @@ var _ = Describe("ParserImpl", func() {
 			gomock.InOrder(
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
-				am.EXPECT().CreateArtifact(weles.ArtifactDescription{JobID: j, Type: weles.ArtifactTypeYAML}).Return(weles.ArtifactPath(""), err),
+				am.EXPECT().CreateArtifact(
+					weles.ArtifactDescription{
+						JobID: j,
+						Type:  weles.ArtifactTypeYAML,
+					}).Return(weles.ArtifactPath(""), err),
 			)
 
 			h.Parse(j)
@@ -143,7 +164,8 @@ var _ = Describe("ParserImpl", func() {
 			expectedNotification := notifier.Notification{
 				JobID: j,
 				OK:    false,
-				Msg:   "Internal Weles error while creating file path in ArtifactDB : " + err.Error(),
+				Msg: "Internal Weles error while creating file path in ArtifactDB : " +
+					err.Error(),
 			}
 			Eventually(r).Should(Receive(Equal(expectedNotification)))
 		})

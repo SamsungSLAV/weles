@@ -69,9 +69,7 @@ var _ = Describe("ArtifactListerHandler", func() {
 			return req
 		}
 
-		filterSorterReqBody := func(
-			filter weles.ArtifactFilter,
-			sorter weles.ArtifactSorter,
+		filterSorterReqBody := func(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
 			contentH string) (rb *bytes.Reader) {
 
 			artifactFilterSort := weles.ArtifactFilterAndSort{
@@ -85,7 +83,9 @@ var _ = Describe("ArtifactListerHandler", func() {
 
 		}
 
-		checkReceivedArtifactInfo := func(respBody []byte, artifactInfo []weles.ArtifactInfo, acceptH string) {
+		checkReceivedArtifactInfo := func(respBody []byte, artifactInfo []weles.ArtifactInfo,
+			acceptH string) {
+
 			artifactInfoMarshalled, err := json.Marshal(artifactInfo)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(string(respBody)).To(MatchJSON(string(artifactInfoMarshalled)))
@@ -211,7 +211,8 @@ var _ = Describe("ArtifactListerHandler", func() {
 						Expect(resp.Header.Get("Next")).To(Equal(""))
 						Expect(resp.Header.Get("Previous")).To(Equal(""))
 						Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
-						Expect(resp.Header.Get("TotalRecords")).To(Equal(strconv.Itoa(len(artifactInfo420))))
+						Expect(resp.Header.Get("TotalRecords")).To(Equal(strconv.Itoa(
+							len(artifactInfo420))))
 
 					},
 
@@ -273,19 +274,25 @@ var _ = Describe("ArtifactListerHandler", func() {
 							checkReceivedArtifactInfo(respBody, artifactInfo, JSON)
 
 							Expect(resp.StatusCode).To(Equal(200))
-							// Next and Previous headers are ignored here as they are tested in other context.
+							// Next and Previous headers are ignored here as they are tested
+							// in other context.
 							Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
 							Expect(resp.Header.Get("TotalRecords")).To(
 								Equal(strconv.Itoa(len(artifactInfo))))
 						},
 						Entry("given empty request when AM has less jobs than page size",
-							artifactInfoAll[:40], emptyFilterA, emptySorterA, curr.paginator, curr.query, currgl),
+							artifactInfoAll[:40], emptyFilterA, emptySorterA, curr.paginator,
+							curr.query, currgl),
 
-						Entry("given filled filter, when AM returns less jobs than Default Page size",
-							artifactInfoAll[10:67], filledFilterA2, emptySorterA, curr.paginator, curr.query, currgl),
+						Entry("given filled filter, when AM returns less jobs than "+
+							"Default Page size",
+							artifactInfoAll[10:67], filledFilterA2, emptySorterA, curr.paginator,
+							curr.query, currgl),
 
-						Entry("given filled filter, when AM returns same amount of filtered jobs as Default Page Size",
-							artifactInfoAll, filledFilterA1, filledSorterA2, curr.paginator, curr.query, currgl),
+						Entry("given filled filter, when AM returns same amount of filtered jobs"+
+							" as Default Page Size",
+							artifactInfoAll, filledFilterA1, filledSorterA2, curr.paginator,
+							curr.query, currgl),
 					)
 				}
 			}
@@ -308,17 +315,26 @@ var _ = Describe("ArtifactListerHandler", func() {
 
 					startingPageQuery := ""
 
-					paginator := weles.ArtifactPagination{Limit: apiDefaults.PageLimit, Forward: true}
+					paginator := weles.ArtifactPagination{
+						Limit:   apiDefaults.PageLimit,
+						Forward: true,
+					}
 					if startingPageNo != 1 {
 						paginator.Forward = true
 						paginator.ID = artifactInfoStartingPage[0].ID
 						startingPageQuery = "?after=" +
-							strconv.FormatInt(artifactInfo[(startingPageNo-1)*int(apiDefaults.PageLimit)].ID, 10)
+							strconv.FormatInt(artifactInfo[(startingPageNo-1)*int(
+								apiDefaults.PageLimit)].ID, 10)
 					}
 
-					listInfo := weles.ListInfo{TotalRecords: uint64(len(artifactInfo)), RemainingRecords: uint64(len(artifactInfo) - startingPageNo*len(artifactInfoStartingPage))}
+					listInfo := weles.ListInfo{
+						TotalRecords: uint64(len(artifactInfo)),
+						RemainingRecords: uint64(len(artifactInfo) - startingPageNo*len(
+							artifactInfoStartingPage)),
+					}
 
-					first := mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator).Return(artifactInfoStartingPage, listInfo, nil)
+					first := mockArtifactManager.EXPECT().ListArtifact(
+						filter, sorter, paginator).Return(artifactInfoStartingPage, listInfo, nil)
 
 					reqBody := filterSorterReqBody(filter, sorter, JSON)
 					req := createRequest(reqBody, "", startingPageQuery, JSON, JSON)
@@ -334,14 +350,19 @@ var _ = Describe("ArtifactListerHandler", func() {
 					Expect(resp.StatusCode).To(Equal(206))
 
 					Expect(resp.Header.Get("Next")).To(Equal("/api/v1/artifacts/list" + "?after=" +
-						strconv.FormatInt(artifactInfoStartingPage[apiDefaults.PageLimit-1].ID, 10)))
+						strconv.FormatInt(artifactInfoStartingPage[apiDefaults.PageLimit-1].ID,
+							10)))
 					prevCheck := ""
 					if startingPageNo != 1 {
-						prevCheck = "/api/v1/artifacts/list" + "?before=" + strconv.FormatInt(artifactInfoStartingPage[0].ID, 10)
+						prevCheck = "/api/v1/artifacts/list" + "?before=" +
+							strconv.FormatInt(artifactInfoStartingPage[0].ID, 10)
 					}
 					Expect(resp.Header.Get("Previous")).To(Equal(prevCheck))
-					Expect(resp.Header.Get("RemainingRecords")).To(Equal(strconv.Itoa(len(artifactInfo) - (startingPageNo * len(artifactInfoStartingPage)))))
-					Expect(resp.Header.Get("TotalRecords")).To(Equal(strconv.Itoa(len(artifactInfo))))
+					Expect(resp.Header.Get("RemainingRecords")).To(
+						Equal(strconv.Itoa(len(artifactInfo) - (startingPageNo * len(
+							artifactInfoStartingPage)))))
+					Expect(resp.Header.Get("TotalRecords")).To(
+						Equal(strconv.Itoa(len(artifactInfo))))
 
 					nextPage := resp.Header.Get("Next")
 					resp.Body.Close()
@@ -350,12 +371,16 @@ var _ = Describe("ArtifactListerHandler", func() {
 					//prepare data for second call based on previous
 					var artifactInfo2 []weles.ArtifactInfo
 					var secondReturnCode int
-					if (len(artifactInfo) - startingPageNo*int(apiDefaults.PageLimit)) <= int(apiDefaults.PageLimit) {
+					if (len(artifactInfo) - startingPageNo*
+						int(apiDefaults.PageLimit)) <= int(apiDefaults.PageLimit) {
 
-						artifactInfo2 = artifactInfo[startingPageNo*int(apiDefaults.PageLimit):] //next page is not full
+						artifactInfo2 = artifactInfo[startingPageNo*int(apiDefaults.PageLimit):]
+						//next page is not full
 						secondReturnCode = 200
 					} else {
-						artifactInfo2 = artifactInfo[startingPageNo*int(apiDefaults.PageLimit) : (startingPageNo+1)*int(apiDefaults.PageLimit)] //last page is full
+						artifactInfo2 = artifactInfo[startingPageNo*
+							int(apiDefaults.PageLimit) : (startingPageNo+1)*
+							int(apiDefaults.PageLimit)] //last page is full
 						secondReturnCode = 206
 					}
 
@@ -366,13 +391,15 @@ var _ = Describe("ArtifactListerHandler", func() {
 							1].ID}
 					listInfo2 := weles.ListInfo{TotalRecords: listInfo.TotalRecords}
 
-					if tmp := len(artifactInfo) - (startingPageNo+1)*int(apiDefaults.PageLimit); tmp < 0 {
+					if tmp := len(artifactInfo) - (startingPageNo+1)*int(
+						apiDefaults.PageLimit); tmp < 0 {
 						listInfo2.RemainingRecords = 0
 					} else {
 						listInfo2.RemainingRecords = uint64(tmp)
 					}
 					//filter and sorter should stay the same.
-					mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator2).Return(artifactInfo2, listInfo2, nil).After(first)
+					mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator2).Return(
+						artifactInfo2, listInfo2, nil).After(first)
 
 					client2 := testserver.Client()
 					req2 := createRequest(reqBody, nextPage, "", JSON, JSON)
@@ -446,18 +473,22 @@ var _ = Describe("ArtifactListerHandler", func() {
 							RemainingRecords: 0}
 
 					} else {
-						artifactInfoStartingPage = artifactInfo[(startingPageNo)*int(apiDefaults.PageLimit) : (startingPageNo+1)*
+						artifactInfoStartingPage = artifactInfo[(startingPageNo)*
+							int(apiDefaults.PageLimit) : (startingPageNo+1)*
 							int(apiDefaults.PageLimit)] //first page of data
 						paginator.Forward = false
-						paginator.ID = artifactInfo[(startingPageNo*int(apiDefaults.PageLimit))-1].ID
+						paginator.ID = artifactInfo[(startingPageNo*
+							int(apiDefaults.PageLimit))-1].ID
 						startingPageQuery = "?before=" + strconv.FormatInt(paginator.ID, 10)
 						listInfo = weles.ListInfo{
-							TotalRecords:     uint64(len(artifactInfo)),
-							RemainingRecords: uint64(len(artifactInfo) - (int(apiDefaults.PageLimit) * startingPageNo))}
+							TotalRecords: uint64(len(artifactInfo)),
+							RemainingRecords: uint64(len(artifactInfo) - (int(
+								apiDefaults.PageLimit) * startingPageNo))}
 
 					}
 
-					first := mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator).Return(artifactInfoStartingPage, listInfo, nil)
+					first := mockArtifactManager.EXPECT().ListArtifact(filter, sorter,
+						paginator).Return(artifactInfoStartingPage, listInfo, nil)
 
 					reqBody := filterSorterReqBody(filter, sorter, JSON)
 					req := createRequest(reqBody, "", startingPageQuery, JSON, JSON)
@@ -473,17 +504,27 @@ var _ = Describe("ArtifactListerHandler", func() {
 
 					if startingPageNo == pages {
 						Expect(resp.StatusCode).To(Equal(200))
-						Expect(resp.Header.Get("Previous")).To(Equal("/api/v1/artifacts/list?before=" + strconv.FormatInt(artifactInfoStartingPage[0].ID, 10)))
+						Expect(resp.Header.Get("Previous")).To(
+							Equal("/api/v1/artifacts/list?before=" +
+								strconv.FormatInt(artifactInfoStartingPage[0].ID, 10)))
 						Expect(resp.Header.Get("Next")).To(Equal(""))
-						Expect(resp.Header.Get("TotalRecords")).To(Equal(strconv.Itoa(len(artifactInfo))))
+						Expect(resp.Header.Get("TotalRecords")).To(
+							Equal(strconv.Itoa(len(artifactInfo))))
 						Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
 
 					} else {
 						Expect(resp.StatusCode).To(Equal(206))
-						Expect(resp.Header.Get("Previous")).To(Equal("/api/v1/artifacts/list?before=" + strconv.FormatInt(artifactInfoStartingPage[0].ID, 10)))
-						Expect(resp.Header.Get("Next")).To(Equal("/api/v1/artifacts/list?after=" + strconv.FormatInt(artifactInfoStartingPage[len(artifactInfoStartingPage)-1].ID, 10)))
-						Expect(resp.Header.Get("TotalRecords")).To(Equal(strconv.Itoa(len(artifactInfo))))
-						Expect(resp.Header.Get("RemainingRecords")).To(Equal(strconv.FormatUint(listInfo.RemainingRecords, 10)))
+						Expect(resp.Header.Get("Previous")).To(
+							Equal("/api/v1/artifacts/list?before=" +
+								strconv.FormatInt(artifactInfoStartingPage[0].ID, 10)))
+						Expect(resp.Header.Get("Next")).To(
+							Equal("/api/v1/artifacts/list?after=" +
+								strconv.FormatInt(artifactInfoStartingPage[len(
+									artifactInfoStartingPage)-1].ID, 10)))
+						Expect(resp.Header.Get("TotalRecords")).To(
+							Equal(strconv.Itoa(len(artifactInfo))))
+						Expect(resp.Header.Get("RemainingRecords")).To(
+							Equal(strconv.FormatUint(listInfo.RemainingRecords, 10)))
 					}
 
 					prevPage := resp.Header.Get("Previous")
@@ -494,21 +535,34 @@ var _ = Describe("ArtifactListerHandler", func() {
 					//prepare data for second call based on previous
 
 					var artifactInfo2 []weles.ArtifactInfo
-					paginator2 := weles.ArtifactPagination{Limit: apiDefaults.PageLimit, Forward: false, ID: artifactInfoStartingPage[0].ID}
+					paginator2 := weles.ArtifactPagination{
+						Limit:   apiDefaults.PageLimit,
+						Forward: false,
+						ID:      artifactInfoStartingPage[0].ID,
+					}
+
 					listInfo2 := weles.ListInfo{TotalRecords: listInfo.TotalRecords}
 					if startingPageNo == pages {
-						artifactInfo2 = artifactInfo[(startingPageNo-2)*int(apiDefaults.PageLimit) : (startingPageNo-1)*int(apiDefaults.PageLimit)]
+						artifactInfo2 = artifactInfo[(startingPageNo-2)*
+							int(apiDefaults.PageLimit) : (startingPageNo-1)*
+							int(apiDefaults.PageLimit)]
+
 						if startingPageNo-1 == 1 {
 							listInfo2.RemainingRecords = 0
 						} else {
-							listInfo2.RemainingRecords = uint64((pages - (startingPageNo - 1)) * int(apiDefaults.PageLimit))
+							listInfo2.RemainingRecords = uint64((pages - (startingPageNo - 1)) *
+								int(apiDefaults.PageLimit))
 						}
 					} else {
-						artifactInfo2 = artifactInfo[(startingPageNo-1)*int(apiDefaults.PageLimit) : startingPageNo*int(apiDefaults.PageLimit)]
+						artifactInfo2 = artifactInfo[(startingPageNo-1)*
+							int(apiDefaults.PageLimit) : startingPageNo*
+							int(apiDefaults.PageLimit)]
+
 						listInfo2.RemainingRecords = uint64(apiDefaults.PageLimit)
 					}
 
-					mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator2).Return(artifactInfo2, listInfo2, nil).After(first)
+					mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator2).Return(
+						artifactInfo2, listInfo2, nil).After(first)
 					client2 := testserver.Client()
 					req2 := createRequest(reqBody, prevPage, "", JSON, JSON)
 					req2.Close = true
@@ -530,15 +584,20 @@ var _ = Describe("ArtifactListerHandler", func() {
 						} else {
 							Expect(resp2.StatusCode).To(Equal(206))
 							Expect(resp2.Header.Get("RemainingRecords")).To(Equal("100"))
-							Expect(resp2.Header.Get("Previous")).To(Equal("/api/v1/artifacts/list?before=" + strconv.FormatInt(artifactInfo2[0].ID, 10)))
+							Expect(resp2.Header.Get("Previous")).To(
+								Equal("/api/v1/artifacts/list?before=" +
+									strconv.FormatInt(artifactInfo2[0].ID, 10)))
 						}
 					} else {
 						Expect(resp2.StatusCode).To(Equal(206))
 						Expect(resp2.Header.Get("RemainingRecords")).To(Equal("100"))
 					}
 
-					Expect(resp2.Header.Get("Next")).To(Equal("/api/v1/artifacts/list?after=" + strconv.FormatInt(artifactInfo2[len(artifactInfo2)-1].ID, 10)))
-					Expect(resp2.Header.Get("TotalRecords")).To(Equal(strconv.Itoa(len(artifactInfo))))
+					Expect(resp2.Header.Get("Next")).To(
+						Equal("/api/v1/artifacts/list?after=" +
+							strconv.FormatInt(artifactInfo2[len(artifactInfo2)-1].ID, 10)))
+					Expect(resp2.Header.Get("TotalRecords")).To(
+						Equal(strconv.Itoa(len(artifactInfo))))
 				},
 				Entry("a: 2->1/2",
 					artifactInfoAll[:170], 2, 2, emptyFilterA, emptySorterA),
@@ -553,7 +612,9 @@ var _ = Describe("ArtifactListerHandler", func() {
 
 		Context("a: There is an error", func() {
 			DescribeTable("Server should respond with error from ArtifactManager",
-				func(pageLimit int, aviArtifacts int, filter weles.ArtifactFilter, sorter weles.ArtifactSorter, statusCode int, amerr error) {
+				func(pageLimit, aviArtifacts int, filter weles.ArtifactFilter,
+					sorter weles.ArtifactSorter, statusCode int, amerr error) {
+
 					apiDefaults.PageLimit = int32(pageLimit)
 					artifactInfo := fixtures.CreateArtifactInfoSlice(aviArtifacts)
 					paginator := weles.ArtifactPagination{Limit: apiDefaults.PageLimit}
@@ -563,9 +624,13 @@ var _ = Describe("ArtifactListerHandler", func() {
 					} else {
 						paginator.Forward = true
 					}
-					listInfo := weles.ListInfo{TotalRecords: uint64(aviArtifacts), RemainingRecords: 0}
+					listInfo := weles.ListInfo{
+						TotalRecords:     uint64(aviArtifacts),
+						RemainingRecords: 0,
+					}
 
-					mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator).Return(artifactInfo, listInfo, amerr)
+					mockArtifactManager.EXPECT().ListArtifact(filter, sorter, paginator).Return(
+						artifactInfo, listInfo, amerr)
 					reqBody := filterSorterReqBody(filter, sorter, JSON)
 					client := testserver.Client()
 					req := createRequest(reqBody, "", "", JSON, JSON)
@@ -585,24 +650,38 @@ var _ = Describe("ArtifactListerHandler", func() {
 					Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
 
 				},
-				Entry("404 status, Artifact not found error, when server has 0 artifacts avaliable,pagination off",
-					0, 0, emptyFilterA, emptySorterA, 404, weles.ErrArtifactNotFound),
+				Entry("404 status, Artifact not found error, "+
+					"when server has 0 artifacts avaliable,pagination off",
+					0, 0, emptyFilterA, emptySorterA,
+					404, weles.ErrArtifactNotFound),
 
-				Entry("404 status, Artifact not found error  when server has 0 jobs avaliable, pagination on",
-					100, 0, emptyFilterA, emptySorterA, 404, weles.ErrArtifactNotFound),
-				Entry("404 status, Artifact not found error, when server has 100 artifacts but none fulfilling filter, pagination off",
-					0, 100, filledFilterA1, emptySorterA, 404, weles.ErrArtifactNotFound),
-				Entry("404status, Artifact not found error  when server has 100 artifacts but none fulfilling filter, pagination on",
-					100, 100, filledFilterA1, emptySorterA, 404, weles.ErrArtifactNotFound),
-				Entry("500 status, ArtifactManager unexpected error when server has 100 artifacts, pagination off",
-					0, 100, emptyFilterA, emptySorterA, 500, errors.New("This is some errors string")),
-				Entry("500 status, ArtifactManager unexpected error when server has 100 artifacts, pagination on",
-					100, 100, emptyFilterA, emptySorterA, 500, errors.New("This is some errors string")),
+				Entry("404 status, Artifact not found error "+
+					"when server has 0 jobs avaliable, pagination on",
+					100, 0, emptyFilterA, emptySorterA,
+					404, weles.ErrArtifactNotFound),
+				Entry("404 status, Artifact not found error, "+
+					"when server has 100 artifacts but none fulfilling filter, pagination off",
+					0, 100, filledFilterA1, emptySorterA,
+					404, weles.ErrArtifactNotFound),
+				Entry("404status, Artifact not found error "+
+					"when server has 100 artifacts but none fulfilling filter, pagination on",
+					100, 100, filledFilterA1, emptySorterA,
+					404, weles.ErrArtifactNotFound),
+				Entry("500 status, ArtifactManager unexpected error "+
+					"when server has 100 artifacts, pagination off",
+					0, 100, emptyFilterA, emptySorterA,
+					500, errors.New("This is some errors string")),
+				Entry("500 status, ArtifactManager unexpected error "+
+					"when server has 100 artifacts, pagination on",
+					100, 100, emptyFilterA, emptySorterA,
+					500, errors.New("This is some errors string")),
 			)
 		})
 
-		DescribeTable("a: rror returned by server due to both before and after query params set am",
-			func(defaultPageLimit int32, query string, filter weles.ArtifactFilter, sorter weles.ArtifactSorter) {
+		DescribeTable("a: Error returned by server due to both before and after query params set",
+			func(defaultPageLimit int32, query string, filter weles.ArtifactFilter,
+				sorter weles.ArtifactSorter) {
+
 				apiDefaults.PageLimit = defaultPageLimit
 
 				reqBody := filterSorterReqBody(filter, sorter, JSON)

@@ -46,12 +46,14 @@ func (d *deviceCommunicationProvider) Boot() (err error) {
 // Login is a part of DeviceCommunicationProvider interface.
 func (d *deviceCommunicationProvider) Login(credentials Credentials) error {
 	d.credentials = credentials
-	_, _, err := d.sessionProvider.Exec(prefixPath+"dut_login.sh", d.credentials.Username, d.credentials.Password)
+	_, _, err := d.sessionProvider.Exec(prefixPath+"dut_login.sh", d.credentials.Username,
+		d.credentials.Password)
 	return err
 }
 
 // CopyFilesTo function is a part of DeviceCommunicationProvider interface.
-// It uses tmpfs of MuxPi so caller must take into consideration size of all files that are to be copied.
+// It uses tmpfs of MuxPi so caller must take into consideration size of all files
+// that are to be copied.
 func (d *deviceCommunicationProvider) CopyFilesTo(src []string, dest string) error {
 	for _, path := range src {
 		_, _, err := d.sessionProvider.Exec(prefixPath+"dut_copyto.sh", path, dest)
@@ -63,7 +65,8 @@ func (d *deviceCommunicationProvider) CopyFilesTo(src []string, dest string) err
 }
 
 // CopyFilesFrom function is a part of DeviceCommunicationProvider interface.
-// It uses tmpfs of MuxPi so caller must take into consideration size of all files that are to be copied.
+// It uses tmpfs of MuxPi so caller must take into consideration size of all files
+// that are to be copied.
 func (d *deviceCommunicationProvider) CopyFilesFrom(src []string, dest string) error {
 	for _, path := range src {
 		_, _, err := d.sessionProvider.Exec(prefixPath+"dut_copyfrom.sh", path, dest)

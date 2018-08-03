@@ -50,7 +50,8 @@ var _ = Describe("JobCancelerHandler", func() {
 	Describe("cancelling a job", func() {
 		getClientResp := func(accept string) (resp *http.Response) {
 			client := testserver.Client()
-			req, err := http.NewRequest(http.MethodPost, testserver.URL+"/api/v1/jobs/1234/cancel", nil)
+			req, err := http.NewRequest(http.MethodPost, testserver.URL+"/api/v1/jobs/1234/cancel",
+				nil)
 			Expect(err).ToNot(HaveOccurred())
 			if accept != OMIT {
 				req.Header.Set("Accept", accept)
@@ -85,12 +86,18 @@ var _ = Describe("JobCancelerHandler", func() {
 
 					Expect(resp.StatusCode).To(Equal(statuscode))
 				},
-				Entry("job does not exist - 404", JSON, weles.ErrJobNotFound, 404),
-				Entry("job does not exist - 404", OMIT, weles.ErrJobNotFound, 404),
-				Entry("job already has final status - 403", JSON, weles.ErrJobStatusChangeNotAllowed, 403),
-				Entry("job already has final status - 403", OMIT, weles.ErrJobStatusChangeNotAllowed, 403),
-				Entry("unexpected error - 500", JSON, errors.New("Some other error"), 500),
-				Entry("unexpected error - 500", OMIT, errors.New("Some other error"), 500),
+				Entry("job does not exist - 404",
+					JSON, weles.ErrJobNotFound, 404),
+				Entry("job does not exist - 404",
+					OMIT, weles.ErrJobNotFound, 404),
+				Entry("job already has final status - 403",
+					JSON, weles.ErrJobStatusChangeNotAllowed, 403),
+				Entry("job already has final status - 403",
+					OMIT, weles.ErrJobStatusChangeNotAllowed, 403),
+				Entry("unexpected error - 500",
+					JSON, errors.New("Some other error"), 500),
+				Entry("unexpected error - 500",
+					OMIT, errors.New("Some other error"), 500),
 			)
 		})
 

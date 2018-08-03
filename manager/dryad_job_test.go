@@ -75,7 +75,9 @@ var _ = Describe("dryadJob", func() {
 
 	It("should go through proper states", func() {
 		djSync <- struct{}{}
-		states := []DryadJobStatus{DryadJobStatusNEW, DryadJobStatusDEPLOY, DryadJobStatusBOOT, DryadJobStatusTEST, DryadJobStatusOK}
+		states := []DryadJobStatus{DryadJobStatusNEW, DryadJobStatusDEPLOY, DryadJobStatusBOOT,
+			DryadJobStatusTEST, DryadJobStatusOK}
+
 		for _, state := range states {
 			change := DryadJobStatusChange{Job: jobID, Status: state}
 			Eventually(changes).Should(Receive(Equal(change)))

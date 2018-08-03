@@ -93,7 +93,8 @@ func (h *DryaderImpl) setStatus(j weles.JobID, msg string) {
 	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusRUNNING, msg)
 	if err != nil {
 		h.remove(j)
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",
+			err.Error()))
 	}
 }
 
@@ -137,13 +138,15 @@ func (h *DryaderImpl) loop() {
 func (h *DryaderImpl) StartJob(j weles.JobID) {
 	d, err := h.jobs.GetDryad(j)
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Dryad for Job : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Dryad for Job : %s",
+			err.Error()))
 		return
 	}
 
 	config, err := h.jobs.GetConfig(j)
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Job config : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Job config : %s",
+			err.Error()))
 		return
 	}
 

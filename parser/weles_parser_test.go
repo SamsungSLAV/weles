@@ -39,7 +39,8 @@ var expectedConfig = weles.Config{
 			Timeout: weles.ValidPeriod(20 * time.Minute),
 			Images: []weles.ImageDefinition{
 				{
-					URI:          "https://images.validation.linaro.org/kvm/standard/stretch-1.img.gz",
+					URI: "https://images.validation.linaro.org/kvm/standard/" +
+						"stretch-1.img.gz",
 					ChecksumURI:  "https://images.validation.linaro.org/kvm/standard/stretch-1.md5",
 					ChecksumType: "md5",
 					Compression:  "gz",
@@ -47,7 +48,8 @@ var expectedConfig = weles.Config{
 					ChecksumPath: "",
 				},
 				{
-					URI:          "https://images.validation.linaro.org/kvm/standard/stretch-2.img.zip",
+					URI: "https://images.validation.linaro.org/kvm/standard/" +
+						"stretch-2.img.zip",
 					ChecksumURI:  "https://images.validation.linaro.org/kvm/standard/stretch-2.md5",
 					ChecksumType: "md5",
 					Compression:  "zip",

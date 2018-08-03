@@ -95,7 +95,9 @@ func prepareQuery(
 	conditions, args = prepareQueryFilter(filter)
 
 	if !totalRecords && paginator.ID != 0 {
-		if (paginator.Forward && sorter.SortOrder == weles.SortOrderDescending) || (!paginator.Forward && (sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "")) {
+		if (paginator.Forward && sorter.SortOrder == weles.SortOrderDescending) ||
+			(!paginator.Forward && (sorter.SortOrder == weles.SortOrderAscending ||
+				sorter.SortOrder == "")) {
 			conditions = append(conditions, " ID < ? ")
 			args = append(args, paginator.ID)
 		} else {
@@ -169,14 +171,17 @@ func prepareQueryFilter(filter weles.ArtifactFilter) (conditions []string, args 
 }
 
 // Filter fetches elements matching ArtifactFilter from database.
-func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.ArtifactSorter, paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
+	paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+
 	results := []weles.ArtifactInfo{}
 	var tr, rr int64
 	// TODO gorp doesn't support passing list of arguments to where in(...) clause yet.
 	// Thats why it's done with the use prepareQuery.
 	trans, err := aDB.dbmap.Begin()
 	if err != nil {
-		return nil, weles.ListInfo{}, errors.New("Failed to open transaction while filtering " + err.Error())
+		return nil, weles.ListInfo{},
+			errors.New("Failed to open transaction while filtering " + err.Error())
 	}
 	queryForTotal, argsForTotal := prepareQuery(filter, sorter, paginator, true, false, 0)
 	queryForRemaining, argsForRemaining := prepareQuery(filter, sorter, paginator, false, true, 0)
@@ -207,10 +212,16 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 		return nil, weles.ListInfo{}, err
 	}
 	if err := trans.Commit(); err != nil {
-		return nil, weles.ListInfo{}, errors.New("Failed to commit transaction while filtering " + err.Error())
+		return nil, weles.ListInfo{},
+			errors.New("Failed to commit transaction while filtering " + err.Error())
 
 	}
-	return results, weles.ListInfo{TotalRecords: uint64(tr), RemainingRecords: uint64(rr - int64(len(results)))}, nil
+	return results,
+		weles.ListInfo{
+			TotalRecords:     uint64(tr),
+			RemainingRecords: uint64(rr - int64(len(results))),
+		},
+		nil
 }
 
 // Select fetches artifacts from ArtifactDB.

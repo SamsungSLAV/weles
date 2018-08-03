@@ -86,7 +86,8 @@ func NewDownloader(j JobsController, a weles.ArtifactManager) Downloader {
 
 // pathStatusChange reacts on notification from ArtifactManager and updates
 // path and job structures.
-func (h *DownloaderImpl) pathStatusChange(path string, status weles.ArtifactStatus) (changed bool, j weles.JobID, info string) {
+func (h *DownloaderImpl) pathStatusChange(path string, status weles.ArtifactStatus,
+) (changed bool, j weles.JobID, info string) {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
 	j, ok := h.path2Job[path]
@@ -183,7 +184,8 @@ func (h *DownloaderImpl) removeJobInfo(j weles.JobID) error {
 }
 
 // push delegates downloading single uri to ArtifactDB.
-func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias string, uri string) (string, error) {
+func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias, uri string,
+) (string, error) {
 	p, err := h.artifacts.PushArtifact(weles.ArtifactDescription{
 		JobID: j,
 		Type:  t,
@@ -294,7 +296,8 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 			config.Action.Deploy.Images[i].Path = path
 		}
 		if image.ChecksumURI != "" {
-			path, err := h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("ImageMD5_%d", i), image.ChecksumURI)
+			path, err := h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("ImageMD5_%d", i),
+				image.ChecksumURI)
 			if err != nil {
 				h.fail(j, fmt.Sprintf(formatURI, image.ChecksumURI, err.Error()))
 				return

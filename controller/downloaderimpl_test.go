@@ -47,40 +47,40 @@ var _ = Describe("DownloaderImpl", func() {
 	}
 	config := weles.Config{Action: weles.Action{
 		Deploy: weles.Deploy{Images: []weles.ImageDefinition{
-			weles.ImageDefinition{URI: "image_0", ChecksumURI: "md5_0"},
-			weles.ImageDefinition{URI: "image_1"},
-			weles.ImageDefinition{ChecksumURI: "md5_2"},
+			{URI: "image_0", ChecksumURI: "md5_0"},
+			{URI: "image_1"},
+			{ChecksumURI: "md5_2"},
 		}},
 		Test: weles.Test{TestCases: []weles.TestCase{
-			weles.TestCase{TestActions: []weles.TestAction{
+			{TestActions: []weles.TestAction{
 				weles.Push{URI: "uri_0", Alias: "alias_0"},
 				weles.Push{URI: "uri_1", Alias: "alias_1"},
 				weles.Pull{Alias: "alias_2"},
 			}},
-			weles.TestCase{TestActions: []weles.TestAction{
+			{TestActions: []weles.TestAction{
 				weles.Push{URI: "uri_3", Alias: "alias_3"},
 			}},
-			weles.TestCase{TestActions: []weles.TestAction{
+			{TestActions: []weles.TestAction{
 				weles.Pull{Alias: "alias_4"},
 			}},
 		}},
 	}}
 	updatedConfig := weles.Config{Action: weles.Action{
 		Deploy: weles.Deploy{Images: []weles.ImageDefinition{
-			weles.ImageDefinition{URI: "image_0", ChecksumURI: "md5_0", Path: paths[0], ChecksumPath: paths[1]},
-			weles.ImageDefinition{URI: "image_1", Path: paths[2]},
-			weles.ImageDefinition{ChecksumURI: "md5_2", ChecksumPath: paths[3]},
+			{URI: "image_0", ChecksumURI: "md5_0", Path: paths[0], ChecksumPath: paths[1]},
+			{URI: "image_1", Path: paths[2]},
+			{ChecksumURI: "md5_2", ChecksumPath: paths[3]},
 		}},
 		Test: weles.Test{TestCases: []weles.TestCase{
-			weles.TestCase{TestActions: []weles.TestAction{
+			{TestActions: []weles.TestAction{
 				weles.Push{URI: "uri_0", Alias: "alias_0", Path: paths[4]},
 				weles.Push{URI: "uri_1", Alias: "alias_1", Path: paths[5]},
 				weles.Pull{Alias: "alias_2", Path: paths[7]},
 			}},
-			weles.TestCase{TestActions: []weles.TestAction{
+			{TestActions: []weles.TestAction{
 				weles.Push{URI: "uri_3", Alias: "alias_3", Path: paths[6]},
 			}},
-			weles.TestCase{TestActions: []weles.TestAction{
+			{TestActions: []weles.TestAction{
 				weles.Pull{Alias: "alias_4", Path: paths[8]},
 			}},
 		}},
@@ -118,7 +118,10 @@ var _ = Describe("DownloaderImpl", func() {
 	Describe("DispatchDownloads", func() {
 		sendChange := func(from, to int, status weles.ArtifactStatus) {
 			for i := from; i < to; i++ {
-				h.collector <- weles.ArtifactStatusChange{Path: weles.ArtifactPath(paths[i]), NewStatus: status}
+				h.collector <- weles.ArtifactStatusChange{
+					Path:      weles.ArtifactPath(paths[i]),
+					NewStatus: status,
+				}
 			}
 		}
 		eventuallyNoti := func(offset int, ok bool, msg string) {
@@ -187,7 +190,8 @@ var _ = Describe("DownloaderImpl", func() {
 				prev = call
 			}
 			if fail {
-				call = jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusDOWNLOADING, infos[i]).Return(err)
+				call = jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusDOWNLOADING,
+					infos[i]).Return(err)
 				if prev != nil {
 					call.After(prev)
 				}
@@ -198,14 +202,30 @@ var _ = Describe("DownloaderImpl", func() {
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 		}
 		defaultPush := func(successfulEntries int, fail bool) *gomock.Call {
-			types := []weles.ArtifactType{weles.ArtifactTypeIMAGE, weles.ArtifactTypeIMAGE, weles.ArtifactTypeIMAGE, weles.ArtifactTypeIMAGE, weles.ArtifactTypeTEST, weles.ArtifactTypeTEST, weles.ArtifactTypeTEST}
-			aliases := []weles.ArtifactAlias{"Image_0", "ImageMD5_0", "Image_1", "ImageMD5_2", "alias_0", "alias_1", "alias_3"}
-			uris := []weles.ArtifactURI{"image_0", "md5_0", "image_1", "md5_2", "uri_0", "uri_1", "uri_3"}
+			types := []weles.ArtifactType{
+				weles.ArtifactTypeIMAGE,
+				weles.ArtifactTypeIMAGE,
+				weles.ArtifactTypeIMAGE,
+				weles.ArtifactTypeIMAGE,
+				weles.ArtifactTypeTEST,
+				weles.ArtifactTypeTEST,
+				weles.ArtifactTypeTEST,
+			}
+			aliases := []weles.ArtifactAlias{"Image_0", "ImageMD5_0", "Image_1", "ImageMD5_2",
+				"alias_0", "alias_1", "alias_3"}
+			uris := []weles.ArtifactURI{"image_0", "md5_0", "image_1", "md5_2", "uri_0", "uri_1",
+				"uri_3"}
 			var i int
 			var prev, call *gomock.Call
 
 			for i = 0; i < successfulEntries; i++ {
-				call = am.EXPECT().PushArtifact(weles.ArtifactDescription{JobID: j, Type: types[i], Alias: aliases[i], URI: uris[i]},
+				call = am.EXPECT().PushArtifact(
+					weles.ArtifactDescription{
+						JobID: j,
+						Type:  types[i],
+						Alias: aliases[i],
+						URI:   uris[i],
+					},
 					h.collector).Return(weles.ArtifactPath(paths[i]), nil)
 				if prev != nil {
 					call.After(prev)
@@ -213,7 +233,13 @@ var _ = Describe("DownloaderImpl", func() {
 				prev = call
 			}
 			if fail {
-				call = am.EXPECT().PushArtifact(weles.ArtifactDescription{JobID: j, Type: types[i], Alias: aliases[i], URI: uris[i]},
+				call = am.EXPECT().PushArtifact(
+					weles.ArtifactDescription{
+						JobID: j,
+						Type:  types[i],
+						Alias: aliases[i],
+						URI:   uris[i],
+					},
 					h.collector).Return(weles.ArtifactPath(""), err)
 				if prev != nil {
 					call.After(prev)
@@ -224,12 +250,14 @@ var _ = Describe("DownloaderImpl", func() {
 		defaultCreate := func(successfulEntries int, fail bool) *gomock.Call {
 			types := []weles.ArtifactType{weles.ArtifactTypeTEST, weles.ArtifactTypeTEST}
 			aliases := []weles.ArtifactAlias{"alias_2", "alias_4"}
-			returnPaths := []weles.ArtifactPath{weles.ArtifactPath(paths[7]), weles.ArtifactPath(paths[8])}
+			returnPaths := []weles.ArtifactPath{weles.ArtifactPath(paths[7]),
+				weles.ArtifactPath(paths[8])}
 			var i int
 			var prev, call *gomock.Call
 
 			for i = 0; i < successfulEntries; i++ {
-				call = am.EXPECT().CreateArtifact(weles.ArtifactDescription{JobID: j, Type: types[i], Alias: aliases[i]}).
+				call = am.EXPECT().CreateArtifact(
+					weles.ArtifactDescription{JobID: j, Type: types[i], Alias: aliases[i]}).
 					Return(returnPaths[i], nil)
 				if prev != nil {
 					call.After(prev)
@@ -237,7 +265,8 @@ var _ = Describe("DownloaderImpl", func() {
 				prev = call
 			}
 			if fail {
-				call = am.EXPECT().CreateArtifact(weles.ArtifactDescription{JobID: j, Type: types[i], Alias: aliases[i]}).
+				call = am.EXPECT().CreateArtifact(
+					weles.ArtifactDescription{JobID: j, Type: types[i], Alias: aliases[i]}).
 					Return(weles.ArtifactPath(""), err)
 				if prev != nil {
 					call.After(prev)
@@ -274,7 +303,8 @@ var _ = Describe("DownloaderImpl", func() {
 
 			h.DispatchDownloads(j)
 
-			expectFail(1, 7, "Internal Weles error while setting config : test error")
+			expectFail(1, 7,
+				"Internal Weles error while setting config : test error")
 		})
 		It("should fail if pull fails", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -284,7 +314,9 @@ var _ = Describe("DownloaderImpl", func() {
 
 			h.DispatchDownloads(j)
 
-			expectFail(1, 6, "Internal Weles error while creating a new path in ArtifactManager : test error")
+			expectFail(1, 6,
+				"Internal Weles error while creating a new path in ArtifactManager : "+
+					"test error")
 		})
 		It("should fail if push for TESTFILE fails", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -293,7 +325,9 @@ var _ = Describe("DownloaderImpl", func() {
 
 			h.DispatchDownloads(j)
 
-			expectFail(1, 4, "Internal Weles error while registering URI:<uri_0> in ArtifactManager : test error")
+			expectFail(1, 4,
+				"Internal Weles error while registering URI:<uri_0> in ArtifactManager : "+
+					"test error")
 		})
 		It("should fail if push for MD5 fails", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -302,7 +336,9 @@ var _ = Describe("DownloaderImpl", func() {
 
 			h.DispatchDownloads(j)
 
-			expectFail(1, 1, "Internal Weles error while registering URI:<md5_0> in ArtifactManager : test error")
+			expectFail(
+				1, 1, "Internal Weles error while registering URI:<md5_0> in ArtifactManager : "+
+					"test error")
 		})
 		It("should fail if push for image fails", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -311,7 +347,8 @@ var _ = Describe("DownloaderImpl", func() {
 
 			h.DispatchDownloads(j)
 
-			expectFail(1, 2, "Internal Weles error while registering URI:<image_1> in ArtifactManager : test error")
+			expectFail(1, 2, "Internal Weles error while registering URI:<image_1> in "+
+				"ArtifactManager : test error")
 		})
 		It("should fail if getting config fails", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -319,7 +356,8 @@ var _ = Describe("DownloaderImpl", func() {
 
 			h.DispatchDownloads(j)
 
-			expectFail(1, 0, "Internal Weles error while getting Job config : test error")
+			expectFail(1, 0, "Internal Weles error while getting Job config : "+
+				"test error")
 		})
 		It("should fail if setting status fails", func() {
 			defaultSetStatusAndInfo(0, true)
@@ -332,10 +370,10 @@ var _ = Describe("DownloaderImpl", func() {
 			emptyConfig := weles.Config{Action: weles.Action{
 				Deploy: weles.Deploy{Images: []weles.ImageDefinition{}},
 				Test: weles.Test{TestCases: []weles.TestCase{
-					weles.TestCase{TestActions: []weles.TestAction{
+					{TestActions: []weles.TestAction{
 						weles.Pull{Alias: "alias_2"},
 					}},
-					weles.TestCase{TestActions: []weles.TestAction{
+					{TestActions: []weles.TestAction{
 						weles.Pull{Alias: "alias_4"},
 					}},
 				}},
@@ -343,10 +381,10 @@ var _ = Describe("DownloaderImpl", func() {
 			emptyUpdatedConfig := weles.Config{Action: weles.Action{
 				Deploy: weles.Deploy{Images: []weles.ImageDefinition{}},
 				Test: weles.Test{TestCases: []weles.TestCase{
-					weles.TestCase{TestActions: []weles.TestAction{
+					{TestActions: []weles.TestAction{
 						weles.Pull{Alias: "alias_2", Path: paths[7]},
 					}},
-					weles.TestCase{TestActions: []weles.TestAction{
+					{TestActions: []weles.TestAction{
 						weles.Pull{Alias: "alias_4", Path: paths[8]},
 					}},
 				}},
@@ -365,7 +403,8 @@ var _ = Describe("DownloaderImpl", func() {
 		})
 		It("should handle downloading failure", func() {
 			c := defaultSetStatusAndInfo(4, false)
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusDOWNLOADING, "Failed to download artifact").After(c)
+			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusDOWNLOADING,
+				"Failed to download artifact").After(c)
 			defaultGetConfig()
 			defaultPush(7, false)
 			defaultCreate(2, false)
@@ -386,35 +425,36 @@ var _ = Describe("DownloaderImpl", func() {
 			sendChange(4, 7, weles.ArtifactStatusDOWNLOADING)
 			eventuallyPathEmpty(1)
 		})
-		It("should block reply until configuration is saved and all artifacts are downloaded", func() {
-			defaultSetStatusAndInfo(8, false)
-			defaultGetConfig()
-			defaultPush(7, false)
-			defaultCreate(2, false)
+		It("should block reply until configuration is saved and all artifacts are downloaded",
+			func() {
+				defaultSetStatusAndInfo(8, false)
+				defaultGetConfig()
+				defaultPush(7, false)
+				defaultCreate(2, false)
 
-			holdDownload := sync.WaitGroup{}
-			holdDownload.Add(1)
-			setConfigReached := sync.WaitGroup{}
-			setConfigReached.Add(1)
+				holdDownload := sync.WaitGroup{}
+				holdDownload.Add(1)
+				setConfigReached := sync.WaitGroup{}
+				setConfigReached.Add(1)
 
-			jc.EXPECT().SetConfig(j, updatedConfig).Do(func(weles.JobID, weles.Config) {
-				setConfigReached.Done()
-				holdDownload.Wait()
+				jc.EXPECT().SetConfig(j, updatedConfig).Do(func(weles.JobID, weles.Config) {
+					setConfigReached.Done()
+					holdDownload.Wait()
+				})
+
+				go h.DispatchDownloads(j)
+
+				setConfigReached.Wait()
+
+				expectPath(1, 0, 7)
+				expectInfo(1, false, 7)
+
+				sendChange(0, 7, weles.ArtifactStatusREADY)
+				holdDownload.Done()
+
+				eventuallyNoti(1, true, "")
+				eventuallyEmpty(1)
 			})
-
-			go h.DispatchDownloads(j)
-
-			setConfigReached.Wait()
-
-			expectPath(1, 0, 7)
-			expectInfo(1, false, 7)
-
-			sendChange(0, 7, weles.ArtifactStatusREADY)
-			holdDownload.Done()
-
-			eventuallyNoti(1, true, "")
-			eventuallyEmpty(1)
-		})
 		It("should handle failure in updating info", func() {
 			defaultSetStatusAndInfo(5, true)
 			defaultGetConfig()
@@ -432,46 +472,50 @@ var _ = Describe("DownloaderImpl", func() {
 			eventuallyNoti(1, false, "Internal Weles error while changing Job status : test error")
 			eventuallyEmpty(1)
 		})
-		It("should leave no data left if failure response is sent while still processing config", func() {
-			defaultSetStatusAndInfo(5, true)
-			defaultGetConfig()
-			defaultPush(7, false)
-			defaultCreate(2, false)
+		It("should leave no data left if failure response is sent while still processing config",
+			func() {
+				defaultSetStatusAndInfo(5, true)
+				defaultGetConfig()
+				defaultPush(7, false)
+				defaultCreate(2, false)
 
-			holdDownload := sync.WaitGroup{}
-			holdDownload.Add(1)
-			setConfigReached := sync.WaitGroup{}
-			setConfigReached.Add(1)
+				holdDownload := sync.WaitGroup{}
+				holdDownload.Add(1)
+				setConfigReached := sync.WaitGroup{}
+				setConfigReached.Add(1)
 
-			jc.EXPECT().SetConfig(j, updatedConfig).Do(func(weles.JobID, weles.Config) {
-				setConfigReached.Done()
-				holdDownload.Wait()
+				jc.EXPECT().SetConfig(j, updatedConfig).Do(func(weles.JobID, weles.Config) {
+					setConfigReached.Done()
+					holdDownload.Wait()
+				})
+
+				go h.DispatchDownloads(j)
+				setConfigReached.Wait()
+
+				expectPath(1, 0, 7)
+				expectInfo(1, false, 7)
+
+				sendChange(0, 7, weles.ArtifactStatusREADY)
+
+				eventuallyNoti(1, false,
+					"Internal Weles error while changing Job status : test error")
+
+				holdDownload.Done()
+
+				eventuallyEmpty(1)
 			})
-
-			go h.DispatchDownloads(j)
-			setConfigReached.Wait()
-
-			expectPath(1, 0, 7)
-			expectInfo(1, false, 7)
-
-			sendChange(0, 7, weles.ArtifactStatusREADY)
-
-			eventuallyNoti(1, false, "Internal Weles error while changing Job status : test error")
-
-			holdDownload.Done()
-
-			eventuallyEmpty(1)
-		})
 		It("should leave no data left if failure response is sent while pushing", func() {
 			c := defaultSetStatusAndInfo(1, false)
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusDOWNLOADING, "1 / 1 artifacts ready").Return(err).After(c)
+			jc.EXPECT().SetStatusAndInfo(
+				j, weles.JobStatusDOWNLOADING, "1 / 1 artifacts ready").Return(err).After(c)
 			defaultGetConfig()
 			holdDownload := sync.WaitGroup{}
 			holdDownload.Add(1)
 			pushReached := sync.WaitGroup{}
 			pushReached.Add(1)
 
-			defaultPush(2, false).Do(func(weles.ArtifactDescription, chan weles.ArtifactStatusChange) {
+			defaultPush(2, false).Do(func(weles.ArtifactDescription,
+				chan weles.ArtifactStatusChange) {
 				pushReached.Done()
 				holdDownload.Wait()
 			})

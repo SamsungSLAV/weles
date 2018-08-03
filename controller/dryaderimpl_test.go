@@ -95,7 +95,8 @@ var _ = Describe("DryaderImpl", func() {
 		It("should register job successfully", func() {
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
 			jc.EXPECT().GetConfig(j).Return(conf, nil)
-			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener))
+			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(
+				h.(*DryaderImpl).listener))
 
 			h.StartJob(j)
 			expectRegistered(1)
@@ -103,7 +104,8 @@ var _ = Describe("DryaderImpl", func() {
 		It("should fail if DryadJobManager.Create fails", func() {
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
 			jc.EXPECT().GetConfig(j).Return(conf, nil)
-			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener)).Return(err)
+			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(
+				h.(*DryaderImpl).listener)).Return(err)
 
 			h.StartJob(j)
 
@@ -115,7 +117,8 @@ var _ = Describe("DryaderImpl", func() {
 
 			h.StartJob(j)
 
-			eventuallyNoti(1, false, "Internal Weles error while getting Dryad for Job : test error")
+			eventuallyNoti(1, false,
+				"Internal Weles error while getting Dryad for Job : test error")
 			eventuallyEmpty(1)
 		})
 	})
@@ -136,7 +139,8 @@ var _ = Describe("DryaderImpl", func() {
 		BeforeEach(func() {
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
 			jc.EXPECT().GetConfig(j).Return(conf, nil)
-			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener))
+			djm.EXPECT().Create(
+				j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener))
 
 			h.StartJob(j)
 
@@ -183,7 +187,8 @@ var _ = Describe("DryaderImpl", func() {
 
 				h.(*DryaderImpl).listener <- weles.DryadJobStatusChange(change)
 
-				eventuallyNoti(1, false, "Internal Weles error while changing Job status : test error")
+				eventuallyNoti(1, false,
+					"Internal Weles error while changing Job status : test error")
 				eventuallyEmpty(1)
 			},
 			updateTableEntries...,

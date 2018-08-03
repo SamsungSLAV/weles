@@ -86,8 +86,10 @@ func (sshfs *reverseSSHFS) open(session *ssh.Session) (err error) {
 	}
 	// TODO(amistewicz): add gid translation
 
-	// Start sshfs command in the provided session. It will run in the foreground and it will not exit even if mount fails.
-	err = session.Start(fmt.Sprintf("mkdir -p \"%s\" && sshfs -o idmap=user -o slave \":%s\" \"%s\"",
+	// Start sshfs command in the provided session. It will run in the foreground and it will
+	// not exit even if mount fails.
+	err = session.Start(fmt.Sprintf(
+		"mkdir -p \"%s\" && sshfs -o idmap=user -o slave \":%s\" \"%s\"",
 		sshfs.remote, sshfs.local, sshfs.remote))
 	if err != nil {
 		return

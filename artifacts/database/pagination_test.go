@@ -30,8 +30,14 @@ var _ = Describe("ArtifactDB pagination", func() {
 
 	emptyF := weles.ArtifactFilter{}
 	//below struct is not empty but filled with default values passed from server.
-	descS := weles.ArtifactSorter{SortOrder: weles.SortOrderDescending, SortBy: weles.ArtifactSortByID}
-	ascS := weles.ArtifactSorter{SortOrder: weles.SortOrderAscending, SortBy: weles.ArtifactSortByID}
+	descS := weles.ArtifactSorter{
+		SortOrder: weles.SortOrderDescending,
+		SortBy:    weles.ArtifactSortByID,
+	}
+	ascS := weles.ArtifactSorter{
+		SortOrder: weles.SortOrderAscending,
+		SortBy:    weles.ArtifactSortByID,
+	}
 	Context("Database is filled with 100 records", func() {
 		DescribeTable("paginating through artifacts",
 			func(

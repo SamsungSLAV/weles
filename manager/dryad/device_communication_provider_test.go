@@ -58,7 +58,8 @@ var _ = Describe("DeviceCommunicationProvider", func() {
 	})
 
 	It("should list call dut_exec", func() {
-		mockSession.EXPECT().Exec("/usr/local/bin/dut_exec.sh", "ls", "-al", "/").Return([]byte("not-empty"), nil, nil)
+		mockSession.EXPECT().Exec(
+			"/usr/local/bin/dut_exec.sh", "ls", "-al", "/").Return([]byte("not-empty"), nil, nil)
 
 		stdout, stderr, err := dcp.Exec("ls", "-al", "/")
 		Expect(err).ToNot(HaveOccurred())

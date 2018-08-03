@@ -42,8 +42,8 @@ type downloadJob struct {
 }
 
 // newDownloader returns initilized Downloader.
-func newDownloader(notification chan weles.ArtifactStatusChange, workers int, queueSize int) *Downloader {
-
+func newDownloader(notification chan weles.ArtifactStatusChange, workers, queueSize int,
+) *Downloader {
 	d := &Downloader{
 		notification: notification,
 		queue:        make(chan downloadJob, queueSize),
@@ -58,7 +58,8 @@ func newDownloader(notification chan weles.ArtifactStatusChange, workers int, qu
 }
 
 // NewDownloader returns Downloader initialized  with default queue length
-func NewDownloader(notification chan weles.ArtifactStatusChange, workerCount, queueCap int) *Downloader {
+func NewDownloader(notification chan weles.ArtifactStatusChange, workerCount, queueCap int,
+) *Downloader {
 	return newDownloader(notification, workerCount, queueCap)
 }
 
@@ -94,7 +95,9 @@ func (d *Downloader) getData(URI weles.ArtifactURI, path weles.ArtifactPath) err
 // download downloads artifact from provided URI and saves it to specified path.
 // It sends notification about status changes to two channels - Downloader's notification
 // channel, and other one, that can be specified passed as an argument.
-func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange) {
+func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath,
+	ch chan weles.ArtifactStatusChange) {
+
 	if path == "" {
 		return
 	}
@@ -118,7 +121,9 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath, ch
 
 // Download is part of implementation of ArtifactDownloader interface.
 // It puts new downloadJob on the queue.
-func (d *Downloader) Download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange) error {
+func (d *Downloader) Download(URI weles.ArtifactURI, path weles.ArtifactPath,
+	ch chan weles.ArtifactStatusChange) error {
+
 	channels := []chan weles.ArtifactStatusChange{ch, d.notification}
 	notify(weles.ArtifactStatusChange{Path: path, NewStatus: weles.ArtifactStatusPENDING}, channels)
 

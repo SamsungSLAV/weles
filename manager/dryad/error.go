@@ -21,7 +21,8 @@ package dryad
 import "errors"
 
 var (
-	// ErrConnectionClosed is returned when caller tries to close already closed connection to Dryad.
+	// ErrConnectionClosed is returned when caller tries to close already closed connection
+	// to Dryad.
 	ErrConnectionClosed = errors.New("attempt to close already closed connection")
 	// ErrNotMounted is returned when the check for sshfs mount fails.
 	ErrNotMounted = errors.New("filesystem not mounted")

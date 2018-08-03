@@ -267,13 +267,15 @@ func (h *BoruterImpl) getDeadline(config weles.Config) time.Time {
 func (h *BoruterImpl) Request(j weles.JobID) {
 	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",
+			err.Error()))
 		return
 	}
 
 	config, err := h.jobs.GetConfig(j)
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Job config : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Job config : %s",
+			err.Error()))
 		return
 	}
 

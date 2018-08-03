@@ -39,7 +39,8 @@ type sshClient struct {
 }
 
 // sessionProvider implements SessionProvider interface.
-// FIXME: When the connection is broken after it is established, all client functions stall. This provider has to be rewritten.
+// FIXME: When the connection is broken after it is established, all client functions stall.
+// This provider has to be rewritten.
 type sessionProvider struct {
 	SessionProvider
 	dryad      weles.Dryad

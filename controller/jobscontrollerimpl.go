@@ -177,7 +177,9 @@ func isStatusChangeValid(oldStatus, newStatus weles.JobStatus) bool {
 // * JobStatusDOWNLOADING --> {JobStatusWAITING, JobStatusCANCELED, JobStatusFAILED}
 // * JobStatusWAITING --> {JobStatusRUNNING, JobStatusCANCELED, JobStatusFAILED}
 // * JobStatusRUNNING --> {JobStatusCOMPLETED, JobStatusCANCELED, JobStatusFAILED}
-func (js *JobsControllerImpl) SetStatusAndInfo(j weles.JobID, newStatus weles.JobStatus, msg string) error {
+func (js *JobsControllerImpl) SetStatusAndInfo(j weles.JobID, newStatus weles.JobStatus, msg string,
+) error {
+
 	js.mutex.Lock()
 	defer js.mutex.Unlock()
 
@@ -295,7 +297,8 @@ func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorte
 			}
 		}
 		if index == -1 {
-			return nil, weles.ListInfo{}, weles.ErrInvalidArgument(fmt.Sprintf("JobID: %d not found", paginator.JobID))
+			return nil, weles.ListInfo{},
+				weles.ErrInvalidArgument(fmt.Sprintf("JobID: %d not found", paginator.JobID))
 		}
 		if paginator.Forward {
 			index++

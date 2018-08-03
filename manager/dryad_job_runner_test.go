@@ -53,9 +53,11 @@ var _ = Describe("DryadJobRunner", func() {
 		By("Deploy")
 		gomock.InOrder(
 			mockSession.EXPECT().TS(),
-			mockSession.EXPECT().Exec("echo", "'{\"image name_1\":\"1\",\"image_name 2\":\"2\"}'", ">", fotaFilePath),
+			mockSession.EXPECT().Exec("echo", "'{\"image name_1\":\"1\",\"image_name 2\":\"2\"}'",
+				">", fotaFilePath),
 			mockSession.EXPECT().Exec(newFotaCmd(fotaSDCardPath, fotaFilePath,
-				[]string{basicConfig.Action.Deploy.Images[0].Path, basicConfig.Action.Deploy.Images[1].Path}).GetCmd()),
+				[]string{basicConfig.Action.Deploy.Images[0].Path,
+					basicConfig.Action.Deploy.Images[1].Path}).GetCmd()),
 		)
 
 		Expect(djr.Deploy()).To(Succeed())
@@ -63,17 +65,23 @@ var _ = Describe("DryadJobRunner", func() {
 		By("Boot")
 		gomock.InOrder(
 			mockDevice.EXPECT().Boot(),
-			mockDevice.EXPECT().Login(dryad.Credentials{Username: basicConfig.Action.Boot.Login, Password: basicConfig.Action.Boot.Password}),
+			mockDevice.EXPECT().Login(
+				dryad.Credentials{
+					Username: basicConfig.Action.Boot.Login,
+					Password: basicConfig.Action.Boot.Password,
+				}),
 		)
 
 		Expect(djr.Boot()).To(Succeed())
 
 		By("Test")
 		gomock.InOrder(
-			mockDevice.EXPECT().CopyFilesTo([]string{basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Path},
+			mockDevice.EXPECT().CopyFilesTo(
+				[]string{basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Path},
 				basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Dest),
 			mockDevice.EXPECT().Exec("command to be run"),
-			mockDevice.EXPECT().CopyFilesFrom([]string{basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Src},
+			mockDevice.EXPECT().CopyFilesFrom(
+				[]string{basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Src},
 				basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Path),
 		)
 

@@ -34,7 +34,8 @@ import (
 // ArtifactDownloader downloads requested file if there is need to.
 type ArtifactDownloader interface {
 	// Download starts downloading requested artifact.
-	Download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange) error
+	Download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange,
+	) error
 
 	// CheckInCache checks if file already exists in ArtifactDB.
 	CheckInCache(URI weles.ArtifactURI) (weles.ArtifactInfo, error)
@@ -54,7 +55,8 @@ type Storage struct {
 	notifier   chan weles.ArtifactStatusChange
 }
 
-func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int) (weles.ArtifactManager, error) {
+func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
+) (weles.ArtifactManager, error) {
 	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
 		return nil, err
@@ -78,17 +80,22 @@ func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int)
 
 // NewArtifactManager returns initialized Storage implementing ArtifactManager interface.
 // If db or dir is empy, default value will be used.
-func NewArtifactManager(db, dir string, notifierCap, workersCount, queueCap int) (weles.ArtifactManager, error) {
+func NewArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
+) (weles.ArtifactManager, error) {
 	return newArtifactManager(filepath.Join(dir, db), dir, notifierCap, workersCount, queueCap)
 }
 
 // ListArtifact is part of implementation of ArtifactManager interface.
-func (s *Storage) ListArtifact(filter weles.ArtifactFilter, sorter weles.ArtifactSorter, paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+func (s *Storage) ListArtifact(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
+	paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+
 	return s.db.Filter(filter, sorter, paginator)
 }
 
 // PushArtifact is part of implementation of ArtifactManager interface.
-func (s *Storage) PushArtifact(artifact weles.ArtifactDescription, ch chan weles.ArtifactStatusChange) (weles.ArtifactPath, error) {
+func (s *Storage) PushArtifact(artifact weles.ArtifactDescription,
+	ch chan weles.ArtifactStatusChange) (weles.ArtifactPath, error) {
+
 	path, err := s.CreateArtifact(artifact)
 	if err != nil {
 		return "", err
@@ -96,7 +103,10 @@ func (s *Storage) PushArtifact(artifact weles.ArtifactDescription, ch chan weles
 
 	err = s.downloader.Download(artifact.URI, path, ch)
 	if err != nil {
-		s.db.SetStatus(weles.ArtifactStatusChange{Path: path, NewStatus: weles.ArtifactStatusFAILED})
+		s.db.SetStatus(weles.ArtifactStatusChange{
+			Path:      path,
+			NewStatus: weles.ArtifactStatusFAILED,
+		})
 		return "", err
 	}
 	return path, nil
@@ -109,7 +119,12 @@ func (s *Storage) CreateArtifact(artifact weles.ArtifactDescription) (weles.Arti
 		return "", err
 	}
 
-	err = s.db.InsertArtifactInfo(&weles.ArtifactInfo{ArtifactDescription: artifact, Path: path, Status: "", Timestamp: strfmt.DateTime(time.Now().UTC())})
+	err = s.db.InsertArtifactInfo(&weles.ArtifactInfo{
+		ArtifactDescription: artifact,
+		Path:                path,
+		Status:              "",
+		Timestamp:           strfmt.DateTime(time.Now().UTC()),
+	})
 	if err != nil {
 		return "", err
 	}

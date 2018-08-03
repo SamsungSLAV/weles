@@ -58,7 +58,9 @@ I call it stupid of the pig.
 		queueCap     = 100
 	)
 
-	checkChannels := func(ch1, ch2 chan weles.ArtifactStatusChange, change weles.ArtifactStatusChange) {
+	checkChannels := func(ch1, ch2 chan weles.ArtifactStatusChange,
+		change weles.ArtifactStatusChange) {
+
 		Eventually(ch1).Should(Receive(Equal(change)))
 		Eventually(ch2).Should(Receive(Equal(change)))
 	}

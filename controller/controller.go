@@ -73,7 +73,8 @@ func NewJobManager(arm weles.ArtifactManager, yap weles.Parser, bor boruta.Reque
 
 // NewController creates and initializes a new instance of Controller.
 // It requires internal Controller's submodules.
-func NewController(js JobsController, pa Parser, do Downloader, bo Boruter, dr Dryader) *Controller {
+func NewController(js JobsController, pa Parser, do Downloader, bo Boruter, dr Dryader,
+) *Controller {
 	c := &Controller{
 		jobs:       js,
 		parser:     pa,

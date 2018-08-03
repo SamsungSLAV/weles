@@ -40,7 +40,9 @@ func NewDryadJobManager() weles.DryadJobManager {
 }
 
 // Create is part of DryadJobManager interface.
-func (d *DryadJobs) Create(job weles.JobID, rusalka weles.Dryad, conf weles.Config, changes chan<- weles.DryadJobStatusChange) error {
+func (d *DryadJobs) Create(job weles.JobID, rusalka weles.Dryad, conf weles.Config,
+	changes chan<- weles.DryadJobStatusChange) error {
+
 	_, ok := d.jobs[job]
 	if ok {
 		return ErrDuplicated

@@ -106,11 +106,16 @@ var _ = Describe("DryadJobManager", func() {
 					Expect(j.Job).To(BeNumerically("<=", end))
 				}
 			},
-			Entry("NEW", 0, 2, []DryadJobStatus{DryadJobStatusNEW}),
-			Entry("DEPLOY", 3, 5, []DryadJobStatus{DryadJobStatusDEPLOY}),
-			Entry("BOOT", 6, 8, []DryadJobStatus{DryadJobStatusBOOT}),
-			Entry("TEST", 9, 11, []DryadJobStatus{DryadJobStatusTEST}),
-			Entry("NEW and DEPLOY", 0, 5, []DryadJobStatus{DryadJobStatusNEW, DryadJobStatusDEPLOY}),
+			Entry("NEW",
+				0, 2, []DryadJobStatus{DryadJobStatusNEW}),
+			Entry("DEPLOY",
+				3, 5, []DryadJobStatus{DryadJobStatusDEPLOY}),
+			Entry("BOOT",
+				6, 8, []DryadJobStatus{DryadJobStatusBOOT}),
+			Entry("TEST",
+				9, 11, []DryadJobStatus{DryadJobStatusTEST}),
+			Entry("NEW and DEPLOY",
+				0, 5, []DryadJobStatus{DryadJobStatusNEW, DryadJobStatusDEPLOY}),
 		)
 
 		DescribeTable("list of jobs with id",

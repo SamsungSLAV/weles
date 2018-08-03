@@ -40,7 +40,8 @@ var _ = Describe("reverseSSHFS", func() {
 			Skip("No valid access info to Dryad")
 		}
 		var err error
-		client, err = ssh.Dial("tcp", dryadInfo.Addr.String(), prepareSSHConfig(dryadInfo.Username, dryadInfo.Key))
+		client, err = ssh.Dial(
+			"tcp", dryadInfo.Addr.String(), prepareSSHConfig(dryadInfo.Username, dryadInfo.Key))
 		Expect(err).ToNot(HaveOccurred())
 		dir, err = ioutil.TempDir("", "sshfs-test")
 		Expect(err).ToNot(HaveOccurred())
