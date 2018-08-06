@@ -64,7 +64,7 @@ func createJobInfoSlice(sliceLenght int) (ret []weles.JobInfo) {
 	durationIncrement2, _ := time.ParseDuration("+100h")
 	jobInfo := make([]weles.JobInfo, sliceLenght)
 	gen := audit.NewGenerator(rand.New(rand.NewSource(time.Now().UTC().UnixNano())))
-	for i, _ := range jobInfo {
+	for i := range jobInfo {
 		tmp := weles.JobInfo{}
 		createdTime := gen.Time(time.Local, dateTimeIter, durationIncrement)
 		tmp.Created = strfmt.DateTime(createdTime)
