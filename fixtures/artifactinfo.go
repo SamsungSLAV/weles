@@ -36,8 +36,14 @@ const (
 // It is filled with random data used for testing.
 func CreateArtifactInfoSlice(sliceLength int) []weles.ArtifactInfo {
 	// checking for errors omitted due to fixed input.
-	dateTimeIter, _ := time.Parse(dateLayout, someDate)
-	durationIncrement, _ := time.ParseDuration(durationIncrement)
+	dateTimeIter, err := time.Parse(dateLayout, someDate)
+	if err != nil {
+		panic(err)
+	}
+	durationIncrement, err := time.ParseDuration(durationIncrement)
+	if err != nil {
+		panic(err)
+	}
 	artifactInfo := make([]weles.ArtifactInfo, sliceLength)
 	gen := audit.NewGenerator(rand.New(rand.NewSource(time.Now().UTC().UnixNano())))
 	for i := range artifactInfo {
