@@ -118,7 +118,11 @@ func main() {
 	// get server with flag values filled out
 	srv = server.NewServer(api)
 
-	defer srv.Shutdown()
+	defer func() {
+		if err = srv.Shutdown(); err != nil {
+			log.Println("Failed to shut down server: " + err.Error())
+		}
+	}()
 
 	apiDefaults.Managers = server.NewManagers(jm, am)
 
