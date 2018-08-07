@@ -249,7 +249,7 @@ func (h *BoruterImpl) getOwner() boruta.UserInfo {
 }
 
 // getValidAfter prepares ValidAfter time for registering new request in Boruta.
-func (h *BoruterImpl) getValidAfter(config weles.Config) time.Time {
+func (h *BoruterImpl) getValidAfter(_ weles.Config) time.Time {
 	return time.Now()
 }
 
@@ -300,5 +300,5 @@ func (h *BoruterImpl) Release(j weles.JobID) {
 	if err != nil {
 		return
 	}
-	h.boruta.CloseRequest(r)
+	_ = h.boruta.CloseRequest(r)
 }

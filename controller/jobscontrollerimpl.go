@@ -21,6 +21,7 @@ package controller
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"sort"
 	"strings"
@@ -185,10 +186,13 @@ func (js *JobsControllerImpl) SetStatusAndInfo(j weles.JobID, newStatus weles.Jo
 
 	job, ok := js.jobs[j]
 	if !ok {
+		log.Println(weles.ErrJobNotFound.Error(), "JobID:", j)
 		return weles.ErrJobNotFound
 	}
 
 	if !isStatusChangeValid(job.Status, newStatus) {
+		log.Println(weles.ErrJobStatusChangeNotAllowed.Error(), "from:", job.Status, "to:",
+			newStatus)
 		return weles.ErrJobStatusChangeNotAllowed
 	}
 
@@ -244,6 +248,7 @@ func (js *JobsControllerImpl) GetDryad(j weles.JobID) (weles.Dryad, error) {
 // - JobPagination containing element after/before which a page should be returned. It also
 // contains information about direction of listing and the size of the returned page which
 // must always be set.
+// TODO: gagarin - Consider breaking this into smaller functions.
 func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorter,
 	paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) {
 
@@ -350,7 +355,7 @@ func prepareFilterRegexp(arr []string) (*regexp.Regexp, error) {
 	var str strings.Builder
 	str.Grow(size)
 	for _, s := range arr {
-		str.WriteString("|(" + s + ")")
+		_, _ = str.WriteString("|(" + s + ")")
 	}
 
 	return regexp.Compile(str.String()[1:])
@@ -389,6 +394,7 @@ func prepareFilter(in *weles.JobFilter) (out *filter, err error) {
 	return out, nil
 }
 
+//TODO: gagarin - Consider breaking into smaller functions.
 func (job *Job) passesFilter(f *filter) bool {
 	if !f.CreatedAfter.IsZero() {
 		if !time.Time(job.JobInfo.Created).After(f.CreatedAfter) {

@@ -50,7 +50,7 @@ var _ = Describe("JobsControllerImpl", func() {
 		var initID, invalidID weles.JobID
 
 		ipAddr := &net.IPNet{IP: net.IPv4(1, 2, 3, 4), Mask: net.IPv4Mask(5, 6, 7, 8)}
-		yaml := []byte("test yaml")
+		testYaml := []byte("test yaml")
 
 		BeforeEach(func() {
 			jc = NewJobsController()
@@ -62,14 +62,15 @@ var _ = Describe("JobsControllerImpl", func() {
 
 			BeforeEach(func() {
 				var err error
-				j, err = jc.NewJob(yaml)
+				j, err = jc.NewJob(testYaml)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(j).To(Equal(initID + 1))
 			})
 			Describe("NewJob", func() {
 				It("should create new Job structure", func() {
+					var err error
 					before := time.Now()
-					j, err := jc.NewJob(yaml)
+					j, err = jc.NewJob(testYaml)
 					after := time.Now()
 
 					Expect(err).NotTo(HaveOccurred())
@@ -85,14 +86,14 @@ var _ = Describe("JobsControllerImpl", func() {
 					Expect(time.Time(job.Created)).To(BeTemporally(">=", before))
 					Expect(time.Time(job.Created)).To(BeTemporally("<=", after))
 					Expect(job.Status).To(Equal(weles.JobStatusNEW))
-					Expect(job.yaml).To(Equal(yaml))
+					Expect(job.yaml).To(Equal(testYaml))
 				})
 			})
 			Describe("GetYaml", func() {
 				It("should return proper yaml for existing job", func() {
-					retyaml, err := jc.GetYaml(j)
+					yaml, err := jc.GetYaml(j)
 					Expect(err).NotTo(HaveOccurred())
-					Expect(retyaml).To(Equal(yaml))
+					Expect(yaml).To(Equal(testYaml))
 				})
 				It("should return error for not existing job", func() {
 					yaml, err := jc.GetYaml(invalidID)
@@ -283,7 +284,7 @@ var _ = Describe("JobsControllerImpl", func() {
 					elems = 5
 					jobids = []weles.JobID{}
 					for i := 1; i <= elems; i++ {
-						j, err := jc.NewJob(yaml)
+						j, err := jc.NewJob(testYaml)
 						Expect(err).NotTo(HaveOccurred())
 						jobids = append(jobids, j)
 					}
@@ -556,7 +557,7 @@ var _ = Describe("JobsControllerImpl", func() {
 					jobids = []weles.JobID{}
 					elems = 10
 					for i := 1; i <= elems; i++ {
-						j, err := jc.NewJob(yaml)
+						j, err := jc.NewJob(testYaml)
 						Expect(err).NotTo(HaveOccurred())
 						jobids = append(jobids, j)
 					}
