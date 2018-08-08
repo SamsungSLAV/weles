@@ -82,8 +82,8 @@ var _ = Describe("reverseSSHFS", func() {
 
 		By("create on local and access from remote", func() {
 			filename := filepath.Join(dir, "testfile1")
-
-			f, err := os.Create(filename)
+			var f *os.File
+			f, err = os.Create(filename)
 			Expect(err).ToNot(HaveOccurred())
 			err = f.Close()
 			Expect(err).ToNot(HaveOccurred())

@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -94,7 +95,11 @@ func (d *sessionProvider) executeRemoteCommand(cmd string) ([]byte, []byte, erro
 	if err != nil {
 		return nil, nil, err
 	}
-	defer session.Close()
+	defer func() {
+		if err = session.Close(); err != nil {
+			log.Println("Failed to close session", err)
+		}
+	}()
 
 	var stdout, stderr bytes.Buffer
 	session.Stdout = &stdout
@@ -124,7 +129,11 @@ func (d *sessionProvider) Exec(cmd ...string) ([]byte, []byte, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	defer session.Close()
+	defer func() {
+		if err = session.Close(); err != nil {
+			log.Println("Failed to close session", err)
+		}
+	}()
 
 	err = d.sshfs.check(session)
 	if err != nil {
@@ -170,8 +179,9 @@ func (d *sessionProvider) Close() error {
 		return nil
 	}
 
-	d.sshfs.close()
-	//TODO: log error.
+	if err := d.sshfs.close(); err != nil {
+		log.Println("Failed to close ssh connection", err)
+	}
 	err := d.connection.client.Close()
 	d.connection.client = nil
 	return err

@@ -66,13 +66,16 @@ func (sshfs *reverseSSHFS) open(session *ssh.Session) (err error) {
 	//                                       ^log on stderr
 	ctx, cancel := context.WithCancel(sshfs.ctx)
 
-	sftp := exec.CommandContext(ctx, "/usr/lib/openssh/sftp-server", "-e", "-l", "INFO")
+	// gas/gosec returns error here about subprocess launching with variable. This is intended.
+	sftp := exec.CommandContext(ctx, "/usr/lib/openssh/sftp-server", "-e", "-l", "INFO") //nolint: gas, gosec,lll
 	session.Stdin, err = sftp.StdoutPipe()
 	if err != nil {
+		cancel()
 		return
 	}
 	session.Stdout, err = sftp.StdinPipe()
 	if err != nil {
+		cancel()
 		return
 	}
 
@@ -82,6 +85,7 @@ func (sshfs *reverseSSHFS) open(session *ssh.Session) (err error) {
 
 	err = sftp.Start()
 	if err != nil {
+		cancel()
 		return
 	}
 	// TODO(amistewicz): add gid translation
@@ -92,6 +96,7 @@ func (sshfs *reverseSSHFS) open(session *ssh.Session) (err error) {
 		"mkdir -p \"%s\" && sshfs -o idmap=user -o slave \":%s\" \"%s\"",
 		sshfs.remote, sshfs.local, sshfs.remote))
 	if err != nil {
+		cancel()
 		return
 	}
 

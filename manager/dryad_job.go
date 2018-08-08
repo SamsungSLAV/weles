@@ -97,7 +97,7 @@ func (d *dryadJob) executePhase(name weles.DryadJobStatus, f func() error) {
 }
 
 // run executes stages of dryadJob in order.
-func (d *dryadJob) run(ctx context.Context) {
+func (d *dryadJob) run(_ context.Context) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err, ok := r.(error); ok {
