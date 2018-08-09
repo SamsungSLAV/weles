@@ -225,34 +225,6 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 		nil
 }
 
-// Select fetches artifacts from ArtifactDB.
-func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []weles.ArtifactInfo, err error) {
-	var (
-		results []weles.ArtifactInfo
-		query   string
-	)
-	// TODO prepare efficient way of executing generic select.
-	switch arg.(type) {
-	case weles.JobID:
-		query = "select * from artifacts where JobID = ?"
-	case weles.ArtifactType:
-		query = "select * from artifacts where Type = ?"
-	case weles.ArtifactAlias:
-		query = "select * from artifacts where Alias = ?"
-	case weles.ArtifactStatus:
-		query = "select * from artifacts where Status = ?"
-	default:
-		return nil, ErrUnsupportedQueryType
-	}
-	query += " ORDER BY id"
-
-	_, err = aDB.dbmap.Select(&results, query, arg)
-	if err != nil {
-		return nil, err
-	}
-	return results, nil
-}
-
 // SetStatus changes artifact's status in ArtifactDB.
 func (aDB *ArtifactDB) SetStatus(change weles.ArtifactStatusChange) error {
 	ai, err := aDB.SelectPath(change.Path)

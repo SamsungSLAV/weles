@@ -259,56 +259,6 @@ var _ = Describe("ArtifactDB", func() {
 		)
 	})
 
-	Describe("Select", func() {
-
-		BeforeEach(func() {
-			trans, err := goldenUnicorn.dbmap.Begin()
-			Expect(err).ToNot(HaveOccurred())
-			defer trans.Commit()
-			for _, a := range testArtifacts {
-				err := trans.Insert(&a)
-				Expect(err).ToNot(HaveOccurred())
-			}
-		})
-
-		DescribeTable("database select",
-			func(lookedFor interface{}, expectedErr error, expectedResult ...weles.ArtifactInfo) {
-				result, err := goldenUnicorn.Select(lookedFor)
-
-				if expectedErr != nil {
-					Expect(err).To(Equal(expectedErr))
-					Expect(result).To(BeNil())
-				} else {
-					Expect(err).ToNot(HaveOccurred())
-					for i := range result {
-						Expect(result[i].ArtifactDescription).To(Equal(
-							expectedResult[i].ArtifactDescription))
-						Expect(result[i].Path).To(Equal(expectedResult[i].Path))
-						Expect(result[i].Status).To(Equal(expectedResult[i].Status))
-						Expect(result[i].Timestamp).To(Equal(expectedResult[i].Timestamp))
-					}
-				}
-			},
-			// types supported by select.
-			Entry("select JobID", artifact.JobID, nil, artifact),
-			Entry("select Type", weles.ArtifactTypeYAML, nil, aYamlFailed),
-			Entry("select Status", weles.ArtifactStatusREADY, nil, aImageReady),
-			Entry("select Alias", artifact.Alias, nil, artifact),
-			// type bool is not supported by select.
-			Entry("select unsupported value", true, ErrUnsupportedQueryType),
-			// test query itsef.
-			Entry("select multiple entries for JobID", aImageReady.JobID, nil, aImageReady,
-				aYamlFailed),
-			Entry("select no entries for invalid JobID", invalidJob, nil),
-			Entry("select multiple entries for Type", weles.ArtifactTypeIMAGE, nil, artifact,
-				aImageReady),
-			Entry("select multiple entries for Alias", aImageReady.Alias, nil, aImageReady,
-				aYamlFailed),
-			Entry("select multiple entries for Status", weles.ArtifactStatusFAILED, nil,
-				aYamlFailed, aTestFailed),
-		)
-	})
-
 	Describe("List", func() {
 		BeforeEach(func() {
 			trans, err := goldenUnicorn.dbmap.Begin()
