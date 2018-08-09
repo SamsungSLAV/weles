@@ -16,13 +16,13 @@
 
 package manager
 
-//go:generate ../bin/dev-tools/mockgen -package=manager -destination=mock_dryad_test.go git.tizen.org/tools/weles/manager/dryad SessionProvider,DeviceCommunicationProvider
-
 import (
 	"context"
 
 	"git.tizen.org/tools/weles"
 	"git.tizen.org/tools/weles/manager/dryad"
+	dmock "git.tizen.org/tools/weles/manager/dryad/mock"
+	"git.tizen.org/tools/weles/manager/mock"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -31,16 +31,16 @@ import (
 
 var _ = Describe("DryadJobRunner", func() {
 	var (
-		mockSession *MockSessionProvider
-		mockDevice  *MockDeviceCommunicationProvider
+		mockSession *dmock.MockSessionProvider
+		mockDevice  *mock.MockDeviceCommunicationProvider
 		ctrl        *gomock.Controller
 		djr         DryadJobRunner
 	)
 
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
-		mockSession = NewMockSessionProvider(ctrl)
-		mockDevice = NewMockDeviceCommunicationProvider(ctrl)
+		mockSession = dmock.NewMockSessionProvider(ctrl)
+		mockDevice = mock.NewMockDeviceCommunicationProvider(ctrl)
 		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, weles.Config{})
 	})
 

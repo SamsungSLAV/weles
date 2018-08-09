@@ -14,8 +14,8 @@
  *  limitations under the License
  */
 
-package manager
+package mock
 
-//go:generate ../bin/dev-tools/mockgen -package manager -destination=../manager/mock_dryad_test.go git.tizen.org/tools/weles/manager/dryad SessionProvider,DeviceCommunicationProvider
+//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./communication_provider.go git.tizen.org/tools/weles/manager/dryad DeviceCommunicationProvider
 
-//go:generate ../bin/dev-tools/mockgen -package manager -destination=../manager/mock_dryad_job_runner_test.go git.tizen.org/tools/weles/manager DryadJobRunner
+//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./dryad_job_runner.go git.tizen.org/tools/weles/manager DryadJobRunner

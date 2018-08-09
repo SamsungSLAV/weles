@@ -21,6 +21,7 @@ import (
 	"errors"
 
 	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles/manager/mock"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -56,8 +57,8 @@ var _ = Describe("dryadJob", func() {
 
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
-		mockDryadJobRunner = NewMockDryadJobRunner(ctrl)
-		mockOfDryadJobRunner := mockDryadJobRunner.(*MockDryadJobRunner)
+		mockDryadJobRunner = mock.NewMockDryadJobRunner(ctrl)
+		mockOfDryadJobRunner := mockDryadJobRunner.(*mock.MockDryadJobRunner)
 		deploy = mockOfDryadJobRunner.EXPECT().Deploy().Times(1)
 		boot = mockOfDryadJobRunner.EXPECT().Boot().Times(1).After(deploy)
 		test = mockOfDryadJobRunner.EXPECT().Test().Times(1).After(boot)
