@@ -242,31 +242,43 @@ func (js *JobsControllerImpl) GetDryad(j weles.JobID) (weles.Dryad, error) {
 	return job.dryad, nil
 }
 
-// List returns information on Jobs. It takes 3 arguments:
-// - JobFilter containing filters
-// - JobSorter containing sorting key and sorting direction
-// - JobPagination containing element after/before which a page should be returned. It also
-// contains information about direction of listing and the size of the returned page which
-// must always be set.
-// TODO: gagarin - Consider breaking this into smaller functions.
-func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorter,
-	paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) {
+func (js *JobsControllerImpl) filter(filter weles.JobFilter, paginator weles.JobPagination) (
+	[]weles.JobInfo, bool, error) {
+	// extra defines if the returned collection of JobInfo contain additionally pagination JobID.
+	var extra = false
 
-	js.mutex.RLock()
-	defer js.mutex.RUnlock()
-	ret := make([]weles.JobInfo, 0, len(js.jobs))
-
+	// Prepare filter.
 	f, err := prepareFilter(&filter)
 	if err != nil {
-		return nil, weles.ListInfo{}, err
+		return nil, extra, err
 	}
 
 	// Filter jobs.
+	ret := make([]weles.JobInfo, 0, len(js.jobs))
 	for _, job := range js.jobs {
-		if job.passesFilter(f) || (paginator.Limit != 0 && job.JobID == paginator.JobID) {
+		if job.passesFilter(f) {
 			ret = append(ret, job.JobInfo)
 		}
 	}
+
+	// If pagination is enabled and there's a valid pagination JobID, it must be added
+	// to the returned collection of JobInfos to allow finding proper scope of jobs (page).
+	// It should be added only if it does not pass filter, otherwise it is already added.
+	if paginator.Limit != 0 && paginator.JobID != weles.JobID(0) {
+		job, present := js.jobs[paginator.JobID]
+		if !present {
+			return nil, extra, weles.ErrInvalidArgument(fmt.Sprintf("JobID: %d not found",
+				paginator.JobID))
+		}
+		if !job.passesFilter(f) {
+			ret = append(ret, job.JobInfo)
+			extra = true
+		}
+	}
+	return ret, extra, nil
+}
+
+func (js *JobsControllerImpl) sort(ret []weles.JobInfo, sorter weles.JobSorter) []weles.JobInfo {
 	// Sort jobs.
 	ps := &jobSorter{
 		jobs: ret,
@@ -281,45 +293,74 @@ func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorte
 		ps.setByFunction(sorter.SortOrder, byStatusAsc, byStatusDesc)
 	}
 	sort.Sort(ps)
+	return ps.jobs
+}
 
+func (js *JobsControllerImpl) paginate(ret []weles.JobInfo, paginator weles.JobPagination) (
+	total, elems, left, index int) {
 	// Pagination.
-	var index, elems, total, left int
+	total = len(ret)
+
 	if paginator.Limit == 0 {
 		// Pagination is disabled. Return all records.
-		total = len(ret)
 		elems = total
-		left = 0
-	} else if paginator.JobID == weles.JobID(0) {
-		total = len(ret)
+		return
+	}
+	if paginator.JobID == weles.JobID(0) {
+		// Starting pagination - 1st page.
 		elems = min(int(paginator.Limit), total)
 		left = total - elems
-	} else {
-		index = -1
-		for i, job := range ret {
-			if job.JobID == paginator.JobID {
-				index = i
-				break
-			}
-		}
-		if index == -1 {
-			return nil, weles.ListInfo{},
-				weles.ErrInvalidArgument(fmt.Sprintf("JobID: %d not found", paginator.JobID))
-		}
-		if paginator.Forward {
-			index++
-			total = len(ret)
-			elems = min(int(paginator.Limit), total-index)
-			left = total - index - elems
-		} else {
-			total = len(ret)
-			elems = min(int(paginator.Limit), index)
-			left = index - elems
-			index -= elems
-		}
-		if !js.jobs[paginator.JobID].passesFilter(f) {
-			total--
+		return
+	}
+	// Find index of pagination JobID.
+	for i, job := range ret {
+		if job.JobID == paginator.JobID {
+			index = i
+			break
 		}
 	}
+
+	if paginator.Forward {
+		index++
+		elems = min(int(paginator.Limit), total-index)
+		left = total - index - elems
+	} else {
+		elems = min(int(paginator.Limit), index)
+		left = index - elems
+		index -= elems
+	}
+	return
+}
+
+// List returns information on Jobs. It takes 3 arguments:
+// - JobFilter containing filters
+// - JobSorter containing sorting key and sorting direction
+// - JobPagination containing element after/before which a page should be returned. It also
+// contains information about direction of listing and the size of the returned page which
+// must always be set.
+func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorter,
+	paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) {
+
+	js.mutex.RLock()
+	defer js.mutex.RUnlock()
+
+	// Filter jobs.
+	ret, extra, err := js.filter(filter, paginator)
+	if err != nil {
+		return nil, weles.ListInfo{}, err
+	}
+
+	// Sort jobs.
+	ret = js.sort(ret, sorter)
+
+	// Pagination.
+	total, elems, left, index := js.paginate(ret, paginator)
+
+	// Don't count pagination JobID if added extra.
+	if extra {
+		total--
+	}
+
 	info := weles.ListInfo{TotalRecords: uint64(total), RemainingRecords: uint64(left)}
 	return ret[index : index+elems], info, nil
 }
@@ -394,51 +435,55 @@ func prepareFilter(in *weles.JobFilter) (out *filter, err error) {
 	return out, nil
 }
 
-//TODO: gagarin - Consider breaking into smaller functions.
+func (job *Job) passesCreatedAfterFilter(f *filter) bool {
+	return f.CreatedAfter.IsZero() || time.Time(job.JobInfo.Created).After(f.CreatedAfter)
+}
+
+func (job *Job) passesCreatedBeforeFilter(f *filter) bool {
+	return f.CreatedBefore.IsZero() || time.Time(job.JobInfo.Created).Before(f.CreatedBefore)
+}
+
+func (job *Job) passesUpdatedAfterFilter(f *filter) bool {
+	return f.UpdatedAfter.IsZero() || time.Time(job.JobInfo.Updated).After(f.UpdatedAfter)
+}
+
+func (job *Job) passesUpdatedBeforeFilter(f *filter) bool {
+	return f.UpdatedBefore.IsZero() || time.Time(job.JobInfo.Updated).Before(f.UpdatedBefore)
+}
+
+func (job *Job) passesInfoFilter(f *filter) bool {
+	return f.Info == nil || f.Info.MatchString(job.JobInfo.Info)
+}
+
+func (job *Job) passesJobIDFilter(f *filter) bool {
+	if f.JobID == nil {
+		return true
+	}
+	_, present := f.JobID[job.JobInfo.JobID]
+	return present
+}
+
+func (job *Job) passesNameFilter(f *filter) bool {
+	return f.Name == nil || f.Name.MatchString(job.JobInfo.Name)
+}
+
+func (job *Job) passesStatusFilter(f *filter) bool {
+	if f.Status == nil {
+		return true
+	}
+	_, present := f.Status[job.JobInfo.Status]
+	return present
+}
+
 func (job *Job) passesFilter(f *filter) bool {
-	if !f.CreatedAfter.IsZero() {
-		if !time.Time(job.JobInfo.Created).After(f.CreatedAfter) {
-			return false
-		}
-	}
-	if !f.CreatedBefore.IsZero() {
-		if !time.Time(job.JobInfo.Created).Before(f.CreatedBefore) {
-			return false
-		}
-	}
-	if !f.UpdatedAfter.IsZero() {
-		if !time.Time(job.JobInfo.Updated).After(f.UpdatedAfter) {
-			return false
-		}
-	}
-	if !f.UpdatedBefore.IsZero() {
-		if !time.Time(job.JobInfo.Updated).Before(f.UpdatedBefore) {
-			return false
-		}
-	}
-	if f.Info != nil {
-		if !f.Info.MatchString(job.JobInfo.Info) {
-			return false
-		}
-	}
-	if f.JobID != nil {
-		_, present := f.JobID[job.JobInfo.JobID]
-		if !present {
-			return false
-		}
-	}
-	if f.Name != nil {
-		if !f.Name.MatchString(job.JobInfo.Name) {
-			return false
-		}
-	}
-	if f.Status != nil {
-		_, present := f.Status[job.JobInfo.Status]
-		if !present {
-			return false
-		}
-	}
-	return true
+	return job.passesCreatedAfterFilter(f) &&
+		job.passesCreatedBeforeFilter(f) &&
+		job.passesUpdatedAfterFilter(f) &&
+		job.passesUpdatedBeforeFilter(f) &&
+		job.passesInfoFilter(f) &&
+		job.passesJobIDFilter(f) &&
+		job.passesNameFilter(f) &&
+		job.passesStatusFilter(f)
 }
 
 func byCreatedAsc(i1, i2 *weles.JobInfo) bool {
