@@ -18,8 +18,6 @@
 
 package weles
 
-//go:generate mockgen -package mock -destination=mock/dryadjobmanager.go git.tizen.org/tools/weles DryadJobManager
-
 import (
 	"crypto/rsa"
 	"net"
