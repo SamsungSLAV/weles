@@ -27,9 +27,10 @@ import (
 )
 
 const (
-	dateLayout        = "Mon Jan 2 15:04:05 -0700 MST 2006"
-	someDate          = "Tue Jan 2 15:04:05 +0100 CET 1900"
-	durationIncrement = "+25h"
+	dateLayout         = "Mon Jan 2 15:04:05 -0700 MST 2006"
+	someDate           = "Tue Jan 2 15:04:05 +0100 CET 1900"
+	durationIncrement  = "+25h"
+	maxArtifactsPerJob = 10
 )
 
 // CreateArtifactInfoSlice returns slice of ArtifactInfos of sliceLength length.
@@ -45,14 +46,21 @@ func CreateArtifactInfoSlice(sliceLength int) []weles.ArtifactInfo {
 		panic(err)
 	}
 	artifactInfo := make([]weles.ArtifactInfo, sliceLength)
-	gen := audit.NewGenerator(rand.New(rand.NewSource(time.Now().UTC().UnixNano())))
+
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	gen := audit.NewGenerator(rand.New(r))
+	var jobID, jobIDSwitchRemainingArtifacts int
 	for i := range artifactInfo {
+		if jobIDSwitchRemainingArtifacts == 0 {
+			jobIDSwitchRemainingArtifacts = r.Intn(maxArtifactsPerJob)
+			jobID = i + 1
+		}
 		tmp := weles.ArtifactInfo{}
 		timestamp := gen.Time(time.Local, dateTimeIter, durationIncrement)
 		tmp.Timestamp = strfmt.DateTime(timestamp)
 		tmp.ID = int64(i + 1)
 		tmp.ArtifactDescription.Alias = weles.ArtifactAlias(gen.Word())
-		tmp.ArtifactDescription.JobID = weles.JobID(i + 1)
+		tmp.ArtifactDescription.JobID = weles.JobID(jobID)
 		tmp.ArtifactDescription.Type = weles.ArtifactType(gen.OneStringOf(
 			string(weles.ArtifactTypeIMAGE),
 			string(weles.ArtifactTypeRESULT),
@@ -68,6 +76,7 @@ func CreateArtifactInfoSlice(sliceLength int) []weles.ArtifactInfo {
 
 		dateTimeIter = dateTimeIter.Add(durationIncrement)
 		artifactInfo[i] = tmp
+		jobIDSwitchRemainingArtifacts--
 	}
 	return artifactInfo
 }
