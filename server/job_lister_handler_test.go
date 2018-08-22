@@ -29,6 +29,7 @@ import (
 	"git.tizen.org/tools/weles"
 	"git.tizen.org/tools/weles/mock"
 	"git.tizen.org/tools/weles/server"
+	"git.tizen.org/tools/weles/server/operations/jobs"
 
 	"github.com/go-openapi/strfmt"
 	"github.com/golang/mock/gomock"
@@ -78,7 +79,7 @@ var _ = Describe("JobListerHandler", func() {
 			contentH string) (
 			rb *bytes.Reader) {
 
-			jobFilterSort := weles.JobFilterAndSort{
+			jobFilterSort := jobs.JobListerBody{
 				Filter: &filter,
 				Sorter: &sorter}
 

@@ -245,7 +245,16 @@ func init() {
             "name": "jobFilterAndSort",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/JobFilterAndSort"
+              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "type": "object",
+              "properties": {
+                "Filter": {
+                  "$ref": "#/definitions/JobFilter"
+                },
+                "Sorter": {
+                  "$ref": "#/definitions/JobSorter"
+                }
+              }
             }
           },
           {
@@ -565,18 +574,6 @@ func init() {
         "UpdatedBefore": {
           "type": "string",
           "format": "date-time"
-        }
-      }
-    },
-    "JobFilterAndSort": {
-      "description": "Data for filtering and sorting Weles Jobs lists.",
-      "type": "object",
-      "properties": {
-        "Filter": {
-          "$ref": "#/definitions/JobFilter"
-        },
-        "Sorter": {
-          "$ref": "#/definitions/JobSorter"
         }
       }
     },
@@ -945,7 +942,16 @@ func init() {
             "name": "jobFilterAndSort",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/JobFilterAndSort"
+              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "type": "object",
+              "properties": {
+                "Filter": {
+                  "$ref": "#/definitions/JobFilter"
+                },
+                "Sorter": {
+                  "$ref": "#/definitions/JobSorter"
+                }
+              }
             }
           },
           {
@@ -1283,18 +1289,6 @@ func init() {
         "UpdatedBefore": {
           "type": "string",
           "format": "date-time"
-        }
-      }
-    },
-    "JobFilterAndSort": {
-      "description": "Data for filtering and sorting Weles Jobs lists.",
-      "type": "object",
-      "properties": {
-        "Filter": {
-          "$ref": "#/definitions/JobFilter"
-        },
-        "Sorter": {
-          "$ref": "#/definitions/JobSorter"
         }
       }
     },

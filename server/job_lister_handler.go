@@ -37,7 +37,7 @@ func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responde
 		paginator = setJobPaginator(params, a.PageLimit)
 	}
 
-	if params.JobFilterAndSort != nil {
+	if params.JobFilterAndSort.Filter != nil || params.JobFilterAndSort.Sorter != nil {
 		jobInfoReceived, listInfo, err = a.Managers.JM.ListJobs(
 			*params.JobFilterAndSort.Filter, *params.JobFilterAndSort.Sorter, paginator)
 	} else {

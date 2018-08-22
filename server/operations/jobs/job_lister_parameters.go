@@ -29,8 +29,6 @@ import (
 	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
-
-	weles "git.tizen.org/tools/weles"
 )
 
 // NewJobListerParams creates a new JobListerParams object
@@ -60,7 +58,7 @@ type JobListerParams struct {
 	/*Job Filter and Sort object.
 	  In: body
 	*/
-	JobFilterAndSort *weles.JobFilterAndSort
+	JobFilterAndSort JobListerBody
 	/*Custom page limit. Denotes number of JobInfo structures that will be returned.
 	  In: query
 	*/
@@ -90,7 +88,7 @@ func (o *JobListerParams) BindRequest(r *http.Request, route *middleware.Matched
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body weles.JobFilterAndSort
+		var body JobListerBody
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			res = append(res, errors.NewParseError("jobFilterAndSort", "body", "", err))
 		} else {
@@ -100,7 +98,7 @@ func (o *JobListerParams) BindRequest(r *http.Request, route *middleware.Matched
 			}
 
 			if len(res) == 0 {
-				o.JobFilterAndSort = &body
+				o.JobFilterAndSort = body
 			}
 		}
 	}

@@ -23,7 +23,12 @@ package jobs
 import (
 	"net/http"
 
+	errors "github.com/go-openapi/errors"
 	middleware "github.com/go-openapi/runtime/middleware"
+	strfmt "github.com/go-openapi/strfmt"
+	swag "github.com/go-openapi/swag"
+
+	weles "git.tizen.org/tools/weles"
 )
 
 // JobListerHandlerFunc turns a function with the right signature into a job lister handler
@@ -72,4 +77,87 @@ func (o *JobLister) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
+}
+
+// JobListerBody Data for filtering and sorting Weles Jobs lists.
+// swagger:model JobListerBody
+type JobListerBody struct {
+
+	// filter
+	Filter *weles.JobFilter `json:"Filter,omitempty"`
+
+	// sorter
+	Sorter *weles.JobSorter `json:"Sorter,omitempty"`
+}
+
+// Validate validates this job lister body
+func (o *JobListerBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFilter(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateSorter(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *JobListerBody) validateFilter(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Filter) { // not required
+		return nil
+	}
+
+	if o.Filter != nil {
+		if err := o.Filter.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("jobFilterAndSort" + "." + "Filter")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *JobListerBody) validateSorter(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Sorter) { // not required
+		return nil
+	}
+
+	if o.Sorter != nil {
+		if err := o.Sorter.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("jobFilterAndSort" + "." + "Sorter")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *JobListerBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *JobListerBody) UnmarshalBinary(b []byte) error {
+	var res JobListerBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
 }
