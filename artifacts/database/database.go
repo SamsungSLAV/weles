@@ -37,13 +37,19 @@ type ArtifactDB struct {
 	dbmap   *gorp.DbMap
 }
 
+const (
+	sqlite3BusyTimeout = "?_busy_timeout=5000"
+	sqlite3MaxOpenConn = 1
+)
+
 // Open opens database connection.
 func (aDB *ArtifactDB) Open(dbPath string) error {
 	var err error
-	aDB.handler, err = sql.Open("sqlite3", dbPath)
+	aDB.handler, err = sql.Open("sqlite3", dbPath+sqlite3BusyTimeout)
 	if err != nil {
 		return errors.New(dbOpenFail + err.Error())
 	}
+	aDB.handler.SetMaxOpenConns(sqlite3MaxOpenConn)
 
 	aDB.dbmap = &gorp.DbMap{Db: aDB.handler, Dialect: gorp.SqliteDialect{}}
 	return aDB.initDB()
@@ -63,8 +69,12 @@ func (aDB *ArtifactDB) Close() error {
 }
 
 // InsertArtifactInfo inserts information about artifact to database.
-func (aDB *ArtifactDB) InsertArtifactInfo(ai *weles.ArtifactInfo) error {
-	return aDB.dbmap.Insert(ai)
+func (aDB *ArtifactDB) InsertArtifactInfo(ai *weles.ArtifactInfo) (err error) {
+	err = aDB.dbmap.Insert(ai)
+	if err != nil {
+		log.Println("Failed to insert ArtifactInfo: ", err)
+	}
+	return
 }
 
 // SelectPath selects artifact from database based on its path.
