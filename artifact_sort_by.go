@@ -46,7 +46,7 @@ var artifactSortByEnum []interface{}
 
 func init() {
 	var res []ArtifactSortBy
-	if err := json.Unmarshal([]byte(`["ID"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ID",""]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
