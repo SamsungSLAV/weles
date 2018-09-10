@@ -20,6 +20,7 @@ package manager
 
 import (
 	"context"
+	"log"
 
 	"git.tizen.org/tools/weles"
 	"git.tizen.org/tools/weles/manager/dryad"
@@ -87,8 +88,9 @@ func (d *dryadJobRunner) Boot() (err error) {
 	}
 
 	// Login to the device only if credentials were specified.
-	if username, password := d.conf.Action.Boot.Login, d.conf.Action.Boot.Password; username != "" && password != "" {
-		return d.device.Login(dryad.Credentials{username, password})
+	if username, password := d.conf.Action.Boot.Login, d.conf.Action.Boot.Password; username !=
+		"" && password != "" {
+		return d.device.Login(dryad.Credentials{Username: username, Password: password})
 	}
 	return nil
 }
@@ -99,13 +101,22 @@ func (d *dryadJobRunner) Test() error {
 		for _, testaction := range testcase.TestActions {
 			switch action := testaction.(type) {
 			case weles.Push:
-				d.device.CopyFilesTo([]string{action.Path}, action.Dest)
+				if err := d.device.CopyFilesTo([]string{action.Path}, action.Dest); err != nil {
+					log.Println("Failed to copy files to DUT", err)
+					return err
+				}
 			case weles.Run:
 				// Exec joins arguments in a single string.
 				// Split and then Join are avoided.
-				d.device.Exec(action.Name)
+				if _, _, err := d.device.Exec(action.Name); err != nil {
+					log.Println("Failed DUT execute", err)
+					return err
+				}
 			case weles.Pull:
-				d.device.CopyFilesFrom([]string{action.Src}, action.Path)
+				if err := d.device.CopyFilesFrom([]string{action.Src}, action.Path); err != nil {
+					log.Println("Failed to copy files from DUT", err)
+					return err
+				}
 			default:
 				panic("unknown test action type")
 			}

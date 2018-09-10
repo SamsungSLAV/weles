@@ -40,7 +40,8 @@ var _ = Describe("reverseSSHFS", func() {
 			Skip("No valid access info to Dryad")
 		}
 		var err error
-		client, err = ssh.Dial("tcp", dryadInfo.Addr.String(), prepareSSHConfig(dryadInfo.Username, dryadInfo.Key))
+		client, err = ssh.Dial(
+			"tcp", dryadInfo.Addr.String(), prepareSSHConfig(dryadInfo.Username, dryadInfo.Key))
 		Expect(err).ToNot(HaveOccurred())
 		dir, err = ioutil.TempDir("", "sshfs-test")
 		Expect(err).ToNot(HaveOccurred())
@@ -81,8 +82,8 @@ var _ = Describe("reverseSSHFS", func() {
 
 		By("create on local and access from remote", func() {
 			filename := filepath.Join(dir, "testfile1")
-
-			f, err := os.Create(filename)
+			var f *os.File
+			f, err = os.Create(filename)
 			Expect(err).ToNot(HaveOccurred())
 			err = f.Close()
 			Expect(err).ToNot(HaveOccurred())

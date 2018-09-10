@@ -122,12 +122,14 @@ var _ = Describe("BoruterImpl", func() {
 			mutex := &sync.Mutex{}
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
-			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(rid, nil)
-			req.EXPECT().ListRequests(nil).AnyTimes().Return([]boruta.ReqInfo{}, err).Do(func(boruta.ListFilter) {
-				mutex.Lock()
-				defer mutex.Unlock()
-				counter--
-			})
+			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
+				rid, nil)
+			req.EXPECT().ListRequests(nil).AnyTimes().Return([]boruta.ReqInfo{}, err).Do(
+				func(boruta.ListFilter) {
+					mutex.Lock()
+					defer mutex.Unlock()
+					counter--
+				})
 
 			h.Request(j)
 			Eventually(func() int {
@@ -144,8 +146,11 @@ var _ = Describe("BoruterImpl", func() {
 			var va, dl time.Time
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
-			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(rid, nil).Do(
-				func(c boruta.Capabilities, p boruta.Priority, ui boruta.UserInfo, validAfter time.Time, deadline time.Time) {
+			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
+				rid, nil).Do(
+				func(c boruta.Capabilities, p boruta.Priority, ui boruta.UserInfo,
+					validAfter, deadline time.Time) {
+
 					va = validAfter
 					dl = deadline
 				})
@@ -169,8 +174,11 @@ var _ = Describe("BoruterImpl", func() {
 
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
-			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(rid, nil).Do(
-				func(c boruta.Capabilities, p boruta.Priority, ui boruta.UserInfo, validAfter time.Time, deadline time.Time) {
+			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
+				rid, nil).Do(
+				func(c boruta.Capabilities, p boruta.Priority, ui boruta.UserInfo,
+					validAfter, deadline time.Time) {
+
 					va = validAfter
 					dl = deadline
 				})
@@ -190,7 +198,8 @@ var _ = Describe("BoruterImpl", func() {
 		It("should fail if NewRequest fails", func() {
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
-			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(boruta.ReqID(0), err)
+			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
+				boruta.ReqID(0), err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
 
 			h.Request(j)
@@ -221,7 +230,8 @@ var _ = Describe("BoruterImpl", func() {
 			config.DeviceType = ""
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
-			req.EXPECT().NewRequest(boruta.Capabilities{}, priority, owner, gomock.Any(), gomock.Any()).Return(boruta.ReqID(0), err)
+			req.EXPECT().NewRequest(boruta.Capabilities{}, priority, owner, gomock.Any(),
+				gomock.Any()).Return(boruta.ReqID(0), err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
 
 			h.Request(j)
@@ -240,7 +250,8 @@ var _ = Describe("BoruterImpl", func() {
 				config.Priority = k
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 				jc.EXPECT().GetConfig(j).Return(config, nil)
-				req.EXPECT().NewRequest(caps, v, owner, gomock.Any(), gomock.Any()).Return(boruta.ReqID(0), err)
+				req.EXPECT().NewRequest(caps, v, owner, gomock.Any(), gomock.Any()).Return(
+					boruta.ReqID(0), err)
 				req.EXPECT().ListRequests(nil).AnyTimes()
 
 				h.Request(j)
@@ -261,20 +272,29 @@ var _ = Describe("BoruterImpl", func() {
 			boruta.DONE,
 			boruta.FAILED,
 		}
-		ai := boruta.AccessInfo{Addr: &net.IPNet{IP: net.IPv4(1, 2, 3, 4), Mask: net.IPv4Mask(5, 6, 7, 8)}}
+		ai := boruta.AccessInfo{
+			Addr: &net.IPNet{
+				IP:   net.IPv4(1, 2, 3, 4),
+				Mask: net.IPv4Mask(5, 6, 7, 8),
+			}}
+
 		BeforeEach(func() {
 			var va, dl time.Time
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
-			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(rid, nil).Do(
-				func(c boruta.Capabilities, p boruta.Priority, ui boruta.UserInfo, validAfter time.Time, deadline time.Time) {
+			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
+				rid, nil).Do(
+				func(c boruta.Capabilities, p boruta.Priority, ui boruta.UserInfo,
+					validAfter, deadline time.Time,
+				) {
 					va = validAfter
 					dl = deadline
 				})
 			listRequestRet = make(chan []boruta.ReqInfo)
-			req.EXPECT().ListRequests(nil).AnyTimes().DoAndReturn(func(boruta.ListFilter) ([]boruta.ReqInfo, error) {
-				return <-listRequestRet, nil
-			})
+			req.EXPECT().ListRequests(nil).AnyTimes().DoAndReturn(
+				func(boruta.ListFilter) ([]boruta.ReqInfo, error) {
+					return <-listRequestRet, nil
+				})
 
 			before := time.Now()
 			h.Request(j)
@@ -295,7 +315,8 @@ var _ = Describe("BoruterImpl", func() {
 				expectRegistered(1)
 			}
 		})
-		for _, s := range states { // Every state is a separate It, because objects must be reinitialized
+		for _, s := range states { // Every state is a separate It,
+			//because objects must be reinitialized.
 			It("should ignore if request's state is unchanged : "+string(s), func() {
 				h.(*BoruterImpl).mutex.Lock()
 
@@ -314,18 +335,36 @@ var _ = Describe("BoruterImpl", func() {
 		}
 		It("should acquire Dryad if state changes to INPROGRESS", func() {
 			req.EXPECT().AcquireWorker(rid).Return(ai, nil)
-			jc.EXPECT().SetDryad(j, weles.Dryad{Addr: ai.Addr, Key: ai.Key, Username: "boruta-user"})
+			jc.EXPECT().SetDryad(
+				j, weles.Dryad{
+					Addr:     ai.Addr,
+					Key:      ai.Key,
+					Username: "boruta-user",
+				})
 
-			rinfo := boruta.ReqInfo{ID: rid, State: boruta.INPROGRESS, Job: &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)}}
+			rinfo := boruta.ReqInfo{
+				ID:    rid,
+				State: boruta.INPROGRESS,
+				Job:   &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)},
+			}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
 
 			eventuallyNoti(1, true, "")
 		})
 		It("should fail during acquire if SetDryad fails", func() {
 			req.EXPECT().AcquireWorker(rid).Return(ai, nil)
-			jc.EXPECT().SetDryad(j, weles.Dryad{Addr: ai.Addr, Key: ai.Key, Username: "boruta-user"}).Return(err)
+			jc.EXPECT().SetDryad(
+				j, weles.Dryad{
+					Addr:     ai.Addr,
+					Key:      ai.Key,
+					Username: "boruta-user",
+				}).Return(err)
 
-			rinfo := boruta.ReqInfo{ID: rid, State: boruta.INPROGRESS, Job: &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)}}
+			rinfo := boruta.ReqInfo{
+				ID:    rid,
+				State: boruta.INPROGRESS,
+				Job:   &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)},
+			}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
 
 			eventuallyNoti(1, false, "Internal Weles error while setting Dryad : test error")
@@ -334,7 +373,11 @@ var _ = Describe("BoruterImpl", func() {
 		It("should fail during acquire if AcquireWorker fails", func() {
 			req.EXPECT().AcquireWorker(rid).Return(boruta.AccessInfo{}, err)
 
-			rinfo := boruta.ReqInfo{ID: rid, State: boruta.INPROGRESS, Job: &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)}}
+			rinfo := boruta.ReqInfo{
+				ID:    rid,
+				State: boruta.INPROGRESS,
+				Job:   &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)},
+			}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
 
 			eventuallyNoti(1, false, "Cannot acquire worker from Boruta : test error")

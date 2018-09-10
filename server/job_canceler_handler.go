@@ -28,13 +28,16 @@ func (m *Managers) JobCanceller(params jobs.JobCancelerParams) middleware.Respon
 		return jobs.NewJobCancelerNoContent()
 
 	case weles.ErrJobNotFound:
-		return jobs.NewJobCancelerNotFound().WithPayload(&weles.ErrResponse{Message: err.Error(), Type: ""})
+		return jobs.NewJobCancelerNotFound().WithPayload(
+			&weles.ErrResponse{Message: err.Error(), Type: ""})
 
 	case weles.ErrJobStatusChangeNotAllowed:
-		return jobs.NewJobCancelerForbidden().WithPayload(&weles.ErrResponse{Message: err.Error(), Type: ""})
+		return jobs.NewJobCancelerForbidden().WithPayload(
+			&weles.ErrResponse{Message: err.Error(), Type: ""})
 
 	default:
-		return jobs.NewJobCancelerInternalServerError().WithPayload(&weles.ErrResponse{Message: err.Error(), Type: ""})
+		return jobs.NewJobCancelerInternalServerError().WithPayload(
+			&weles.ErrResponse{Message: err.Error(), Type: ""})
 	}
 
 }

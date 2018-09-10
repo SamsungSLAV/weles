@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import (
 	"errors"
 
 	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles/manager/mock"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -56,8 +57,8 @@ var _ = Describe("dryadJob", func() {
 
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
-		mockDryadJobRunner = NewMockDryadJobRunner(ctrl)
-		mockOfDryadJobRunner := mockDryadJobRunner.(*MockDryadJobRunner)
+		mockDryadJobRunner = mock.NewMockDryadJobRunner(ctrl)
+		mockOfDryadJobRunner := mockDryadJobRunner.(*mock.MockDryadJobRunner)
 		deploy = mockOfDryadJobRunner.EXPECT().Deploy().Times(1)
 		boot = mockOfDryadJobRunner.EXPECT().Boot().Times(1).After(deploy)
 		test = mockOfDryadJobRunner.EXPECT().Test().Times(1).After(boot)
@@ -74,9 +75,11 @@ var _ = Describe("dryadJob", func() {
 
 	It("should go through proper states", func() {
 		djSync <- struct{}{}
-		states := []DryadJobStatus{DJ_NEW, DJ_DEPLOY, DJ_BOOT, DJ_TEST, DJ_OK}
+		states := []DryadJobStatus{DryadJobStatusNEW, DryadJobStatusDEPLOY, DryadJobStatusBOOT,
+			DryadJobStatusTEST, DryadJobStatusOK}
+
 		for _, state := range states {
-			change := DryadJobStatusChange{jobID, state}
+			change := DryadJobStatusChange{Job: jobID, Status: state}
 			Eventually(changes).Should(Receive(Equal(change)))
 		}
 	})
@@ -85,7 +88,7 @@ var _ = Describe("dryadJob", func() {
 		c.Return(err).Times(times)
 	}
 	registerErr := func(deployErr, bootErr, testErr error) []DryadJobStatus {
-		ret := []DryadJobStatus{DJ_NEW, DJ_DEPLOY}
+		ret := []DryadJobStatus{DryadJobStatusNEW, DryadJobStatusDEPLOY}
 		switch {
 		case deployErr != nil:
 			registerPhaseErr(deploy, deployErr, 1)
@@ -94,16 +97,16 @@ var _ = Describe("dryadJob", func() {
 		case bootErr != nil:
 			registerPhaseErr(deploy, deployErr, 1)
 			registerPhaseErr(boot, bootErr, 1)
-			ret = append(ret, DJ_BOOT)
+			ret = append(ret, DryadJobStatusBOOT)
 			registerPhaseErr(test, testErr, 0)
 		case testErr != nil:
 			registerPhaseErr(deploy, deployErr, 1)
 			registerPhaseErr(boot, bootErr, 1)
-			ret = append(ret, DJ_BOOT)
+			ret = append(ret, DryadJobStatusBOOT)
 			registerPhaseErr(test, testErr, 1)
-			ret = append(ret, DJ_TEST)
+			ret = append(ret, DryadJobStatusTEST)
 		}
-		ret = append(ret, DJ_FAIL)
+		ret = append(ret, DryadJobStatusFAIL)
 		djSync <- struct{}{}
 		return ret
 	}
@@ -111,7 +114,7 @@ var _ = Describe("dryadJob", func() {
 		func(f func() []DryadJobStatus) {
 			states := f()
 			for _, state := range states {
-				change := DryadJobStatusChange{jobID, state}
+				change := DryadJobStatusChange{Job: jobID, Status: state}
 				Eventually(changes).Should(Receive(Equal(change)))
 			}
 		},
@@ -130,7 +133,7 @@ var _ = Describe("dryadJob", func() {
 		func(f func()) {
 			f()
 			djSync <- struct{}{}
-			fail := DryadJobStatusChange{jobID, DJ_FAIL}
+			fail := DryadJobStatusChange{Job: jobID, Status: DryadJobStatusFAIL}
 			Eventually(changes).Should(Receive(Equal(fail)))
 		},
 		Entry("deploy", func() {

@@ -171,7 +171,7 @@ var _ = Describe("Controller", func() {
 			sorter := weles.JobSorter{}
 			paginator := weles.JobPagination{}
 			list := []weles.JobInfo{
-				weles.JobInfo{
+				{
 					JobID: weles.JobID(3),
 					Name:  "test name",
 				},

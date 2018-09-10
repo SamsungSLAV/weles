@@ -86,7 +86,8 @@ func NewDownloader(j JobsController, a weles.ArtifactManager) Downloader {
 
 // pathStatusChange reacts on notification from ArtifactManager and updates
 // path and job structures.
-func (h *DownloaderImpl) pathStatusChange(path string, status weles.ArtifactStatus) (changed bool, j weles.JobID, info string) {
+func (h *DownloaderImpl) pathStatusChange(path string, status weles.ArtifactStatus,
+) (changed bool, j weles.JobID, info string) {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
 	j, ok := h.path2Job[path]
@@ -183,7 +184,8 @@ func (h *DownloaderImpl) removeJobInfo(j weles.JobID) error {
 }
 
 // push delegates downloading single uri to ArtifactDB.
-func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias string, uri string) (string, error) {
+func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias, uri string,
+) (string, error) {
 	p, err := h.artifacts.PushArtifact(weles.ArtifactDescription{
 		JobID: j,
 		Type:  t,
@@ -286,7 +288,8 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 
 	for i, image := range config.Action.Deploy.Images {
 		if image.URI != "" {
-			path, err := h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("Image_%d", i), image.URI)
+			var path string
+			path, err = h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("Image_%d", i), image.URI)
 			if err != nil {
 				h.fail(j, fmt.Sprintf(formatURI, image.URI, err.Error()))
 				return
@@ -294,7 +297,9 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 			config.Action.Deploy.Images[i].Path = path
 		}
 		if image.ChecksumURI != "" {
-			path, err := h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("ImageMD5_%d", i), image.ChecksumURI)
+			var path string
+			path, err = h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("ImageMD5_%d", i),
+				image.ChecksumURI)
 			if err != nil {
 				h.fail(j, fmt.Sprintf(formatURI, image.ChecksumURI, err.Error()))
 				return
@@ -302,12 +307,13 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 			config.Action.Deploy.Images[i].ChecksumPath = path
 		}
 	}
+	var path string
 	for i, tc := range config.Action.Test.TestCases {
 		for k, ta := range tc.TestActions {
 			switch ta.(type) {
 			case weles.Push:
 				action := ta.(weles.Push)
-				path, err := h.push(j, weles.ArtifactTypeTEST, action.Alias, action.URI)
+				path, err = h.push(j, weles.ArtifactTypeTEST, action.Alias, action.URI)
 				if err != nil {
 					h.fail(j, fmt.Sprintf(formatURI, action.URI, err.Error()))
 					return
@@ -316,7 +322,7 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 				config.Action.Test.TestCases[i].TestActions[k] = action
 			case weles.Pull:
 				action := ta.(weles.Pull)
-				path, err := h.pullCreate(j, action.Alias)
+				path, err = h.pullCreate(j, action.Alias)
 				if err != nil {
 					h.fail(j, fmt.Sprintf(formatPath, err.Error()))
 					return

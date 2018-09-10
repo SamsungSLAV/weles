@@ -26,12 +26,14 @@ import (
 func (m *Managers) JobCreator(params jobs.JobCreatorParams) middleware.Responder {
 	byteContainer, err := ioutil.ReadAll(params.Yamlfile)
 	if err != nil {
-		return jobs.NewJobCreatorUnprocessableEntity().WithPayload(&weles.ErrResponse{Message: err.Error(), Type: ""})
+		return jobs.NewJobCreatorUnprocessableEntity().WithPayload(
+			&weles.ErrResponse{Message: err.Error(), Type: ""})
 	}
 
 	jobID, err := m.JM.CreateJob(byteContainer)
 	if err != nil {
-		return jobs.NewJobCreatorInternalServerError().WithPayload(&weles.ErrResponse{Message: err.Error(), Type: ""})
+		return jobs.NewJobCreatorInternalServerError().WithPayload(
+			&weles.ErrResponse{Message: err.Error(), Type: ""})
 	}
 
 	return jobs.NewJobCreatorCreated().WithPayload(jobID)

@@ -54,13 +54,15 @@ func NewParser(j JobsController, a weles.ArtifactManager, p weles.Parser) Parser
 func (h *ParserImpl) Parse(j weles.JobID) {
 	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusPARSING, "")
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",
+			err.Error()))
 		return
 	}
 
 	yaml, err := h.jobs.GetYaml(j)
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting yaml description : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting yaml description : %s",
+			err.Error()))
 		return
 	}
 
@@ -69,25 +71,31 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 		Type:  weles.ArtifactTypeYAML,
 	})
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while creating file path in ArtifactDB : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf(
+			"Internal Weles error while creating file path in ArtifactDB : %s",
+			err.Error()))
 		return
 	}
 
 	err = ioutil.WriteFile(string(path), yaml, 0644)
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while saving file in ArtifactDB : %s", err.Error()))
+		h.SendFail(
+			j, fmt.Sprintf("Internal Weles error while saving file in ArtifactDB : %s",
+				err.Error()))
 		return
 	}
 
 	conf, err := h.parser.ParseYaml(yaml)
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Error parsing yaml file : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Error parsing yaml file : %s",
+			err.Error()))
 		return
 	}
 
 	err = h.jobs.SetConfig(j, *conf)
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while setting config : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while setting config : %s",
+			err.Error()))
 		return
 	}
 

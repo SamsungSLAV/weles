@@ -20,6 +20,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"log"
 	"strings"
 
 	"git.tizen.org/tools/weles"
@@ -41,7 +42,7 @@ func (aDB *ArtifactDB) Open(dbPath string) error {
 	var err error
 	aDB.handler, err = sql.Open("sqlite3", dbPath)
 	if err != nil {
-		return err
+		return errors.New(dbOpenFail + err.Error())
 	}
 
 	aDB.dbmap = &gorp.DbMap{Db: aDB.handler, Dialect: gorp.SqliteDialect{}}
@@ -83,18 +84,57 @@ func prepareQuery(
 	filter weles.ArtifactFilter,
 	sorter weles.ArtifactSorter,
 	paginator weles.ArtifactPagination,
-	getTotal, getRemaining bool, offset int64) (string, []interface{}) {
-	var (
-		conditions []string
-		query      string
-		args       []interface{}
-	)
-	if getTotal == false && getRemaining == false {
+	totalRecords, remainingRecords bool, offset int64) (query string, args []interface{}) {
+
+	if !totalRecords && !remainingRecords {
 		query = "select * from artifacts "
 	} else {
 		query = "select count(*) from artifacts "
 	}
 
+	var conditions []string
+	conditions, args = prepareQueryFilter(filter)
+
+	if !totalRecords && paginator.ID != 0 {
+		if (paginator.Forward && sorter.SortOrder == weles.SortOrderDescending) ||
+			(!paginator.Forward && (sorter.SortOrder == weles.SortOrderAscending ||
+				sorter.SortOrder == "")) {
+			conditions = append(conditions, " ID < ? ")
+			args = append(args, paginator.ID)
+		} else {
+			conditions = append(conditions, " ID > ? ")
+			args = append(args, paginator.ID)
+		}
+	}
+
+	if len(conditions) > 0 {
+		query += " where " + strings.Join(conditions, " AND ")
+	}
+
+	query += prepareQuerySorter(sorter)
+
+	if paginator.Limit != 0 {
+		if offset == 0 {
+			query += " LIMIT ? "
+			args = append(args, paginator.Limit)
+		} else {
+			query += " LIMIT ? OFFSET ?"
+			args = append(args, paginator.Limit, offset)
+		}
+	}
+	return
+}
+
+func prepareQuerySorter(sorter weles.ArtifactSorter) string {
+	//TODO: make timestamp also db key, add to where clause and order by as described in:
+	// https://www.sqlite.org/rowvalue.html#scrolling_window_queries
+	if sorter.SortOrder == weles.SortOrderDescending {
+		return " ORDER BY ID DESC "
+	}
+	return " ORDER BY ID ASC "
+}
+
+func prepareQueryFilter(filter weles.ArtifactFilter) (conditions []string, args []interface{}) {
 	if len(filter.JobID) > 0 {
 		q := make([]string, len(filter.JobID))
 		for i, job := range filter.JobID {
@@ -127,47 +167,21 @@ func prepareQuery(
 		}
 		conditions = append(conditions, " Alias in ("+strings.Join(q, ",")+")")
 	}
-	if getTotal == false && paginator.ID != 0 {
-		if (paginator.Forward == true && sorter.SortOrder == weles.SortOrderDescending) || (paginator.Forward == false && (sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "")) {
-			conditions = append(conditions, " ID < ? ")
-			args = append(args, paginator.ID)
-		} else {
-			conditions = append(conditions, " ID > ? ")
-			args = append(args, paginator.ID)
-		}
-	}
 
-	if len(conditions) > 0 {
-		query += " where " + strings.Join(conditions, " AND ")
-	}
-	//TODO: make timestamp also db key, add to where clause and order by as described in:
-	// https://www.sqlite.org/rowvalue.html#scrolling_window_queries
-	if sorter.SortOrder == weles.SortOrderDescending {
-		query += " ORDER BY ID DESC "
-	} else if sorter.SortOrder == weles.SortOrderAscending || sorter.SortOrder == "" {
-		query += " ORDER BY ID ASC "
-	}
-	if paginator.Limit != 0 {
-		if offset == 0 {
-			query += " LIMIT ? "
-			args = append(args, paginator.Limit)
-		} else {
-			query += " LIMIT ? OFFSET ?"
-			args = append(args, paginator.Limit, offset)
-		}
-	}
-	return query, args
+	return
 }
 
 // Filter fetches elements matching ArtifactFilter from database.
-func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.ArtifactSorter, paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
+	paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+
 	results := []weles.ArtifactInfo{}
 	var tr, rr int64
 	// TODO gorp doesn't support passing list of arguments to where in(...) clause yet.
 	// Thats why it's done with the use prepareQuery.
 	trans, err := aDB.dbmap.Begin()
 	if err != nil {
-		return nil, weles.ListInfo{}, errors.New("Failed to open transaction while filtering " + err.Error())
+		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTransOpenFail + err.Error())
 	}
 	queryForTotal, argsForTotal := prepareQuery(filter, sorter, paginator, true, false, 0)
 	queryForRemaining, argsForRemaining := prepareQuery(filter, sorter, paginator, false, true, 0)
@@ -175,12 +189,12 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 
 	rr, err = aDB.dbmap.SelectInt(queryForRemaining, argsForRemaining...)
 	if err != nil {
-		return nil, weles.ListInfo{}, errors.New("Failed to get remaining records " + err.Error())
+		return nil, weles.ListInfo{}, errors.New(whileFilter + dbRemainingFail + err.Error())
 	}
 
 	tr, err = aDB.dbmap.SelectInt(queryForTotal, argsForTotal...)
 	if err != nil {
-		return nil, weles.ListInfo{}, errors.New("Failed to get total records " + err.Error())
+		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTotalFail + err.Error())
 	}
 	// TODO: refactor this file. below is to ignore pagination object when pagination is turned off.
 	if paginator.Limit == 0 {
@@ -188,20 +202,27 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 		paginator.ID = 0
 	}
 
-	if paginator.Forward == false {
+	if !paginator.Forward {
 		offset = rr - int64(paginator.Limit)
 	}
 
 	queryForData, argsForData := prepareQuery(filter, sorter, paginator, false, false, offset)
 	_, err = aDB.dbmap.Select(&results, queryForData, argsForData...)
 	if err != nil {
-		return nil, weles.ListInfo{}, err
+		return nil, weles.ListInfo{}, errors.New(whileFilter + dbArtifactInfoFail + err.Error())
 	}
 	if err := trans.Commit(); err != nil {
-		return nil, weles.ListInfo{}, errors.New("Failed to commit transaction while filtering " + err.Error())
+		return nil,
+			weles.ListInfo{},
+			errors.New(whileFilter + dbTransCommitFail + err.Error())
 
 	}
-	return results, weles.ListInfo{TotalRecords: uint64(tr), RemainingRecords: uint64(rr - int64(len(results)))}, nil
+	return results,
+		weles.ListInfo{
+			TotalRecords:     uint64(tr),
+			RemainingRecords: uint64(rr - int64(len(results))),
+		},
+		nil
 }
 
 // Select fetches artifacts from ArtifactDB.
@@ -232,29 +253,18 @@ func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []weles.ArtifactInfo, 
 	return results, nil
 }
 
-// getID fetches ID of an artifact with provided path.
-func (aDB *ArtifactDB) getID(path weles.ArtifactPath) (int64, error) {
-	res, err := aDB.dbmap.SelectInt("select ID from artifacts where Path=?", path)
-	if err != nil {
-		return 0, err
-	}
-	return res, nil
-}
-
 // SetStatus changes artifact's status in ArtifactDB.
 func (aDB *ArtifactDB) SetStatus(change weles.ArtifactStatusChange) error {
 	ai, err := aDB.SelectPath(change.Path)
 	if err != nil {
-		return err
+		log.Println("failed to retrieve artifact based on its path: " + err.Error())
+		return err //TODO: aalexanderr - log  error and continue
 	}
-
-	id, err := aDB.getID(ai.Path)
-	if err != nil {
-		return err
-	}
-	ai.ID = id
 
 	ai.Status = change.NewStatus
-	_, err = aDB.dbmap.Update(&ai)
+	if _, err = aDB.dbmap.Update(&ai); err != nil {
+		log.Println("failed to update database" + err.Error())
+		// TODO: aalexanderr - log critical, stop weles gracefully
+	}
 	return err
 }

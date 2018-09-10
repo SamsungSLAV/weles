@@ -26,12 +26,24 @@ import (
 	"git.tizen.org/tools/weles"
 )
 
+const (
+	dateLayout        = "Mon Jan 2 15:04:05 -0700 MST 2006"
+	someDate          = "Tue Jan 2 15:04:05 +0100 CET 1900"
+	durationIncrement = "+25h"
+)
+
 // CreateArtifactInfoSlice returns slice of ArtifactInfos of sliceLength length.
 // It is filled with random data used for testing.
 func CreateArtifactInfoSlice(sliceLength int) []weles.ArtifactInfo {
 	// checking for errors omitted due to fixed input.
-	dateTimeIter, _ := time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", "Tue Jan 2 15:04:05 +0100 CET 1900")
-	durationIncrement, _ := time.ParseDuration("+25h")
+	dateTimeIter, err := time.Parse(dateLayout, someDate)
+	if err != nil {
+		panic(err)
+	}
+	durationIncrement, err := time.ParseDuration(durationIncrement)
+	if err != nil {
+		panic(err)
+	}
 	artifactInfo := make([]weles.ArtifactInfo, sliceLength)
 	gen := audit.NewGenerator(rand.New(rand.NewSource(time.Now().UTC().UnixNano())))
 	for i := range artifactInfo {

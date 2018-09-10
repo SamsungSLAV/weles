@@ -16,13 +16,13 @@
 
 package manager
 
-//go:generate ../bin/dev-tools/mockgen -package=manager -destination=mock_dryad_test.go git.tizen.org/tools/weles/manager/dryad SessionProvider,DeviceCommunicationProvider
-
 import (
 	"context"
 
 	"git.tizen.org/tools/weles"
 	"git.tizen.org/tools/weles/manager/dryad"
+	dmock "git.tizen.org/tools/weles/manager/dryad/mock"
+	"git.tizen.org/tools/weles/manager/mock"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -31,16 +31,16 @@ import (
 
 var _ = Describe("DryadJobRunner", func() {
 	var (
-		mockSession *MockSessionProvider
-		mockDevice  *MockDeviceCommunicationProvider
+		mockSession *dmock.MockSessionProvider
+		mockDevice  *mock.MockDeviceCommunicationProvider
 		ctrl        *gomock.Controller
 		djr         DryadJobRunner
 	)
 
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
-		mockSession = NewMockSessionProvider(ctrl)
-		mockDevice = NewMockDeviceCommunicationProvider(ctrl)
+		mockSession = dmock.NewMockSessionProvider(ctrl)
+		mockDevice = mock.NewMockDeviceCommunicationProvider(ctrl)
 		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, weles.Config{})
 	})
 
@@ -53,9 +53,11 @@ var _ = Describe("DryadJobRunner", func() {
 		By("Deploy")
 		gomock.InOrder(
 			mockSession.EXPECT().TS(),
-			mockSession.EXPECT().Exec("echo", "'{\"image name_1\":\"1\",\"image_name 2\":\"2\"}'", ">", fotaFilePath),
+			mockSession.EXPECT().Exec("echo", "'{\"image name_1\":\"1\",\"image_name 2\":\"2\"}'",
+				">", fotaFilePath),
 			mockSession.EXPECT().Exec(newFotaCmd(fotaSDCardPath, fotaFilePath,
-				[]string{basicConfig.Action.Deploy.Images[0].Path, basicConfig.Action.Deploy.Images[1].Path}).GetCmd()),
+				[]string{basicConfig.Action.Deploy.Images[0].Path,
+					basicConfig.Action.Deploy.Images[1].Path}).GetCmd()),
 		)
 
 		Expect(djr.Deploy()).To(Succeed())
@@ -63,17 +65,23 @@ var _ = Describe("DryadJobRunner", func() {
 		By("Boot")
 		gomock.InOrder(
 			mockDevice.EXPECT().Boot(),
-			mockDevice.EXPECT().Login(dryad.Credentials{basicConfig.Action.Boot.Login, basicConfig.Action.Boot.Password}),
+			mockDevice.EXPECT().Login(
+				dryad.Credentials{
+					Username: basicConfig.Action.Boot.Login,
+					Password: basicConfig.Action.Boot.Password,
+				}),
 		)
 
 		Expect(djr.Boot()).To(Succeed())
 
 		By("Test")
 		gomock.InOrder(
-			mockDevice.EXPECT().CopyFilesTo([]string{basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Path},
+			mockDevice.EXPECT().CopyFilesTo(
+				[]string{basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Path},
 				basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Dest),
 			mockDevice.EXPECT().Exec("command to be run"),
-			mockDevice.EXPECT().CopyFilesFrom([]string{basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Src},
+			mockDevice.EXPECT().CopyFilesFrom(
+				[]string{basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Src},
 				basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Path),
 		)
 

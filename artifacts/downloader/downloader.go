@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package downloader
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"sync"
@@ -42,8 +43,8 @@ type downloadJob struct {
 }
 
 // newDownloader returns initilized Downloader.
-func newDownloader(notification chan weles.ArtifactStatusChange, workers int, queueSize int) *Downloader {
-
+func newDownloader(notification chan weles.ArtifactStatusChange, workers, queueSize int,
+) *Downloader {
 	d := &Downloader{
 		notification: notification,
 		queue:        make(chan downloadJob, queueSize),
@@ -58,7 +59,8 @@ func newDownloader(notification chan weles.ArtifactStatusChange, workers int, qu
 }
 
 // NewDownloader returns Downloader initialized  with default queue length
-func NewDownloader(notification chan weles.ArtifactStatusChange, workerCount, queueCap int) *Downloader {
+func NewDownloader(notification chan weles.ArtifactStatusChange, workerCount, queueCap int,
+) *Downloader {
 	return newDownloader(notification, workerCount, queueCap)
 }
 
@@ -75,17 +77,28 @@ func (d *Downloader) getData(URI weles.ArtifactURI, path weles.ArtifactPath) err
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
+	defer func() {
+		if erro := resp.Body.Close(); erro != nil {
+			log.Println("failed to close response body after downloading file from: "+string(URI),
+				erro.Error())
+		}
+	}()
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("server error %v %v", URI, resp.Status)
+		return fmt.Errorf("while downloading: %v server returned %v status code, expected 200 ",
+			URI, resp.Status)
 	}
 
 	file, err := os.Create(string(path))
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+
+	defer func() {
+		if erro := file.Close(); erro != nil {
+			log.Println("failed to close file: " + string(path) + " " + erro.Error())
+		}
+	}()
 
 	_, err = io.Copy(file, resp.Body)
 	return err
@@ -94,7 +107,9 @@ func (d *Downloader) getData(URI weles.ArtifactURI, path weles.ArtifactPath) err
 // download downloads artifact from provided URI and saves it to specified path.
 // It sends notification about status changes to two channels - Downloader's notification
 // channel, and other one, that can be specified passed as an argument.
-func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange) {
+func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath,
+	ch chan weles.ArtifactStatusChange) {
+
 	if path == "" {
 		return
 	}
@@ -108,7 +123,9 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath, ch
 
 	err := d.getData(URI, path)
 	if err != nil {
-		os.Remove(string(path))
+		if err = os.Remove(string(path)); err != nil {
+			log.Println("failed to remove an artifact: ", path, " due to: "+err.Error())
+		}
 		change.NewStatus = weles.ArtifactStatusFAILED
 	} else {
 		change.NewStatus = weles.ArtifactStatusREADY
@@ -118,9 +135,11 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath, ch
 
 // Download is part of implementation of ArtifactDownloader interface.
 // It puts new downloadJob on the queue.
-func (d *Downloader) Download(URI weles.ArtifactURI, path weles.ArtifactPath, ch chan weles.ArtifactStatusChange) error {
+func (d *Downloader) Download(URI weles.ArtifactURI, path weles.ArtifactPath,
+	ch chan weles.ArtifactStatusChange) error {
+
 	channels := []chan weles.ArtifactStatusChange{ch, d.notification}
-	notify(weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING}, channels)
+	notify(weles.ArtifactStatusChange{Path: path, NewStatus: weles.ArtifactStatusPENDING}, channels)
 
 	job := downloadJob{
 		path: path,

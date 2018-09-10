@@ -24,7 +24,8 @@ type Managers struct {
 	AM weles.ArtifactManager
 }
 
-// APIDefaults contains interface implementations (Managers) and default values (set via CLI flags) for the API.
+// APIDefaults contains interface implementations (Managers) and default values
+// (set via CLI flags) for the API.
 type APIDefaults struct {
 	Managers  *Managers
 	PageLimit int32

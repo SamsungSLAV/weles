@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,7 +52,6 @@ With gently smiling jaws!
 	var (
 		testDir string
 		dbPath  string
-		err     error
 	)
 
 	var (
@@ -64,28 +63,29 @@ With gently smiling jaws!
 
 	var (
 		description = weles.ArtifactDescription{
-			"alias",
-			job,
-			weles.ArtifactTypeIMAGE,
-			"uri",
+			Alias: "alias",
+			JobID: job,
+			Type:  weles.ArtifactTypeIMAGE,
+			URI:   "uri",
 		}
 
 		dSameJobNType = weles.ArtifactDescription{
-			"other alias",
-			job,
-			weles.ArtifactTypeIMAGE,
-			"other uri",
+			Alias: "other alias",
+			JobID: job,
+			Type:  weles.ArtifactTypeIMAGE,
+			URI:   "other uri",
 		}
 
 		dSameJobOtherType = weles.ArtifactDescription{
-			"another alias",
-			job,
-			weles.ArtifactTypeYAML,
-			"another uri",
+			Alias: "another alias",
+			JobID: job,
+			Type:  weles.ArtifactTypeYAML,
+			URI:   "another uri",
 		}
 	)
 
 	BeforeEach(func() {
+		var err error
 		testDir, err = ioutil.TempDir("", "test-weles-")
 		Expect(err).ToNot(HaveOccurred())
 		dbPath = filepath.Join(testDir, "test.db")
@@ -126,13 +126,13 @@ With gently smiling jaws!
 
 	It("should create new temp directory for artifacts", func() {
 		var path, pathSame, pathType weles.ArtifactPath
-
 		jobDir := filepath.Join(testDir, strconv.Itoa(int(description.JobID)))
 		typeDir := filepath.Join(jobDir, string(description.Type))
 		newTypeDir := filepath.Join(jobDir, string(dSameJobOtherType.Type))
 
 		Expect(jobDir).ToNot(BeADirectory())
 
+		var err error
 		By("CreateArtifact", func() {
 			path, err = silverKangaroo.CreateArtifact(description)
 			Expect(err).ToNot(HaveOccurred())
@@ -227,17 +227,17 @@ With gently smiling jaws!
 			ch chan weles.ArtifactStatusChange
 
 			ad weles.ArtifactDescription = weles.ArtifactDescription{
-				"somealias",
-				job,
-				weles.ArtifactTypeIMAGE,
-				validURL,
+				Alias: "somealias",
+				JobID: job,
+				Type:  weles.ArtifactTypeIMAGE,
+				URI:   validURL,
 			}
 
 			adInvalid weles.ArtifactDescription = weles.ArtifactDescription{
-				"somealias",
-				job,
-				weles.ArtifactTypeIMAGE,
-				invalidURL,
+				Alias: "somealias",
+				JobID: job,
+				Type:  weles.ArtifactTypeIMAGE,
+				URI:   invalidURL,
 			}
 		)
 
@@ -256,15 +256,24 @@ With gently smiling jaws!
 
 				Expect(err).ToNot(HaveOccurred())
 
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING})))
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusDOWNLOADING})))
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, finalStatus})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: weles.ArtifactStatusPENDING,
+				})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: weles.ArtifactStatusDOWNLOADING,
+				})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: finalStatus,
+				})))
 
 				if finalStatus != weles.ArtifactStatusFAILED {
 					By("Check if file exists and has proper content")
+					content, erro := ioutil.ReadFile(string(path))
 
-					content, err := ioutil.ReadFile(string(path))
-					Expect(err).ToNot(HaveOccurred())
+					Expect(erro).ToNot(HaveOccurred())
 					Expect(string(content)).To(BeIdenticalTo(poem))
 
 				} else {

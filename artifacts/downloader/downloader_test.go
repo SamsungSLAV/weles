@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,7 +58,9 @@ I call it stupid of the pig.
 		queueCap     = 100
 	)
 
-	checkChannels := func(ch1, ch2 chan weles.ArtifactStatusChange, change weles.ArtifactStatusChange) {
+	checkChannels := func(ch1, ch2 chan weles.ArtifactStatusChange,
+		change weles.ArtifactStatusChange) {
+
 		Eventually(ch1).Should(Receive(Equal(change)))
 		Eventually(ch2).Should(Receive(Equal(change)))
 	}
@@ -90,15 +92,16 @@ I call it stupid of the pig.
 	})
 
 	prepareServer := func(url weles.ArtifactURI) *httptest.Server {
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if url == validURL {
-				w.WriteHeader(http.StatusOK)
-				fmt.Fprint(w, pigs)
-			} else {
-				w.WriteHeader(http.StatusNotFound)
-			}
-		}))
-		return ts
+		testServer := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if url == validURL {
+					w.WriteHeader(http.StatusOK)
+					fmt.Fprint(w, pigs)
+				} else {
+					w.WriteHeader(http.StatusNotFound)
+				}
+			}))
+		return testServer
 	}
 
 	DescribeTable("getData(): Notify channels and save data to file",
@@ -143,7 +146,10 @@ I call it stupid of the pig.
 			}
 			filename := weles.ArtifactPath(filepath.Join(dir, "test"))
 
-			status := weles.ArtifactStatusChange{filename, weles.ArtifactStatusDOWNLOADING}
+			status := weles.ArtifactStatusChange{
+				Path:      filename,
+				NewStatus: weles.ArtifactStatusDOWNLOADING,
+			}
 
 			platinumKoala.download(weles.ArtifactURI(ts.URL), weles.ArtifactPath(filename), ch)
 
@@ -182,7 +188,10 @@ I call it stupid of the pig.
 			err := platinumKoala.Download(weles.ArtifactURI(ts.URL), path, ch)
 			Expect(err).ToNot(HaveOccurred())
 
-			status := weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING}
+			status := weles.ArtifactStatusChange{
+				Path:      path,
+				NewStatus: weles.ArtifactStatusPENDING,
+			}
 			Eventually(ch).Should(Receive(Equal(status)))
 
 			status.NewStatus = weles.ArtifactStatusDOWNLOADING
@@ -207,16 +216,28 @@ I call it stupid of the pig.
 			err := platinumKoala.Download(weles.ArtifactURI(ts.URL), path, ch)
 			Expect(err).ToNot(HaveOccurred())
 
-			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusPENDING})))
-			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusDOWNLOADING})))
+			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+				Path:      path,
+				NewStatus: weles.ArtifactStatusPENDING,
+			})))
+			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+				Path:      path,
+				NewStatus: weles.ArtifactStatusDOWNLOADING,
+			})))
 
 			if poem != "" {
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusREADY})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: weles.ArtifactStatusREADY,
+				})))
 				content, err := ioutil.ReadFile(string(path))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(string(content)).To(BeIdenticalTo(poem))
 			} else {
-				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{path, weles.ArtifactStatusFAILED})))
+				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: weles.ArtifactStatusFAILED,
+				})))
 				content, err := ioutil.ReadFile(string(path))
 				Expect(err).To(HaveOccurred())
 				Expect(content).To(BeNil())

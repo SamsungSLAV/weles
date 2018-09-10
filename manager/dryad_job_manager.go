@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,26 +21,28 @@ package manager
 import (
 	"sync"
 
-	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles"
 )
 
 // DryadJobs implements DryadJobManager interface.
 type DryadJobs struct {
-	DryadJobManager
-	jobs      map[JobID]*dryadJob
+	weles.DryadJobManager
+	jobs      map[weles.JobID]*dryadJob
 	jobsMutex *sync.RWMutex
 }
 
 // NewDryadJobManager returns DryadJobManager interface of a new instance of DryadJobs.
-func NewDryadJobManager() DryadJobManager {
+func NewDryadJobManager() weles.DryadJobManager {
 	return &DryadJobs{
-		jobs:      make(map[JobID]*dryadJob),
+		jobs:      make(map[weles.JobID]*dryadJob),
 		jobsMutex: new(sync.RWMutex),
 	}
 }
 
 // Create is part of DryadJobManager interface.
-func (d *DryadJobs) Create(job JobID, rusalka Dryad, conf Config, changes chan<- DryadJobStatusChange) error {
+func (d *DryadJobs) Create(job weles.JobID, rusalka weles.Dryad, conf weles.Config,
+	changes chan<- weles.DryadJobStatusChange) error {
+
 	_, ok := d.jobs[job]
 	if ok {
 		return ErrDuplicated
@@ -53,7 +55,7 @@ func (d *DryadJobs) Create(job JobID, rusalka Dryad, conf Config, changes chan<-
 }
 
 // Cancel is part of DryadJobManager interface.
-func (d *DryadJobs) Cancel(job JobID) error {
+func (d *DryadJobs) Cancel(job weles.JobID) error {
 	d.jobsMutex.RLock()
 	defer d.jobsMutex.RUnlock()
 	dJob, ok := d.jobs[job]
@@ -66,30 +68,30 @@ func (d *DryadJobs) Cancel(job JobID) error {
 
 // createStatusMatcher creates a matcher for DryadJobStatus.
 // It is a helper function of List.
-func createStatusMatcher(statuses []DryadJobStatus) func(DryadJobStatus) bool {
+func createStatusMatcher(statuses []weles.DryadJobStatus) func(weles.DryadJobStatus) bool {
 	if len(statuses) == 0 {
-		return func(s DryadJobStatus) bool {
+		return func(s weles.DryadJobStatus) bool {
 			return true
 		}
 	}
-	m := make(map[DryadJobStatus]interface{})
+	m := make(map[weles.DryadJobStatus]interface{})
 	for _, status := range statuses {
 		m[status] = nil
 	}
-	return func(s DryadJobStatus) bool {
+	return func(s weles.DryadJobStatus) bool {
 		_, ok := m[s]
 		return ok
 	}
 }
 
 // List is part of DryadJobManager interface.
-func (d *DryadJobs) List(filter *DryadJobFilter) ([]DryadJobInfo, error) {
+func (d *DryadJobs) List(filter *weles.DryadJobFilter) ([]weles.DryadJobInfo, error) {
 	d.jobsMutex.RLock()
 	defer d.jobsMutex.RUnlock()
 
 	// Trivial case - return all.
 	if filter == nil {
-		ret := make([]DryadJobInfo, 0, len(d.jobs))
+		ret := make([]weles.DryadJobInfo, 0, len(d.jobs))
 		for _, job := range d.jobs {
 			info := job.GetJobInfo()
 			ret = append(ret, info)
@@ -97,7 +99,7 @@ func (d *DryadJobs) List(filter *DryadJobFilter) ([]DryadJobInfo, error) {
 		return ret, nil
 	}
 
-	ret := make([]DryadJobInfo, 0)
+	ret := make([]weles.DryadJobInfo, 0)
 	statusMatcher := createStatusMatcher(filter.Statuses)
 
 	// References undefined - check only Status.

@@ -116,7 +116,8 @@ var _ = Describe("JobCreatorHandler", func() {
 					req := requestBody("test_sample.yml", "yamlfile", accept)
 					orgBody := mockInput("test_sample.yml")
 					client := testserver.Client()
-					mockJobManager.EXPECT().CreateJob(orgBody).Return(weles.JobID(0), errors.New("Unparsable"))
+					mockJobManager.EXPECT().CreateJob(orgBody).Return(weles.JobID(0), errors.New(
+						"Unparsable"))
 
 					resp, err := client.Do(req)
 					Expect(err).ToNot(HaveOccurred())
@@ -134,12 +135,14 @@ var _ = Describe("JobCreatorHandler", func() {
 
 		Context("handler receives nil instead of file", func() {
 			It("should return unprocessable entity object", func() {
-				req, err := http.NewRequest(http.MethodPost, testserver.URL+"/api/v1/jobs/", errReader(0))
+				req, err := http.NewRequest(http.MethodPost, testserver.URL+"/api/v1/jobs/",
+					errReader(0))
 				Expect(err).ToNot(HaveOccurred())
 				params := jobs.JobCreatorParams{Yamlfile: errReader(0), HTTPRequest: req}
 
 				ret := apiDefaults.Managers.JobCreator(params)
-				Expect(ret.(*jobs.JobCreatorUnprocessableEntity).Payload).To(Equal(&weles.ErrResponse{Message: "reader error"}))
+				Expect(ret.(*jobs.JobCreatorUnprocessableEntity).Payload).To(
+					Equal(&weles.ErrResponse{Message: "reader error"}))
 
 			})
 		})

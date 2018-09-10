@@ -60,15 +60,28 @@ func main() {
 	var srv *server.Server // make sure init is called
 	var apiDefaults server.APIDefaults
 
-	flag.Int32Var(&apiDefaults.PageLimit, "page-limit", 0, "Default limit of page size returned by Weles API. If set to 0 pagination will be turned off")
-	flag.StringVar(&borutaAddress, "boruta-address", "http://127.0.0.1:8487", "Boruta address. Must contain protocol.")
-	flag.DurationVar(&borutaRefreshPeriod, "boruta-refresh-period", 2*time.Second, "Boruta refresh period")
-	flag.StringVar(&artifactDBName, "db-file", "weles.db", "name of *.db file. Should be located in --db-location")
-	flag.StringVar(&artifactDBLocation, "db-location", "/tmp/weles/", "location of *.db file and place where Weles will store artifacts.")
+	flag.Int32Var(&apiDefaults.PageLimit, "page-limit", 0, "Default limit of page size returned "+
+		"by Weles API. If set to 0 pagination will be turned off")
+
+	flag.StringVar(&borutaAddress, "boruta-address", "http://127.0.0.1:8487",
+		"Boruta address. Must contain protocol.")
+
+	flag.DurationVar(&borutaRefreshPeriod, "boruta-refresh-period", 2*time.Second,
+		"Boruta refresh period")
+
+	flag.StringVar(&artifactDBName, "db-file", "weles.db",
+		"name of *.db file. Should be located in --db-location")
+
+	flag.StringVar(&artifactDBLocation, "db-location", "/tmp/weles/",
+		"location of *.db file and place where Weles will store artifacts.")
+
 	//TODO: when cyberdryads or testlab instance will be present, performance tests should be done
 	// to set default values of below:
-	flag.IntVar(&artifactDownloadQueueCap, "artifact-download-queue-cap", 100, "Capacity of artifact download queue")
+	flag.IntVar(&artifactDownloadQueueCap, "artifact-download-queue-cap", 100,
+		"Capacity of artifact download queue")
+
 	flag.IntVar(&activeWorkersCap, "active-workers-cap", 16, "Maximum number of active workers.")
+
 	flag.IntVar(&notifierChannelCap, "notifier-channel-cap", 100, "Notifier channel capacity.")
 
 	//TODO: input validation
@@ -79,7 +92,8 @@ func main() {
 
 		title := "Weles"
 		fmt.Fprint(os.Stderr, title+"\n\n")
-		desc := "This is a Weles server.   You can find out more about Weles at [http://tbd.tbd](http://tbd.tbd)."
+		desc := "This is a Weles server. " +
+			"You can find out more about Weles at [http://tbd.tbd](http://tbd.tbd)."
 		if desc != "" {
 			fmt.Fprintf(os.Stderr, desc+"\n\n")
 		}
@@ -104,7 +118,11 @@ func main() {
 	// get server with flag values filled out
 	srv = server.NewServer(api)
 
-	defer srv.Shutdown()
+	defer func() {
+		if err = srv.Shutdown(); err != nil {
+			log.Println("Failed to shut down server: " + err.Error())
+		}
+	}()
 
 	apiDefaults.Managers = server.NewManagers(jm, am)
 

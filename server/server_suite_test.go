@@ -34,8 +34,12 @@ import (
 )
 
 const (
-	JSON = "application/json"
-	OMIT = "omit"
+	JSON               = "application/json"
+	OMIT               = "omit"
+	dateLayout         = "Mon Jan 2 15:04:05 -0700 MST 2006"
+	someDate           = "Tue Jan 2 15:04:05 +0100 CET 1900"
+	durationIncrement1 = "25h"
+	durationIncrement2 = "+100h"
 )
 
 func TestServer(t *testing.T) {
@@ -43,14 +47,19 @@ func TestServer(t *testing.T) {
 	RunSpecs(t, "Server Suite")
 }
 
-func testServerSetup() (mockCtrl *gomock.Controller, mockJobManager *mock.MockJobManager, mockArtifactManager *mock.MockArtifactManager, apiDefaults *server.APIDefaults, testserver *httptest.Server) {
+func testServerSetup() (mockCtrl *gomock.Controller, mockJobManager *mock.MockJobManager,
+	mockArtifactManager *mock.MockArtifactManager, apiDefaults *server.APIDefaults,
+	testserver *httptest.Server) {
+
 	mockCtrl = gomock.NewController(GinkgoT())
 	mockJobManager = mock.NewMockJobManager(mockCtrl)
 	mockArtifactManager = mock.NewMockArtifactManager(mockCtrl)
 	swaggerSpec, _ := loads.Analyzed(server.SwaggerJSON, "")
 	api := operations.NewWelesAPI(swaggerSpec)
 	srv := server.NewServer(api)
-	apiDefaults = &server.APIDefaults{Managers: server.NewManagers(mockJobManager, mockArtifactManager)}
+	apiDefaults = &server.APIDefaults{
+		Managers: server.NewManagers(mockJobManager, mockArtifactManager),
+	}
 	srv.WelesConfigureAPI(apiDefaults)
 	testserver = httptest.NewServer(srv.GetHandler())
 	return
@@ -59,12 +68,12 @@ func testServerSetup() (mockCtrl *gomock.Controller, mockJobManager *mock.MockJo
 // createJobInfoSlice is a function to create random data for tests of JobLister
 func createJobInfoSlice(sliceLenght int) (ret []weles.JobInfo) {
 	// checking for errors omitted due to fixed input.
-	dateTimeIter, _ := time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", "Tue Jan 2 15:04:05 +0100 CET 1900")
-	durationIncrement, _ := time.ParseDuration("+25h")
-	durationIncrement2, _ := time.ParseDuration("+100h")
+	dateTimeIter, _ := time.Parse(dateLayout, someDate)
+	durationIncrement, _ := time.ParseDuration(durationIncrement1)
+	durationIncrement2, _ := time.ParseDuration(durationIncrement2)
 	jobInfo := make([]weles.JobInfo, sliceLenght)
 	gen := audit.NewGenerator(rand.New(rand.NewSource(time.Now().UTC().UnixNano())))
-	for i, _ := range jobInfo {
+	for i := range jobInfo {
 		tmp := weles.JobInfo{}
 		createdTime := gen.Time(time.Local, dateTimeIter, durationIncrement)
 		tmp.Created = strfmt.DateTime(createdTime)

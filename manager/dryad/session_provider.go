@@ -20,12 +20,13 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
 	"crypto/rsa"
 
-	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -39,10 +40,11 @@ type sshClient struct {
 }
 
 // sessionProvider implements SessionProvider interface.
-// FIXME: When the connection is broken after it is established, all client functions stall. This provider has to be rewritten.
+// FIXME: When the connection is broken after it is established, all client functions stall.
+// This provider has to be rewritten.
 type sessionProvider struct {
 	SessionProvider
-	dryad      Dryad
+	dryad      weles.Dryad
 	connection *sshClient
 	sshfs      *reverseSSHFS
 }
@@ -93,7 +95,11 @@ func (d *sessionProvider) executeRemoteCommand(cmd string) ([]byte, []byte, erro
 	if err != nil {
 		return nil, nil, err
 	}
-	defer session.Close()
+	defer func() {
+		if err = session.Close(); err != nil {
+			log.Println("Failed to close session", err)
+		}
+	}()
 
 	var stdout, stderr bytes.Buffer
 	session.Stdout = &stdout
@@ -104,7 +110,7 @@ func (d *sessionProvider) executeRemoteCommand(cmd string) ([]byte, []byte, erro
 }
 
 // NewSessionProvider returns new instance of SessionProvider.
-func NewSessionProvider(dryad Dryad, workdir string) SessionProvider {
+func NewSessionProvider(dryad weles.Dryad, workdir string) SessionProvider {
 	cfg := prepareSSHConfig(dryad.Username, dryad.Key)
 
 	return &sessionProvider{
@@ -123,7 +129,11 @@ func (d *sessionProvider) Exec(cmd ...string) ([]byte, []byte, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	defer session.Close()
+	defer func() {
+		if err = session.Close(); err != nil {
+			log.Println("Failed to close session", err)
+		}
+	}()
 
 	err = d.sshfs.check(session)
 	if err != nil {
@@ -169,8 +179,9 @@ func (d *sessionProvider) Close() error {
 		return nil
 	}
 
-	d.sshfs.close()
-	//TODO: log error.
+	if err := d.sshfs.close(); err != nil {
+		log.Println("Failed to close ssh connection", err)
+	}
 	err := d.connection.client.Close()
 	d.connection.client = nil
 	return err

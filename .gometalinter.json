@@ -1,0 +1,53 @@
+{
+"Linters": {
+    "lll":{
+        "Command": "lll -g -l 100 -w 4 ",
+        "Pattern": "^(?P<path>.*?\\.go):(?P<line>\\d+):\\s*(?P<message>.*)$",
+        "IsFast": true
+    }
+},
+"Enable":[
+    "deadcode",
+    "errcheck",
+    "goconst",
+    "gocyclo",
+    "gofmt",
+    "golint",
+    "gas",
+    "ineffassign",
+    "interfacer",
+    "lll",
+    "maligned",
+    "megacheck",
+    "structcheck",
+    "test",
+    "unconvert",
+    "unparam",
+    "varcheck",
+    "vet",
+    "vetshadow"
+],
+"Vendor":true,
+"Cyclo":15,
+"Sort":["path","line"],
+"Aggregate":true,
+"Skip":[
+    "bin",
+    "doc",
+    "docker",
+    "mock",
+    "server/operations"],
+"Exclude":[
+    "server.go",
+    "embedded_spec.go",
+    "artifact_info.go",
+    "artifact_sort_by.go",
+    "artifact_status.go",
+    "artifact_type.go",
+    "err_response.go",
+    "job_filter.go",
+    "job_info.go",
+    "job_sort_by.go",
+    "job_status.go",
+    "sort_order.go"]
+}

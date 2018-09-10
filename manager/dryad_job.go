@@ -21,40 +21,42 @@ import (
 	"fmt"
 	"sync"
 
-	. "git.tizen.org/tools/weles"
+	"git.tizen.org/tools/weles"
 	"git.tizen.org/tools/weles/manager/dryad"
 )
 
 type dryadJob struct {
-	info       DryadJobInfo
+	info       weles.DryadJobInfo
 	mutex      *sync.Mutex
 	runner     DryadJobRunner
-	notify     chan<- DryadJobStatusChange
+	notify     chan<- weles.DryadJobStatusChange
 	cancel     context.CancelFunc
 	failReason string
 }
 
 // newDryadJobWithCancel creates an instance of dryadJob without a goroutine.
 // It is intended to be used by tests and newDryadJob only.
-func newDryadJobWithCancel(job JobID, changes chan<- DryadJobStatusChange,
+func newDryadJobWithCancel(job weles.JobID, changes chan<- weles.DryadJobStatusChange,
 	runner DryadJobRunner, cancel context.CancelFunc) *dryadJob {
 
 	dJob := &dryadJob{
 		mutex:  new(sync.Mutex),
 		runner: runner,
-		info: DryadJobInfo{
+		info: weles.DryadJobInfo{
 			Job: job,
 		},
 		notify: changes,
 		cancel: cancel,
 	}
-	dJob.changeStatus(DJ_NEW)
+	dJob.changeStatus(weles.DryadJobStatusNEW)
 	return dJob
 }
 
 // newDryadJob creates an instance of dryadJob and starts a goroutine
 // executing phases of given job implemented by provider of DryadJobRunner interface.
-func newDryadJob(job JobID, rusalka Dryad, conf Config, changes chan<- DryadJobStatusChange) *dryadJob {
+func newDryadJob(job weles.JobID, rusalka weles.Dryad, conf weles.Config,
+	changes chan<- weles.DryadJobStatusChange) *dryadJob {
+
 	// FIXME: It should use the proper path to the artifactory.
 	session := dryad.NewSessionProvider(rusalka, "")
 	device := dryad.NewDeviceCommunicationProvider(session)
@@ -69,24 +71,24 @@ func newDryadJob(job JobID, rusalka Dryad, conf Config, changes chan<- DryadJobS
 }
 
 // GetJobInfo returns DryadJobInfo of dryadJob and prevents race condition.
-func (d *dryadJob) GetJobInfo() DryadJobInfo {
+func (d *dryadJob) GetJobInfo() weles.DryadJobInfo {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	return d.info
 }
 
 // changeState updates Status and sends DryadJobStatusChange to the notify channel.
-func (d *dryadJob) changeStatus(state DryadJobStatus) {
+func (d *dryadJob) changeStatus(state weles.DryadJobStatus) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	d.info.Status = state
 	select {
-	case d.notify <- DryadJobStatusChange{d.info.Job, state}:
+	case d.notify <- weles.DryadJobStatusChange{Job: d.info.Job, Status: state}:
 	default:
 	}
 }
 
-func (d *dryadJob) executePhase(name DryadJobStatus, f func() error) {
+func (d *dryadJob) executePhase(name weles.DryadJobStatus, f func() error) {
 	d.changeStatus(name)
 	err := f()
 	if err != nil {
@@ -95,7 +97,7 @@ func (d *dryadJob) executePhase(name DryadJobStatus, f func() error) {
 }
 
 // run executes stages of dryadJob in order.
-func (d *dryadJob) run(ctx context.Context) {
+func (d *dryadJob) run(_ context.Context) {
 	defer func() {
 		if r := recover(); r != nil {
 			if err, ok := r.(error); ok {
@@ -103,12 +105,12 @@ func (d *dryadJob) run(ctx context.Context) {
 			} else {
 				d.failReason = fmt.Sprintf("run panicked: %v", r)
 			}
-			d.changeStatus(DJ_FAIL)
+			d.changeStatus(weles.DryadJobStatusFAIL)
 			return
 		}
-		d.changeStatus(DJ_OK)
+		d.changeStatus(weles.DryadJobStatusOK)
 	}()
-	d.executePhase(DJ_DEPLOY, d.runner.Deploy)
-	d.executePhase(DJ_BOOT, d.runner.Boot)
-	d.executePhase(DJ_TEST, d.runner.Test)
+	d.executePhase(weles.DryadJobStatusDEPLOY, d.runner.Deploy)
+	d.executePhase(weles.DryadJobStatusBOOT, d.runner.Boot)
+	d.executePhase(weles.DryadJobStatusTEST, d.runner.Test)
 }

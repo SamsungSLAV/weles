@@ -93,7 +93,8 @@ func (h *DryaderImpl) setStatus(j weles.JobID, msg string) {
 	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusRUNNING, msg)
 	if err != nil {
 		h.remove(j)
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",
+			err.Error()))
 	}
 }
 
@@ -114,18 +115,18 @@ func (h *DryaderImpl) loop() {
 			}
 
 			switch change.Status {
-			case weles.DJ_NEW:
+			case weles.DryadJobStatusNEW:
 				h.setStatus(change.Job, "Started")
-			case weles.DJ_DEPLOY:
+			case weles.DryadJobStatusDEPLOY:
 				h.setStatus(change.Job, "Deploying")
-			case weles.DJ_BOOT:
+			case weles.DryadJobStatusBOOT:
 				h.setStatus(change.Job, "Booting")
-			case weles.DJ_TEST:
+			case weles.DryadJobStatusTEST:
 				h.setStatus(change.Job, "Testing")
-			case weles.DJ_FAIL:
+			case weles.DryadJobStatusFAIL:
 				h.remove(change.Job)
 				h.SendFail(change.Job, "Failed to execute test on Dryad.")
-			case weles.DJ_OK:
+			case weles.DryadJobStatusOK:
 				h.remove(change.Job)
 				h.SendOK(change.Job)
 			}
@@ -137,13 +138,15 @@ func (h *DryaderImpl) loop() {
 func (h *DryaderImpl) StartJob(j weles.JobID) {
 	d, err := h.jobs.GetDryad(j)
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Dryad for Job : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Dryad for Job : %s",
+			err.Error()))
 		return
 	}
 
 	config, err := h.jobs.GetConfig(j)
 	if err != nil {
-		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Job config : %s", err.Error()))
+		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Job config : %s",
+			err.Error()))
 		return
 	}
 
@@ -167,5 +170,5 @@ func (h *DryaderImpl) CancelJob(j weles.JobID) {
 	}
 
 	h.remove(j)
-	h.djm.Cancel(j)
+	_ = h.djm.Cancel(j)
 }

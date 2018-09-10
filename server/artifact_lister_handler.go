@@ -28,8 +28,8 @@ func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) midd
 			Message: weles.ErrBeforeAfterNotAllowed.Error()})
 	}
 
-	artifactInfoReceived := []weles.ArtifactInfo{}
-	listInfo := weles.ListInfo{}
+	var artifactInfoReceived []weles.ArtifactInfo
+	var listInfo weles.ListInfo
 	var err error
 	paginator := weles.ArtifactPagination{}
 	if a.PageLimit != 0 {
@@ -69,11 +69,9 @@ func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) midd
 
 }
 
-func responderArtifact206(
-	listInfo weles.ListInfo,
-	paginator weles.ArtifactPagination,
-	artifactInfoReturned []*weles.ArtifactInfo,
-	defaultPageLimit int32) (responder *artifacts.ArtifactListerPartialContent) {
+func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPagination,
+	artifactInfoReturned []*weles.ArtifactInfo, defaultPageLimit int32,
+) (responder *artifacts.ArtifactListerPartialContent) {
 	var artifactListerURL artifacts.ArtifactListerURL
 
 	responder = artifacts.NewArtifactListerPartialContent()
@@ -84,7 +82,7 @@ func responderArtifact206(
 	artifactListerURL.After = &tmp
 
 	if defaultPageLimit != paginator.Limit {
-		tmp := int32(paginator.Limit)
+		tmp := paginator.Limit
 		artifactListerURL.Limit = &tmp
 	}
 	responder.SetNext(artifactListerURL.String())
@@ -95,7 +93,7 @@ func responderArtifact206(
 		tmp = artifactInfoReturned[0].ID
 		artifactListerURL.Before = &tmp
 		if defaultPageLimit != paginator.Limit {
-			tmp := int32(paginator.Limit)
+			tmp := paginator.Limit
 			artifactListerURL.Limit = &tmp
 		}
 		responder.SetPrevious(artifactListerURL.String())
@@ -104,32 +102,28 @@ func responderArtifact206(
 	return
 }
 
-func responderArtifact200(
-	listInfo weles.ListInfo,
-	paginator weles.ArtifactPagination,
-	artifactInfoReturned []*weles.ArtifactInfo,
-	defaultPageLimit int32) (responder *artifacts.ArtifactListerOK) {
-
+func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPagination,
+	artifactInfoReturned []*weles.ArtifactInfo, defaultPageLimit int32,
+) (responder *artifacts.ArtifactListerOK) {
 	var artifactListerURL artifacts.ArtifactListerURL
 	responder = artifacts.NewArtifactListerOK()
 	responder.SetTotalRecords(listInfo.TotalRecords)
 	if paginator.ID != 0 { //not the first page
 		// keep in mind that ArtifactPath in paginator is taken from query parameter,
 		// not ArtifactManager
-		if paginator.Forward == true {
+		if paginator.Forward {
 			tmp := artifactInfoReturned[0].ID
 			artifactListerURL.Before = &tmp
 			if defaultPageLimit != paginator.Limit {
-				tmp := int32(paginator.Limit)
+				tmp := paginator.Limit
 				artifactListerURL.Limit = &tmp
 			}
 			responder.SetPrevious(artifactListerURL.String())
-		}
-		if paginator.Forward == false {
+		} else {
 			tmp := artifactInfoReturned[len(artifactInfoReturned)-1].ID
 			artifactListerURL.After = &tmp
 			if defaultPageLimit != paginator.Limit {
-				tmp2 := int32(paginator.Limit)
+				tmp2 := paginator.Limit
 				artifactListerURL.Limit = &tmp2
 			}
 			responder.SetNext(artifactListerURL.String())
@@ -139,9 +133,8 @@ func responderArtifact200(
 	return
 }
 
-func setArtifactPaginator(
-	params artifacts.ArtifactListerParams,
-	defaultPageLimit int32) (paginator weles.ArtifactPagination) {
+func setArtifactPaginator(params artifacts.ArtifactListerParams, defaultPageLimit int32,
+) (paginator weles.ArtifactPagination) {
 	paginator.Forward = true
 	if params.After != nil {
 		paginator.ID = *params.After
@@ -159,7 +152,8 @@ func setArtifactPaginator(
 
 // artifactInfoReceivedToReturn does the same thing as jobInfoReceivedToReturn.
 // TODO:make ArtifactInfos and JobInfos types implement interface with a function that will return
-// slice of pointers. Will probably need to use reflect which I'm not familiar with thus not done now.
+// slice of pointers. Will probably need to use reflect which I'm not familiar with thus not done
+// now.
 func artifactInfoReceivedToReturn(artifactInfoReceived []weles.ArtifactInfo) []*weles.ArtifactInfo {
 	artifactInfoReturned := make([]*weles.ArtifactInfo, len(artifactInfoReceived))
 	for i := range artifactInfoReceived {

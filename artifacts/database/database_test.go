@@ -54,7 +54,6 @@ var _ = Describe("ArtifactDB", func() {
 			Status:    weles.ArtifactStatusPENDING,
 			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
-
 		aImageReady = weles.ArtifactInfo{
 			ArtifactDescription: weles.ArtifactDescription{
 				Alias: "other alias",
@@ -66,7 +65,6 @@ var _ = Describe("ArtifactDB", func() {
 			Status:    weles.ArtifactStatusREADY,
 			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
-
 		aYamlFailed = weles.ArtifactInfo{
 			ArtifactDescription: weles.ArtifactDescription{
 				Alias: "other alias",
@@ -78,7 +76,6 @@ var _ = Describe("ArtifactDB", func() {
 			Status:    weles.ArtifactStatusFAILED,
 			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
-
 		aTestFailed = weles.ArtifactInfo{
 			ArtifactDescription: weles.ArtifactDescription{
 				Alias: "alias",
@@ -90,94 +87,98 @@ var _ = Describe("ArtifactDB", func() {
 			Status:    weles.ArtifactStatusFAILED,
 			Timestamp: strfmt.DateTime(time.Unix(3000, 60).Round(time.Millisecond).UTC()),
 		}
-
 		testArtifacts = []weles.ArtifactInfo{artifact, aImageReady, aYamlFailed, aTestFailed}
 
 		oneJobFilter = weles.ArtifactFilter{
 			JobID:  []weles.JobID{artifact.JobID},
 			Alias:  nil,
 			Status: nil,
-			Type:   nil}
+			Type:   nil,
+		}
 		twoJobsFilter = weles.ArtifactFilter{
 			JobID:  []weles.JobID{artifact.JobID, aImageReady.JobID},
 			Alias:  nil,
 			Status: nil,
-			Type:   nil}
+			Type:   nil,
+		}
 		noJobFilter = weles.ArtifactFilter{
 			JobID:  []weles.JobID{invalidJob},
 			Alias:  nil,
 			Status: nil,
-			Type:   nil}
-
+			Type:   nil,
+		}
 		oneTypeFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   []weles.ArtifactType{aYamlFailed.Type},
 			Status: nil,
-			Alias:  nil}
-
+			Alias:  nil,
+		}
 		twoTypesFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   []weles.ArtifactType{aYamlFailed.Type, aTestFailed.Type},
 			Status: nil,
-			Alias:  nil}
-
+			Alias:  nil,
+		}
 		noTypeFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   []weles.ArtifactType{invalidType},
 			Status: nil,
-			Alias:  nil}
-
+			Alias:  nil,
+		}
 		oneStatusFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   nil,
 			Status: []weles.ArtifactStatus{artifact.Status},
-			Alias:  nil}
-
+			Alias:  nil,
+		}
 		twoStatusFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   nil,
 			Status: []weles.ArtifactStatus{artifact.Status, aYamlFailed.Status},
-			Alias:  nil}
-
+			Alias:  nil,
+		}
 		noStatusFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   nil,
 			Status: []weles.ArtifactStatus{invalidStatus},
-			Alias:  nil}
-
+			Alias:  nil,
+		}
 		oneAliasFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   nil,
 			Status: nil,
-			Alias:  []weles.ArtifactAlias{artifact.Alias}}
-
+			Alias:  []weles.ArtifactAlias{artifact.Alias},
+		}
 		twoAliasFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   nil,
 			Status: nil,
-			Alias:  []weles.ArtifactAlias{artifact.Alias, aImageReady.Alias}}
-
+			Alias:  []weles.ArtifactAlias{artifact.Alias, aImageReady.Alias},
+		}
 		noAliasFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   nil,
 			Status: nil,
-			Alias:  []weles.ArtifactAlias{invalidAlias}}
-
+			Alias:  []weles.ArtifactAlias{invalidAlias},
+		}
 		fullFilter = weles.ArtifactFilter{
 			JobID:  []weles.JobID{artifact.JobID, aImageReady.JobID, aYamlFailed.JobID},
 			Type:   twoTypesFilter.Type,
 			Status: twoStatusFilter.Status,
-			Alias:  twoAliasFilter.Alias}
-
+			Alias:  twoAliasFilter.Alias,
+		}
 		noMatchFilter = weles.ArtifactFilter{
 			JobID:  oneJobFilter.JobID,
 			Type:   oneTypeFilter.Type,
 			Status: nil,
-			Alias:  nil}
-
+			Alias:  nil,
+		}
 		emptyFilter = weles.ArtifactFilter{}
 		//default values of sorter passed by server
-		defaultSorter = weles.ArtifactSorter{SortOrder: weles.SortOrderDescending, SortBy: weles.ArtifactSortByID}
+		defaultSorter = weles.ArtifactSorter{
+			SortOrder: weles.SortOrderDescending,
+			SortBy:    weles.ArtifactSortByID,
+		}
 	)
 
 	jobsInDB := func(job weles.JobID) int64 {
@@ -251,8 +252,10 @@ var _ = Describe("ArtifactDB", func() {
 				expectedArtifact.ID = result.ID
 				Expect(result).To(Equal(expectedArtifact))
 			},
-			Entry("retrieve artifact based on path", artifact.Path, nil, artifact),
-			Entry("retrieve artifact based on invalid path", invalidPath, sql.ErrNoRows, weles.ArtifactInfo{}),
+			Entry("retrieve artifact based on path",
+				artifact.Path, nil, artifact),
+			Entry("retrieve artifact based on invalid path",
+				invalidPath, sql.ErrNoRows, weles.ArtifactInfo{}),
 		)
 	})
 
@@ -278,7 +281,8 @@ var _ = Describe("ArtifactDB", func() {
 				} else {
 					Expect(err).ToNot(HaveOccurred())
 					for i := range result {
-						Expect(result[i].ArtifactDescription).To(Equal(expectedResult[i].ArtifactDescription))
+						Expect(result[i].ArtifactDescription).To(Equal(
+							expectedResult[i].ArtifactDescription))
 						Expect(result[i].Path).To(Equal(expectedResult[i].Path))
 						Expect(result[i].Status).To(Equal(expectedResult[i].Status))
 						Expect(result[i].Timestamp).To(Equal(expectedResult[i].Timestamp))
@@ -293,11 +297,15 @@ var _ = Describe("ArtifactDB", func() {
 			// type bool is not supported by select.
 			Entry("select unsupported value", true, ErrUnsupportedQueryType),
 			// test query itsef.
-			Entry("select multiple entries for JobID", aImageReady.JobID, nil, aImageReady, aYamlFailed),
+			Entry("select multiple entries for JobID", aImageReady.JobID, nil, aImageReady,
+				aYamlFailed),
 			Entry("select no entries for invalid JobID", invalidJob, nil),
-			Entry("select multiple entries for Type", weles.ArtifactTypeIMAGE, nil, artifact, aImageReady),
-			Entry("select multiple entries for Alias", aImageReady.Alias, nil, aImageReady, aYamlFailed),
-			Entry("select multiple entries for Status", weles.ArtifactStatusFAILED, nil, aYamlFailed, aTestFailed),
+			Entry("select multiple entries for Type", weles.ArtifactTypeIMAGE, nil, artifact,
+				aImageReady),
+			Entry("select multiple entries for Alias", aImageReady.Alias, nil, aImageReady,
+				aYamlFailed),
+			Entry("select multiple entries for Status", weles.ArtifactStatusFAILED, nil,
+				aYamlFailed, aTestFailed),
 		)
 	})
 
@@ -313,7 +321,8 @@ var _ = Describe("ArtifactDB", func() {
 		})
 		DescribeTable("list artifacts matching filter",
 			func(filter weles.ArtifactFilter, expected ...weles.ArtifactInfo) {
-				results, _, err := goldenUnicorn.Filter(filter, defaultSorter, weles.ArtifactPagination{})
+				results, _, err := goldenUnicorn.Filter(filter, defaultSorter,
+					weles.ArtifactPagination{})
 				Expect(err).ToNot(HaveOccurred())
 				//TODO: match all fields except ID.
 				for i := range results {
@@ -335,7 +344,8 @@ var _ = Describe("ArtifactDB", func() {
 			Entry("filter more than one Type", twoTypesFilter, aYamlFailed, aTestFailed),
 			Entry("filter Type not in db", noTypeFilter),
 			Entry("filter one Status", oneStatusFilter, artifact),
-			Entry("filter more than one Status", twoStatusFilter, artifact, aTestFailed, aYamlFailed),
+			Entry("filter more than one Status", twoStatusFilter, artifact, aTestFailed,
+				aYamlFailed),
 			Entry("filter Status not in db", noStatusFilter),
 			Entry("filter one Alias", oneAliasFilter, artifact),
 			Entry("filter more than one Alias", twoAliasFilter, artifact, aImageReady, aYamlFailed),
@@ -355,22 +365,32 @@ var _ = Describe("ArtifactDB", func() {
 		DescribeTable("artifact status change",
 			func(change weles.ArtifactStatusChange, expectedErr error) {
 
+				var a weles.ArtifactInfo
 				err := goldenUnicorn.SetStatus(change)
 				if expectedErr == nil {
 					Expect(err).ToNot(HaveOccurred())
-
-					a, err := goldenUnicorn.SelectPath(change.Path)
+					a, err = goldenUnicorn.SelectPath(change.Path)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(a.Status).To(Equal(change.NewStatus))
 				} else {
 					Expect(err).To(Equal(expectedErr))
-					a, err := goldenUnicorn.SelectPath(change.Path)
+					a, err = goldenUnicorn.SelectPath(change.Path)
 					Expect(err).To(HaveOccurred())
 					Expect(a).To(Equal(weles.ArtifactInfo{}))
 				}
 			},
-			Entry("change status of artifact not present in ArtifactDB", weles.ArtifactStatusChange{Path: invalidPath, NewStatus: weles.ArtifactStatusDOWNLOADING}, sql.ErrNoRows),
-			Entry("change status of artifact present in ArtifactDB", weles.ArtifactStatusChange{Path: artifact.Path, NewStatus: weles.ArtifactStatusDOWNLOADING}, nil),
+			Entry("change status of artifact not present in ArtifactDB",
+				weles.ArtifactStatusChange{
+					Path:      invalidPath,
+					NewStatus: weles.ArtifactStatusDOWNLOADING,
+				},
+				sql.ErrNoRows),
+			Entry("change status of artifact present in ArtifactDB",
+				weles.ArtifactStatusChange{
+					Path:      artifact.Path,
+					NewStatus: weles.ArtifactStatusDOWNLOADING,
+				},
+				nil),
 		)
 	})
 })

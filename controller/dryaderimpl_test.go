@@ -95,7 +95,8 @@ var _ = Describe("DryaderImpl", func() {
 		It("should register job successfully", func() {
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
 			jc.EXPECT().GetConfig(j).Return(conf, nil)
-			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener))
+			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(
+				h.(*DryaderImpl).listener))
 
 			h.StartJob(j)
 			expectRegistered(1)
@@ -103,7 +104,8 @@ var _ = Describe("DryaderImpl", func() {
 		It("should fail if DryadJobManager.Create fails", func() {
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
 			jc.EXPECT().GetConfig(j).Return(conf, nil)
-			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener)).Return(err)
+			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(
+				h.(*DryaderImpl).listener)).Return(err)
 
 			h.StartJob(j)
 
@@ -115,17 +117,18 @@ var _ = Describe("DryaderImpl", func() {
 
 			h.StartJob(j)
 
-			eventuallyNoti(1, false, "Internal Weles error while getting Dryad for Job : test error")
+			eventuallyNoti(1, false,
+				"Internal Weles error while getting Dryad for Job : test error")
 			eventuallyEmpty(1)
 		})
 	})
 
 	Describe("With registered request", func() {
 		updateStates := []weles.DryadJobStatus{
-			weles.DJ_NEW,
-			weles.DJ_DEPLOY,
-			weles.DJ_BOOT,
-			weles.DJ_TEST,
+			weles.DryadJobStatusNEW,
+			weles.DryadJobStatusDEPLOY,
+			weles.DryadJobStatusBOOT,
+			weles.DryadJobStatusTEST,
 		}
 		updateMsgs := []string{
 			"Started",
@@ -136,7 +139,8 @@ var _ = Describe("DryaderImpl", func() {
 		BeforeEach(func() {
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
 			jc.EXPECT().GetConfig(j).Return(conf, nil)
-			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener))
+			djm.EXPECT().Create(
+				j, dryad, conf, (chan<- weles.DryadJobStatusChange)(h.(*DryaderImpl).listener))
 
 			h.StartJob(j)
 
@@ -145,12 +149,12 @@ var _ = Describe("DryaderImpl", func() {
 
 		It("should ignore ID of not registered request", func() {
 			states := []weles.DryadJobStatus{
-				weles.DJ_NEW,
-				weles.DJ_DEPLOY,
-				weles.DJ_BOOT,
-				weles.DJ_TEST,
-				weles.DJ_FAIL,
-				weles.DJ_OK,
+				weles.DryadJobStatusNEW,
+				weles.DryadJobStatusDEPLOY,
+				weles.DryadJobStatusBOOT,
+				weles.DryadJobStatusTEST,
+				weles.DryadJobStatusFAIL,
+				weles.DryadJobStatusOK,
 			}
 			for _, s := range states {
 				change := weles.DryadJobInfo{Job: weles.JobID(0x0BCA), Status: s}
@@ -183,14 +187,15 @@ var _ = Describe("DryaderImpl", func() {
 
 				h.(*DryaderImpl).listener <- weles.DryadJobStatusChange(change)
 
-				eventuallyNoti(1, false, "Internal Weles error while changing Job status : test error")
+				eventuallyNoti(1, false,
+					"Internal Weles error while changing Job status : test error")
 				eventuallyEmpty(1)
 			},
 			updateTableEntries...,
 		)
 
 		It("should fail if Dryad Job fails", func() {
-			change := weles.DryadJobInfo{Job: j, Status: weles.DJ_FAIL}
+			change := weles.DryadJobInfo{Job: j, Status: weles.DryadJobStatusFAIL}
 
 			h.(*DryaderImpl).listener <- weles.DryadJobStatusChange(change)
 
@@ -198,7 +203,7 @@ var _ = Describe("DryaderImpl", func() {
 			eventuallyEmpty(1)
 		})
 		It("should notify about successfully completed Dryad Job", func() {
-			change := weles.DryadJobInfo{Job: j, Status: weles.DJ_OK}
+			change := weles.DryadJobInfo{Job: j, Status: weles.DryadJobStatusOK}
 
 			h.(*DryaderImpl).listener <- weles.DryadJobStatusChange(change)
 

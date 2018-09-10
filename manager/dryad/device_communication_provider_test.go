@@ -16,24 +16,24 @@
 
 package dryad
 
-//go:generate mockgen --package=dryad --destination=mock_session_provider_test.go git.tizen.org/tools/weles/manager/dryad SessionProvider
-
 import (
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"git.tizen.org/tools/weles/manager/dryad/mock"
 )
 
 var _ = Describe("DeviceCommunicationProvider", func() {
 	var (
 		ctrl        *gomock.Controller
-		mockSession *MockSessionProvider
+		mockSession *mock.MockSessionProvider
 		dcp         DeviceCommunicationProvider
 	)
 
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
-		mockSession = NewMockSessionProvider(ctrl)
+		mockSession = mock.NewMockSessionProvider(ctrl)
 		dcp = NewDeviceCommunicationProvider(mockSession)
 	})
 
@@ -58,7 +58,8 @@ var _ = Describe("DeviceCommunicationProvider", func() {
 	})
 
 	It("should list call dut_exec", func() {
-		mockSession.EXPECT().Exec("/usr/local/bin/dut_exec.sh", "ls", "-al", "/").Return([]byte("not-empty"), nil, nil)
+		mockSession.EXPECT().Exec(
+			"/usr/local/bin/dut_exec.sh", "ls", "-al", "/").Return([]byte("not-empty"), nil, nil)
 
 		stdout, stderr, err := dcp.Exec("ls", "-al", "/")
 		Expect(err).ToNot(HaveOccurred())
