@@ -31,10 +31,7 @@ func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) midd
 		}
 		paginator = setArtifactPaginator(params, a.PageLimit)
 	}
-	filter := weles.ArtifactFilter{}
-	if params.ArtifactFilterAndSort.Filter != nil {
-		filter = *params.ArtifactFilterAndSort.Filter
-	}
+	filter := setArtifactFilter(params.ArtifactFilterAndSort.Filter)
 	sorter := setArtifactSorter(params.ArtifactFilterAndSort.Sorter)
 
 	artifactInfoReceived, listInfo, err := a.Managers.AM.ListArtifact(filter, sorter, paginator)
@@ -120,6 +117,32 @@ func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 		}
 	}
 	responder.SetPayload(artifactInfoReturned)
+	return
+}
+
+// setArtifactFilter adjusts filter's 0 values to be consistent and acceptable by the artifacts db
+// That is []string with only 1 empty element should be removed.
+func setArtifactFilter(fi *weles.ArtifactFilter) (fo weles.ArtifactFilter) {
+	if fi != nil {
+		if len(fi.JobID) > 0 {
+			fo.JobID = fi.JobID
+		}
+		if len(fi.Alias) > 0 {
+			if !(len(fi.Alias) == 1 && fi.Alias[0] == "") {
+				fo.Alias = fi.Alias
+			}
+		}
+		if len(fi.Status) > 0 {
+			if !(len(fi.Status) == 1 && fi.Status[0] == "") {
+				fo.Status = fi.Status
+			}
+		}
+		if len(fi.Type) > 0 {
+			if !(len(fi.Type) == 1 && fi.Type[0] == "") {
+				fo.Type = fi.Type
+			}
+		}
+	}
 	return
 }
 
