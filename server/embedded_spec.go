@@ -615,9 +615,10 @@ func init() {
       }
     },
     "JobSortBy": {
-      "description": "denotes key for sorting Jobs list. Jobs are sorted by ID (Ascending) by default.\nYou can sort jobs additionaly by\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
+      "description": "denotes key for sorting Jobs list.\n\n* ID - default sort key.\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\n\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
       "type": "string",
       "enum": [
+        "ID",
         "CreatedDate",
         "UpdatedDate",
         "JobStatus"
@@ -1330,9 +1331,10 @@ func init() {
       }
     },
     "JobSortBy": {
-      "description": "denotes key for sorting Jobs list. Jobs are sorted by ID (Ascending) by default.\nYou can sort jobs additionaly by\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
+      "description": "denotes key for sorting Jobs list.\n\n* ID - default sort key.\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\n\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
       "type": "string",
       "enum": [
+        "ID",
         "CreatedDate",
         "UpdatedDate",
         "JobStatus"
