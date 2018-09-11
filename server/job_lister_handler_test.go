@@ -133,7 +133,7 @@ var _ = Describe("JobListerHandler", func() {
 		emptyFilter := weles.JobFilter{}
 
 		filledSorter1 := weles.JobSorter{
-			SortBy:    weles.JobSortByCreatedDate,
+			SortBy:    weles.JobSortByID,
 			SortOrder: weles.SortOrderAscending}
 
 		filledSorter2 := weles.JobSorter{
@@ -209,7 +209,12 @@ var _ = Describe("JobListerHandler", func() {
 						listInfo := weles.ListInfo{
 							TotalRecords:     uint64(len(jobInfoSlice420)),
 							RemainingRecords: 0}
-
+						if sorter.SortOrder == "" {
+							sorter.SortOrder = weles.SortOrderAscending
+						}
+						if sorter.SortBy == "" {
+							sorter.SortBy = weles.JobSortByID
+						}
 						mockJobManager.EXPECT().ListJobs(
 							filter, sorter, emptyPaginator).Return(
 							jobInfoSlice420, listInfo, nil)
@@ -276,6 +281,12 @@ var _ = Describe("JobListerHandler", func() {
 								TotalRecords:     uint64(len(jobInfo)),
 								RemainingRecords: 0}
 
+							if sorter.SortOrder == "" {
+								sorter.SortOrder = weles.SortOrderAscending
+							}
+							if sorter.SortBy == "" {
+								sorter.SortBy = weles.JobSortByID
+							}
 							mockJobManager.EXPECT().ListJobs(
 								filter, sorter, paginator).Return(
 								jobInfo, listInfo, nil)
@@ -349,6 +360,12 @@ var _ = Describe("JobListerHandler", func() {
 							jobInfoStartingPage)),
 					}
 
+					if sorter.SortOrder == "" {
+						sorter.SortOrder = weles.SortOrderAscending
+					}
+					if sorter.SortBy == "" {
+						sorter.SortBy = weles.JobSortByID
+					}
 					first := mockJobManager.EXPECT().ListJobs(filter, sorter, paginator).Return(
 						jobInfoStartingPage, listInfo, nil)
 
@@ -502,6 +519,12 @@ var _ = Describe("JobListerHandler", func() {
 
 					}
 
+					if sorter.SortOrder == "" {
+						sorter.SortOrder = weles.SortOrderAscending
+					}
+					if sorter.SortBy == "" {
+						sorter.SortBy = weles.JobSortByID
+					}
 					first := mockJobManager.EXPECT().ListJobs(
 						filter, sorter, paginator).Return(jobInfoStartingPage, listInfo, nil)
 
@@ -643,6 +666,12 @@ var _ = Describe("JobListerHandler", func() {
 					}
 					listInfo := weles.ListInfo{TotalRecords: uint64(aviJobs), RemainingRecords: 0}
 
+					if sorter.SortOrder == "" {
+						sorter.SortOrder = weles.SortOrderAscending
+					}
+					if sorter.SortBy == "" {
+						sorter.SortBy = weles.JobSortByID
+					}
 					mockJobManager.EXPECT().ListJobs(filter, sorter, paginator).Return(
 						jobInfo, listInfo, jmerr)
 					reqBody := filterSorterReqBody(filter, sorter, JSON)
@@ -712,8 +741,6 @@ var _ = Describe("JobListerHandler", func() {
 				Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
 
 			},
-			Entry("json, pagination off",
-				int32(0), "?before=10&after=20", JSON, JSON, emptyFilter, emptySorter),
 			Entry("json, pagination on",
 				int32(100), "?before=10&after=20", JSON, JSON, emptyFilter, emptySorter),
 		)

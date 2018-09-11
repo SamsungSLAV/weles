@@ -23,27 +23,21 @@ import (
 
 // JobLister is a handler which passess requests for listing jobs to jobmanager.
 func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responder {
-	if (params.After != nil) && (params.Before != nil) {
-		return jobs.NewJobListerBadRequest().WithPayload(
-			&weles.ErrResponse{Message: weles.ErrBeforeAfterNotAllowed.Error()})
-	}
-
-	var jobInfoReceived []weles.JobInfo
-	var listInfo weles.ListInfo
-	var err error
 	paginator := weles.JobPagination{}
-
 	if a.PageLimit != 0 {
+		if (params.After != nil) && (params.Before != nil) {
+			return jobs.NewJobListerBadRequest().WithPayload(
+				&weles.ErrResponse{Message: weles.ErrBeforeAfterNotAllowed.Error()})
+		}
 		paginator = setJobPaginator(params, a.PageLimit)
 	}
-
-	if params.JobFilterAndSort.Filter != nil || params.JobFilterAndSort.Sorter != nil {
-		jobInfoReceived, listInfo, err = a.Managers.JM.ListJobs(
-			*params.JobFilterAndSort.Filter, *params.JobFilterAndSort.Sorter, paginator)
-	} else {
-		jobInfoReceived, listInfo, err = a.Managers.JM.ListJobs(
-			weles.JobFilter{}, weles.JobSorter{}, paginator)
+	filter := weles.JobFilter{}
+	if params.JobFilterAndSort.Filter != nil {
+		filter = *params.JobFilterAndSort.Filter
 	}
+	sorter := setJobSorter(params.JobFilterAndSort.Sorter)
+
+	jobInfoReceived, listInfo, err := a.Managers.JM.ListJobs(filter, sorter, paginator)
 	if err != nil {
 		// due to weles.ErrInvalidArgument implementing error interface rather than being error
 		// (which is intentional as we want to pass underlying error) switch err.(type) checks only
@@ -68,7 +62,6 @@ func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responde
 		return responder200(listInfo, paginator, jobInfoReturned, a.PageLimit)
 	}
 	return responder206(listInfo, paginator, jobInfoReturned, a.PageLimit)
-
 }
 
 func responder206(listInfo weles.ListInfo, paginator weles.JobPagination,
@@ -148,6 +141,27 @@ func setJobPaginator(params jobs.JobListerParams, defaultPageLimit int32,
 		paginator.Limit = defaultPageLimit
 	} else {
 		paginator.Limit = *params.Limit
+	}
+	return
+}
+
+// setJobSorter sets default sorter values.
+func setJobSorter(si *weles.JobSorter) (so weles.JobSorter) {
+	if si == nil {
+		return weles.JobSorter{
+			SortOrder: weles.SortOrderAscending,
+			SortBy:    weles.JobSortByID,
+		}
+	}
+	if si.SortOrder == "" {
+		so.SortOrder = weles.SortOrderAscending
+	} else {
+		so.SortOrder = si.SortOrder
+	}
+	if si.SortBy == "" {
+		so.SortBy = weles.JobSortByID
+	} else {
+		so.SortBy = si.SortBy
 	}
 	return
 }
