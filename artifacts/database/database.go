@@ -185,12 +185,12 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	queryForRemaining, argsForRemaining := prepareQuery(filter, sorter, paginator, false, true, 0)
 	var offset int64
 
-	rr, err = aDB.dbmap.SelectInt(queryForRemaining, argsForRemaining...)
+	rr, err = trans.SelectInt(queryForRemaining, argsForRemaining...)
 	if err != nil {
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbRemainingFail + err.Error())
 	}
 
-	tr, err = aDB.dbmap.SelectInt(queryForTotal, argsForTotal...)
+	tr, err = trans.SelectInt(queryForTotal, argsForTotal...)
 	if err != nil {
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTotalFail + err.Error())
 	}
@@ -204,7 +204,7 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	}
 
 	queryForData, argsForData := prepareQuery(filter, sorter, paginator, false, false, offset)
-	_, err = aDB.dbmap.Select(&results, queryForData, argsForData...)
+	_, err = trans.Select(&results, queryForData, argsForData...)
 	if err != nil {
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbArtifactInfoFail + err.Error())
 	}
