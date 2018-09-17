@@ -44,6 +44,7 @@ const (
 
 	basePath          = "/api/v1"
 	listArtifactsPath = "/artifacts/list"
+	listJobsPath      = "/jobs/list"
 )
 
 func TestServer(t *testing.T) {
