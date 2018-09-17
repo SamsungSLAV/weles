@@ -435,6 +435,7 @@ var _ = Describe("JobListerHandler", func() {
 						filter, sorter, paginator2).Return(jobInfo2, listInfo2, nil).After(first)
 
 					client2 := testserver.Client()
+					reqBody = filterSorterReqBody(filter, sorter, JSON)
 					req2 := createRequest(reqBody, nextPage, "", JSON, JSON)
 					req2.Close = true
 					resp2, err := client2.Do(req2)
@@ -603,6 +604,7 @@ var _ = Describe("JobListerHandler", func() {
 					mockJobManager.EXPECT().ListJobs(
 						filter, sorter, paginator2).Return(jobInfo2, listInfo2, nil).After(first)
 					client2 := testserver.Client()
+					reqBody = filterSorterReqBody(filter, sorter, JSON)
 					req2 := createRequest(reqBody, prevPage, "", JSON, JSON)
 					req2.Close = true
 					resp2, err := client2.Do(req2)

@@ -15,6 +15,8 @@
 package server
 
 import (
+	"time"
+
 	"github.com/go-openapi/runtime/middleware"
 
 	"git.tizen.org/tools/weles"
@@ -31,10 +33,7 @@ func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responde
 		}
 		paginator = setJobPaginator(params, a.PageLimit)
 	}
-	filter := weles.JobFilter{}
-	if params.JobFilterAndSort.Filter != nil {
-		filter = *params.JobFilterAndSort.Filter
-	}
+	filter := setJobFilter(params.JobFilterAndSort.Filter)
 	sorter := setJobSorter(params.JobFilterAndSort.Sorter)
 
 	jobInfoReceived, listInfo, err := a.Managers.JM.ListJobs(filter, sorter, paginator)
@@ -124,6 +123,50 @@ func responder200(listInfo weles.ListInfo, paginator weles.JobPagination,
 		}
 	}
 	responder.SetPayload(jobInfoReturned)
+	return
+}
+
+// setJobFilter adjusts filter's 0 values to be consistent and acceptable by controller.
+// This is:
+// for strfmt.DateTime elements normalizing 0 time as (0001-01-01T00:00:00.000Z) instead of
+// Unix 0- 1970-01-01T00:00:00.000Z
+// Controller treats slices with 0 len as empty, slices with lenght of 1 and empty value should not
+// be passed to controller.
+func setJobFilter(i *weles.JobFilter) (o weles.JobFilter) {
+	if i != nil {
+		if time.Time(i.CreatedBefore).Unix() != 0 {
+			o.CreatedBefore = i.CreatedBefore
+		}
+		if time.Time(i.CreatedAfter).Unix() != 0 {
+			o.CreatedAfter = i.CreatedAfter
+		}
+		if time.Time(i.UpdatedBefore).Unix() != 0 {
+			o.UpdatedBefore = i.UpdatedBefore
+		}
+		if time.Time(i.UpdatedAfter).Unix() != 0 {
+			o.UpdatedAfter = i.UpdatedAfter
+		}
+		if len(i.JobID) > 0 {
+			if !(len(i.JobID) == 1 && i.JobID[0] == 0) {
+				o.JobID = i.JobID
+			}
+		}
+		if len(i.Info) > 0 {
+			if !(len(i.Info) == 1 && i.Info[0] == "") {
+				o.Info = i.Info
+			}
+		}
+		if len(i.Name) > 0 {
+			if !(len(i.Name) == 1 && i.Name[0] == "") {
+				o.Name = i.Name
+			}
+		}
+		if len(i.Status) > 0 {
+			if !(len(i.Status) == 1 && i.Status[0] == "") {
+				o.Status = i.Status
+			}
+		}
+	}
 	return
 }
 
