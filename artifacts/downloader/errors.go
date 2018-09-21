@@ -18,9 +18,22 @@
 
 package downloader
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 var (
 	//ErrQueueFull is returned when download queue is full.
 	ErrQueueFull = errors.New("downlad queue is full")
 )
+
+type ErrWrongStatusReceived struct {
+	URI            string
+	receivedStatus string
+}
+
+func (e ErrWrongStatusReceived) Error() string {
+	return fmt.Sprintf(`download of %s failed, received  %s, expected "200 OK"`,
+		e.URI, e.receivedStatus)
+}
