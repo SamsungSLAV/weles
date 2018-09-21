@@ -17,7 +17,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -25,6 +24,7 @@ import (
 	flag "github.com/spf13/pflag"
 
 	"github.com/SamsungSLAV/boruta/http/client"
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/artifacts"
 	"github.com/SamsungSLAV/weles/controller"
@@ -50,14 +50,14 @@ var (
 
 func exitOnErr(ctx string, err error) {
 	if err != nil {
-		log.Fatal(ctx, err)
+		logger.IncDepth(1).WithError(err).Emergency(ctx)
+		os.Exit(1)
 	}
 }
 
 func main() {
-
 	swaggerSpec, err := loads.Embedded(server.SwaggerJSON, server.FlatSwaggerJSON)
-	exitOnErr("failed to load embedded swagger spec", err)
+	exitOnErr("Failed to load embedded swagger spec.", err)
 
 	var srv *server.Server // make sure init is called
 	var apiDefaults server.APIDefaults
@@ -104,6 +104,8 @@ You can find out more at weles.rtfd.io`+"\n\n"+flag.CommandLine.FlagUsages())
 		os.Exit(0)
 	}
 
+	logger.SetThreshold(logger.ErrLevel)
+
 	var yap parser.Parser
 	am, err := artifacts.NewArtifactManager(
 		artifactDBName,
@@ -111,7 +113,7 @@ You can find out more at weles.rtfd.io`+"\n\n"+flag.CommandLine.FlagUsages())
 		notifierChannelCap,
 		activeWorkersCap,
 		artifactDownloadQueueCap)
-	exitOnErr("failed to initialize ArtifactManager ", err)
+	exitOnErr("Failed to initialize ArtifactManager.", err)
 	bor := client.NewBorutaClient(borutaAddress)
 	djm := manager.NewDryadJobManager(artifactDBLocation)
 	jm := controller.NewJobManager(am, &yap, bor, borutaRefreshPeriod, djm)
@@ -122,7 +124,7 @@ You can find out more at weles.rtfd.io`+"\n\n"+flag.CommandLine.FlagUsages())
 
 	defer func() {
 		if err = srv.Shutdown(); err != nil {
-			log.Println("Failed to shut down server: " + err.Error())
+			logger.WithError(err).Error("Failed to shut down server.")
 		}
 	}()
 
@@ -130,5 +132,5 @@ You can find out more at weles.rtfd.io`+"\n\n"+flag.CommandLine.FlagUsages())
 
 	srv.WelesConfigureAPI(&apiDefaults)
 	err = srv.Serve()
-	exitOnErr("failed to serve the API", err)
+	exitOnErr("Failed to serve the API.", err)
 }
