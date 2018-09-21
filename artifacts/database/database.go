@@ -20,15 +20,15 @@ package database
 import (
 	"database/sql"
 	"errors"
-	"log"
 	"strings"
-
-	"github.com/SamsungSLAV/weles"
 
 	"github.com/go-gorp/gorp"
 	// sqlite3 is imported for side-effects and will be used
 	// with the standard library sql interface.
 	_ "github.com/mattn/go-sqlite3"
+
+	"github.com/SamsungSLAV/slav/logger"
+	"github.com/SamsungSLAV/weles"
 )
 
 // ArtifactDB is responsible for database connection and queries.
@@ -47,6 +47,7 @@ func (aDB *ArtifactDB) Open(dbPath string) error {
 	var err error
 	aDB.handler, err = sql.Open("sqlite3", dbPath+sqlite3BusyTimeout)
 	if err != nil {
+		logger.WithProperty("path", dbPath).WithError(err).Error("Failed to open db:", err.Error())
 		return errors.New(dbOpenFail + err.Error())
 	}
 	aDB.handler.SetMaxOpenConns(sqlite3MaxOpenConn)
@@ -72,7 +73,8 @@ func (aDB *ArtifactDB) Close() error {
 func (aDB *ArtifactDB) InsertArtifactInfo(ai *weles.ArtifactInfo) (err error) {
 	err = aDB.dbmap.Insert(ai)
 	if err != nil {
-		log.Println("Failed to insert ArtifactInfo: ", err)
+		logger.WithError(err).WithProperty("ArtifactPath", string(ai.Path)).
+			Error("Failed to insert ArtifactInfo.")
 	}
 	return
 }
@@ -83,6 +85,8 @@ func (aDB *ArtifactDB) SelectPath(path weles.ArtifactPath) (weles.ArtifactInfo, 
 	ai := weles.ArtifactInfo{}
 	err := aDB.dbmap.SelectOne(&ai, "select * from artifacts where Path=?", path)
 	if err != nil {
+		logger.WithError(err).WithProperty("ArtifactPath", string(path)).
+			Error("Failed to slect artifact.")
 		return weles.ArtifactInfo{}, err
 	}
 	return ai, nil
@@ -188,14 +192,15 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	// Thats why it's done with the use prepareQuery.
 	trans, err := aDB.dbmap.Begin()
 	if err != nil {
+		logger.WithError(err).Error("Failed to create transaction.")
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTransOpenFail + err.Error())
 	}
 	defer func() {
 		if err != nil {
+			logger.WithError(err).Error("Failed to filter records.")
 			// err should be logged when it occurs.
 			if err2 := trans.Rollback(); err2 != nil {
-				log.Printf("%v occurred when filtering, trying to rollback transaction failed: %v",
-					err, err2)
+				logger.WithError(err2).Alert("Transaction rollback failed. Database is unusable.")
 			}
 		}
 	}()
@@ -205,17 +210,19 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 
 	rr, err = trans.SelectInt(queryForRemaining, argsForRemaining...)
 	if err != nil {
+		logger.WithError(err).Error("Failed to get remaining records count.")
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbRemainingFail + err.Error())
 	}
 
 	tr, err = trans.SelectInt(queryForTotal, argsForTotal...)
 	if err != nil {
+		logger.WithError(err).Error("Failed to get total record count.")
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTotalFail + err.Error())
 	}
 
 	if tr == 0 {
-		// err needs to be updated for deferred 'if err!=nil' to catch it and roll back the
-		// not committed transaction
+		// err needs to be updated for deferred 'if err!=nil' to catch it and roll back
+		// uncommitted transaction
 		err = weles.ErrArtifactNotFound
 		return []weles.ArtifactInfo{}, weles.ListInfo{}, err
 	}
@@ -227,9 +234,11 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	queryForData, argsForData := prepareQuery(filter, sorter, paginator, false, false, offset)
 	_, err = trans.Select(&results, queryForData, argsForData...)
 	if err != nil {
+		logger.WithError(err).Error("Failed to get artifacts.")
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbArtifactInfoFail + err.Error())
 	}
 	if err := trans.Commit(); err != nil {
+		logger.WithError(err).Error("Failed to commit transaction to db.")
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTransCommitFail + err.Error())
 
 	}
@@ -245,14 +254,14 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 func (aDB *ArtifactDB) SetStatus(change weles.ArtifactStatusChange) error {
 	ai, err := aDB.SelectPath(change.Path)
 	if err != nil {
-		log.Println("failed to retrieve artifact based on its path: " + err.Error())
-		return err //TODO: aalexanderr - log  error and continue
+		// err logged in SelectPath
+		return err
 	}
 
 	ai.Status = change.NewStatus
 	if _, err = aDB.dbmap.Update(&ai); err != nil {
-		log.Println("failed to update database" + err.Error())
-		// TODO: aalexanderr - log critical, stop weles gracefully
+		logger.WithError(err).Alert("Failed to update database.")
+		// TODO: stop weles gracefully
 	}
 	return err
 }
