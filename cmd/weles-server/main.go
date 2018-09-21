@@ -17,7 +17,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -25,6 +24,7 @@ import (
 	flag "github.com/spf13/pflag"
 
 	"github.com/SamsungSLAV/boruta/http/client"
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/artifacts"
 	"github.com/SamsungSLAV/weles/controller"
@@ -50,12 +50,12 @@ var (
 
 func exitOnErr(ctx string, err error) {
 	if err != nil {
-		log.Fatal(ctx, err)
+		logger.Emergency(ctx, err)
+		os.Exit(1)
 	}
 }
 
 func main() {
-
 	swaggerSpec, err := loads.Embedded(server.SwaggerJSON, server.FlatSwaggerJSON)
 	exitOnErr("failed to load embedded swagger spec", err)
 
@@ -111,6 +111,8 @@ func main() {
 		os.Exit(0)
 	}
 
+	logger.SetThreshold(logger.ErrLevel)
+
 	var yap parser.Parser
 	am, err := artifacts.NewArtifactManager(
 		artifactDBName,
@@ -129,7 +131,7 @@ func main() {
 
 	defer func() {
 		if err = srv.Shutdown(); err != nil {
-			log.Println("Failed to shut down server: " + err.Error())
+			logger.Error("Failed to shut down server: " + err.Error())
 		}
 	}()
 

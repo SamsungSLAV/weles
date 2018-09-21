@@ -32,6 +32,14 @@ required = [
   "github.com/tideland/golib/audit"
            ]
 
+# TODO remove when logger transitions to github
+ignored = [
+  "github.com/SamsungSLAV/slav",
+  "github.com/SamsungSLAV/slav/logger",
+  ]
+
+
+
 [[constraint]]
 name = "github.com/SamsungSLAV/boruta"
 version = "v0.1.0"
