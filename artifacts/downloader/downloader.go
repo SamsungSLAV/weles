@@ -18,13 +18,12 @@
 package downloader
 
 import (
-	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"sync"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 )
 
@@ -75,28 +74,34 @@ func (d *Downloader) Close() {
 func (d *Downloader) getData(URI weles.ArtifactURI, path weles.ArtifactPath) error {
 	resp, err := http.Get(string(URI))
 	if err != nil {
+		logger.WithError(err).WithProperty("URI", string(URI)).Error("Failed to download artifact.")
 		return err
 	}
 
 	defer func() {
 		if erro := resp.Body.Close(); erro != nil {
-			log.Println("failed to close response body after downloading file from: "+string(URI),
-				erro.Error())
+			logger.WithError(err).WithProperty("URI", string(URI)).
+				Error("Failed to close response body after downloading artifact.")
 		}
 	}()
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("while downloading: %v server returned %v status code, expected 200 ",
-			URI, resp.Status)
+		e := ErrWrongStatusReceived{URI: string(URI), receivedStatus: resp.Status}
+		logger.WithProperties(logger.Properties{"URI": string(URI), "receivedStatus": resp.Status}).
+			Error("Received wrong response from server after downloading artifact.")
+		return e.Error()
 	}
 
 	file, err := os.Create(string(path))
 	if err != nil {
+		logger.WithError(err).WithProperty("path", string(path)).
+			Error("Failed to create file.")
 		return err
 	}
 
 	defer func() {
 		if erro := file.Close(); erro != nil {
-			log.Println("failed to close file: " + string(path) + " " + erro.Error())
+			logger.WithError(err).WithProperty("path", string(path)).
+				Errorf("Failed to close file.")
 		}
 	}()
 
@@ -111,6 +116,8 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath,
 	ch chan weles.ArtifactStatusChange) {
 
 	if path == "" {
+		logger.Error("Downloader.download received empty path to save downloaded artifact from:",
+			string(URI))
 		return
 	}
 
@@ -124,7 +131,8 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath,
 	err := d.getData(URI, path)
 	if err != nil {
 		if err = os.Remove(string(path)); err != nil {
-			log.Println("failed to remove an artifact: ", path, " due to: "+err.Error())
+			logger.WithError(err).WithProperty("path", string(path)).
+				Error("Failed to remove artifact.")
 		}
 		change.NewStatus = weles.ArtifactStatusFAILED
 	} else {
