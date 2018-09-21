@@ -20,7 +20,6 @@ package artifacts
 import (
 	"errors"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -28,6 +27,7 @@ import (
 
 	"github.com/go-openapi/strfmt"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/artifacts/database"
 	"github.com/SamsungSLAV/weles/artifacts/downloader"
@@ -61,6 +61,7 @@ func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
 ) (weles.ArtifactManager, error) {
 	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
+		logger.Error("Failed to create artifact directory " + err.Error())
 		return nil, err
 	}
 	notifier := make(chan weles.ArtifactStatusChange, notifierCap)
@@ -72,6 +73,7 @@ func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
 	}
 	err = am.db.Open(db)
 	if err != nil {
+		logger.Error("Failed to open database connection " + err.Error())
 		return nil, err
 	}
 
@@ -100,6 +102,7 @@ func (s *Storage) PushArtifact(artifact weles.ArtifactDescription,
 
 	path, err := s.CreateArtifact(artifact)
 	if err != nil {
+		logger.Error("Failed to create artifact:", err.Error())
 		return "", err
 	}
 
@@ -110,11 +113,14 @@ func (s *Storage) PushArtifact(artifact weles.ArtifactDescription,
 			NewStatus: weles.ArtifactStatusFAILED,
 		})
 		if err2 != nil {
-			return "", errors.New(
-				"failed to download artifact: " + err.Error() +
-					" and failed to set artifacts status to failed: " + err2.Error())
+			e := errors.New("failed to download artifact: " + err.Error() +
+				" and failed to set artifacts status to failed: " + err2.Error())
+			logger.Error(e.Error())
+			return "", e
 		}
-		return "", errors.New("failed to download artifact: " + err.Error())
+		e := errors.New("failed to download artifact: " + err.Error())
+		logger.Error(e.Error())
+		return "", e
 	}
 	return path, nil
 }
@@ -123,16 +129,18 @@ func (s *Storage) PushArtifact(artifact weles.ArtifactDescription,
 func (s *Storage) CreateArtifact(artifact weles.ArtifactDescription) (weles.ArtifactPath, error) {
 	path, err := s.getNewPath(artifact)
 	if err != nil {
+		logger.Errorf("Failed to create path for artifact:%+v, due: %s ", artifact, err.Error())
 		return "", err
 	}
-
-	err = s.db.InsertArtifactInfo(&weles.ArtifactInfo{
+	ai := weles.ArtifactInfo{
 		ArtifactDescription: artifact,
 		Path:                path,
 		Status:              "",
 		Timestamp:           strfmt.DateTime(time.Now().UTC()),
-	})
+	}
+	err = s.db.InsertArtifactInfo(&ai)
 	if err != nil {
+		logger.Errorf("Failed to insert ArtifactInfo: %+v to db due: %s", ai, err.Error())
 		return "", err
 	}
 	return path, nil
@@ -161,19 +169,21 @@ func (s *Storage) getNewPath(ad weles.ArtifactDescription) (weles.ArtifactPath, 
 	// Organize by filetypes
 	err = os.MkdirAll(typeDir, os.ModePerm)
 	if err != nil {
+		logger.Errorf("Failed to create %s directory: %s", typeDir, err.Error())
 		return "", err
 	}
 
 	// Add human readable prefix
 	f, err := ioutil.TempFile(typeDir, string(ad.Alias))
 	if err != nil {
+		logger.Errorf("Failed to create temporary %s/%s file: %s", typeDir, string(ad.Alias),
+			err.Error())
 		return "", err
 	}
 
 	defer func() {
 		if err = f.Close(); err != nil {
-			log.Println("failed to close file")
-			//TODO: aalexanderr log
+			logger.Errorf("Failed to close file: %s", err.Error())
 		}
 	}()
 	return weles.ArtifactPath(f.Name()), err

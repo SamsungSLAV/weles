@@ -20,11 +20,11 @@ package downloader
 import (
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"sync"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 )
 
@@ -75,28 +75,32 @@ func (d *Downloader) Close() {
 func (d *Downloader) getData(URI weles.ArtifactURI, path weles.ArtifactPath) error {
 	resp, err := http.Get(string(URI))
 	if err != nil {
+		logger.Errorf("Failed to download %s artifact: %s", string(URI), err.Error())
 		return err
 	}
 
 	defer func() {
 		if erro := resp.Body.Close(); erro != nil {
-			log.Println("failed to close response body after downloading file from: "+string(URI),
+			logger.Errorf("Failed to close response body after downloading %s file: %s", string(URI),
 				erro.Error())
 		}
 	}()
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("while downloading: %v server returned %v status code, expected 200 ",
+		err := fmt.Errorf("while downloading: %v server returned %v status code, expected 200 ",
 			URI, resp.Status)
+		logger.Error(err)
+		return err
 	}
 
 	file, err := os.Create(string(path))
 	if err != nil {
+		logger.Error("Failed to create file:", err.Error())
 		return err
 	}
 
 	defer func() {
 		if erro := file.Close(); erro != nil {
-			log.Println("failed to close file: " + string(path) + " " + erro.Error())
+			logger.Errorf("Failed to close %s file: %s", string(path), erro.Error())
 		}
 	}()
 
@@ -111,6 +115,8 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath,
 	ch chan weles.ArtifactStatusChange) {
 
 	if path == "" {
+		logger.Error("Downloader.download received empty path to download artifact from:",
+			string(URI))
 		return
 	}
 
@@ -124,7 +130,7 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath,
 	err := d.getData(URI, path)
 	if err != nil {
 		if err = os.Remove(string(path)); err != nil {
-			log.Println("failed to remove an artifact: ", path, " due to: "+err.Error())
+			logger.Errorf("failed to remove %s artifact: %s", string(path), err.Error())
 		}
 		change.NewStatus = weles.ArtifactStatusFAILED
 	} else {
