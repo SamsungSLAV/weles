@@ -21,6 +21,7 @@ package manager
 import (
 	"sync"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 )
 
@@ -47,6 +48,7 @@ func (d *DryadJobs) Create(job weles.JobID, rusalka weles.Dryad, conf weles.Conf
 
 	_, ok := d.jobs[job]
 	if ok {
+		logger.Errorf("Tried to create job that already exists: %d", job)
 		return ErrDuplicated
 	}
 	d.jobsMutex.Lock()
@@ -62,6 +64,7 @@ func (d *DryadJobs) Cancel(job weles.JobID) error {
 	defer d.jobsMutex.RUnlock()
 	dJob, ok := d.jobs[job]
 	if !ok {
+		logger.Errorf("Tried to fail nonexisting job: %d", job)
 		return ErrNotExist
 	}
 	dJob.cancel()

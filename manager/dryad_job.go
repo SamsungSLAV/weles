@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/manager/dryad"
 )
@@ -91,6 +92,8 @@ func (d *dryadJob) executePhase(name weles.DryadJobStatus, f func() error) {
 	d.changeStatus(name)
 	err := f()
 	if err != nil {
+		logger.WithError(err).WithProperties(logger.Properties{"JobID": d.info.Job, "pahse": name}).
+			Errorf("Failed to execute phase.")
 		panic(fmt.Errorf("%s phase failed: %s", name, err))
 	}
 }
@@ -105,6 +108,8 @@ func (d *dryadJob) run(_ context.Context) {
 				d.failReason = fmt.Sprintf("run panicked: %v", r)
 			}
 			d.changeStatus(weles.DryadJobStatusFAIL)
+			logger.WithError(fmt.Errorf(d.failReason)).WithProperty("JobID", d.info.Job).
+				Error("Dryad job run panicked.")
 			return
 		}
 		d.changeStatus(weles.DryadJobStatusOK)
