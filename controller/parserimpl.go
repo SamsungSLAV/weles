@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/controller/notifier"
 )
@@ -54,6 +55,7 @@ func NewParser(j JobsController, a weles.ArtifactManager, p weles.Parser) Parser
 func (h *ParserImpl) Parse(j weles.JobID) {
 	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusPARSING, "")
 	if err != nil {
+		logger.Errorf("Failed to set %d job's status to parsing: %s", j, err.Error())
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",
 			err.Error()))
 		return
@@ -61,6 +63,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 
 	yaml, err := h.jobs.GetYaml(j)
 	if err != nil {
+		logger.Errorf("Failed to get %d job's yaml file: %s", j, err.Error())
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting yaml description : %s",
 			err.Error()))
 		return
@@ -71,6 +74,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 		Type:  weles.ArtifactTypeYAML,
 	})
 	if err != nil {
+		logger.Errorf("Failed to create YAML file for %d job due %s", j, err.Error())
 		h.SendFail(j, fmt.Sprintf(
 			"Internal Weles error while creating file path in ArtifactDB : %s",
 			err.Error()))
@@ -79,6 +83,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 
 	err = ioutil.WriteFile(string(path), yaml, 0644)
 	if err != nil {
+		logger.Errorf("Failed to write %d jobs yaml to file: %s", j, err.Error())
 		h.SendFail(
 			j, fmt.Sprintf("Internal Weles error while saving file in ArtifactDB : %s",
 				err.Error()))
@@ -87,6 +92,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 
 	conf, err := h.parser.ParseYaml(yaml)
 	if err != nil {
+		logger.Errorf("Failed to parse yaml for %d job: %s", j, err.Error())
 		h.SendFail(j, fmt.Sprintf("Error parsing yaml file : %s",
 			err.Error()))
 		return
@@ -94,6 +100,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 
 	err = h.jobs.SetConfig(j, *conf)
 	if err != nil {
+		logger.Errorf("Failed to set config for %d job: %s", j, err.Error())
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while setting config : %s",
 			err.Error()))
 		return
