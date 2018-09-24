@@ -21,6 +21,8 @@ package manager
 import (
 	"encoding/json"
 	"strconv"
+
+	"github.com/SamsungSLAV/slav/logger"
 )
 
 const (
@@ -76,6 +78,8 @@ func newMapping(fms []fotaMap) []byte {
 	}
 	ret, err := json.Marshal(fotaMapping)
 	if err != nil {
+		logger.WithError(err).WithProperty("fotaMapping", fms).
+			Error("Failed to marshal fotaMapping to json.")
 		panic(err)
 	}
 	return ret

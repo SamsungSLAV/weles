@@ -19,15 +19,15 @@ package dryad
 import (
 	"bytes"
 	"context"
+	"crypto/rsa"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
-	"crypto/rsa"
-
-	"github.com/SamsungSLAV/weles"
 	"golang.org/x/crypto/ssh"
+
+	"github.com/SamsungSLAV/slav/logger"
+	"github.com/SamsungSLAV/weles"
 )
 
 const (
@@ -70,10 +70,14 @@ func prepareSSHConfig(userName string, key rsa.PrivateKey) *ssh.ClientConfig {
 func (d *sessionProvider) connect() (err error) {
 	d.connection.client, err = ssh.Dial("tcp", d.dryad.Addr.String(), d.connection.config)
 	if err != nil {
+		logger.WithError(err).WithProperty("addr", d.dryad.Addr.String()).
+			Error("Failed to dial dryad.")
 		return err
 	}
 	session, err := d.connection.client.NewSession()
 	if err != nil {
+		logger.WithError(err).WithProperty("addr", d.dryad.Addr.String()).
+			Error("Failed to create connection with dryad.")
 		return err
 	}
 	return d.sshfs.open(session)
@@ -83,12 +87,14 @@ func (d *sessionProvider) newSession() (*ssh.Session, error) {
 	if d.connection.client == nil {
 		err := d.connect()
 		if err != nil {
+			logger.WithError(err).Error("Failed to connect to dryad.")
 			return nil, err
 		}
 	}
 
 	session, err := d.connection.client.NewSession()
 	if err != nil {
+		logger.WithError(err).Error("Failed to create session with dryad.")
 		return nil, err
 	}
 
@@ -98,11 +104,12 @@ func (d *sessionProvider) newSession() (*ssh.Session, error) {
 func (d *sessionProvider) executeRemoteCommand(cmd string) ([]byte, []byte, error) {
 	session, err := d.newSession()
 	if err != nil {
+		logger.WithError(err).Error("Failed to create session with dryad.")
 		return nil, nil, err
 	}
 	defer func() {
 		if err = session.Close(); err != nil {
-			log.Println("Failed to close session", err)
+			logger.WithError(err).Error("Failed to close session with dryad.")
 		}
 	}()
 
@@ -136,12 +143,13 @@ func (d *sessionProvider) Exec(cmd ...string) ([]byte, []byte, error) {
 	}
 	defer func() {
 		if err = session.Close(); err != nil {
-			log.Println("Failed to close session", err)
+			logger.WithError(err).Error("Failed to close session with dryad.")
 		}
 	}()
 
 	err = d.sshfs.check(session)
 	if err != nil {
+		logger.WithError(err).Error("Filesystem not avaliable.")
 		return nil, nil, err
 	}
 
@@ -153,6 +161,7 @@ func (d *sessionProvider) Exec(cmd ...string) ([]byte, []byte, error) {
 func (d *sessionProvider) DUT() error {
 	_, stderr, err := d.executeRemoteCommand(stmCommand + " -dut")
 	if err != nil {
+		logger.WithError(err).WithProperty("stderr", stderr).Error("DUT command failed.")
 		return fmt.Errorf("DUT command failed: %s: %s", err, stderr)
 	}
 	return nil
@@ -163,6 +172,7 @@ func (d *sessionProvider) DUT() error {
 func (d *sessionProvider) TS() error {
 	_, stderr, err := d.executeRemoteCommand(stmCommand + " -ts")
 	if err != nil {
+		logger.WithError(err).WithProperty("stderr", stderr).Error("TS command failed.")
 		return fmt.Errorf("TS command failed: %s: %s", err, stderr)
 	}
 	return nil
@@ -173,6 +183,7 @@ func (d *sessionProvider) TS() error {
 func (d *sessionProvider) PowerTick() error {
 	_, stderr, err := d.executeRemoteCommand(stmCommand + " -tick")
 	if err != nil {
+		logger.WithError(err).WithProperty("stderr", stderr).Error("PowerTick command failed.")
 		return fmt.Errorf("PowerTick command failed: %s: %s", err, stderr)
 	}
 	return nil
@@ -185,7 +196,7 @@ func (d *sessionProvider) Close() error {
 	}
 
 	if err := d.sshfs.close(); err != nil {
-		log.Println("Failed to close ssh connection", err)
+		logger.WithError(err).Error("Failed to close SSHFS connection with dryad.")
 	}
 	err := d.connection.client.Close()
 	d.connection.client = nil

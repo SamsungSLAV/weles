@@ -20,10 +20,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"log"
 	"os/exec"
 
 	"golang.org/x/crypto/ssh"
+
+	"github.com/SamsungSLAV/slav/logger"
 )
 
 // reverseSSHFS will start a process on the remote and the local hosts and a goroutine.
@@ -72,11 +73,13 @@ func (sshfs *reverseSSHFS) open(session *ssh.Session) (err error) {
 
 	session.Stdin, err = sftp.StdoutPipe()
 	if err != nil {
+		logger.WithError(err).Error("Failed to get SFTP stdout pipe.")
 		cancel()
 		return
 	}
 	session.Stdout, err = sftp.StdinPipe()
 	if err != nil {
+		logger.WithError(err).Error("Failed to get SFTP stdin pipe.")
 		cancel()
 		return
 	}
@@ -87,6 +90,7 @@ func (sshfs *reverseSSHFS) open(session *ssh.Session) (err error) {
 
 	err = sftp.Start()
 	if err != nil {
+		logger.WithError(err).Error("Failed to start reverse SSHFS.")
 		cancel()
 		return
 	}
@@ -98,6 +102,7 @@ func (sshfs *reverseSSHFS) open(session *ssh.Session) (err error) {
 		"mkdir -p \"%s\" && sshfs -o idmap=user -o slave \":%s\" \"%s\"",
 		sshfs.remote, sshfs.local, sshfs.remote))
 	if err != nil {
+		logger.WithError(err).Error("Failed to start reverse SSHFS.")
 		cancel()
 		return
 	}
@@ -115,6 +120,8 @@ func (sshfs *reverseSSHFS) sshfsWait() {
 	err := sshfs.session.Wait()
 	sshfs.sftpCancel()
 	if err != nil {
+		logger.WithError(err).WithProperty("sshfsStderr", sshfs.sshfsStderr.String()).
+			Errorf("SSHFS process exited with error.")
 		err = fmt.Errorf("sshfs process exited: %s: %s", err, sshfs.sshfsStderr.String())
 	} else {
 		err = fmt.Errorf("sshfs process exited with success: %s", sshfs.sshfsStderr.String())
@@ -127,6 +134,8 @@ func (sshfs *reverseSSHFS) sshfsWait() {
 func (sshfs *reverseSSHFS) sftpWait(sftp *exec.Cmd) {
 	err := sftp.Wait()
 	if err != nil {
+		logger.WithError(err).WithProperty("sshfsStderr", sshfs.sftpStderr.String()).
+			Errorf("SFTP process exited with error.")
 		err = fmt.Errorf("sftp process exited: %s: %s", err, sshfs.sftpStderr.String())
 	} else {
 		err = fmt.Errorf("sftp process exited with success: %s", sshfs.sftpStderr.String())
@@ -184,8 +193,9 @@ func (sshfs *reverseSSHFS) check(session *ssh.Session) (err error) {
 	default:
 		err = session.Run(fmt.Sprintf(mountChecker, sshfs.remote, sshfs.remote))
 		if err != nil {
-			log.Println("closing")
+			logger.WithError(err).Error("Filesystem not mounted. Session failed.")
 			if err := sshfs.session.Close(); err != nil {
+				logger.WithError(err).Error("Failed to close session.")
 				return fmt.Errorf("filesystem not mounted: failed to close session: %s", err)
 			}
 			// Drain channels to free goroutines.
