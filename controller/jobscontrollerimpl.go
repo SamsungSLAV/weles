@@ -21,7 +21,6 @@ package controller
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"sort"
 	"strings"
@@ -30,6 +29,7 @@ import (
 
 	"github.com/go-openapi/strfmt"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 )
 
@@ -110,6 +110,7 @@ func (js *JobsControllerImpl) GetYaml(j weles.JobID) ([]byte, error) {
 
 	job, ok := js.jobs[j]
 	if !ok {
+		logger.WithProperty("JobID", j).Error("Failed to find job.")
 		return nil, weles.ErrJobNotFound
 	}
 
@@ -123,6 +124,7 @@ func (js *JobsControllerImpl) SetConfig(j weles.JobID, conf weles.Config) error 
 
 	job, ok := js.jobs[j]
 	if !ok {
+		logger.WithProperty("JobID", j).Error("Failed to find job.")
 		return weles.ErrJobNotFound
 	}
 
@@ -186,13 +188,14 @@ func (js *JobsControllerImpl) SetStatusAndInfo(j weles.JobID, newStatus weles.Jo
 
 	job, ok := js.jobs[j]
 	if !ok {
-		log.Println(weles.ErrJobNotFound.Error(), "JobID:", j)
+		logger.WithProperty("JobID", j).Error("Failed to find job.")
 		return weles.ErrJobNotFound
 	}
 
 	if !isStatusChangeValid(job.Status, newStatus) {
-		log.Println(weles.ErrJobStatusChangeNotAllowed.Error(), "from:", job.Status, "to:",
-			newStatus)
+		logger.WithProperties(logger.Properties{
+			"oldStatus": job.Status, "newStatus": string(newStatus)}).
+			Error("Invalid status change requested.")
 		return weles.ErrJobStatusChangeNotAllowed
 	}
 
@@ -209,6 +212,7 @@ func (js *JobsControllerImpl) GetConfig(j weles.JobID) (weles.Config, error) {
 
 	job, ok := js.jobs[j]
 	if !ok {
+		logger.WithProperty("JobID", j).Error("Failed to find job.")
 		return weles.Config{}, weles.ErrJobNotFound
 	}
 
@@ -222,6 +226,7 @@ func (js *JobsControllerImpl) SetDryad(j weles.JobID, d weles.Dryad) error {
 
 	job, ok := js.jobs[j]
 	if !ok {
+		logger.WithProperty("JobID", j).Error("Failed to find job.")
 		return weles.ErrJobNotFound
 	}
 
@@ -236,6 +241,7 @@ func (js *JobsControllerImpl) GetDryad(j weles.JobID) (weles.Dryad, error) {
 
 	job, ok := js.jobs[j]
 	if !ok {
+		logger.WithProperty("JobID", j).Error("Failed to find job.")
 		return weles.Dryad{}, weles.ErrJobNotFound
 	}
 
@@ -250,6 +256,9 @@ func (js *JobsControllerImpl) filter(filter weles.JobFilter, paginator weles.Job
 	// Prepare filter.
 	f, err := prepareFilter(&filter)
 	if err != nil {
+		logger.WithError(err).WithProperties(logger.Properties{
+			"filter": filter, "paginator": paginator}).
+			Error("Failed to prepare filter.")
 		return nil, extra, err
 	}
 
@@ -267,6 +276,8 @@ func (js *JobsControllerImpl) filter(filter weles.JobFilter, paginator weles.Job
 	if paginator.Limit != 0 && paginator.JobID != weles.JobID(0) {
 		job, present := js.jobs[paginator.JobID]
 		if !present {
+			logger.WithProperties(logger.Properties{"filter": filter, "paginator": paginator}).
+				Error("Failed to find JobID from paginator.")
 			return nil, extra, weles.ErrInvalidArgument(fmt.Sprintf("JobID: %d not found",
 				paginator.JobID))
 		}
@@ -347,6 +358,9 @@ func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorte
 	// Filter jobs.
 	ret, extra, err := js.filter(filter, paginator)
 	if err != nil {
+		logger.WithError(err).WithProperties(logger.Properties{
+			"filter": filter, "sorter": sorter, "paginator": paginator}).
+			Errorf("Failed to filter jobs.")
 		return nil, weles.ListInfo{}, err
 	}
 
@@ -411,7 +425,9 @@ func prepareFilter(in *weles.JobFilter) (out *filter, err error) {
 	out.CreatedBefore = time.Time(in.CreatedBefore)
 	out.Info, regErr = prepareFilterRegexp(in.Info)
 	if regErr != nil {
-		return nil, weles.ErrInvalidArgument("cannot compile regex from Info: " + regErr.Error())
+		msg := weles.ErrInvalidArgument("cannot compile regex from Info: " + regErr.Error())
+		logger.WithError(regErr).WithProperty("filter", in).Error("Failed to compile regex.")
+		return nil, msg
 	}
 	if len(in.JobID) > 0 {
 		out.JobID = make(map[weles.JobID]interface{})
@@ -421,7 +437,9 @@ func prepareFilter(in *weles.JobFilter) (out *filter, err error) {
 	}
 	out.Name, regErr = prepareFilterRegexp(in.Name)
 	if regErr != nil {
-		return nil, weles.ErrInvalidArgument("cannot compile regex from Name: " + regErr.Error())
+		msg := weles.ErrInvalidArgument("cannot compile regex from Name: " + regErr.Error())
+		logger.WithError(regErr).WithProperty("filter", in).Error("Failed to compile regex.")
+		return nil, msg
 	}
 	if len(in.Status) > 0 {
 		out.Status = make(map[weles.JobStatus]interface{})
