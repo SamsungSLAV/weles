@@ -18,6 +18,8 @@ package dryad
 
 import (
 	"fmt"
+
+	"github.com/SamsungSLAV/slav/logger"
 )
 
 // prefixPath is a parent directory DUT scripts.
@@ -48,6 +50,10 @@ func (d *deviceCommunicationProvider) Login(credentials Credentials) error {
 	d.credentials = credentials
 	_, _, err := d.sessionProvider.Exec(prefixPath+"dut_login.sh", d.credentials.Username,
 		d.credentials.Password)
+	if err != nil {
+		logger.Error("Failed to login", err)
+	}
+
 	return err
 }
 
@@ -58,6 +64,7 @@ func (d *deviceCommunicationProvider) CopyFilesTo(src []string, dest string) err
 	for _, path := range src {
 		_, _, err := d.sessionProvider.Exec(prefixPath+"dut_copyto.sh", path, dest)
 		if err != nil {
+			logger.Errorf("Failed to copy %s to %s: %s", path, dest, err.Error())
 			return fmt.Errorf("failed to copy %s to %s: %v", path, dest, err)
 		}
 	}
@@ -71,6 +78,7 @@ func (d *deviceCommunicationProvider) CopyFilesFrom(src []string, dest string) e
 	for _, path := range src {
 		_, _, err := d.sessionProvider.Exec(prefixPath+"dut_copyfrom.sh", path, dest)
 		if err != nil {
+			logger.Errorf("Failed to copy %s to %s: %s", path, dest, err.Error())
 			return fmt.Errorf("failed to copy %s to %s: %v", path, dest, err)
 		}
 	}

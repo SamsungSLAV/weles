@@ -20,8 +20,8 @@ package manager
 
 import (
 	"context"
-	"log"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/manager/dryad"
 )
@@ -51,6 +51,7 @@ func newDryadJobRunner(ctx context.Context, rusalka dryad.SessionProvider,
 func (d *dryadJobRunner) Deploy() (err error) {
 	err = d.rusalka.TS()
 	if err != nil {
+		logger.Error("Failed to switch SD card to Controller:", err.Error())
 		return
 	}
 
@@ -71,6 +72,7 @@ func (d *dryadJobRunner) Deploy() (err error) {
 	mapping := newMapping(partLayout)
 	_, _, err = d.rusalka.Exec("echo", "'"+string(mapping)+"'", ">", fotaFilePath)
 	if err != nil {
+		logger.Error("Failed to create partition mapping:", err.Error())
 		return
 	}
 
@@ -102,19 +104,19 @@ func (d *dryadJobRunner) Test() error {
 			switch action := testaction.(type) {
 			case weles.Push:
 				if err := d.device.CopyFilesTo([]string{action.Path}, action.Dest); err != nil {
-					log.Println("Failed to copy files to DUT", err)
+					logger.Error("Failed to copy files to DUT", err)
 					return err
 				}
 			case weles.Run:
 				// Exec joins arguments in a single string.
 				// Split and then Join are avoided.
 				if _, _, err := d.device.Exec(action.Name); err != nil {
-					log.Println("Failed DUT execute", err)
+					logger.Error("Failed DUT execute", err)
 					return err
 				}
 			case weles.Pull:
 				if err := d.device.CopyFilesFrom([]string{action.Src}, action.Path); err != nil {
-					log.Println("Failed to copy files from DUT", err)
+					logger.Error("Failed to copy files from DUT", err)
 					return err
 				}
 			default:

@@ -21,6 +21,8 @@ package manager
 import (
 	"encoding/json"
 	"strconv"
+
+	"git.tizen.org/tools/slav/logger"
 )
 
 const (
@@ -72,6 +74,7 @@ func newMapping(fms []fotaMap) []byte {
 	}
 	ret, err := json.Marshal(fotaMapping)
 	if err != nil {
+		logger.WithProperty("fota mapping", fms).Error("Failed to marshal fotMap to json:", err)
 		panic(err)
 	}
 	return ret
