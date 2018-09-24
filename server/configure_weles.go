@@ -19,11 +19,13 @@ package server
 
 import (
 	"crypto/tls"
+	"fmt"
 	"net/http"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/server/operations"
 	"github.com/SamsungSLAV/weles/server/operations/artifacts"
@@ -68,6 +70,10 @@ func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 	api.GeneralVersionHandler = general.VersionHandlerFunc(a.Version)
 
 	api.ServerShutdown = func() {}
+
+	api.Logger = func(s string, a ...interface{}) {
+		logger.Warning(fmt.Sprintf(s, a...))
+	}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }
