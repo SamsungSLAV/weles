@@ -21,6 +21,8 @@ import (
 	"context"
 	"crypto/rsa"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 	"time"
 
@@ -47,6 +49,7 @@ type sessionProvider struct {
 	dryad      weles.Dryad
 	connection *sshClient
 	sshfs      *reverseSSHFS
+	log        *os.File
 }
 
 func prepareSSHConfig(userName string, key rsa.PrivateKey) *ssh.ClientConfig {
@@ -114,8 +117,8 @@ func (d *sessionProvider) executeRemoteCommand(cmd string) ([]byte, []byte, erro
 	}()
 
 	var stdout, stderr bytes.Buffer
-	session.Stdout = &stdout
-	session.Stderr = &stderr
+	session.Stdout = io.MultiWriter(&stdout, os.Stderr)
+	session.Stderr = io.MultiWriter(&stderr, os.Stderr)
 
 	err = session.Run(cmd)
 	return stdout.Bytes(), stderr.Bytes(), err
