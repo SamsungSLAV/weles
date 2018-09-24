@@ -24,6 +24,7 @@ import (
 	"log"
 	"sync"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/controller/notifier"
 )
@@ -93,6 +94,8 @@ func (h *DryaderImpl) remove(j weles.JobID) {
 func (h *DryaderImpl) setStatus(j weles.JobID, msg string) {
 	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusRUNNING, msg)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).
+			Error("Failed to change job state to RUNNING.")
 		h.remove(j)
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",
 			err.Error()))
@@ -139,6 +142,7 @@ func (h *DryaderImpl) loop() {
 func (h *DryaderImpl) StartJob(j weles.JobID) {
 	d, err := h.jobs.GetDryad(j)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).Error("Failed to get Dryad for Job.")
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Dryad for Job : %s",
 			err.Error()))
 		return
@@ -146,6 +150,7 @@ func (h *DryaderImpl) StartJob(j weles.JobID) {
 
 	config, err := h.jobs.GetConfig(j)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).Error("Failed to get config for Job.")
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Job config : %s",
 			err.Error()))
 		return
@@ -155,6 +160,8 @@ func (h *DryaderImpl) StartJob(j weles.JobID) {
 
 	err = h.djm.Create(j, d, config, h.listener)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).
+			Error("Failed to start Job execution on Dryad.")
 		h.remove(j)
 		h.SendFail(j, fmt.Sprintf("Cannot delegate Job to Dryad : %s", err.Error()))
 		return

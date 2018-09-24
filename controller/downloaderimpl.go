@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/controller/notifier"
 )
@@ -92,10 +93,12 @@ func (h *DownloaderImpl) pathStatusChange(path string, status weles.ArtifactStat
 	defer h.mutex.Unlock()
 	j, ok := h.path2Job[path]
 	if !ok {
+		logger.WithProperty("path", path).Error("Failed to match Path with JobID.")
 		return
 	}
 	i, ok := h.info[j]
 	if !ok {
+		logger.WithProperty("JobID", j).Error("Failed to match ArtifactInfo with JobID.")
 		delete(h.path2Job, path)
 		return
 	}
@@ -139,6 +142,8 @@ func (h *DownloaderImpl) loop() {
 
 		err := h.jobs.SetStatusAndInfo(j, weles.JobStatusDOWNLOADING, info)
 		if err != nil {
+			logger.WithError(err).WithProperty("JobID", j).
+				Error("Failed to set JobStatus to DOWNLOADING.")
 			h.removePath(string(change.Path))
 			h.fail(j, fmt.Sprintf(formatJobStatus, err.Error()))
 		}
@@ -177,6 +182,7 @@ func (h *DownloaderImpl) removeJobInfo(j weles.JobID) error {
 
 	_, ok := h.info[j]
 	if !ok {
+		logger.WithProperty("JobID", j).Error("Failed to match JobInfo with JobID.")
 		return weles.ErrJobNotFound
 	}
 	delete(h.info, j)
@@ -186,13 +192,16 @@ func (h *DownloaderImpl) removeJobInfo(j weles.JobID) error {
 // push delegates downloading single uri to ArtifactDB.
 func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias, uri string,
 ) (string, error) {
-	p, err := h.artifacts.PushArtifact(weles.ArtifactDescription{
+	ad := weles.ArtifactDescription{
 		JobID: j,
 		Type:  t,
 		Alias: weles.ArtifactAlias(alias),
 		URI:   weles.ArtifactURI(uri),
-	}, h.collector)
+	}
+	p, err := h.artifacts.PushArtifact(ad, h.collector)
 	if err != nil {
+		logger.WithError(err).WithProperties(logger.Properties{"JobID": j, "URI": uri}).
+			Error("Failed to push Artifact to DB.")
 		return "", err
 	}
 
@@ -201,6 +210,7 @@ func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias, uri st
 
 	i, ok := h.info[j]
 	if !ok {
+		logger.WithProperty("JobID", j).Errorf("Failed to match jobsArtifactInfo with JobID.")
 		return "", weles.ErrJobNotFound
 	}
 	i.paths++
@@ -226,6 +236,7 @@ func (h *DownloaderImpl) configSaved(j weles.JobID) {
 
 	i, ok := h.info[j]
 	if !ok {
+		logger.WithProperty("JobID", j).Errorf("Failed to match jobsArtifactInfo with JobID.")
 		return
 	}
 
@@ -276,12 +287,15 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 
 	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusDOWNLOADING, "")
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).
+			Error("Failed to set JobStatus to DOWNLOADING.")
 		h.fail(j, fmt.Sprintf(formatJobStatus, err.Error()))
 		return
 	}
 
 	config, err := h.jobs.GetConfig(j)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).Error("Failed to get Job config.")
 		h.fail(j, fmt.Sprintf(formatJobConfig, err.Error()))
 		return
 	}
@@ -291,6 +305,9 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 			var path string
 			path, err = h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("Image_%d", i), image.URI)
 			if err != nil {
+				logger.WithError(err).
+					WithProperties(logger.Properties{"URI": image.URI, "JobID": j}).
+					Error("Failed to create path for IMAGE artifact.")
 				h.fail(j, fmt.Sprintf(formatURI, image.URI, err.Error()))
 				return
 			}
@@ -301,6 +318,9 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 			path, err = h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("ImageMD5_%d", i),
 				image.ChecksumURI)
 			if err != nil {
+				logger.WithError(err).
+					WithProperties(logger.Properties{"URI": image.ChecksumURI, "JobID": j}).
+					Errorf("Failed to create path for IMAGE artifact.")
 				h.fail(j, fmt.Sprintf(formatURI, image.ChecksumURI, err.Error()))
 				return
 			}
@@ -315,6 +335,9 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 				action := ta.(weles.Push)
 				path, err = h.push(j, weles.ArtifactTypeTEST, action.Alias, action.URI)
 				if err != nil {
+					logger.WithError(err).
+						WithProperties(logger.Properties{"URI": action.URI, "JobID": j}).
+						Error("Failed to create path for TEST artifact.")
 					h.fail(j, fmt.Sprintf(formatURI, action.URI, err.Error()))
 					return
 				}
@@ -324,6 +347,9 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 				action := ta.(weles.Pull)
 				path, err = h.pullCreate(j, action.Alias)
 				if err != nil {
+					logger.WithError(err).
+						WithProperties(logger.Properties{"Alias": action.Alias, "JobID": j}).
+						Error("Failed to create new path for TEST artifact.")
 					h.fail(j, fmt.Sprintf(formatPath, err.Error()))
 					return
 				}
@@ -335,6 +361,7 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 
 	err = h.jobs.SetConfig(j, config)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).Error("Failed to set Job config.")
 		h.fail(j, fmt.Sprintf(formatConfig, err.Error()))
 		return
 	}
