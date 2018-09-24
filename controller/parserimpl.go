@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/controller/notifier"
 )
@@ -54,6 +55,8 @@ func NewParser(j JobsController, a weles.ArtifactManager, p weles.Parser) Parser
 func (h *ParserImpl) Parse(j weles.JobID) {
 	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusPARSING, "")
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).
+			Error("Failed to set JobStatus to PARSING.")
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",
 			err.Error()))
 		return
@@ -61,6 +64,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 
 	yaml, err := h.jobs.GetYaml(j)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).Error("Failed to get Job description.")
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting yaml description : %s",
 			err.Error()))
 		return
@@ -71,6 +75,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 		Type:  weles.ArtifactTypeYAML,
 	})
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).Error("Failed to create Job description.")
 		h.SendFail(j, fmt.Sprintf(
 			"Internal Weles error while creating file path in ArtifactDB : %s",
 			err.Error()))
@@ -79,6 +84,8 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 
 	err = ioutil.WriteFile(string(path), yaml, 0644)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).
+			Error("Failed to write Job description to file.")
 		h.SendFail(
 			j, fmt.Sprintf("Internal Weles error while saving file in ArtifactDB : %s",
 				err.Error()))
@@ -87,6 +94,8 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 
 	conf, err := h.parser.ParseYaml(yaml)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).
+			Error("Failed to parse Job description for job.")
 		h.SendFail(j, fmt.Sprintf("Error parsing yaml file : %s",
 			err.Error()))
 		return
@@ -94,6 +103,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 
 	err = h.jobs.SetConfig(j, *conf)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).Errorf("Failed to set config for Job.")
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while setting config : %s",
 			err.Error()))
 		return

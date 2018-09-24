@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/SamsungSLAV/boruta"
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/controller/notifier"
 )
@@ -119,6 +120,7 @@ func (h *BoruterImpl) pop(j weles.JobID) (r boruta.ReqID, err error) {
 
 	rinfo, ok := h.info[j]
 	if !ok {
+		logger.WithProperty("JobID", j).Error("JobID not found in BoruterImpl.info map.")
 		return r, weles.ErrJobNotFound
 	}
 	r = rinfo.rid
@@ -163,6 +165,8 @@ func (h *BoruterImpl) acquire(j weles.JobID, rinfo boruta.ReqInfo) {
 	ai, err := h.boruta.AcquireWorker(rinfo.ID)
 	if err != nil {
 		h.remove(j, rinfo.ID)
+		logger.WithError(err).WithProperty("JobID", j).
+			Error("Failed to acquire worker from Boruta.")
 		h.SendFail(j, fmt.Sprintf("Cannot acquire worker from Boruta : %s", err.Error()))
 		return
 	}
@@ -170,6 +174,7 @@ func (h *BoruterImpl) acquire(j weles.JobID, rinfo boruta.ReqInfo) {
 	err = h.jobs.SetDryad(j, weles.Dryad{Addr: ai.Addr, Key: ai.Key, Username: "boruta-user"})
 	if err != nil {
 		h.remove(j, rinfo.ID)
+		logger.WithError(err).WithProperty("JobID", j).Error("Failed to set up the dryad.")
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while setting Dryad : %s", err.Error()))
 		return
 	}
@@ -190,7 +195,7 @@ func (h *BoruterImpl) loop() {
 		// TODO use filter with slice of ReqIDs when implemented in Boruta.
 		requests, err := h.boruta.ListRequests(nil)
 		if err != nil {
-			// TODO log error
+			logger.WithError(err).Error("Failed to list Boruta requests.")
 			continue
 		}
 
@@ -267,6 +272,7 @@ func (h *BoruterImpl) getDeadline(config weles.Config) time.Time {
 func (h *BoruterImpl) Request(j weles.JobID) {
 	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).Error("Failed to change JobStatus.")
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",
 			err.Error()))
 		return
@@ -274,6 +280,7 @@ func (h *BoruterImpl) Request(j weles.JobID) {
 
 	config, err := h.jobs.GetConfig(j)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).Error("Failed to get Job config.")
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while getting Job config : %s",
 			err.Error()))
 		return
@@ -287,6 +294,7 @@ func (h *BoruterImpl) Request(j weles.JobID) {
 
 	r, err := h.boruta.NewRequest(caps, priority, owner, validAfter, deadline)
 	if err != nil {
+		logger.WithError(err).WithProperty("JobID", j).Error("Failed to create request in Boruta.")
 		h.SendFail(j, fmt.Sprintf("Failed to create request in Boruta : %s", err.Error()))
 		return
 	}
@@ -298,6 +306,7 @@ func (h *BoruterImpl) Request(j weles.JobID) {
 func (h *BoruterImpl) Release(j weles.JobID) {
 	r, err := h.pop(j)
 	if err != nil {
+		logger.WithError(err).Error("Failed to return Dryad to Boruta's pool.")
 		return
 	}
 	_ = h.boruta.CloseRequest(r)

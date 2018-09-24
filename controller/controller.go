@@ -27,7 +27,7 @@ import (
 	"time"
 
 	"github.com/SamsungSLAV/boruta"
-
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 )
 
@@ -99,6 +99,7 @@ func (c *Controller) Finish() {
 func (c *Controller) CreateJob(yaml []byte) (weles.JobID, error) {
 	j, err := c.jobs.NewJob(yaml)
 	if err != nil {
+		logger.WithError(err).Error("Failed to create new job.")
 		return weles.JobID(0), err
 	}
 
@@ -112,6 +113,7 @@ func (c *Controller) CreateJob(yaml []byte) (weles.JobID, error) {
 func (c *Controller) CancelJob(j weles.JobID) error {
 	err := c.jobs.SetStatusAndInfo(j, weles.JobStatusCANCELED, "")
 	if err != nil {
+		logger.WithError(err).Error("Failed to cancel job.")
 		return err
 	}
 	c.dryader.CancelJob(j)
