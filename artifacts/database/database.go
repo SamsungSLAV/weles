@@ -190,6 +190,15 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	if err != nil {
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTransOpenFail + err.Error())
 	}
+	defer func() {
+		if err != nil {
+			// err should be logged when it occurs.
+			if err2 := trans.Rollback(); err2 != nil {
+				log.Printf("%v occurred when filtering, trying to rollback transaction failed: %v",
+					err, err2)
+			}
+		}
+	}()
 	queryForTotal, argsForTotal := prepareQuery(filter, sorter, paginator, true, false, 0)
 	queryForRemaining, argsForRemaining := prepareQuery(filter, sorter, paginator, false, true, 0)
 	var offset int64
@@ -205,7 +214,10 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	}
 
 	if tr == 0 {
-		return []weles.ArtifactInfo{}, weles.ListInfo{}, weles.ErrArtifactNotFound
+		// err needs to be updated for deferred 'if err!=nil' to catch it and roll back the
+		// not committed transaction
+		err = weles.ErrArtifactNotFound
+		return []weles.ArtifactInfo{}, weles.ListInfo{}, err
 	}
 
 	if !paginator.Forward {
