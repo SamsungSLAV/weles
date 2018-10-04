@@ -37,13 +37,19 @@ type ArtifactDB struct {
 	dbmap   *gorp.DbMap
 }
 
+const (
+	sqlite3BusyTimeout = "?_busy_timeout=5000"
+	sqlite3MaxOpenConn = 1
+)
+
 // Open opens database connection.
 func (aDB *ArtifactDB) Open(dbPath string) error {
 	var err error
-	aDB.handler, err = sql.Open("sqlite3", dbPath)
+	aDB.handler, err = sql.Open("sqlite3", dbPath+sqlite3BusyTimeout)
 	if err != nil {
 		return errors.New(dbOpenFail + err.Error())
 	}
+	aDB.handler.SetMaxOpenConns(sqlite3MaxOpenConn)
 
 	aDB.dbmap = &gorp.DbMap{Db: aDB.handler, Dialect: gorp.SqliteDialect{}}
 	return aDB.initDB()
@@ -63,8 +69,12 @@ func (aDB *ArtifactDB) Close() error {
 }
 
 // InsertArtifactInfo inserts information about artifact to database.
-func (aDB *ArtifactDB) InsertArtifactInfo(ai *weles.ArtifactInfo) error {
-	return aDB.dbmap.Insert(ai)
+func (aDB *ArtifactDB) InsertArtifactInfo(ai *weles.ArtifactInfo) (err error) {
+	err = aDB.dbmap.Insert(ai)
+	if err != nil {
+		log.Println("Failed to insert ArtifactInfo: ", err)
+	}
+	return
 }
 
 // SelectPath selects artifact from database based on its path.
@@ -80,11 +90,9 @@ func (aDB *ArtifactDB) SelectPath(path weles.ArtifactPath) (weles.ArtifactInfo, 
 
 // prepareQuery prepares query based on given filter.
 // TODO code duplication
-func prepareQuery(
-	filter weles.ArtifactFilter,
-	sorter weles.ArtifactSorter,
-	paginator weles.ArtifactPagination,
-	totalRecords, remainingRecords bool, offset int64) (query string, args []interface{}) {
+func prepareQuery(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
+	paginator weles.ArtifactPagination, totalRecords, remainingRecords bool, offset int64,
+) (query string, args []interface{}) {
 
 	if !totalRecords && !remainingRecords {
 		query = "select * from artifacts "
@@ -97,8 +105,7 @@ func prepareQuery(
 
 	if !totalRecords && paginator.ID != 0 {
 		if (paginator.Forward && sorter.SortOrder == weles.SortOrderDescending) ||
-			(!paginator.Forward && (sorter.SortOrder == weles.SortOrderAscending ||
-				sorter.SortOrder == "")) {
+			(!paginator.Forward && sorter.SortOrder == weles.SortOrderAscending) {
 			conditions = append(conditions, " ID < ? ")
 			args = append(args, paginator.ID)
 		} else {
@@ -183,23 +190,34 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	if err != nil {
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTransOpenFail + err.Error())
 	}
+	defer func() {
+		if err != nil {
+			// err should be logged when it occurs.
+			if err2 := trans.Rollback(); err2 != nil {
+				log.Printf("%v occurred when filtering, trying to rollback transaction failed: %v",
+					err, err2)
+			}
+		}
+	}()
 	queryForTotal, argsForTotal := prepareQuery(filter, sorter, paginator, true, false, 0)
 	queryForRemaining, argsForRemaining := prepareQuery(filter, sorter, paginator, false, true, 0)
 	var offset int64
 
-	rr, err = aDB.dbmap.SelectInt(queryForRemaining, argsForRemaining...)
+	rr, err = trans.SelectInt(queryForRemaining, argsForRemaining...)
 	if err != nil {
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbRemainingFail + err.Error())
 	}
 
-	tr, err = aDB.dbmap.SelectInt(queryForTotal, argsForTotal...)
+	tr, err = trans.SelectInt(queryForTotal, argsForTotal...)
 	if err != nil {
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTotalFail + err.Error())
 	}
-	// TODO: refactor this file. below is to ignore pagination object when pagination is turned off.
-	if paginator.Limit == 0 {
-		paginator.Forward = true
-		paginator.ID = 0
+
+	if tr == 0 {
+		// err needs to be updated for deferred 'if err!=nil' to catch it and roll back the
+		// not committed transaction
+		err = weles.ErrArtifactNotFound
+		return []weles.ArtifactInfo{}, weles.ListInfo{}, err
 	}
 
 	if !paginator.Forward {
@@ -207,14 +225,12 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 	}
 
 	queryForData, argsForData := prepareQuery(filter, sorter, paginator, false, false, offset)
-	_, err = aDB.dbmap.Select(&results, queryForData, argsForData...)
+	_, err = trans.Select(&results, queryForData, argsForData...)
 	if err != nil {
 		return nil, weles.ListInfo{}, errors.New(whileFilter + dbArtifactInfoFail + err.Error())
 	}
 	if err := trans.Commit(); err != nil {
-		return nil,
-			weles.ListInfo{},
-			errors.New(whileFilter + dbTransCommitFail + err.Error())
+		return nil, weles.ListInfo{}, errors.New(whileFilter + dbTransCommitFail + err.Error())
 
 	}
 	return results,
@@ -223,34 +239,6 @@ func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.Artifact
 			RemainingRecords: uint64(rr - int64(len(results))),
 		},
 		nil
-}
-
-// Select fetches artifacts from ArtifactDB.
-func (aDB *ArtifactDB) Select(arg interface{}) (artifacts []weles.ArtifactInfo, err error) {
-	var (
-		results []weles.ArtifactInfo
-		query   string
-	)
-	// TODO prepare efficient way of executing generic select.
-	switch arg.(type) {
-	case weles.JobID:
-		query = "select * from artifacts where JobID = ?"
-	case weles.ArtifactType:
-		query = "select * from artifacts where Type = ?"
-	case weles.ArtifactAlias:
-		query = "select * from artifacts where Alias = ?"
-	case weles.ArtifactStatus:
-		query = "select * from artifacts where Status = ?"
-	default:
-		return nil, ErrUnsupportedQueryType
-	}
-	query += " ORDER BY id"
-
-	_, err = aDB.dbmap.Select(&results, query, arg)
-	if err != nil {
-		return nil, err
-	}
-	return results, nil
 }
 
 // SetStatus changes artifact's status in ArtifactDB.

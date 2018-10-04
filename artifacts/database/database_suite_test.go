@@ -38,26 +38,42 @@ var (
 	tmpDirPath        string
 )
 
-var _ = BeforeSuite(func() {
+const (
+	dbToRead              = "test-db-pagination.db"
+	tmpDirPrefix          = "weles-"
+	generatedRecordsCount = 100
+	pageLimit             = 30
+	pageCount             = generatedRecordsCount/pageLimit + 1
+)
 
-	var err error
-	tmpDirPath, err = ioutil.TempDir("", "weles-")
+var _ = BeforeSuite(func() {
+	var (
+		err error
+		db  ArtifactDB
+	)
+
+	tmpDirPath, err = ioutil.TempDir("", tmpDirPrefix)
 	Expect(err).ToNot(HaveOccurred())
-	err = silverHoneybadger.Open(filepath.Join(tmpDirPath, "test_pagination.db"))
+
+	err = db.Open(filepath.Join(tmpDirPath, dbToRead))
 	Expect(err).ToNot(HaveOccurred())
-	artifacts := fixtures.CreateArtifactInfoSlice(100)
-	trans, err := silverHoneybadger.dbmap.Begin()
+	silverHoneybadgerArtifacts := fixtures.CreateArtifactInfoSlice(generatedRecordsCount)
+
+	trans, err := db.dbmap.Begin()
 	Expect(err).ToNot(HaveOccurred())
-	for _, artifact := range artifacts {
-		err = silverHoneybadger.InsertArtifactInfo(&artifact)
+
+	for _, artifact := range silverHoneybadgerArtifacts {
+		err = trans.Insert(&artifact)
 		Expect(err).ToNot(HaveOccurred())
 	}
 	trans.Commit()
+	db.Close()
 
+	err = silverHoneybadger.Open(filepath.Join(tmpDirPath, dbToRead))
+	Expect(err).ToNot(HaveOccurred())
 })
 
 var _ = AfterSuite(func() {
-
 	err := silverHoneybadger.Close()
 	Expect(err).ToNot(HaveOccurred())
 	err = os.RemoveAll(tmpDirPath)

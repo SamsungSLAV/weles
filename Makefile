@@ -31,6 +31,13 @@ swagger-server-generate:  swagger.yml COPYING
 		--compatibility-mode=modern
 	dep ensure
 
+.PHONY: swagger-models-generate
+swagger-models-generate:  swagger.yml COPYING
+	./$(DEV_TOOLS_DIR)/swagger generate model \
+		-f ./swagger.yml \
+		-m ../weles \
+		-s ./server \
+		-r ./COPYING \
 
 .PHONY: swagger-docs-html
 swagger-docs-html: swagger.yml

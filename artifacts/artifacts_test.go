@@ -281,9 +281,11 @@ With gently smiling jaws!
 					Expect(string(path)).NotTo(BeAnExistingFile())
 				}
 
-				ai, err := silverKangaroo.GetArtifactInfo(path)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(ai.Status).To(Equal(finalStatus))
+				Eventually(func() weles.ArtifactStatus {
+					ai, err := silverKangaroo.GetArtifactInfo(path)
+					Expect(err).ToNot(HaveOccurred())
+					return ai.Status
+				}).Should(Equal(finalStatus))
 
 				By("Check if artifact is in ArtifactDB")
 				Expect(checkPathInDb(path)).To(BeTrue())

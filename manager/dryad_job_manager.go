@@ -27,15 +27,17 @@ import (
 // DryadJobs implements DryadJobManager interface.
 type DryadJobs struct {
 	weles.DryadJobManager
-	jobs      map[weles.JobID]*dryadJob
-	jobsMutex *sync.RWMutex
+	jobs           map[weles.JobID]*dryadJob
+	jobsMutex      *sync.RWMutex
+	artifactDBPath string
 }
 
 // NewDryadJobManager returns DryadJobManager interface of a new instance of DryadJobs.
-func NewDryadJobManager() weles.DryadJobManager {
+func NewDryadJobManager(artifactDBPath string) weles.DryadJobManager {
 	return &DryadJobs{
-		jobs:      make(map[weles.JobID]*dryadJob),
-		jobsMutex: new(sync.RWMutex),
+		jobs:           make(map[weles.JobID]*dryadJob),
+		jobsMutex:      new(sync.RWMutex),
+		artifactDBPath: artifactDBPath,
 	}
 }
 
@@ -50,7 +52,7 @@ func (d *DryadJobs) Create(job weles.JobID, rusalka weles.Dryad, conf weles.Conf
 	d.jobsMutex.Lock()
 	defer d.jobsMutex.Unlock()
 	// FIXME(amistewicz): dryadJobs should not be stored indefinitely.
-	d.jobs[job] = newDryadJob(job, rusalka, conf, changes)
+	d.jobs[job] = newDryadJob(job, rusalka, conf, changes, d.artifactDBPath)
 	return nil
 }
 

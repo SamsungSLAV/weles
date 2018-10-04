@@ -225,7 +225,7 @@ func (h *BoruterImpl) getCaps(config weles.Config) boruta.Capabilities {
 	}
 
 	return boruta.Capabilities{
-		"DeviceType": config.DeviceType,
+		"device_type": config.DeviceType,
 	}
 }
 

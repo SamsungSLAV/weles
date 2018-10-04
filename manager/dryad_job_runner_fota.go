@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	fotaCmdPath    = "/usr/bin/fota"
+	fotaCmdPath    = "/usr/local/bin/fota"
 	fotaSDCardPath = "/dev/sda"
 	fotaFilePath   = "/tmp/fota.json"
 )

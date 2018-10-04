@@ -34,12 +34,17 @@ import (
 )
 
 const (
-	JSON               = "application/json"
-	OMIT               = "omit"
+	JSON = "application/json"
+	OMIT = "omit"
+
 	dateLayout         = "Mon Jan 2 15:04:05 -0700 MST 2006"
 	someDate           = "Tue Jan 2 15:04:05 +0100 CET 1900"
 	durationIncrement1 = "25h"
 	durationIncrement2 = "+100h"
+
+	basePath          = "/api/v1"
+	listArtifactsPath = "/artifacts/list"
+	listJobsPath      = "/jobs/list"
 )
 
 func TestServer(t *testing.T) {

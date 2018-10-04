@@ -21,34 +21,20 @@ import (
 	"git.tizen.org/tools/weles/server/operations/artifacts"
 )
 
-// ArtifactLister is a handler which passess requests for listing artifacts to artifactmanager.
+// ArtifactLister is a handler which passess requests for listing artifacts to ArtifactManager.
 func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) middleware.Responder {
-	if (params.After != nil) && (params.Before != nil) {
-		return artifacts.NewArtifactListerBadRequest().WithPayload(&weles.ErrResponse{
-			Message: weles.ErrBeforeAfterNotAllowed.Error()})
-	}
-
-	var artifactInfoReceived []weles.ArtifactInfo
-	var listInfo weles.ListInfo
-	var err error
 	paginator := weles.ArtifactPagination{}
 	if a.PageLimit != 0 {
+		if (params.After != nil) && (params.Before != nil) {
+			return artifacts.NewArtifactListerBadRequest().WithPayload(&weles.ErrResponse{
+				Message: weles.ErrBeforeAfterNotAllowed.Error()})
+		}
 		paginator = setArtifactPaginator(params, a.PageLimit)
 	}
+	filter := setArtifactFilter(params.ArtifactFilterAndSort.Filter)
+	sorter := setArtifactSorter(params.ArtifactFilterAndSort.Sorter)
 
-	if params.ArtifactFilterAndSort != nil {
-		artifactInfoReceived, listInfo, err = a.Managers.AM.ListArtifact(
-			*params.ArtifactFilterAndSort.Filter, *params.ArtifactFilterAndSort.Sorter, paginator)
-	} else {
-		artifactInfoReceived, listInfo, err = a.Managers.AM.ListArtifact(
-			weles.ArtifactFilter{}, weles.ArtifactSorter{}, paginator)
-	}
-
-	// TODO: remove this when artifactmanager will return this.
-	if len(artifactInfoReceived) == 0 {
-		return artifacts.NewArtifactListerNotFound().WithPayload(
-			&weles.ErrResponse{Message: weles.ErrArtifactNotFound.Error()})
-	}
+	artifactInfoReceived, listInfo, err := a.Managers.AM.ListArtifact(filter, sorter, paginator)
 
 	switch err {
 	default:
@@ -66,9 +52,9 @@ func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) midd
 		return responderArtifact200(listInfo, paginator, artifactInfoReturned, a.PageLimit)
 	} //not last page...
 	return responderArtifact206(listInfo, paginator, artifactInfoReturned, a.PageLimit)
-
 }
 
+// responderArtifact206 builds 206 HTTP response with appropriate headers and body.
 func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPagination,
 	artifactInfoReturned []*weles.ArtifactInfo, defaultPageLimit int32,
 ) (responder *artifacts.ArtifactListerPartialContent) {
@@ -102,6 +88,7 @@ func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 	return
 }
 
+// responderArtifact200 builds 200 HTTP response with appropriate headers and body.
 func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPagination,
 	artifactInfoReturned []*weles.ArtifactInfo, defaultPageLimit int32,
 ) (responder *artifacts.ArtifactListerOK) {
@@ -133,6 +120,54 @@ func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 	return
 }
 
+// setArtifactFilter adjusts filter's 0 values to be consistent and acceptable by the artifacts db
+// That is []string with only 1 empty element should be removed.
+func setArtifactFilter(fi *weles.ArtifactFilter) (fo weles.ArtifactFilter) {
+	if fi != nil {
+		if len(fi.JobID) > 0 {
+			fo.JobID = fi.JobID
+		}
+		if len(fi.Alias) > 0 {
+			if !(len(fi.Alias) == 1 && fi.Alias[0] == "") {
+				fo.Alias = fi.Alias
+			}
+		}
+		if len(fi.Status) > 0 {
+			if !(len(fi.Status) == 1 && fi.Status[0] == "") {
+				fo.Status = fi.Status
+			}
+		}
+		if len(fi.Type) > 0 {
+			if !(len(fi.Type) == 1 && fi.Type[0] == "") {
+				fo.Type = fi.Type
+			}
+		}
+	}
+	return
+}
+
+// setArtifactSorter sets default sorter values.
+func setArtifactSorter(si *weles.ArtifactSorter) (so weles.ArtifactSorter) {
+	if si == nil {
+		return weles.ArtifactSorter{
+			SortOrder: weles.SortOrderAscending,
+			SortBy:    weles.ArtifactSortByID,
+		}
+	}
+	if si.SortOrder == "" {
+		so.SortOrder = weles.SortOrderAscending
+	} else {
+		so.SortOrder = si.SortOrder
+	}
+	if si.SortBy == "" {
+		so.SortBy = weles.ArtifactSortByID
+	} else {
+		so.SortBy = si.SortBy
+	}
+	return
+}
+
+// setArtifactPaginator creates and fills paginator object with default values.
 func setArtifactPaginator(params artifacts.ArtifactListerParams, defaultPageLimit int32,
 ) (paginator weles.ArtifactPagination) {
 	paginator.Forward = true
@@ -150,10 +185,9 @@ func setArtifactPaginator(params artifacts.ArtifactListerParams, defaultPageLimi
 	return paginator
 }
 
-// artifactInfoReceivedToReturn does the same thing as jobInfoReceivedToReturn.
-// TODO:make ArtifactInfos and JobInfos types implement interface with a function that will return
-// slice of pointers. Will probably need to use reflect which I'm not familiar with thus not done
-// now.
+// artifactInfoReceivedToReturn creates slice of pointers from slice of values of ArtifactInfo
+// struct. Very similiar function can be found in job_lister_handler.go. Separate functions are
+// present as generic one would need to use reflect which affects performance.
 func artifactInfoReceivedToReturn(artifactInfoReceived []weles.ArtifactInfo) []*weles.ArtifactInfo {
 	artifactInfoReturned := make([]*weles.ArtifactInfo, len(artifactInfoReceived))
 	for i := range artifactInfoReceived {

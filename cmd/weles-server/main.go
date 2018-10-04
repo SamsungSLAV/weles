@@ -111,7 +111,7 @@ func main() {
 		artifactDownloadQueueCap)
 	exitOnErr("failed to initialize ArtifactManager ", err)
 	bor := client.NewBorutaClient(borutaAddress)
-	djm := manager.NewDryadJobManager()
+	djm := manager.NewDryadJobManager(artifactDBLocation)
 	jm := controller.NewJobManager(am, &yap, bor, borutaRefreshPeriod, djm)
 
 	api := operations.NewWelesAPI(swaggerSpec)

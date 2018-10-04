@@ -55,10 +55,9 @@ func newDryadJobWithCancel(job weles.JobID, changes chan<- weles.DryadJobStatusC
 // newDryadJob creates an instance of dryadJob and starts a goroutine
 // executing phases of given job implemented by provider of DryadJobRunner interface.
 func newDryadJob(job weles.JobID, rusalka weles.Dryad, conf weles.Config,
-	changes chan<- weles.DryadJobStatusChange) *dryadJob {
+	changes chan<- weles.DryadJobStatusChange, artifactDBPath string) *dryadJob {
 
-	// FIXME: It should use the proper path to the artifactory.
-	session := dryad.NewSessionProvider(rusalka, "")
+	session := dryad.NewSessionProvider(rusalka, artifactDBPath)
 	device := dryad.NewDeviceCommunicationProvider(session)
 
 	ctx, cancel := context.WithCancel(context.Background())

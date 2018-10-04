@@ -29,8 +29,6 @@ import (
 	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
-
-	weles "git.tizen.org/tools/weles"
 )
 
 // NewArtifactListerParams creates a new ArtifactListerParams object
@@ -56,7 +54,7 @@ type ArtifactListerParams struct {
 	/*Artifact Filter and Sort object.
 	  In: body
 	*/
-	ArtifactFilterAndSort *weles.ArtifactFilterAndSort
+	ArtifactFilterAndSort ArtifactListerBody
 	/*ID of first element from next page.
 	  In: query
 	*/
@@ -85,7 +83,7 @@ func (o *ArtifactListerParams) BindRequest(r *http.Request, route *middleware.Ma
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body weles.ArtifactFilterAndSort
+		var body ArtifactListerBody
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			res = append(res, errors.NewParseError("artifactFilterAndSort", "body", "", err))
 		} else {
@@ -95,7 +93,7 @@ func (o *ArtifactListerParams) BindRequest(r *http.Request, route *middleware.Ma
 			}
 
 			if len(res) == 0 {
-				o.ArtifactFilterAndSort = &body
+				o.ArtifactFilterAndSort = body
 			}
 		}
 	}

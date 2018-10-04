@@ -62,7 +62,7 @@ var artifactStatusEnum []interface{}
 
 func init() {
 	var res []ArtifactStatus
-	if err := json.Unmarshal([]byte(`["DOWNLOADING","READY","FAILED","PENDING"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["DOWNLOADING","READY","FAILED","PENDING",""]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

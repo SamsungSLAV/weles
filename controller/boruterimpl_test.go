@@ -98,7 +98,7 @@ var _ = Describe("BoruterImpl", func() {
 				JobTimeout: weles.ValidPeriod(jobTimeout),
 			},
 		}
-		caps = boruta.Capabilities{"DeviceType": "TestDeviceType"}
+		caps = boruta.Capabilities{"device_type": "TestDeviceType"}
 		priority = boruta.Priority(7)
 	})
 	AfterEach(func() {

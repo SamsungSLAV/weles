@@ -18,16 +18,6 @@
 
 package database
 
-import (
-	"errors"
-)
-
-var (
-	// ErrUnsupportedQueryType is returned when wrong type of argument is passed to
-	// ArtifactDB's Select().
-	ErrUnsupportedQueryType = errors.New("unsupported argument type")
-)
-
 const (
 	dbOpenFail         = "failed to open artifacts database: "
 	whileFilter        = "while filtering, "

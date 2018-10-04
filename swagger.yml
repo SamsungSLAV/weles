@@ -96,7 +96,13 @@ paths:
           description: Job Filter and Sort object.
           required: false
           schema:
-            $ref: '#/definitions/JobFilterAndSort'
+            description: Data for filtering and sorting Weles Jobs lists.
+            type: object
+            properties:
+              Filter:
+                $ref: '#/definitions/JobFilter'
+              Sorter:
+                $ref: '#/definitions/JobSorter'
         - in: query
           name: after
           description: JobID of the last element from previous page.
@@ -185,7 +191,13 @@ paths:
           description: Artifact Filter and Sort object.
           required: false
           schema:
-            $ref: '#/definitions/ArtifactFilterAndSort'
+            description: Data for filtering and sorting Weles Jobs lists.
+            type: object
+            properties:
+              Filter:
+                $ref: '#/definitions/ArtifactFilter'
+              Sorter:
+                $ref: '#/definitions/ArtifactSorter'
         - in: query
           name: after
           description: ID of the last element from previous page.
@@ -375,17 +387,20 @@ definitions:
           type: string
   JobSortBy:
     description: |
-      denotes key for sorting Jobs list. Jobs are sorted by ID (Ascending) by default.
-      You can sort jobs additionaly by
+      denotes key for sorting Jobs list.
+
+      * ID - default sort key.
 
       * CreatedDate - sorting by date of creation of the weles job.
 
       * UpdatedDate - sorting by date of update of the weles job.
 
       * JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.
+
       When sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)
     type: string
     enum:
+      - ID
       - CreatedDate
       - UpdatedDate
       - JobStatus
@@ -410,14 +425,6 @@ definitions:
         $ref: '#/definitions/JobSortBy'
       SortOrder:
         $ref: '#/definitions/SortOrder'
-  JobFilterAndSort:
-    description: Data for filtering and sorting Weles Jobs lists.
-    type: object
-    properties:
-      Filter:
-        $ref: '#/definitions/JobFilter'
-      Sorter:
-        $ref: '#/definitions/JobSorter'
   ArtifactType:
     description: |
       denotes type and function of an artifact.
@@ -545,14 +552,6 @@ definitions:
         $ref: '#/definitions/ArtifactSortBy'
       SortOrder:
         $ref: '#/definitions/SortOrder'
-  ArtifactFilterAndSort:
-    description: Data for filtering and sorting Weles Jobs lists.
-    type: object
-    properties:
-      Filter:
-        $ref: '#/definitions/ArtifactFilter'
-      Sorter:
-        $ref: '#/definitions/ArtifactSorter'
 externalDocs:
   description: TBD
   url: 'http://TBD.tbd'

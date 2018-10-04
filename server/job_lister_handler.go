@@ -15,6 +15,8 @@
 package server
 
 import (
+	"time"
+
 	"github.com/go-openapi/runtime/middleware"
 
 	"git.tizen.org/tools/weles"
@@ -23,27 +25,18 @@ import (
 
 // JobLister is a handler which passess requests for listing jobs to jobmanager.
 func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responder {
-	if (params.After != nil) && (params.Before != nil) {
-		return jobs.NewJobListerBadRequest().WithPayload(
-			&weles.ErrResponse{Message: weles.ErrBeforeAfterNotAllowed.Error()})
-	}
-
-	var jobInfoReceived []weles.JobInfo
-	var listInfo weles.ListInfo
-	var err error
 	paginator := weles.JobPagination{}
-
 	if a.PageLimit != 0 {
+		if (params.After != nil) && (params.Before != nil) {
+			return jobs.NewJobListerBadRequest().WithPayload(
+				&weles.ErrResponse{Message: weles.ErrBeforeAfterNotAllowed.Error()})
+		}
 		paginator = setJobPaginator(params, a.PageLimit)
 	}
+	filter := setJobFilter(params.JobFilterAndSort.Filter)
+	sorter := setJobSorter(params.JobFilterAndSort.Sorter)
 
-	if params.JobFilterAndSort != nil {
-		jobInfoReceived, listInfo, err = a.Managers.JM.ListJobs(
-			*params.JobFilterAndSort.Filter, *params.JobFilterAndSort.Sorter, paginator)
-	} else {
-		jobInfoReceived, listInfo, err = a.Managers.JM.ListJobs(
-			weles.JobFilter{}, weles.JobSorter{}, paginator)
-	}
+	jobInfoReceived, listInfo, err := a.Managers.JM.ListJobs(filter, sorter, paginator)
 	if err != nil {
 		// due to weles.ErrInvalidArgument implementing error interface rather than being error
 		// (which is intentional as we want to pass underlying error) switch err.(type) checks only
@@ -68,7 +61,6 @@ func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responde
 		return responder200(listInfo, paginator, jobInfoReturned, a.PageLimit)
 	}
 	return responder206(listInfo, paginator, jobInfoReturned, a.PageLimit)
-
 }
 
 func responder206(listInfo weles.ListInfo, paginator weles.JobPagination,
@@ -134,6 +126,50 @@ func responder200(listInfo weles.ListInfo, paginator weles.JobPagination,
 	return
 }
 
+// setJobFilter adjusts filter's 0 values to be consistent and acceptable by controller.
+// This is:
+// for strfmt.DateTime elements normalizing 0 time as (0001-01-01T00:00:00.000Z) instead of
+// Unix 0- 1970-01-01T00:00:00.000Z
+// Controller treats slices with 0 len as empty, slices with lenght of 1 and empty value should not
+// be passed to controller.
+func setJobFilter(i *weles.JobFilter) (o weles.JobFilter) {
+	if i != nil {
+		if time.Time(i.CreatedBefore).Unix() != 0 {
+			o.CreatedBefore = i.CreatedBefore
+		}
+		if time.Time(i.CreatedAfter).Unix() != 0 {
+			o.CreatedAfter = i.CreatedAfter
+		}
+		if time.Time(i.UpdatedBefore).Unix() != 0 {
+			o.UpdatedBefore = i.UpdatedBefore
+		}
+		if time.Time(i.UpdatedAfter).Unix() != 0 {
+			o.UpdatedAfter = i.UpdatedAfter
+		}
+		if len(i.JobID) > 0 {
+			if !(len(i.JobID) == 1 && i.JobID[0] == 0) {
+				o.JobID = i.JobID
+			}
+		}
+		if len(i.Info) > 0 {
+			if !(len(i.Info) == 1 && i.Info[0] == "") {
+				o.Info = i.Info
+			}
+		}
+		if len(i.Name) > 0 {
+			if !(len(i.Name) == 1 && i.Name[0] == "") {
+				o.Name = i.Name
+			}
+		}
+		if len(i.Status) > 0 {
+			if !(len(i.Status) == 1 && i.Status[0] == "") {
+				o.Status = i.Status
+			}
+		}
+	}
+	return
+}
+
 func setJobPaginator(params jobs.JobListerParams, defaultPageLimit int32,
 ) (paginator weles.JobPagination) {
 	paginator.Forward = true
@@ -148,6 +184,27 @@ func setJobPaginator(params jobs.JobListerParams, defaultPageLimit int32,
 		paginator.Limit = defaultPageLimit
 	} else {
 		paginator.Limit = *params.Limit
+	}
+	return
+}
+
+// setJobSorter sets default sorter values.
+func setJobSorter(si *weles.JobSorter) (so weles.JobSorter) {
+	if si == nil {
+		return weles.JobSorter{
+			SortOrder: weles.SortOrderAscending,
+			SortBy:    weles.JobSortByID,
+		}
+	}
+	if si.SortOrder == "" {
+		so.SortOrder = weles.SortOrderAscending
+	} else {
+		so.SortOrder = si.SortOrder
+	}
+	if si.SortBy == "" {
+		so.SortBy = weles.JobSortByID
+	} else {
+		so.SortBy = si.SortBy
 	}
 	return
 }

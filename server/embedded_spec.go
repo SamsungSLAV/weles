@@ -79,7 +79,16 @@ func init() {
             "name": "artifactFilterAndSort",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/ArtifactFilterAndSort"
+              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "type": "object",
+              "properties": {
+                "Filter": {
+                  "$ref": "#/definitions/ArtifactFilter"
+                },
+                "Sorter": {
+                  "$ref": "#/definitions/ArtifactSorter"
+                }
+              }
             }
           },
           {
@@ -236,7 +245,16 @@ func init() {
             "name": "jobFilterAndSort",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/JobFilterAndSort"
+              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "type": "object",
+              "properties": {
+                "Filter": {
+                  "$ref": "#/definitions/JobFilter"
+                },
+                "Sorter": {
+                  "$ref": "#/definitions/JobSorter"
+                }
+              }
             }
           },
           {
@@ -425,18 +443,6 @@ func init() {
         }
       }
     },
-    "ArtifactFilterAndSort": {
-      "description": "Data for filtering and sorting Weles Jobs lists.",
-      "type": "object",
-      "properties": {
-        "Filter": {
-          "$ref": "#/definitions/ArtifactFilter"
-        },
-        "Sorter": {
-          "$ref": "#/definitions/ArtifactSorter"
-        }
-      }
-    },
     "ArtifactInfo": {
       "description": "describes single artifact stored in ArtifactDB.",
       "type": "object",
@@ -571,18 +577,6 @@ func init() {
         }
       }
     },
-    "JobFilterAndSort": {
-      "description": "Data for filtering and sorting Weles Jobs lists.",
-      "type": "object",
-      "properties": {
-        "Filter": {
-          "$ref": "#/definitions/JobFilter"
-        },
-        "Sorter": {
-          "$ref": "#/definitions/JobSorter"
-        }
-      }
-    },
     "JobID": {
       "description": "is a unique identifier for Weles Job.",
       "type": "integer",
@@ -621,9 +615,10 @@ func init() {
       }
     },
     "JobSortBy": {
-      "description": "denotes key for sorting Jobs list. Jobs are sorted by ID (Ascending) by default.\nYou can sort jobs additionaly by\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
+      "description": "denotes key for sorting Jobs list.\n\n* ID - default sort key.\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\n\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
       "type": "string",
       "enum": [
+        "ID",
         "CreatedDate",
         "UpdatedDate",
         "JobStatus"
@@ -764,7 +759,16 @@ func init() {
             "name": "artifactFilterAndSort",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/ArtifactFilterAndSort"
+              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "type": "object",
+              "properties": {
+                "Filter": {
+                  "$ref": "#/definitions/ArtifactFilter"
+                },
+                "Sorter": {
+                  "$ref": "#/definitions/ArtifactSorter"
+                }
+              }
             }
           },
           {
@@ -939,7 +943,16 @@ func init() {
             "name": "jobFilterAndSort",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/JobFilterAndSort"
+              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "type": "object",
+              "properties": {
+                "Filter": {
+                  "$ref": "#/definitions/JobFilter"
+                },
+                "Sorter": {
+                  "$ref": "#/definitions/JobSorter"
+                }
+              }
             }
           },
           {
@@ -1146,18 +1159,6 @@ func init() {
         }
       }
     },
-    "ArtifactFilterAndSort": {
-      "description": "Data for filtering and sorting Weles Jobs lists.",
-      "type": "object",
-      "properties": {
-        "Filter": {
-          "$ref": "#/definitions/ArtifactFilter"
-        },
-        "Sorter": {
-          "$ref": "#/definitions/ArtifactSorter"
-        }
-      }
-    },
     "ArtifactInfo": {
       "description": "describes single artifact stored in ArtifactDB.",
       "type": "object",
@@ -1292,18 +1293,6 @@ func init() {
         }
       }
     },
-    "JobFilterAndSort": {
-      "description": "Data for filtering and sorting Weles Jobs lists.",
-      "type": "object",
-      "properties": {
-        "Filter": {
-          "$ref": "#/definitions/JobFilter"
-        },
-        "Sorter": {
-          "$ref": "#/definitions/JobSorter"
-        }
-      }
-    },
     "JobID": {
       "description": "is a unique identifier for Weles Job.",
       "type": "integer",
@@ -1342,9 +1331,10 @@ func init() {
       }
     },
     "JobSortBy": {
-      "description": "denotes key for sorting Jobs list. Jobs are sorted by ID (Ascending) by default.\nYou can sort jobs additionaly by\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
+      "description": "denotes key for sorting Jobs list.\n\n* ID - default sort key.\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\n\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
       "type": "string",
       "enum": [
+        "ID",
         "CreatedDate",
         "UpdatedDate",
         "JobStatus"

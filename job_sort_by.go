@@ -29,20 +29,25 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// JobSortBy denotes key for sorting Jobs list. Jobs are sorted by ID (Ascending) by default.
-// You can sort jobs additionaly by
+// JobSortBy denotes key for sorting Jobs list.
+//
+// * ID - default sort key.
 //
 // * CreatedDate - sorting by date of creation of the weles job.
 //
 // * UpdatedDate - sorting by date of update of the weles job.
 //
 // * JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.
+//
 // When sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)
 //
 // swagger:model JobSortBy
 type JobSortBy string
 
 const (
+
+	// JobSortByID captures enum value "ID"
+	JobSortByID JobSortBy = "ID"
 
 	// JobSortByCreatedDate captures enum value "CreatedDate"
 	JobSortByCreatedDate JobSortBy = "CreatedDate"
@@ -59,7 +64,7 @@ var jobSortByEnum []interface{}
 
 func init() {
 	var res []JobSortBy
-	if err := json.Unmarshal([]byte(`["CreatedDate","UpdatedDate","JobStatus"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ID","CreatedDate","UpdatedDate","JobStatus",""]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
