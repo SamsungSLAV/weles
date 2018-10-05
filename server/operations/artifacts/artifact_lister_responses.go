@@ -26,7 +26,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/swag"
 
-	weles "git.tizen.org/tools/weles"
+	weles "github.com/SamsungSLAV/weles"
 )
 
 // ArtifactListerOKCode is the HTTP code returned for type ArtifactListerOK

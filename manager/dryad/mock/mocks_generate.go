@@ -16,4 +16,4 @@
 
 package mock
 
-//go:generate ../../../bin/dev-tools/mockgen -package mock -destination=./session_provider.go git.tizen.org/tools/weles/manager/dryad SessionProvider
+//go:generate ../../../bin/dev-tools/mockgen -package mock -destination=./session_provider.go github.com/SamsungSLAV/weles/manager/dryad SessionProvider

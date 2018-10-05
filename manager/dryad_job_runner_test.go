@@ -19,10 +19,10 @@ package manager
 import (
 	"context"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/manager/dryad"
-	dmock "git.tizen.org/tools/weles/manager/dryad/mock"
-	"git.tizen.org/tools/weles/manager/mock"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/manager/dryad"
+	dmock "github.com/SamsungSLAV/weles/manager/dryad/mock"
+	"github.com/SamsungSLAV/weles/manager/mock"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"

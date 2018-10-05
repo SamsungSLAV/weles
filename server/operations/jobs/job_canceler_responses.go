@@ -25,7 +25,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	weles "git.tizen.org/tools/weles"
+	weles "github.com/SamsungSLAV/weles"
 )
 
 // JobCancelerNoContentCode is the HTTP code returned for type JobCancelerNoContent

@@ -20,7 +20,7 @@
 package notifier
 
 import (
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 // Notifier defines interface providing channel for notifying Controller.

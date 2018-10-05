@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2017-2018 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/parser"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/parser"
 )
 
 var expectedConfig = weles.Config{

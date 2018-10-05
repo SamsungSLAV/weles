@@ -19,7 +19,7 @@ package notifier
 import (
 	"fmt"
 
-	. "git.tizen.org/tools/weles"
+	. "github.com/SamsungSLAV/weles"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

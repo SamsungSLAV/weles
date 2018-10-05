@@ -25,7 +25,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"git.tizen.org/tools/weles/fixtures"
+	"github.com/SamsungSLAV/weles/fixtures"
 )
 
 func TestDatabase(t *testing.T) {

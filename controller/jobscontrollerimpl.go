@@ -30,7 +30,7 @@ import (
 
 	"github.com/go-openapi/strfmt"
 
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 // JobsControllerImpl structure stores Weles' Jobs data. It controls

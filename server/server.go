@@ -40,7 +40,7 @@ import (
 	flag "github.com/spf13/pflag"
 	"golang.org/x/net/netutil"
 
-	"git.tizen.org/tools/weles/server/operations"
+	"github.com/SamsungSLAV/weles/server/operations"
 )
 
 const (

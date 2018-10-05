@@ -21,7 +21,7 @@ package manager
 import (
 	"sync"
 
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 // DryadJobs implements DryadJobManager interface.

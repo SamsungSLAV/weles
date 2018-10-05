@@ -25,7 +25,7 @@ import (
 	"os"
 	"sync"
 
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 // Downloader implements ArtifactDownloader interface.

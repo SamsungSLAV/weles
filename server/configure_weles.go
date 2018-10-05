@@ -24,9 +24,9 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 
-	"git.tizen.org/tools/weles/server/operations"
-	"git.tizen.org/tools/weles/server/operations/artifacts"
-	"git.tizen.org/tools/weles/server/operations/jobs"
+	"github.com/SamsungSLAV/weles/server/operations"
+	"github.com/SamsungSLAV/weles/server/operations/artifacts"
+	"github.com/SamsungSLAV/weles/server/operations/jobs"
 )
 
 func configureFlags(api *operations.WelesAPI) {

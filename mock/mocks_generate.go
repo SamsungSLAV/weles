@@ -16,10 +16,10 @@
 
 package mock
 
-//go:generate ../bin/dev-tools/mockgen -package mock -destination=./artifactmanager.go git.tizen.org/tools/weles ArtifactManager
+//go:generate ../bin/dev-tools/mockgen -package mock -destination=./artifactmanager.go github.com/SamsungSLAV/weles ArtifactManager
 
-//go:generate ../bin/dev-tools/mockgen -package mock -destination=./dryadjobmanager.go git.tizen.org/tools/weles DryadJobManager
+//go:generate ../bin/dev-tools/mockgen -package mock -destination=./dryadjobmanager.go github.com/SamsungSLAV/weles DryadJobManager
 
-//go:generate ../bin/dev-tools/mockgen -package mock -destination=./jobmanager.go git.tizen.org/tools/weles JobManager
+//go:generate ../bin/dev-tools/mockgen -package mock -destination=./jobmanager.go github.com/SamsungSLAV/weles JobManager
 
-//go:generate ../bin/dev-tools/mockgen -package mock -destination=./parser.go git.tizen.org/tools/weles Parser
+//go:generate ../bin/dev-tools/mockgen -package mock -destination=./parser.go github.com/SamsungSLAV/weles Parser

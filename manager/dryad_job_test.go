@@ -20,8 +20,8 @@ import (
 	"context"
 	"errors"
 
-	. "git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/manager/mock"
+	. "github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/manager/mock"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"

@@ -16,17 +16,14 @@
 
 package mock
 
-//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./jobscontroller.go git.tizen.org/tools/weles/controller JobsController
+//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./jobscontroller.go github.com/SamsungSLAV/weles/controller JobsController
 
-// TODO: fix relative path to absolute
-// You need to have Boruta checked out next to Weles for below go generate to work.
-// Reflect mode will not work in below case.
-//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./requests.go -source=../../../boruta/boruta.go
+//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./requests.go github.com/SamsungSLAV/boruta Requests
 
-//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./boruter.go git.tizen.org/tools/weles/controller Boruter
+//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./boruter.go github.com/SamsungSLAV/weles/controller Boruter
 
-//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./downloader.go git.tizen.org/tools/weles/controller Downloader
+//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./downloader.go github.com/SamsungSLAV/weles/controller Downloader
 
-//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./dryader.go git.tizen.org/tools/weles/controller Dryader
+//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./dryader.go github.com/SamsungSLAV/weles/controller Dryader
 
-//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./parser.go git.tizen.org/tools/weles/controller Parser
+//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./parser.go github.com/SamsungSLAV/weles/controller Parser

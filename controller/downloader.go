@@ -20,8 +20,8 @@
 package controller
 
 import (
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/controller/notifier"
 )
 
 // Downloader defines action run for a Job to download artifacts required to
