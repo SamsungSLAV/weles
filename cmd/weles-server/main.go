@@ -24,13 +24,13 @@ import (
 	loads "github.com/go-openapi/loads"
 	flag "github.com/spf13/pflag"
 
-	"git.tizen.org/tools/boruta/http/client"
-	"git.tizen.org/tools/weles/artifacts"
-	"git.tizen.org/tools/weles/controller"
-	"git.tizen.org/tools/weles/manager"
-	"git.tizen.org/tools/weles/parser"
-	"git.tizen.org/tools/weles/server"
-	"git.tizen.org/tools/weles/server/operations"
+	"github.com/SamsungSLAV/boruta/http/client"
+	"github.com/SamsungSLAV/weles/artifacts"
+	"github.com/SamsungSLAV/weles/controller"
+	"github.com/SamsungSLAV/weles/manager"
+	"github.com/SamsungSLAV/weles/parser"
+	"github.com/SamsungSLAV/weles/server"
+	"github.com/SamsungSLAV/weles/server/operations"
 )
 
 var (

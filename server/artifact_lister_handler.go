@@ -17,8 +17,8 @@ package server
 import (
 	"github.com/go-openapi/runtime/middleware"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/server/operations/artifacts"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/server/operations/artifacts"
 )
 
 // ArtifactLister is a handler which passess requests for listing artifacts to ArtifactManager.

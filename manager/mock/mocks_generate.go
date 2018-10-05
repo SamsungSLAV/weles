@@ -16,6 +16,6 @@
 
 package mock
 
-//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./communication_provider.go git.tizen.org/tools/weles/manager/dryad DeviceCommunicationProvider
+//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./communication_provider.go github.com/SamsungSLAV/weles/manager/dryad DeviceCommunicationProvider
 
-//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./dryad_job_runner.go git.tizen.org/tools/weles/manager DryadJobRunner
+//go:generate ../../bin/dev-tools/mockgen -package mock -destination=./dryad_job_runner.go github.com/SamsungSLAV/weles/manager DryadJobRunner

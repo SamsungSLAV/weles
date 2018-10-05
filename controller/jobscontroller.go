@@ -22,7 +22,7 @@
 package controller
 
 import (
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 // Job contains all information about Job embedding public part - JobInfo.

@@ -26,9 +26,9 @@ import (
 	"sync"
 	"time"
 
-	"git.tizen.org/tools/boruta"
+	"github.com/SamsungSLAV/boruta"
 
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 // Controller binds all major components of Weles and provides logic layer

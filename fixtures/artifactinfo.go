@@ -23,7 +23,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/tideland/golib/audit"
 
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 const (

@@ -22,8 +22,8 @@ import (
 	"context"
 	"log"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/manager/dryad"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/manager/dryad"
 )
 
 // dryadJobRunner implements DryadJobRunner interface.

@@ -19,8 +19,8 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/server/operations/jobs"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/server/operations/jobs"
 )
 
 // JobLister is a handler which passess requests for listing jobs to jobmanager.

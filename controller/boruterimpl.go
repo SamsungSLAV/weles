@@ -25,9 +25,9 @@ import (
 	"sync"
 	"time"
 
-	"git.tizen.org/tools/boruta"
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/controller/notifier"
+	"github.com/SamsungSLAV/boruta"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/controller/notifier"
 )
 
 // TODO ProlongAccess to Dryad in Boruta, before time expires.

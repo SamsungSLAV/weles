@@ -5,9 +5,9 @@
 package mock
 
 import (
-	rsa "crypto/rsa"
-	boruta "git.tizen.org/tools/boruta"
+	boruta "github.com/SamsungSLAV/boruta"
 	gomock "github.com/golang/mock/gomock"
+	ssh "golang.org/x/crypto/ssh"
 	reflect "reflect"
 	time "time"
 )
@@ -182,15 +182,15 @@ func (m *MockSuperviser) EXPECT() *MockSuperviserMockRecorder {
 }
 
 // Register mocks base method
-func (m *MockSuperviser) Register(caps boruta.Capabilities) error {
-	ret := m.ctrl.Call(m, "Register", caps)
+func (m *MockSuperviser) Register(caps boruta.Capabilities, dryadAddress, sshAddress string) error {
+	ret := m.ctrl.Call(m, "Register", caps, dryadAddress, sshAddress)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Register indicates an expected call of Register
-func (mr *MockSuperviserMockRecorder) Register(caps interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockSuperviser)(nil).Register), caps)
+func (mr *MockSuperviserMockRecorder) Register(caps, dryadAddress, sshAddress interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockSuperviser)(nil).Register), caps, dryadAddress, sshAddress)
 }
 
 // SetFail mocks base method
@@ -326,16 +326,15 @@ func (mr *MockDryadMockRecorder) PutInMaintenance(msg interface{}) *gomock.Call 
 }
 
 // Prepare mocks base method
-func (m *MockDryad) Prepare() (*rsa.PrivateKey, error) {
-	ret := m.ctrl.Call(m, "Prepare")
-	ret0, _ := ret[0].(*rsa.PrivateKey)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+func (m *MockDryad) Prepare(key *ssh.PublicKey) error {
+	ret := m.ctrl.Call(m, "Prepare", key)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Prepare indicates an expected call of Prepare
-func (mr *MockDryadMockRecorder) Prepare() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Prepare", reflect.TypeOf((*MockDryad)(nil).Prepare))
+func (mr *MockDryadMockRecorder) Prepare(key interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Prepare", reflect.TypeOf((*MockDryad)(nil).Prepare), key)
 }
 
 // Healthcheck mocks base method

@@ -22,7 +22,7 @@
 package notifier
 
 import (
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 // Impl implements Notifier interface

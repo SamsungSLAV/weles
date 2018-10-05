@@ -28,6 +28,7 @@ swagger-server-generate:  swagger.yml COPYING
 		-r ./COPYING \
 		--flag-strategy pflag \
 		--exclude-main \
+		--skip-models \
 		--compatibility-mode=modern
 	dep ensure
 

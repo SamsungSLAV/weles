@@ -15,7 +15,7 @@
 package server
 
 import (
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 // Managers provide implementation of JobManager and ArtifactManager interfaces.

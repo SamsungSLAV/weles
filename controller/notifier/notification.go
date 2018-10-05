@@ -20,7 +20,7 @@
 package notifier
 
 import (
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 // BuffSize is the default channel buffer size for channels passing

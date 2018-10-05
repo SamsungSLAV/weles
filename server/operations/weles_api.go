@@ -34,8 +34,8 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"git.tizen.org/tools/weles/server/operations/artifacts"
-	"git.tizen.org/tools/weles/server/operations/jobs"
+	"github.com/SamsungSLAV/weles/server/operations/artifacts"
+	"github.com/SamsungSLAV/weles/server/operations/jobs"
 )
 
 // NewWelesAPI creates a new Weles instance

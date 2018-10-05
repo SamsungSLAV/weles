@@ -29,11 +29,11 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/fixtures"
-	"git.tizen.org/tools/weles/mock"
-	"git.tizen.org/tools/weles/server"
-	"git.tizen.org/tools/weles/server/operations/artifacts"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/fixtures"
+	"github.com/SamsungSLAV/weles/mock"
+	"github.com/SamsungSLAV/weles/server"
+	"github.com/SamsungSLAV/weles/server/operations/artifacts"
 )
 
 var _ = Describe("Listing artifacts with server initialized", func() {
