@@ -17,7 +17,7 @@
 package manager
 
 import (
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 )
 
 // basicConfig is incomplete, but contains necessary definitions

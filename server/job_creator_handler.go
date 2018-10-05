@@ -15,8 +15,8 @@
 package server
 
 import (
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/server/operations/jobs"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/server/operations/jobs"
 	middleware "github.com/go-openapi/runtime/middleware"
 
 	"io/ioutil"

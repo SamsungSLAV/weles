@@ -22,8 +22,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/parser"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/parser"
 )
 
 var expectedConfig = weles.Config{

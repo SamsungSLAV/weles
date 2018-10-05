@@ -19,7 +19,7 @@ package manager
 import (
 	"sync"
 
-	. "git.tizen.org/tools/weles"
+	. "github.com/SamsungSLAV/weles"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"

@@ -27,10 +27,10 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/tideland/golib/audit"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/mock"
-	"git.tizen.org/tools/weles/server"
-	"git.tizen.org/tools/weles/server/operations"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/mock"
+	"github.com/SamsungSLAV/weles/server"
+	"github.com/SamsungSLAV/weles/server/operations"
 )
 
 const (

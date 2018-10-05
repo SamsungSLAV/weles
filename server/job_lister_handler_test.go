@@ -31,10 +31,10 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/mock"
-	"git.tizen.org/tools/weles/server"
-	"git.tizen.org/tools/weles/server/operations/jobs"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/mock"
+	"github.com/SamsungSLAV/weles/server"
+	"github.com/SamsungSLAV/weles/server/operations/jobs"
 )
 
 var _ = Describe("Listing jobs with server initialized", func() {

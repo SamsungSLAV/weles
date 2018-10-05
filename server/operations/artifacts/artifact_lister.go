@@ -28,7 +28,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	swag "github.com/go-openapi/swag"
 
-	weles "git.tizen.org/tools/weles"
+	weles "github.com/SamsungSLAV/weles"
 )
 
 // ArtifactListerHandlerFunc turns a function with the right signature into a artifact lister handler

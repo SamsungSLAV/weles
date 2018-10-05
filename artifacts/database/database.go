@@ -23,7 +23,7 @@ import (
 	"log"
 	"strings"
 
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 
 	"github.com/go-gorp/gorp"
 	// sqlite3 is imported for side-effects and will be used

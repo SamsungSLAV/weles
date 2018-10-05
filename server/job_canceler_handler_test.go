@@ -26,8 +26,8 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/mock"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/mock"
 )
 
 var _ = Describe("JobCancelerHandler", func() {

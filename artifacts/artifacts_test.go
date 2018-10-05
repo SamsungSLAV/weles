@@ -27,7 +27,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 
 	_ "github.com/mattn/go-sqlite3"
 	. "github.com/onsi/ginkgo"

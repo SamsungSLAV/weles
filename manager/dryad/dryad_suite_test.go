@@ -29,7 +29,7 @@ import (
 
 	"encoding/pem"
 
-	. "git.tizen.org/tools/weles"
+	. "github.com/SamsungSLAV/weles"
 )
 
 func TestManager(t *testing.T) {

@@ -21,8 +21,8 @@
 package controller
 
 import (
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/controller/notifier"
 )
 
 // Boruter defines actions run for a Job to request and acquire or release Dryad.

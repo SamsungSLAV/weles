@@ -22,8 +22,8 @@ import (
 	"fmt"
 	"sync"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/controller/notifier"
 )
 
 const (

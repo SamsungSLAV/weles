@@ -21,7 +21,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"git.tizen.org/tools/weles/manager/dryad/mock"
+	"github.com/SamsungSLAV/weles/manager/dryad/mock"
 )
 
 var _ = Describe("DeviceCommunicationProvider", func() {

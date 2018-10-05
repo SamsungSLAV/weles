@@ -26,7 +26,7 @@ import (
 
 	"crypto/rsa"
 
-	"git.tizen.org/tools/weles"
+	"github.com/SamsungSLAV/weles"
 	"golang.org/x/crypto/ssh"
 )
 

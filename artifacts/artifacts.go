@@ -28,9 +28,9 @@ import (
 
 	"github.com/go-openapi/strfmt"
 
-	"git.tizen.org/tools/weles"
-	"git.tizen.org/tools/weles/artifacts/database"
-	"git.tizen.org/tools/weles/artifacts/downloader"
+	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/artifacts/database"
+	"github.com/SamsungSLAV/weles/artifacts/downloader"
 )
 
 // ArtifactDownloader downloads requested file if there is need to.
