@@ -22,6 +22,30 @@
       "revId": "a1763153e9decda42e896b7713410df9776dea13",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b6a3bb7_c6b97759",
+        "filename": "controller/mock/mocks_generate.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-10-08T14:27:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2287498d_aae6185e",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 116
+      },
+      "revId": "a1763153e9decda42e896b7713410df9776dea13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
