@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "27b7d35f_e75f9cbe",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-10-08T09:41:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27d8f1bb_6b58243c",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 17
+      },
+      "revId": "2beb6f812c425dd51969912b4e70b49a0a82bcb2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1e35ff87_57ba6e35",
         "filename": "manager/dryad_job_runner_conf_test.go",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-10-05T18:53:29Z",
       "side": 1,
       "message": "update date",
+      "range": {
+        "startLine": 2,
+        "startChar": 18,
+        "endLine": 2,
+        "endChar": 22
+      },
+      "revId": "2beb6f812c425dd51969912b4e70b49a0a82bcb2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7994748_f2499c80",
+        "filename": "manager/dryad_job_runner_conf_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-10-08T09:41:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e35ff87_57ba6e35",
       "range": {
         "startLine": 2,
         "startChar": 18,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "ae8e2d3e_fe493575",
+        "filename": "parser/parser.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-10-08T09:41:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06855dcd_dfa67fa3",
+      "range": {
+        "startLine": 2,
+        "startChar": 18,
+        "endLine": 2,
+        "endChar": 22
+      },
+      "revId": "2beb6f812c425dd51969912b4e70b49a0a82bcb2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a45ff84f_3b28291c",
         "filename": "parser/weles_parser_test.go",
         "patchSetId": 1
@@ -82,6 +154,30 @@
       "writtenOn": "2018-10-05T18:53:29Z",
       "side": 1,
       "message": "update date",
+      "range": {
+        "startLine": 2,
+        "startChar": 18,
+        "endLine": 2,
+        "endChar": 22
+      },
+      "revId": "2beb6f812c425dd51969912b4e70b49a0a82bcb2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be971064_1ea2677d",
+        "filename": "parser/weles_parser_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-10-08T09:41:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a45ff84f_3b28291c",
       "range": {
         "startLine": 2,
         "startChar": 18,
