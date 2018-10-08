@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2287498d_aae6185e",
+        "filename": "controller/mock/mocks_generate.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-10-08T13:57:07Z",
+      "side": 1,
+      "message": "Please change to:\n//go:generate ../../bin/dev-tools/mockgen -package mock -destination\u003d./requests.go github.com/SamsungSLAV/boruta Requests\n\nso we dont need boruta checked out locally",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 116
+      },
+      "revId": "a1763153e9decda42e896b7713410df9776dea13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
