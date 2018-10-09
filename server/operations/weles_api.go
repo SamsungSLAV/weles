@@ -35,6 +35,7 @@ import (
 	"github.com/go-openapi/swag"
 
 	"github.com/SamsungSLAV/weles/server/operations/artifacts"
+	"github.com/SamsungSLAV/weles/server/operations/general"
 	"github.com/SamsungSLAV/weles/server/operations/jobs"
 )
 
@@ -67,6 +68,9 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 		}),
 		JobsJobListerHandler: jobs.JobListerHandlerFunc(func(params jobs.JobListerParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobLister has not yet been implemented")
+		}),
+		GeneralVersionHandler: general.VersionHandlerFunc(func(params general.VersionParams) middleware.Responder {
+			return middleware.NotImplemented("operation GeneralVersion has not yet been implemented")
 		}),
 	}
 }
@@ -109,6 +113,8 @@ type WelesAPI struct {
 	JobsJobCreatorHandler jobs.JobCreatorHandler
 	// JobsJobListerHandler sets the operation handler for the job lister operation
 	JobsJobListerHandler jobs.JobListerHandler
+	// GeneralVersionHandler sets the operation handler for the version operation
+	GeneralVersionHandler general.VersionHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -190,6 +196,10 @@ func (o *WelesAPI) Validate() error {
 
 	if o.JobsJobListerHandler == nil {
 		unregistered = append(unregistered, "jobs.JobListerHandler")
+	}
+
+	if o.GeneralVersionHandler == nil {
+		unregistered = append(unregistered, "general.VersionHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -312,6 +322,11 @@ func (o *WelesAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/jobs/list"] = jobs.NewJobLister(o.context, o.JobsJobListerHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/version"] = general.NewVersion(o.context, o.GeneralVersionHandler)
 
 }
 
