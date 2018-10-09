@@ -1,0 +1,20 @@
+Release 0.1.0 - Fri Oct. 12 2018 - Paweł Wieczorek <p.wieczorek2@samsung.com>
+=============================================================================
+* Basic LAVA YAML job description support:
+  - Deploy (including partition mapping)
+  - Boot (with login and prompt variants)
+  - Test (run/push/pull actions)
+* Requesting DUT from Boruta based on "device_type" capability
+* Obtaining and storing job assets and artifacts locally
+* Sharing assets and artifacts with reverse SSHFS
+* Dryad requirements (under /usr/local/bin path):
+  - stm (for power controlling actions: -dut/-ts/-tick)
+  - fota (supporting mapping-based selective flashing)
+  - dut_boot.sh
+  - dut_login.sh
+  - dut_copyto.sh
+  - dut_copyfrom.sh
+  - dut_exec.sh
+* HTTP API v1:
+  - jobs: create new, cancel, list with filtering and sorting (paginated)
+  - artifacts: list with filtering and sorting (paginated)
