@@ -3,7 +3,7 @@ info:
   description: >-
     This is a Weles server.   You can find out more about Weles at
     [http://tbd.tbd](http://tbd.tbd).
-  version: 0.0.0
+  version: v1
   title: Weles
   termsOfService: 'http://tbd.tbd/terms/'
   contact:
@@ -22,6 +22,8 @@ tags:
     description: Info and management of Weles jobs.
   - name: artifacts
     description: Info about all artifacts used by Weles jobs.
+  - name: general
+    description: Info about Weles (e.g. version)
 schemes:
   - http
 paths:
@@ -267,6 +269,33 @@ paths:
           $ref: '#/responses/BadRequest'
         '404':
           $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/InternalServer'
+  /version:
+    get:
+      tags:
+        - general
+      summary: Show current version of Weles internals
+      description: Version and state of API (e.g. v1 obsolete, v2 stable,
+                   v3 devel) and server version.
+      operationId: Version
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Version'
+          headers:
+            Weles-Server-Version:
+              type: string
+              description: Version of Weles server.
+            Weles-API-Version:
+              type: string
+              description: Version of Weles API.
+            Weles-API-State:
+              type: string
+              description: State of Weles API.
         '500':
           $ref: '#/responses/InternalServer'
 responses:
@@ -552,6 +581,24 @@ definitions:
         $ref: '#/definitions/ArtifactSortBy'
       SortOrder:
         $ref: '#/definitions/SortOrder'
+  Version:
+    description: |
+      defines version of Weles API (and its state) and server.
+    type: object
+    properties:
+      Server:
+        description: Version of Weles server.
+        type: string
+      API:
+        description: Version of Weles API.
+        type: string
+      State:
+        description: State of Weles API.
+        type: string
+        enum:
+          - devel
+          - stable
+          - deprecated
 externalDocs:
   description: TBD
   url: 'http://TBD.tbd'

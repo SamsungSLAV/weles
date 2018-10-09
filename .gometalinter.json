@@ -49,5 +49,6 @@
     "job_info.go",
     "job_sort_by.go",
     "job_status.go",
-    "sort_order.go"]
+    "sort_order.go",
+    "version.go"]
 }
