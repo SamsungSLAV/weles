@@ -16,3 +16,6 @@
 
 // Package weles represents the base of the Weles system.
 package weles
+
+// SrvVersion indicates version of Weles server.
+const SrvVersion string = "0.1.0"
