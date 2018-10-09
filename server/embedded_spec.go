@@ -54,7 +54,7 @@ func init() {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "version": "0.0.0"
+    "version": "0.1.0"
   },
   "host": "localhost:8088",
   "basePath": "/api/v1",
@@ -387,6 +387,44 @@ func init() {
           }
         }
       }
+    },
+    "/version": {
+      "get": {
+        "description": "Version and state of API (e.g. v1 obsolete, v2 stable, v3 devel) and server version.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "general"
+        ],
+        "summary": "Show current version of Weles internals",
+        "operationId": "Version",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Version"
+            },
+            "headers": {
+              "API-State": {
+                "type": "string",
+                "description": "State of Weles API."
+              },
+              "API-Version": {
+                "type": "string",
+                "description": "Version of Weles API."
+              },
+              "Server-Version": {
+                "type": "string",
+                "description": "Version of Weles server."
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/responses/InternalServer"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -657,6 +695,29 @@ func init() {
         "Ascending",
         "Descending"
       ]
+    },
+    "Version": {
+      "description": "defines version of Weles API (and its state) and server.\n",
+      "type": "object",
+      "properties": {
+        "API": {
+          "description": "Version of Weles API.",
+          "type": "string"
+        },
+        "Server": {
+          "description": "Version of Weles server.",
+          "type": "string"
+        },
+        "State": {
+          "description": "State of Weles API.",
+          "type": "string",
+          "enum": [
+            "devel",
+            "stable",
+            "deprecated"
+          ]
+        }
+      }
     }
   },
   "responses": {
@@ -705,6 +766,10 @@ func init() {
     {
       "description": "Info about all artifacts used by Weles jobs.",
       "name": "artifacts"
+    },
+    {
+      "description": "Info about Weles (e.g. version)",
+      "name": "general"
     }
   ],
   "externalDocs": {
@@ -734,7 +799,7 @@ func init() {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "version": "0.0.0"
+    "version": "0.1.0"
   },
   "host": "localhost:8088",
   "basePath": "/api/v1",
@@ -1103,6 +1168,47 @@ func init() {
           }
         }
       }
+    },
+    "/version": {
+      "get": {
+        "description": "Version and state of API (e.g. v1 obsolete, v2 stable, v3 devel) and server version.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "general"
+        ],
+        "summary": "Show current version of Weles internals",
+        "operationId": "Version",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Version"
+            },
+            "headers": {
+              "API-State": {
+                "type": "string",
+                "description": "State of Weles API."
+              },
+              "API-Version": {
+                "type": "string",
+                "description": "Version of Weles API."
+              },
+              "Server-Version": {
+                "type": "string",
+                "description": "Version of Weles server."
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1373,6 +1479,29 @@ func init() {
         "Ascending",
         "Descending"
       ]
+    },
+    "Version": {
+      "description": "defines version of Weles API (and its state) and server.\n",
+      "type": "object",
+      "properties": {
+        "API": {
+          "description": "Version of Weles API.",
+          "type": "string"
+        },
+        "Server": {
+          "description": "Version of Weles server.",
+          "type": "string"
+        },
+        "State": {
+          "description": "State of Weles API.",
+          "type": "string",
+          "enum": [
+            "devel",
+            "stable",
+            "deprecated"
+          ]
+        }
+      }
     }
   },
   "responses": {
@@ -1421,6 +1550,10 @@ func init() {
     {
       "description": "Info about all artifacts used by Weles jobs.",
       "name": "artifacts"
+    },
+    {
+      "description": "Info about Weles (e.g. version)",
+      "name": "general"
     }
   ],
   "externalDocs": {

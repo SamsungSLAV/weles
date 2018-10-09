@@ -24,9 +24,16 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 
+	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/server/operations"
 	"github.com/SamsungSLAV/weles/server/operations/artifacts"
+	"github.com/SamsungSLAV/weles/server/operations/general"
 	"github.com/SamsungSLAV/weles/server/operations/jobs"
+)
+
+const (
+	apiVersion = "0.1.0"
+	apiState   = weles.VersionStateDevel
 )
 
 func configureFlags(api *operations.WelesAPI) {
@@ -57,6 +64,8 @@ func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 	api.JobsJobListerHandler = jobs.JobListerHandlerFunc(a.JobLister)
 
 	api.ArtifactsArtifactListerHandler = artifacts.ArtifactListerHandlerFunc(a.ArtifactLister)
+
+	api.GeneralVersionHandler = general.VersionHandlerFunc(a.Version)
 
 	api.ServerShutdown = func() {}
 
