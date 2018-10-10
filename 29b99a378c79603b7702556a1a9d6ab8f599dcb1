@@ -42,6 +42,24 @@
     },
     {
       "key": {
+        "uuid": "e7f3be96_6712cc48",
+        "filename": "Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-10-10T06:07:29Z",
+      "side": 1,
+      "message": "ad 1) this is container only for building not running Weles, thus this file should not go into containers bin (as this could indicate other purpose of this dockerfile)\nad 2) to specify output to /weles explicitly",
+      "parentUuid": "b0e1b8bd_871efeaa",
+      "revId": "29b99a378c79603b7702556a1a9d6ab8f599dcb1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7992417b_fcb4829d",
         "filename": "Makefile",
         "patchSetId": 3
@@ -53,6 +71,30 @@
       "writtenOn": "2018-10-09T19:52:00Z",
       "side": 1,
       "message": "\"make clean\" should clean what was made by \"make\".\nHere you clean-vendor, which was not created by run of default make target",
+      "range": {
+        "startLine": 24,
+        "startChar": 26,
+        "endLine": 25,
+        "endChar": 0
+      },
+      "revId": "29b99a378c79603b7702556a1a9d6ab8f599dcb1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebd40c32_e3ecf6e5",
+        "filename": "Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-10-10T06:07:29Z",
+      "side": 1,
+      "message": "my bad",
+      "parentUuid": "7992417b_fcb4829d",
       "range": {
         "startLine": 24,
         "startChar": 26,
