@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e21b48a2_cc09aa73",
+        "filename": "Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-10-10T15:50:17Z",
+      "side": 1,
+      "message": "Done (americanish)",
+      "parentUuid": "cff8ac6a_f88398de",
+      "range": {
+        "startLine": 17,
+        "startChar": 31,
+        "endLine": 17,
+        "endChar": 41
+      },
+      "revId": "29b99a378c79603b7702556a1a9d6ab8f599dcb1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b0e1b8bd_871efeaa",
         "filename": "Dockerfile",
         "patchSetId": 3
@@ -53,6 +77,24 @@
       "writtenOn": "2018-10-10T06:07:29Z",
       "side": 1,
       "message": "ad 1) this is container only for building not running Weles, thus this file should not go into containers bin (as this could indicate other purpose of this dockerfile)\nad 2) to specify output to /weles explicitly",
+      "parentUuid": "b0e1b8bd_871efeaa",
+      "revId": "29b99a378c79603b7702556a1a9d6ab8f599dcb1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eccbe83a_cedd8f80",
+        "filename": "Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-10-10T15:50:17Z",
+      "side": 1,
+      "message": "For similarity with Boruta Dockerfile:\n\n* shorter path to extract artifact\n* no make server in Boruta so far",
       "parentUuid": "b0e1b8bd_871efeaa",
       "revId": "29b99a378c79603b7702556a1a9d6ab8f599dcb1",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
@@ -94,6 +136,30 @@
       "writtenOn": "2018-10-10T06:07:29Z",
       "side": 1,
       "message": "my bad",
+      "parentUuid": "7992417b_fcb4829d",
+      "range": {
+        "startLine": 24,
+        "startChar": 26,
+        "endLine": 25,
+        "endChar": 0
+      },
+      "revId": "29b99a378c79603b7702556a1a9d6ab8f599dcb1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7543f04a_4f98d444",
+        "filename": "Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-10-10T15:50:17Z",
+      "side": 1,
+      "message": "Done",
       "parentUuid": "7992417b_fcb4829d",
       "range": {
         "startLine": 24,
