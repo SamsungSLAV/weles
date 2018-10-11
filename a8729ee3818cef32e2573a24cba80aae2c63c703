@@ -22,6 +22,30 @@
       "revId": "a8729ee3818cef32e2573a24cba80aae2c63c703",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e76a969d_a761561e",
+        "filename": "Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-10-11T08:36:25Z",
+      "side": 1,
+      "message": "It has to be part local - swagger.yml contains information on given instance; this is OpenAPI-way of doing it",
+      "parentUuid": "5e33b1c6_c3119fde",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 18
+      },
+      "revId": "a8729ee3818cef32e2573a24cba80aae2c63c703",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
