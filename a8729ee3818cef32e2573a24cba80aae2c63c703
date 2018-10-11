@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e33b1c6_c3119fde",
+        "filename": "Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2018-10-11T08:33:07Z",
+      "side": 1,
+      "message": "I don\u0027t like it. It should either build entirely from downloaded version or from local sources, not part local, part upstream.",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 18
+      },
+      "revId": "a8729ee3818cef32e2573a24cba80aae2c63c703",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
