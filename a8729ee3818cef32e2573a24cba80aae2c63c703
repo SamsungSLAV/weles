@@ -46,6 +46,30 @@
       "revId": "a8729ee3818cef32e2573a24cba80aae2c63c703",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3742b6e_0faadbfc",
+        "filename": "Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2018-10-11T09:55:42Z",
+      "side": 1,
+      "message": "So could you please add information that instance details should be changes (and which fields are these)?",
+      "parentUuid": "e76a969d_a761561e",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 18
+      },
+      "revId": "a8729ee3818cef32e2573a24cba80aae2c63c703",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
