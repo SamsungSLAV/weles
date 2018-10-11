@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c34b7634_891231f6",
+        "filename": "server/version_handler_test.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2018-10-11T09:34:53Z",
+      "side": 1,
+      "message": "HTTP response headers aren\u0027t checked.",
+      "revId": "485ee03179cf3ffdccb01b808fd5e737dccab7af",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95feff55_3ae9d5c4",
+        "filename": "swagger.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2018-10-11T09:34:53Z",
+      "side": 1,
+      "message": "Please make it application specific headers.\nWeles-Server-Version",
+      "range": {
+        "startLine": 290,
+        "startChar": 12,
+        "endLine": 290,
+        "endChar": 26
+      },
+      "revId": "485ee03179cf3ffdccb01b808fd5e737dccab7af",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2184d822_df9cd822",
+        "filename": "swagger.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2018-10-11T09:34:53Z",
+      "side": 1,
+      "message": "Weles-API-Version",
+      "range": {
+        "startLine": 293,
+        "startChar": 12,
+        "endLine": 293,
+        "endChar": 23
+      },
+      "revId": "485ee03179cf3ffdccb01b808fd5e737dccab7af",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6419bb27_76b987e6",
+        "filename": "swagger.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2018-10-11T09:34:53Z",
+      "side": 1,
+      "message": "Weles-API-State",
+      "range": {
+        "startLine": 296,
+        "startChar": 12,
+        "endLine": 296,
+        "endChar": 21
+      },
+      "revId": "485ee03179cf3ffdccb01b808fd5e737dccab7af",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
