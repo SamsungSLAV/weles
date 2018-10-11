@@ -34,6 +34,24 @@
       "revId": "f0ae85a4009650d3dcd61fa752bc17d1db6ba620",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d0c67f7_0370825c",
+        "filename": "ChangeLog",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015237
+      },
+      "writtenOn": "2018-10-11T07:49:11Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1411f593_e1e24a1b",
+      "revId": "f0ae85a4009650d3dcd61fa752bc17d1db6ba620",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
