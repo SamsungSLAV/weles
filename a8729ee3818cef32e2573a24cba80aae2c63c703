@@ -70,6 +70,30 @@
       "revId": "a8729ee3818cef32e2573a24cba80aae2c63c703",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f62132a3_c5e68e3a",
+        "filename": "Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-10-11T10:56:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3742b6e_0faadbfc",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 18
+      },
+      "revId": "a8729ee3818cef32e2573a24cba80aae2c63c703",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
