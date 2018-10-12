@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "70e89ba1_86722e0e",
+        "filename": "server/version_handler.go",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2018-10-12T05:51:59Z",
+      "side": 1,
+      "message": "missing docstring",
+      "revId": "7bfcfd5e8e555a866be084c245bdc917599eda76",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
