@@ -67,6 +67,16 @@ swagger-server-generate:  swagger.yml COPYING
 		--compatibility-mode=modern
 	dep ensure
 
+swagger-client-generate:  swagger.yml COPYING
+	./$(DEV_TOOLS_DIR)/swagger generate client\
+		-A weles \
+		-f ./swagger.yml \
+		-m ../weles \
+		-s ./server \
+		-r ./COPYING \
+		--skip-models \
+	dep ensure
+
 .PHONY: swagger-models-generate
 swagger-models-generate:  swagger.yml COPYING
 	./$(DEV_TOOLS_DIR)/swagger generate model \
