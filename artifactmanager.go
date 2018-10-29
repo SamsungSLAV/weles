@@ -18,12 +18,16 @@
 
 package weles
 
+type Artifacter interface {
+	// List filters ArtifactDB and returns list of all matching artifacts.
+	ListArtifact(filter ArtifactFilter, sorter ArtifactSorter, paginator ArtifactPagination) ([]ArtifactInfo, ListInfo, error) // nolint: lll
+}
+
 // ArtifactManager provides access to content in ArtifactDB required for Job execution.
 // It provides data from ArtifactDB for lookup and retrieval.
 // It is responsible for downloading job artifacts to ArtifactDB.
 type ArtifactManager interface {
-	// List filters ArtifactDB and returns list of all matching artifacts.
-	ListArtifact(filter ArtifactFilter, sorter ArtifactSorter, paginator ArtifactPagination) ([]ArtifactInfo, ListInfo, error) // nolint: lll
+	Artifacter
 
 	// Push inserts artifact to ArtifactDB and returns its path.
 	PushArtifact(artifact ArtifactDescription, ch chan ArtifactStatusChange) (ArtifactPath, error)
