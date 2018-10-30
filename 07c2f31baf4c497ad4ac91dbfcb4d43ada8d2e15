@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "81988e19_85aab08a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T17:19:27Z",
+      "side": 1,
+      "message": "ArtifactLister came to my mind, but discussion is open.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 10
+      },
+      "revId": "07c2f31baf4c497ad4ac91dbfcb4d43ada8d2e15",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "840337f9_886c9ffa",
+        "filename": "artifactmanager.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T17:19:27Z",
+      "side": 1,
+      "message": "not only",
+      "range": {
+        "startLine": 17,
+        "startChar": 35,
+        "endLine": 17,
+        "endChar": 50
+      },
+      "revId": "07c2f31baf4c497ad4ac91dbfcb4d43ada8d2e15",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3e150612_358fe41c",
+        "filename": "artifactmanager.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T17:19:27Z",
+      "side": 1,
+      "message": "godoc description missing",
+      "revId": "07c2f31baf4c497ad4ac91dbfcb4d43ada8d2e15",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e794b010_39f45fa6",
+        "filename": "artifactmanager.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T17:19:27Z",
+      "side": 1,
+      "message": "I don\u0027t know if ArtifactManager should contain Artifacter.\nThe AM methods are used for Weles internal purposes:\n* PushArtifact\n* CreateArtifact\n\nI don\u0027t find usage of:\n* GetArtifactInfo\n* Close (maybe I miss something in this case)\n\nThe moved method: ListArtifact is used only by HTTP server and this is also the only on that is used by http server from AM interface.\n\nIMO These 2 interfaces should be split as they have completely different users.",
+      "revId": "07c2f31baf4c497ad4ac91dbfcb4d43ada8d2e15",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
