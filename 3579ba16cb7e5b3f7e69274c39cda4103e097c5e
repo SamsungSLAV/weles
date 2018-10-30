@@ -1,0 +1,135 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6705ca2a_d145f234",
+        "filename": "client/client.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T20:43:39Z",
+      "side": 1,
+      "message": "missing license and copyrights",
+      "revId": "3579ba16cb7e5b3f7e69274c39cda4103e097c5e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "711ba0c4_e640001c",
+        "filename": "client/client.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T20:43:39Z",
+      "side": 1,
+      "message": "Drop JobSpecification stuff for good.\n\nYou can use function:\n func NamedReader(name string, rdr io.Reader) NamedReadCloser",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 1
+      },
+      "revId": "3579ba16cb7e5b3f7e69274c39cda4103e097c5e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "127b43ab_fbbe5a51",
+        "filename": "client/client.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T20:43:39Z",
+      "side": 1,
+      "message": "Create Job",
+      "range": {
+        "startLine": 34,
+        "startChar": 3,
+        "endLine": 34,
+        "endChar": 9
+      },
+      "revId": "3579ba16cb7e5b3f7e69274c39cda4103e097c5e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ad09c99_12f87d0b",
+        "filename": "client/client.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T20:43:39Z",
+      "side": 1,
+      "message": "start comment with function name",
+      "revId": "3579ba16cb7e5b3f7e69274c39cda4103e097c5e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4fab1fb0_42ccecc3",
+        "filename": "client/client.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T20:43:39Z",
+      "side": 1,
+      "message": "Why do you want this function to be generic ?\nThe implementation is not generic.\nThe usage is not generic (you must cast the result).\n\nIMO This function should be split into 2 functions: one for jobs, the other for artifacts",
+      "revId": "3579ba16cb7e5b3f7e69274c39cda4103e097c5e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2f3865f3_37071e39",
+        "filename": "client/errors.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T20:43:39Z",
+      "side": 1,
+      "message": "missing license and copyrights",
+      "revId": "3579ba16cb7e5b3f7e69274c39cda4103e097c5e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "65371251_640145c6",
+        "filename": "client/errors.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T20:43:39Z",
+      "side": 1,
+      "message": "missing godoc comment",
+      "revId": "3579ba16cb7e5b3f7e69274c39cda4103e097c5e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
