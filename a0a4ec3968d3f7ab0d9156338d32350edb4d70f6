@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ecf2e9f7_aa052cd6",
+        "filename": "Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T17:29:43Z",
+      "side": 1,
+      "message": "should be PHONY",
+      "range": {
+        "startLine": 70,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 24
+      },
+      "revId": "a0a4ec3968d3f7ab0d9156338d32350edb4d70f6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6f60e61_0f6abff8",
+        "filename": "Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-10-30T17:29:43Z",
+      "side": 1,
+      "message": "Will you create/save any server related package ?",
+      "range": {
+        "startLine": 75,
+        "startChar": 2,
+        "endLine": 75,
+        "endChar": 15
+      },
+      "revId": "a0a4ec3968d3f7ab0d9156338d32350edb4d70f6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
