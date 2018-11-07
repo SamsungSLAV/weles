@@ -282,7 +282,9 @@ With gently smiling jaws!
 				}
 
 				Eventually(func() weles.ArtifactStatus {
-					ai, err := silverKangaroo.GetArtifactInfo(path)
+					storage, ok := silverKangaroo.(*Storage)
+					Expect(ok).To(BeTrue())
+					ai, err := storage.getArtifactInfo(path)
 					Expect(err).ToNot(HaveOccurred())
 					return ai.Status
 				}).Should(Equal(finalStatus))

@@ -138,8 +138,8 @@ func (s *Storage) CreateArtifact(artifact weles.ArtifactDescription) (weles.Arti
 	return path, nil
 }
 
-// GetArtifactInfo is part of implementation of ArtifactManager interface.
-func (s *Storage) GetArtifactInfo(path weles.ArtifactPath) (weles.ArtifactInfo, error) {
+// getArtifactInfo is used in tests of ArtifactManager interface.
+func (s *Storage) getArtifactInfo(path weles.ArtifactPath) (weles.ArtifactInfo, error) {
 	return s.db.SelectPath(path)
 }
 

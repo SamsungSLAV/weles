@@ -58,19 +58,6 @@ func (mr *MockArtifactManagerMockRecorder) CreateArtifact(arg0 interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateArtifact", reflect.TypeOf((*MockArtifactManager)(nil).CreateArtifact), arg0)
 }
 
-// GetArtifactInfo mocks base method
-func (m *MockArtifactManager) GetArtifactInfo(arg0 weles.ArtifactPath) (weles.ArtifactInfo, error) {
-	ret := m.ctrl.Call(m, "GetArtifactInfo", arg0)
-	ret0, _ := ret[0].(weles.ArtifactInfo)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetArtifactInfo indicates an expected call of GetArtifactInfo
-func (mr *MockArtifactManagerMockRecorder) GetArtifactInfo(arg0 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetArtifactInfo", reflect.TypeOf((*MockArtifactManager)(nil).GetArtifactInfo), arg0)
-}
-
 // ListArtifact mocks base method
 func (m *MockArtifactManager) ListArtifact(arg0 weles.ArtifactFilter, arg1 weles.ArtifactSorter, arg2 weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
 	ret := m.ctrl.Call(m, "ListArtifact", arg0, arg1, arg2)

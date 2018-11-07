@@ -31,9 +31,6 @@ type ArtifactManager interface {
 	// Create constructs ArtifactPath in ArtifactDB, but no file is created.
 	CreateArtifact(artifact ArtifactDescription) (ArtifactPath, error)
 
-	// GetFileInfo retrieves information about an artifact from ArtifactDB.
-	GetArtifactInfo(path ArtifactPath) (ArtifactInfo, error)
-
 	// Close gracefully closes ArtifactManager.
 	Close() error
 }
