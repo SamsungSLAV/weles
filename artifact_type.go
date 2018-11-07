@@ -39,6 +39,8 @@ import (
 //
 // * YAML - yaml file describing Weles Job.
 //
+// * LOG - logs gathered by Weles (boot logs, device connection logs, etc.)
+//
 // swagger:model ArtifactType
 type ArtifactType string
 
@@ -55,6 +57,9 @@ const (
 
 	// ArtifactTypeYAML captures enum value "YAML"
 	ArtifactTypeYAML ArtifactType = "YAML"
+
+	// ArtifactTypeLOG captures enum value "LOG"
+	ArtifactTypeLOG ArtifactType = "LOG"
 )
 
 // for schema
@@ -62,7 +67,7 @@ var artifactTypeEnum []interface{}
 
 func init() {
 	var res []ArtifactType
-	if err := json.Unmarshal([]byte(`["IMAGE","RESULT","TEST","YAML",""]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["IMAGE","RESULT","TEST","YAML","LOG", ""]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
