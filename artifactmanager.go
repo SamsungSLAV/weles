@@ -30,8 +30,9 @@ type ArtifactManager interface {
 	// change of status of Artifact (e.g. READY or FAILED).
 	Download(artifact ArtifactDescription, ch chan ArtifactStatusChange) (ArtifactPath, error)
 
-	// Create constructs ArtifactPath in ArtifactDB, but no file is created.
-	CreateArtifact(artifact ArtifactDescription) (ArtifactPath, error)
+	// Create creates a record in ArtifactDB and prepares a path for other
+	// modules to save the file to. No file is created.
+	Create(artifact ArtifactDescription) (ArtifactPath, error)
 
 	// Close gracefully closes ArtifactManager.
 	Close() error

@@ -45,17 +45,17 @@ func (mr *MockArtifactManagerMockRecorder) Close() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockArtifactManager)(nil).Close))
 }
 
-// CreateArtifact mocks base method
-func (m *MockArtifactManager) CreateArtifact(arg0 weles.ArtifactDescription) (weles.ArtifactPath, error) {
-	ret := m.ctrl.Call(m, "CreateArtifact", arg0)
+// Create mocks base method
+func (m *MockArtifactManager) Create(arg0 weles.ArtifactDescription) (weles.ArtifactPath, error) {
+	ret := m.ctrl.Call(m, "Create", arg0)
 	ret0, _ := ret[0].(weles.ArtifactPath)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CreateArtifact indicates an expected call of CreateArtifact
-func (mr *MockArtifactManagerMockRecorder) CreateArtifact(arg0 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateArtifact", reflect.TypeOf((*MockArtifactManager)(nil).CreateArtifact), arg0)
+// Create indicates an expected call of Create
+func (mr *MockArtifactManagerMockRecorder) Create(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockArtifactManager)(nil).Create), arg0)
 }
 
 // Download mocks base method

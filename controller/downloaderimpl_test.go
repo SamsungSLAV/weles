@@ -256,7 +256,7 @@ var _ = Describe("DownloaderImpl", func() {
 			var prev, call *gomock.Call
 
 			for i = 0; i < successfulEntries; i++ {
-				call = am.EXPECT().CreateArtifact(
+				call = am.EXPECT().Create(
 					weles.ArtifactDescription{JobID: j, Type: types[i], Alias: aliases[i]}).
 					Return(returnPaths[i], nil)
 				if prev != nil {
@@ -265,7 +265,7 @@ var _ = Describe("DownloaderImpl", func() {
 				prev = call
 			}
 			if fail {
-				call = am.EXPECT().CreateArtifact(
+				call = am.EXPECT().Create(
 					weles.ArtifactDescription{JobID: j, Type: types[i], Alias: aliases[i]}).
 					Return(weles.ArtifactPath(""), err)
 				if prev != nil {
