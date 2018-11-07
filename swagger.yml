@@ -466,12 +466,15 @@ definitions:
 
       * YAML - yaml file describing Weles Job.
 
+      * LOG - logs gathered by Weles (boot logs, device connection logs, etc.)
+
     type: string
     enum:
       - IMAGE
       - RESULT
       - TEST
       - YAML
+      - LOG
   ArtifactPath:
     description: describes path to artifact in ArtifactDB filesystem.
     type: string
