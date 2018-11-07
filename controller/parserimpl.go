@@ -66,7 +66,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 		return
 	}
 
-	path, err := h.artifacts.CreateArtifact(weles.ArtifactDescription{
+	path, err := h.artifacts.Create(weles.ArtifactDescription{
 		JobID: j,
 		Type:  weles.ArtifactTypeYAML,
 	})
