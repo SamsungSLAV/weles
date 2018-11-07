@@ -57,6 +57,10 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
 		JSONProducer:          runtime.JSONProducer(),
+		MultipartformProducer: runtime.DiscardProducer,
+		ArtifactsArtifactDownloaderHandler: artifacts.ArtifactDownloaderHandlerFunc(func(params artifacts.ArtifactDownloaderParams) middleware.Responder {
+			return middleware.NotImplemented("operation ArtifactsArtifactDownloader has not yet been implemented")
+		}),
 		ArtifactsArtifactListerHandler: artifacts.ArtifactListerHandlerFunc(func(params artifacts.ArtifactListerParams) middleware.Responder {
 			return middleware.NotImplemented("operation ArtifactsArtifactLister has not yet been implemented")
 		}),
@@ -104,7 +108,11 @@ type WelesAPI struct {
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
+	// MultipartformProducer registers a producer for a "multipart/form-data" mime type
+	MultipartformProducer runtime.Producer
 
+	// ArtifactsArtifactDownloaderHandler sets the operation handler for the artifact downloader operation
+	ArtifactsArtifactDownloaderHandler artifacts.ArtifactDownloaderHandler
 	// ArtifactsArtifactListerHandler sets the operation handler for the artifact lister operation
 	ArtifactsArtifactListerHandler artifacts.ArtifactListerHandler
 	// JobsJobCancelerHandler sets the operation handler for the job canceler operation
@@ -180,6 +188,14 @@ func (o *WelesAPI) Validate() error {
 
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
+	}
+
+	if o.MultipartformProducer == nil {
+		unregistered = append(unregistered, "MultipartformProducer")
+	}
+
+	if o.ArtifactsArtifactDownloaderHandler == nil {
+		unregistered = append(unregistered, "artifacts.ArtifactDownloaderHandler")
 	}
 
 	if o.ArtifactsArtifactListerHandler == nil {
@@ -261,6 +277,9 @@ func (o *WelesAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 
+		case "multipart/form-data":
+			result["multipart/form-data"] = o.MultipartformProducer
+
 		}
 
 		if p, ok := o.customProducers[mt]; ok {
@@ -302,6 +321,11 @@ func (o *WelesAPI) initHandlerCache() {
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/artifacts/{ArtifactID}"] = artifacts.NewArtifactDownloader(o.context, o.ArtifactsArtifactDownloaderHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
