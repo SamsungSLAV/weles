@@ -252,7 +252,7 @@ With gently smiling jaws!
 				defer ts.Close()
 				ad.URI = weles.ArtifactURI(ts.URL)
 
-				path, err := silverKangaroo.PushArtifact(ad, ch)
+				path, err := silverKangaroo.Download(ad, ch)
 
 				Expect(err).ToNot(HaveOccurred())
 

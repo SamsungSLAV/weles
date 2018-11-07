@@ -25,8 +25,10 @@ type ArtifactManager interface {
 	// List filters ArtifactDB and returns list of all matching artifacts.
 	ListArtifact(filter ArtifactFilter, sorter ArtifactSorter, paginator ArtifactPagination) ([]ArtifactInfo, ListInfo, error) // nolint: lll
 
-	// Push inserts artifact to ArtifactDB and returns its path.
-	PushArtifact(artifact ArtifactDescription, ch chan ArtifactStatusChange) (ArtifactPath, error)
+	// Download creates a record in ArtifactDB and  starts download of
+	// artifact. ArtifactStatusChange channel receives notification about
+	// change of status of Artifact (e.g. READY or FAILED).
+	Download(artifact ArtifactDescription, ch chan ArtifactStatusChange) (ArtifactPath, error)
 
 	// Create constructs ArtifactPath in ArtifactDB, but no file is created.
 	CreateArtifact(artifact ArtifactDescription) (ArtifactPath, error)
