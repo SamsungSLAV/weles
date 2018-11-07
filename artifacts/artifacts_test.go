@@ -134,7 +134,7 @@ With gently smiling jaws!
 
 		var err error
 		By("CreateArtifact", func() {
-			path, err = silverKangaroo.CreateArtifact(description)
+			path, err = silverKangaroo.Create(description)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(path).NotTo(BeNil())
 		})
@@ -147,7 +147,7 @@ With gently smiling jaws!
 		})
 
 		By("Add new artifact for the same JobID", func() {
-			pathSame, err = silverKangaroo.CreateArtifact(dSameJobNType)
+			pathSame, err = silverKangaroo.Create(dSameJobNType)
 			Expect(err).ToNot(HaveOccurred())
 
 			Expect(jobDir).To(BeADirectory())
@@ -158,7 +158,7 @@ With gently smiling jaws!
 		})
 
 		By("Add artifact with other type for the same JobID", func() {
-			pathType, err = silverKangaroo.CreateArtifact(dSameJobOtherType)
+			pathType, err = silverKangaroo.Create(dSameJobOtherType)
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(jobDir).To(BeADirectory())

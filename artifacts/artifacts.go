@@ -99,7 +99,7 @@ func (s *Storage) ListArtifact(filter weles.ArtifactFilter, sorter weles.Artifac
 func (s *Storage) Download(artifact weles.ArtifactDescription,
 	ch chan weles.ArtifactStatusChange) (weles.ArtifactPath, error) {
 
-	path, err := s.CreateArtifact(artifact)
+	path, err := s.Create(artifact)
 	if err != nil {
 		return "", err
 	}
@@ -120,8 +120,8 @@ func (s *Storage) Download(artifact weles.ArtifactDescription,
 	return path, nil
 }
 
-// CreateArtifact is part of implementation of ArtifactManager interface.
-func (s *Storage) CreateArtifact(artifact weles.ArtifactDescription) (weles.ArtifactPath, error) {
+// Create is part of implementation of ArtifactManager interface.
+func (s *Storage) Create(artifact weles.ArtifactDescription) (weles.ArtifactPath, error) {
 	path, err := s.getNewPath(artifact)
 	if err != nil {
 		return "", err
