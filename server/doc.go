@@ -38,6 +38,7 @@ http://tbd.tbd/terms/
 
     Produces:
     - application/json
+    - multipart/form-data
 
 swagger:meta
 */
