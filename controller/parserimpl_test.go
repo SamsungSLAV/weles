@@ -68,7 +68,7 @@ var _ = Describe("ParserImpl", func() {
 			gomock.InOrder(
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
-				am.EXPECT().CreateArtifact(
+				am.EXPECT().Create(
 					weles.ArtifactDescription{
 						JobID: j,
 						Type:  weles.ArtifactTypeYAML,
@@ -88,7 +88,7 @@ var _ = Describe("ParserImpl", func() {
 			gomock.InOrder(
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
-				am.EXPECT().CreateArtifact(
+				am.EXPECT().Create(
 					weles.ArtifactDescription{
 						JobID: j,
 						Type:  weles.ArtifactTypeYAML,
@@ -110,7 +110,7 @@ var _ = Describe("ParserImpl", func() {
 			gomock.InOrder(
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
-				am.EXPECT().CreateArtifact(
+				am.EXPECT().Create(
 					weles.ArtifactDescription{
 						JobID: j,
 						Type:  weles.ArtifactTypeYAML,
@@ -131,7 +131,7 @@ var _ = Describe("ParserImpl", func() {
 			gomock.InOrder(
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
-				am.EXPECT().CreateArtifact(
+				am.EXPECT().Create(
 					weles.ArtifactDescription{
 						JobID: j,
 						Type:  weles.ArtifactTypeYAML,
@@ -152,7 +152,7 @@ var _ = Describe("ParserImpl", func() {
 			gomock.InOrder(
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
-				am.EXPECT().CreateArtifact(
+				am.EXPECT().Create(
 					weles.ArtifactDescription{
 						JobID: j,
 						Type:  weles.ArtifactTypeYAML,

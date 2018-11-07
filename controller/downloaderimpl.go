@@ -211,7 +211,7 @@ func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias, uri st
 
 // pullCreate creates a new path for pull artifact.
 func (h *DownloaderImpl) pullCreate(j weles.JobID, alias string) (string, error) {
-	p, err := h.artifacts.CreateArtifact(weles.ArtifactDescription{
+	p, err := h.artifacts.Create(weles.ArtifactDescription{
 		JobID: j,
 		Type:  weles.ArtifactTypeTEST,
 		Alias: weles.ArtifactAlias(alias),
