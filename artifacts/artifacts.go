@@ -94,8 +94,9 @@ func (s *Storage) ListArtifact(filter weles.ArtifactFilter, sorter weles.Artifac
 	return s.db.Filter(filter, sorter, paginator)
 }
 
-// PushArtifact is part of implementation of ArtifactManager interface.
-func (s *Storage) PushArtifact(artifact weles.ArtifactDescription,
+// Download artifact from artifact.URI and notify about success/failure using
+// ArtifactStatusChange channel.
+func (s *Storage) Download(artifact weles.ArtifactDescription,
 	ch chan weles.ArtifactStatusChange) (weles.ArtifactPath, error) {
 
 	path, err := s.CreateArtifact(artifact)

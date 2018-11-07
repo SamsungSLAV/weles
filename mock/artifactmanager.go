@@ -58,6 +58,19 @@ func (mr *MockArtifactManagerMockRecorder) CreateArtifact(arg0 interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateArtifact", reflect.TypeOf((*MockArtifactManager)(nil).CreateArtifact), arg0)
 }
 
+// Download mocks base method
+func (m *MockArtifactManager) Download(arg0 weles.ArtifactDescription, arg1 chan weles.ArtifactStatusChange) (weles.ArtifactPath, error) {
+	ret := m.ctrl.Call(m, "Download", arg0, arg1)
+	ret0, _ := ret[0].(weles.ArtifactPath)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Download indicates an expected call of Download
+func (mr *MockArtifactManagerMockRecorder) Download(arg0, arg1 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Download", reflect.TypeOf((*MockArtifactManager)(nil).Download), arg0, arg1)
+}
+
 // ListArtifact mocks base method
 func (m *MockArtifactManager) ListArtifact(arg0 weles.ArtifactFilter, arg1 weles.ArtifactSorter, arg2 weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
 	ret := m.ctrl.Call(m, "ListArtifact", arg0, arg1, arg2)
@@ -70,17 +83,4 @@ func (m *MockArtifactManager) ListArtifact(arg0 weles.ArtifactFilter, arg1 weles
 // ListArtifact indicates an expected call of ListArtifact
 func (mr *MockArtifactManagerMockRecorder) ListArtifact(arg0, arg1, arg2 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListArtifact", reflect.TypeOf((*MockArtifactManager)(nil).ListArtifact), arg0, arg1, arg2)
-}
-
-// PushArtifact mocks base method
-func (m *MockArtifactManager) PushArtifact(arg0 weles.ArtifactDescription, arg1 chan weles.ArtifactStatusChange) (weles.ArtifactPath, error) {
-	ret := m.ctrl.Call(m, "PushArtifact", arg0, arg1)
-	ret0, _ := ret[0].(weles.ArtifactPath)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// PushArtifact indicates an expected call of PushArtifact
-func (mr *MockArtifactManagerMockRecorder) PushArtifact(arg0, arg1 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PushArtifact", reflect.TypeOf((*MockArtifactManager)(nil).PushArtifact), arg0, arg1)
 }

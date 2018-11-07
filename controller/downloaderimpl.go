@@ -186,7 +186,7 @@ func (h *DownloaderImpl) removeJobInfo(j weles.JobID) error {
 // push delegates downloading single uri to ArtifactDB.
 func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias, uri string,
 ) (string, error) {
-	p, err := h.artifacts.PushArtifact(weles.ArtifactDescription{
+	p, err := h.artifacts.Download(weles.ArtifactDescription{
 		JobID: j,
 		Type:  t,
 		Alias: weles.ArtifactAlias(alias),

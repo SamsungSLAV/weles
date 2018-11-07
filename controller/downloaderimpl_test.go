@@ -219,7 +219,7 @@ var _ = Describe("DownloaderImpl", func() {
 			var prev, call *gomock.Call
 
 			for i = 0; i < successfulEntries; i++ {
-				call = am.EXPECT().PushArtifact(
+				call = am.EXPECT().Download(
 					weles.ArtifactDescription{
 						JobID: j,
 						Type:  types[i],
@@ -233,7 +233,7 @@ var _ = Describe("DownloaderImpl", func() {
 				prev = call
 			}
 			if fail {
-				call = am.EXPECT().PushArtifact(
+				call = am.EXPECT().Download(
 					weles.ArtifactDescription{
 						JobID: j,
 						Type:  types[i],

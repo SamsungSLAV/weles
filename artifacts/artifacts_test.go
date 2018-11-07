@@ -221,7 +221,7 @@ With gently smiling jaws!
 		)
 	})
 
-	Describe("PushArtifact", func() {
+	Describe("Downloading Artifact", func() {
 
 		var (
 			ch chan weles.ArtifactStatusChange
@@ -245,14 +245,14 @@ With gently smiling jaws!
 			ch = make(chan weles.ArtifactStatusChange, 20)
 		})
 
-		DescribeTable("Push artifact",
+		DescribeTable("Download Artifact",
 			func(ad weles.ArtifactDescription, finalStatus weles.ArtifactStatus) {
 
 				ts := prepareServer(ad.URI)
 				defer ts.Close()
 				ad.URI = weles.ArtifactURI(ts.URL)
 
-				path, err := silverKangaroo.PushArtifact(ad, ch)
+				path, err := silverKangaroo.Download(ad, ch)
 
 				Expect(err).ToNot(HaveOccurred())
 
