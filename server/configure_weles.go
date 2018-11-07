@@ -64,6 +64,8 @@ func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 	api.JobsJobListerHandler = jobs.JobListerHandlerFunc(a.JobLister)
 
 	api.ArtifactsArtifactListerHandler = artifacts.ArtifactListerHandlerFunc(a.ArtifactLister)
+	api.ArtifactsArtifactDownloaderHandler = artifacts.ArtifactDownloaderHandlerFunc(
+		a.Managers.ArtifactDownloader)
 
 	api.GeneralVersionHandler = general.VersionHandlerFunc(a.Version)
 
