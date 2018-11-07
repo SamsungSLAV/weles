@@ -183,6 +183,46 @@ func init() {
         }
       }
     },
+    "/artifacts/{ArtifactID}": {
+      "get": {
+        "description": "ArtifactDownload returns requested artifact.",
+        "produces": [
+          "multipart/form-data",
+          "application/json"
+        ],
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "Download artifact.",
+        "operationId": "ArtifactDownload",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "ArtifactID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServer"
+          }
+        }
+      }
+    },
     "/jobs": {
       "post": {
         "description": "adds new Job in Weles using recipe passed in YAML format.",
@@ -914,6 +954,55 @@ func init() {
                 "format": "uint64",
                 "description": "count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
               }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrResponse"
+            }
+          }
+        }
+      }
+    },
+    "/artifacts/{ArtifactID}": {
+      "get": {
+        "description": "ArtifactDownload returns requested artifact.",
+        "produces": [
+          "multipart/form-data",
+          "application/json"
+        ],
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "Download artifact.",
+        "operationId": "ArtifactDownload",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "ArtifactID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "file"
             }
           },
           "400": {
