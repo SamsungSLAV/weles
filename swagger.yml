@@ -271,6 +271,33 @@ paths:
           $ref: '#/responses/NotFound'
         '500':
           $ref: '#/responses/InternalServer'
+  '/artifacts/{ArtifactID}':
+    get:
+      tags:
+        - artifacts
+      summary: Download artifact.
+      description: ArtifactDownload returns requested artifact.
+      operationId: ArtifactDownload
+      produces:
+        - multipart/form-data
+        - application/json
+      parameters:
+        - in: path
+          required: true
+          name: ArtifactID
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: file
+        '400':
+          $ref: '#/responses/BadRequest'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/InternalServer'
   /version:
     get:
       tags:
