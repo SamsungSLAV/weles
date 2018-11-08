@@ -52,25 +52,30 @@ type ArtifactDownloader interface {
 type Storage struct {
 	weles.ArtifactManager
 	db         database.ArtifactDB
-	dir        string
+	fsDir      string
 	downloader ArtifactDownloader
 	notifier   chan weles.ArtifactStatusChange
 }
 
-func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
+// NewArtifactManager reads database file from dbPath or creates one if none provided.
+// It also creates (if neccessary) directories for artifact storage (fsDir).
+// notifierCap, workersCount, queueCap are parameters for downloader, please refer to
+// it's documentation.
+func NewArtifactManager(dbPath, fsDir string, notifierCap, workersCount, queueCap int,
 ) (weles.ArtifactManager, error) {
-	err := os.MkdirAll(dir, os.ModePerm)
+
+	err := os.MkdirAll(fsDir, os.ModePerm)
 	if err != nil {
 		return nil, err
 	}
 	notifier := make(chan weles.ArtifactStatusChange, notifierCap)
 
 	am := Storage{
-		dir:        dir,
+		fsDir:      fsDir,
 		downloader: downloader.NewDownloader(notifier, workersCount, queueCap),
 		notifier:   notifier,
 	}
-	err = am.db.Open(db)
+	err = am.db.Open(dbPath)
 	if err != nil {
 		return nil, err
 	}
@@ -78,13 +83,6 @@ func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
 	go am.listenToChanges()
 
 	return &am, nil
-}
-
-// NewArtifactManager returns initialized Storage implementing ArtifactManager interface.
-// If db or dir is empy, default value will be used.
-func NewArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
-) (weles.ArtifactManager, error) {
-	return newArtifactManager(filepath.Join(dir, db), dir, notifierCap, workersCount, queueCap)
 }
 
 // ListArtifact is part of implementation of ArtifactManager interface.
@@ -154,7 +152,7 @@ func (s *Storage) Close() error {
 // getNewPath prepares new path for artifact.
 func (s *Storage) getNewPath(ad weles.ArtifactDescription) (weles.ArtifactPath, error) {
 	var (
-		jobDir  = filepath.Join(s.dir, strconv.FormatUint(uint64(ad.JobID), 10))
+		jobDir  = filepath.Join(s.fsDir, strconv.FormatUint(uint64(ad.JobID), 10))
 		typeDir = filepath.Join(jobDir, string(ad.Type))
 		err     error
 	)
