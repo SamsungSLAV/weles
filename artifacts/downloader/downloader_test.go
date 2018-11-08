@@ -253,7 +253,7 @@ I call it stupid of the pig.
 			ts = prepareServer(validURL)
 
 			notification := make(chan weles.ArtifactStatusChange, notifyCap)
-			ironGopher := newDownloader(notification, 0, 0)
+			ironGopher := NewDownloader(notification, 0, 0)
 			defer ironGopher.Close()
 
 			path := weles.ArtifactPath(filepath.Join(validDir, "file"))
