@@ -37,8 +37,8 @@ import (
 var (
 	borutaAddress            string
 	borutaRefreshPeriod      time.Duration
-	artifactDBName           string
-	artifactDBLocation       string
+	artifactsDB              string
+	artifactsFS              string
 	artifactDownloadQueueCap int
 	activeWorkersCap         int
 	notifierChannelCap       int
@@ -71,11 +71,11 @@ func main() {
 	flag.DurationVar(&borutaRefreshPeriod, "boruta-refresh-period", 2*time.Second,
 		"Boruta refresh period")
 
-	flag.StringVar(&artifactDBName, "db-file", "weles.db",
-		"name of *.db file. Should be located in --db-location")
+	flag.StringVar(&artifactsDB, "db-path", "/var/weles/artifacts.db",
+		"Absolute path to where *.db file is located (or should be created).")
 
-	flag.StringVar(&artifactDBLocation, "db-location", "/tmp/weles/",
-		"location of *.db file and place where Weles will store artifacts.")
+	flag.StringVar(&artifactsFS, "fs-path", "/tmp/weles/",
+		"Absolute path to directory where Weles should store artifacts.")
 
 	//TODO: when cyberdryads or testlab instance will be present, performance tests should be done
 	// to set default values of below:
@@ -113,14 +113,14 @@ func main() {
 
 	var yap parser.Parser
 	am, err := artifacts.NewArtifactManager(
-		artifactDBName,
-		artifactDBLocation,
+		artifactsDB,
+		artifactsFS,
 		notifierChannelCap,
 		activeWorkersCap,
 		artifactDownloadQueueCap)
 	exitOnErr("failed to initialize ArtifactManager ", err)
 	bor := client.NewBorutaClient(borutaAddress)
-	djm := manager.NewDryadJobManager(artifactDBLocation)
+	djm := manager.NewDryadJobManager(artifactsFS)
 	jm := controller.NewJobManager(am, &yap, bor, borutaRefreshPeriod, djm)
 
 	api := operations.NewWelesAPI(swaggerSpec)

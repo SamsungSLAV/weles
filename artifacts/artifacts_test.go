@@ -90,7 +90,7 @@ With gently smiling jaws!
 		Expect(err).ToNot(HaveOccurred())
 		dbPath = filepath.Join(testDir, "test.db")
 
-		silverKangaroo, err = newArtifactManager(dbPath, testDir, 100, 16, 100)
+		silverKangaroo, err = NewArtifactManager(dbPath, testDir, 100, 16, 100)
 		//TODO add tests against different notifier cap, queue cap and workers count.
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -188,27 +188,13 @@ With gently smiling jaws!
 	})
 
 	Describe("Public initializer", func() {
-		var (
-			defaultDb  = "weles.db"
-			defaultDir = "/tmp/weles/"
-			customDb   = "nawia.db"
-			customDir  = "/tmp/weles-custom/"
-		)
-
 		DescribeTable("NewArtifactManager()", func(db, dir string) {
 			copperPanda, err := NewArtifactManager(db, dir, 100, 16, 100)
 			//TODO: add tests against different notifier cap and workers count.
 			Expect(err).ToNot(HaveOccurred())
 
-			if db == "" {
-				db = defaultDb
-			}
-			if dir == "" {
-				dir = defaultDir
-			}
-
 			Expect(dir).To(BeADirectory())
-			Expect(filepath.Join(dir, db)).To(BeAnExistingFile())
+			Expect(db).To(BeAnExistingFile())
 
 			err = copperPanda.Close()
 			Expect(err).ToNot(HaveOccurred())
@@ -216,8 +202,10 @@ With gently smiling jaws!
 			err = os.RemoveAll(dir)
 			Expect(err).ToNot(HaveOccurred())
 		},
-			Entry("create database in default directory", defaultDb, defaultDir),
-			Entry("create database in custom directory", customDb, customDir),
+			Entry("create database in default directory",
+				"/tmp/weles.db", "/tmp/weles/"),
+			Entry("create database in custom directory",
+				"/tmp/weles-custom/nawia.db", "/tmp/weles-custom/"),
 		)
 	})
 
