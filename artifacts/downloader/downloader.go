@@ -42,26 +42,20 @@ type downloadJob struct {
 	ch   chan weles.ArtifactStatusChange
 }
 
-// newDownloader returns initilized Downloader.
-func newDownloader(notification chan weles.ArtifactStatusChange, workers, queueSize int,
+// NewDownloader returns Downloader object which implements ArtifactDownloader interface.
+func NewDownloader(notification chan weles.ArtifactStatusChange, workerCount, queueCap int,
 ) *Downloader {
 	d := &Downloader{
 		notification: notification,
-		queue:        make(chan downloadJob, queueSize),
+		queue:        make(chan downloadJob, queueCap),
 	}
 
 	// Start all workers.
-	d.wg.Add(workers)
-	for i := 0; i < workers; i++ {
+	d.wg.Add(workerCount)
+	for i := 0; i < workerCount; i++ {
 		go d.work()
 	}
 	return d
-}
-
-// NewDownloader returns Downloader initialized  with default queue length
-func NewDownloader(notification chan weles.ArtifactStatusChange, workerCount, queueCap int,
-) *Downloader {
-	return newDownloader(notification, workerCount, queueCap)
 }
 
 // Close is part of implementation of ArtifactDownloader interface.
