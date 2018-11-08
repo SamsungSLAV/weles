@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b97c9c78_1e1faff9",
+        "filename": "artifactmanager.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-08T18:02:31Z",
+      "side": 1,
+      "message": "double space between sentences",
+      "revId": "fe95f3915e2d42b1d93d2c43dccb47f2a3c6ac25",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddb9893e_cc3b9979",
+        "filename": "artifacts/artifacts_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-08T18:02:31Z",
+      "side": 1,
+      "message": "missed this one || add space",
+      "revId": "fe95f3915e2d42b1d93d2c43dccb47f2a3c6ac25",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
