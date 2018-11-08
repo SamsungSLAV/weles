@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "971c4e24_f7a63e6f",
+        "filename": "artifactmanager.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-08T17:57:56Z",
+      "side": 1,
+      "message": "double space between \"and\" and \"starts\"",
+      "revId": "0a0462eabd07f1121fae15a5d07d2decdd343c20",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
