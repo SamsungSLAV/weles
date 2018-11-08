@@ -88,9 +88,10 @@ With gently smiling jaws!
 		var err error
 		testDir, err = ioutil.TempDir("", "test-weles-")
 		Expect(err).ToNot(HaveOccurred())
-		dbPath = filepath.Join(testDir, "test.db")
+		db := "test.db"
+		dbPath = filepath.Join(testDir, db)
 
-		silverKangaroo, err = newArtifactManager(dbPath, testDir, 100, 16, 100)
+		silverKangaroo, err = NewArtifactManager(db, testDir, 100, 16, 100)
 		//TODO add tests against different notifier cap, queue cap and workers count.
 		Expect(err).ToNot(HaveOccurred())
 	})

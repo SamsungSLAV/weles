@@ -57,7 +57,8 @@ type Storage struct {
 	notifier   chan weles.ArtifactStatusChange
 }
 
-func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
+// NewArtifactManager returns initialized Storage implementing ArtifactManager interface.
+func NewArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
 ) (weles.ArtifactManager, error) {
 	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
@@ -70,7 +71,7 @@ func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
 		downloader: downloader.NewDownloader(notifier, workersCount, queueCap),
 		notifier:   notifier,
 	}
-	err = am.db.Open(db)
+	err = am.db.Open(filepath.Join(dir, db))
 	if err != nil {
 		return nil, err
 	}
@@ -78,13 +79,6 @@ func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
 	go am.listenToChanges()
 
 	return &am, nil
-}
-
-// NewArtifactManager returns initialized Storage implementing ArtifactManager interface.
-// If db or dir is empy, default value will be used.
-func NewArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
-) (weles.ArtifactManager, error) {
-	return newArtifactManager(filepath.Join(dir, db), dir, notifierCap, workersCount, queueCap)
 }
 
 // ListArtifact is part of implementation of ArtifactManager interface.
