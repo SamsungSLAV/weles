@@ -19,6 +19,70 @@
     },
     {
       "key": {
+        "uuid": "88217eea_88024337",
+        "filename": "controller/boruterimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "it should be consistent, fixd.\nadditionally there was no context of error (e.g. JobID) - added that as well",
+      "parentUuid": "c5e8746c_c03e9e5c",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6aa26e5_50bdf271",
+        "filename": "controller/boruterimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "+ debug log?",
+      "range": {
+        "startLine": 207,
+        "startChar": 0,
+        "endLine": 212,
+        "endChar": 25
+      },
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1cc641ee_bde5d76a",
+        "filename": "controller/boruterimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "+Error log?",
+      "range": {
+        "startLine": 213,
+        "startChar": 3,
+        "endLine": 221,
+        "endChar": 58
+      },
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0fe18356_239cc3ba",
         "filename": "controller/downloaderimpl.go",
         "patchSetId": 2
@@ -33,6 +97,24 @@
       "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29db1452_73f8444f",
+        "filename": "controller/downloaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "singular it is",
+      "parentUuid": "0fe18356_239cc3ba",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +135,24 @@
     },
     {
       "key": {
+        "uuid": "0819c234_9e35499e",
+        "filename": "controller/downloaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e31634e0_0dd6bfff",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c00f0a46_e58bda51",
         "filename": "controller/downloaderimpl.go",
         "patchSetId": 2
@@ -67,6 +167,24 @@
       "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69475eaa_988176de",
+        "filename": "controller/downloaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "im hoping its not only possibility :)",
+      "parentUuid": "c00f0a46_e58bda51",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +205,24 @@
     },
     {
       "key": {
+        "uuid": "89cb506c_79040397",
+        "filename": "controller/downloaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93673733_7e29ff80",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9ab6e25a_216b7768",
         "filename": "controller/downloaderimpl.go",
         "patchSetId": 2
@@ -101,6 +237,24 @@
       "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28fd187d_9e3a5d97",
+        "filename": "controller/downloaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9ab6e25a_216b7768",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -121,6 +275,24 @@
     },
     {
       "key": {
+        "uuid": "b4f39803_7cf5322c",
+        "filename": "controller/downloaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "71c567d7_fe478de3",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "71e58381_3a593caa",
         "filename": "controller/dryaderimpl.go",
         "patchSetId": 2
@@ -135,6 +307,24 @@
       "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ae2576c_8dc6ad96",
+        "filename": "controller/dryaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "not only this time, missed a few more but im trying to catch them as I go thorough the commits.",
+      "parentUuid": "71e58381_3a593caa",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -155,6 +345,24 @@
     },
     {
       "key": {
+        "uuid": "8a5a9739_ff4fcf7f",
+        "filename": "controller/dryaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "123c7be3_b3ad7f57",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aee73fa_f35cd824",
         "filename": "controller/dryaderimpl.go",
         "patchSetId": 2
@@ -169,6 +377,24 @@
       "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b00780f6_98198f89",
+        "filename": "controller/dryaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "I\u0027m all in for not creating FAILED 1, but manager is a part of Weles I am least familiar with :(\nhope current error msg is more accurate",
+      "parentUuid": "1aee73fa_f35cd824",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -189,6 +415,24 @@
     },
     {
       "key": {
+        "uuid": "90197251_f2c7ba72",
+        "filename": "controller/jobscontrollerimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5b5003b5_583165e6",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "46f05621_0ba99332",
         "filename": "controller/jobscontrollerimpl.go",
         "patchSetId": 2
@@ -203,6 +447,24 @@
       "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8872a571_85e67bdb",
+        "filename": "controller/jobscontrollerimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "46f05621_0ba99332",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -223,6 +485,24 @@
     },
     {
       "key": {
+        "uuid": "f6b1e620_21581533",
+        "filename": "controller/jobscontrollerimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9217585d_83e14ea3",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7f944026_7339ac7e",
         "filename": "controller/parserimpl.go",
         "patchSetId": 2
@@ -240,6 +520,24 @@
     },
     {
       "key": {
+        "uuid": "19a17a89_9b94aa0d",
+        "filename": "controller/parserimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7f944026_7339ac7e",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "26550d9b_d2f1d01c",
         "filename": "controller/parserimpl.go",
         "patchSetId": 2
@@ -251,6 +549,24 @@
       "writtenOn": "2018-11-09T15:39:02Z",
       "side": 1,
       "message": "keep letter case consistent (yaml vs YAML)\n\nalso, no full stop?",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "444c380a_01bbe5f3",
+        "filename": "controller/parserimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T17:56:45Z",
+      "side": 1,
+      "message": "I think we need to name this \"YAML file\" - Job specification? Job recipe?",
+      "parentUuid": "26550d9b_d2f1d01c",
       "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
