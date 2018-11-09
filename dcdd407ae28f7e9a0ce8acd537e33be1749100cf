@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9ce2e770_bbbd27b2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-09T11:52:03Z",
+      "side": 1,
+      "message": "Full stop not necessary",
+      "revId": "dcdd407ae28f7e9a0ce8acd537e33be1749100cf",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "aa590e1b_91e10916",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
