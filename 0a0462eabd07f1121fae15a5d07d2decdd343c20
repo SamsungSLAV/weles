@@ -16,6 +16,24 @@
       "revId": "0a0462eabd07f1121fae15a5d07d2decdd343c20",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27476062_a9eed979",
+        "filename": "artifactmanager.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T12:54:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "971c4e24_f7a63e6f",
+      "revId": "0a0462eabd07f1121fae15a5d07d2decdd343c20",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
