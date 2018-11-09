@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "de17ddde_09e28a68",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T16:42:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f76888db_fba36d78",
+      "revId": "6acf8fadb032bf7eb7a0df60e2fb8c473afc6f13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b726da32_b2deb409",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2018-11-09T15:06:05Z",
       "side": 1,
       "message": "Is it still applicable?",
+      "revId": "6acf8fadb032bf7eb7a0df60e2fb8c473afc6f13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3af4646_77ed67fe",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T16:42:38Z",
+      "side": 1,
+      "message": "it was at the time of push but isnt anymore (yay!)",
+      "parentUuid": "b726da32_b2deb409",
       "revId": "6acf8fadb032bf7eb7a0df60e2fb8c473afc6f13",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fd7bdd7a_6e18296d",
+        "filename": "Gopkg.toml",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T16:42:38Z",
+      "side": 1,
+      "message": "was at the time of commiting, isnt anymore!",
+      "parentUuid": "cc504fa5_571cf6ec",
+      "revId": "6acf8fadb032bf7eb7a0df60e2fb8c473afc6f13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "45ea0a16_544b7bac",
         "filename": "cmd/weles-server/main.go",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2018-11-09T15:06:05Z",
       "side": 1,
       "message": "I wonder what were the origins of this logging convention; I\u0027m fine with it, though:\n\n[0.000090] [EME] [main.go:60] \"Failed to load embedded swagger spec.\" {error:foo;}",
+      "revId": "6acf8fadb032bf7eb7a0df60e2fb8c473afc6f13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed6484a4_fa00a048",
+        "filename": "cmd/weles-server/main.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-09T16:42:38Z",
+      "side": 1,
+      "message": "for easy parsing of parameters",
+      "parentUuid": "45ea0a16_544b7bac",
       "revId": "6acf8fadb032bf7eb7a0df60e2fb8c473afc6f13",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
