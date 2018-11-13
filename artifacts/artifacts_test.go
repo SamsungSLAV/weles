@@ -84,14 +84,22 @@ With gently smiling jaws!
 		}
 	)
 
+	var (
+		defaultDb   = "/tmp/weles.db"
+		defaultDir  = "/tmp/weles"
+		customDb    = "/tmp/weles-custom/nawia.db"
+		customDir   = "/tmp/weles-custom/"
+		separateDb  = "/tmp/weles/artifacts.db"
+		separateDir = "/tmp/weles-storage"
+	)
+
 	BeforeEach(func() {
 		var err error
 		testDir, err = ioutil.TempDir("", "test-weles-")
 		Expect(err).ToNot(HaveOccurred())
-		db := "test.db"
-		dbPath = filepath.Join(testDir, db)
+		dbPath = filepath.Join(testDir, "weles.db")
 
-		silverKangaroo, err = NewArtifactManager(db, testDir, 100, 16, 100)
+		silverKangaroo, err = NewArtifactManager(dbPath, testDir, 100, 16, 100)
 		//TODO add tests against different notifier cap, queue cap and workers count.
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -189,27 +197,13 @@ With gently smiling jaws!
 	})
 
 	Describe("Public initializer", func() {
-		var (
-			defaultDb  = "weles.db"
-			defaultDir = "/tmp/weles/"
-			customDb   = "nawia.db"
-			customDir  = "/tmp/weles-custom/"
-		)
-
 		DescribeTable("NewArtifactManager()", func(db, dir string) {
 			copperPanda, err := NewArtifactManager(db, dir, 100, 16, 100)
 			//TODO: add tests against different notifier cap and workers count.
 			Expect(err).ToNot(HaveOccurred())
 
-			if db == "" {
-				db = defaultDb
-			}
-			if dir == "" {
-				dir = defaultDir
-			}
-
 			Expect(dir).To(BeADirectory())
-			Expect(filepath.Join(dir, db)).To(BeAnExistingFile())
+			Expect(db).To(BeAnExistingFile())
 
 			err = copperPanda.Close()
 			Expect(err).ToNot(HaveOccurred())
@@ -217,8 +211,12 @@ With gently smiling jaws!
 			err = os.RemoveAll(dir)
 			Expect(err).ToNot(HaveOccurred())
 		},
-			Entry("create database in default directory", defaultDb, defaultDir),
-			Entry("create database in custom directory", customDb, customDir),
+			Entry("create database in default directory",
+				defaultDb, defaultDir),
+			Entry("create database in custom directory",
+				customDb, customDir),
+			Entry("create database and storage in different directories",
+				separateDb, separateDir),
 		)
 	})
 
