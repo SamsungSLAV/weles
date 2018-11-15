@@ -536,6 +536,11 @@ definitions:
     description: is used to filter results from ArtifactDB.
     type: object
     properties:
+      ID:
+        type: array
+        items:
+          type: integer
+          format: int64
       JobID:
         type: array
         items:

@@ -36,6 +36,9 @@ type ArtifactFilter struct {
 	// alias
 	Alias []ArtifactAlias `json:"Alias"`
 
+	// ID
+	ID []int64 `json:"ID"`
+
 	// job ID
 	JobID []JobID `json:"JobID"`
 
