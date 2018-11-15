@@ -461,6 +461,13 @@ func init() {
             "$ref": "#/definitions/ArtifactAlias"
           }
         },
+        "ID": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
         "JobID": {
           "type": "array",
           "items": {
@@ -543,13 +550,14 @@ func init() {
       ]
     },
     "ArtifactType": {
-      "description": "denotes type and function of an artifact.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n",
+      "description": "denotes type and function of an artifact.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n\n* LOG - logs gathered by Weles (boot logs, device connection logs, etc.)\n",
       "type": "string",
       "enum": [
         "IMAGE",
         "RESULT",
         "TEST",
-        "YAML"
+        "YAML",
+        "LOG"
       ]
     },
     "ArtifactURI": {
@@ -1245,6 +1253,13 @@ func init() {
             "$ref": "#/definitions/ArtifactAlias"
           }
         },
+        "ID": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
         "JobID": {
           "type": "array",
           "items": {
@@ -1327,13 +1342,14 @@ func init() {
       ]
     },
     "ArtifactType": {
-      "description": "denotes type and function of an artifact.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n",
+      "description": "denotes type and function of an artifact.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n\n* LOG - logs gathered by Weles (boot logs, device connection logs, etc.)\n",
       "type": "string",
       "enum": [
         "IMAGE",
         "RESULT",
         "TEST",
-        "YAML"
+        "YAML",
+        "LOG"
       ]
     },
     "ArtifactURI": {
