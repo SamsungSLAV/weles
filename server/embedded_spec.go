@@ -461,6 +461,13 @@ func init() {
             "$ref": "#/definitions/ArtifactAlias"
           }
         },
+        "ID": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
         "JobID": {
           "type": "array",
           "items": {
@@ -1243,6 +1250,13 @@ func init() {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ArtifactAlias"
+          }
+        },
+        "ID": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "JobID": {
