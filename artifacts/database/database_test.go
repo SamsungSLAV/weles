@@ -88,76 +88,46 @@ var _ = Describe("ArtifactDB", func() {
 		testArtifacts = []weles.ArtifactInfo{artifact, aImageReady, aYamlFailed, aTestFailed}
 
 		oneJobFilter = weles.ArtifactFilter{
-			JobID:  []weles.JobID{artifact.JobID},
-			Alias:  nil,
-			Status: nil,
-			Type:   nil,
+			JobID: []weles.JobID{artifact.JobID},
 		}
 		twoJobsFilter = weles.ArtifactFilter{
-			JobID:  []weles.JobID{artifact.JobID, aImageReady.JobID},
-			Alias:  nil,
-			Status: nil,
-			Type:   nil,
+			JobID: []weles.JobID{artifact.JobID, aImageReady.JobID},
 		}
 		noJobFilter = weles.ArtifactFilter{
-			JobID:  []weles.JobID{invalidJob},
-			Alias:  nil,
-			Status: nil,
-			Type:   nil,
+			JobID: []weles.JobID{invalidJob},
 		}
+		oneIDFilter = weles.ArtifactFilter{
+			ID: []int64{1},
+		}
+		//twoIDFilter = weles.ArtifactFilter{
+		//	ID: []int64{1, 2},
+		//}
 		oneTypeFilter = weles.ArtifactFilter{
-			JobID:  nil,
-			Type:   []weles.ArtifactType{aYamlFailed.Type},
-			Status: nil,
-			Alias:  nil,
+			Type: []weles.ArtifactType{aYamlFailed.Type},
 		}
 		twoTypesFilter = weles.ArtifactFilter{
-			JobID:  nil,
-			Type:   []weles.ArtifactType{aYamlFailed.Type, aTestFailed.Type},
-			Status: nil,
-			Alias:  nil,
+			Type: []weles.ArtifactType{aYamlFailed.Type, aTestFailed.Type},
 		}
 		noTypeFilter = weles.ArtifactFilter{
-			JobID:  nil,
-			Type:   []weles.ArtifactType{invalidType},
-			Status: nil,
-			Alias:  nil,
+			Type: []weles.ArtifactType{invalidType},
 		}
 		oneStatusFilter = weles.ArtifactFilter{
-			JobID:  nil,
-			Type:   nil,
 			Status: []weles.ArtifactStatus{artifact.Status},
-			Alias:  nil,
 		}
 		twoStatusFilter = weles.ArtifactFilter{
-			JobID:  nil,
-			Type:   nil,
 			Status: []weles.ArtifactStatus{artifact.Status, aYamlFailed.Status},
-			Alias:  nil,
 		}
 		noStatusFilter = weles.ArtifactFilter{
-			JobID:  nil,
-			Type:   nil,
 			Status: []weles.ArtifactStatus{invalidStatus},
-			Alias:  nil,
 		}
 		oneAliasFilter = weles.ArtifactFilter{
-			JobID:  nil,
-			Type:   nil,
-			Status: nil,
-			Alias:  []weles.ArtifactAlias{artifact.Alias},
+			Alias: []weles.ArtifactAlias{artifact.Alias},
 		}
 		twoAliasFilter = weles.ArtifactFilter{
-			JobID:  nil,
-			Type:   nil,
-			Status: nil,
-			Alias:  []weles.ArtifactAlias{artifact.Alias, aImageReady.Alias},
+			Alias: []weles.ArtifactAlias{artifact.Alias, aImageReady.Alias},
 		}
 		noAliasFilter = weles.ArtifactFilter{
-			JobID:  nil,
-			Type:   nil,
-			Status: nil,
-			Alias:  []weles.ArtifactAlias{invalidAlias},
+			Alias: []weles.ArtifactAlias{invalidAlias},
 		}
 		fullFilter = weles.ArtifactFilter{
 			JobID:  []weles.JobID{artifact.JobID, aImageReady.JobID, aYamlFailed.JobID},
@@ -166,10 +136,8 @@ var _ = Describe("ArtifactDB", func() {
 			Alias:  twoAliasFilter.Alias,
 		}
 		noMatchFilter = weles.ArtifactFilter{
-			JobID:  oneJobFilter.JobID,
-			Type:   oneTypeFilter.Type,
-			Status: nil,
-			Alias:  nil,
+			JobID: oneJobFilter.JobID,
+			Type:  oneTypeFilter.Type,
 		}
 		emptyFilter = weles.ArtifactFilter{}
 
@@ -339,6 +307,8 @@ var _ = Describe("ArtifactDB", func() {
 					}
 					Expect(results).To(ConsistOf(expected))
 				},
+				Entry("Filter one ID", oneIDFilter, artifact),
+				Entry("Filter one ID", oneIDFilter, artifact, aImageReady),
 				Entry("filter one JobID", oneJobFilter, artifact),
 				Entry("filter more than one JobIDs", twoJobsFilter, artifact, aImageReady,
 					aYamlFailed),
