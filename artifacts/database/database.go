@@ -142,6 +142,14 @@ func prepareQuerySorter(sorter weles.ArtifactSorter) string {
 }
 
 func prepareQueryFilter(filter weles.ArtifactFilter) (conditions []string, args []interface{}) {
+	if len(filter.ID) > 0 {
+		q := make([]string, len(filter.ID))
+		for i, id := range filter.ID {
+			q[i] = "?"
+			args = append(args, id)
+		}
+		conditions = append(conditions, " JobID in ("+strings.Join(q, ",")+")")
+	}
 	if len(filter.JobID) > 0 {
 		q := make([]string, len(filter.JobID))
 		for i, job := range filter.JobID {
