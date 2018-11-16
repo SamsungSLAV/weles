@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "32107c29_8caa5f37",
+        "filename": "artifacts/artifacts.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-16T12:27:22Z",
+      "side": 1,
+      "message": "Download is a noun here, so comment still lacks a verb\n\nI\u0027m ok with it, though - please don\u0027t generate a new patchset if that would be the only change included in it",
+      "range": {
+        "startLine": 97,
+        "startChar": 3,
+        "endLine": 97,
+        "endChar": 11
+      },
+      "revId": "3ec2cfa595ea89ef6e5bdabb256783b8f22c003e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
