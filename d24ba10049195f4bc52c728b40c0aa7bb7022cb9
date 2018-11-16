@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd6b7d40_ab83fcfe",
+        "filename": "artifactmanager.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-16T12:44:55Z",
+      "side": 1,
+      "message": "s/prepare/return/ seems clearer to me\n\nAt first I didn\u0027t get it - how would it be different from creating a record in a db if no file is actually created?\n\nI\u0027m ok with it, though - please don\u0027t generate a new patchset if that would be the only change included in it",
+      "range": {
+        "startLine": 33,
+        "startChar": 46,
+        "endLine": 34,
+        "endChar": 31
+      },
+      "revId": "d24ba10049195f4bc52c728b40c0aa7bb7022cb9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
