@@ -83,6 +83,30 @@
     },
     {
       "key": {
+        "uuid": "6cb84842_0934fc56",
+        "filename": "controller/boruterimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-16T16:55:12Z",
+      "side": 1,
+      "message": "I\u0027m not sure; warning maybe?\n\nThese errors are not caused by Weles",
+      "parentUuid": "1cc641ee_bde5d76a",
+      "range": {
+        "startLine": 213,
+        "startChar": 3,
+        "endLine": 221,
+        "endChar": 58
+      },
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0fe18356_239cc3ba",
         "filename": "controller/downloaderimpl.go",
         "patchSetId": 2
@@ -328,6 +352,24 @@
     },
     {
       "key": {
+        "uuid": "c90ef243_0e4a9aa6",
+        "filename": "controller/dryaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-16T16:55:12Z",
+      "side": 1,
+      "message": "Don\u0027t you wanna be the very best?\n\nGotta catch \u0027em all!",
+      "parentUuid": "4ae2576c_8dc6ad96",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "123c7be3_b3ad7f57",
         "filename": "controller/dryaderimpl.go",
         "patchSetId": 2
@@ -567,6 +609,24 @@
       "side": 1,
       "message": "I think we need to name this \"YAML file\" - Job specification? Job recipe?",
       "parentUuid": "26550d9b_d2f1d01c",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6935d0ca_60e69068",
+        "filename": "controller/parserimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-16T16:55:12Z",
+      "side": 1,
+      "message": "YAML file is fine for the time being",
+      "parentUuid": "444c380a_01bbe5f3",
       "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
