@@ -24,7 +24,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// ArtifactAlias is an alternative name of an artifact.
+// ArtifactAlias is alternative name of an Artifact. Taken from the Job Submission file.
 // swagger:model ArtifactAlias
 type ArtifactAlias string
 

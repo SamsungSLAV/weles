@@ -32,35 +32,47 @@ import (
 	enums "github.com/SamsungSLAV/weles/enums"
 )
 
-// JobFilter is used to filter Weles Jobs.
+// JobFilter is used to filter Weles Jobs.i
+// Filling more than one struct member (e.g.  JobID, Name) will result in
+// searching for a Job with filled JobID and Name.
+// Filling more than one member of an array/slice (in specific struct
+// member) will result in searching for all members of array.
+// Both aforementioned behaviours may occur simultainously. Some JobFilter
+// fields support regular expressions (see fields documentation).
 // swagger:model JobFilter
 type JobFilter struct {
 
-	// created after
+	// CreatedAfter is used to omit records created before supplied date.
 	// Format: date-time
 	CreatedAfter strfmt.DateTime `json:"CreatedAfter,omitempty"`
 
-	// created before
+	// CreatedBefore is used to omit records created after supplied date.
 	// Format: date-time
 	CreatedBefore strfmt.DateTime `json:"CreatedBefore,omitempty"`
 
-	// info
+	// Info is used to filter by Job info (detailed information from Weles
+	// about Job execution).
+	// Allows usage of regular expressions.
 	Info []string `json:"Info"`
 
-	// job ID
+	// JobID is used to filter Jobs by it's ID. Most commonly used filter.
 	JobID []JobID `json:"JobID"`
 
-	// name
+	// Name is used to filter using name acquired form Job Submission file
+	// (yaml format, job_name key's value).
+	// Allows usage of regular expressions.
 	Name []string `json:"Name"`
 
-	// status
+	// Status is used to receive only Jobs in specific status. When filled
+	// with more than one element, returned jobs will only be in those
+	// statuses.
 	Status []enums.JobStatus `json:"Status"`
 
-	// updated after
+	// UpdatedAfter is used to omit records updated before supplied date.
 	// Format: date-time
 	UpdatedAfter strfmt.DateTime `json:"UpdatedAfter,omitempty"`
 
-	// updated before
+	// UpdatedBefore is used to omit records updated after supplied date.
 	// Format: date-time
 	UpdatedBefore strfmt.DateTime `json:"UpdatedBefore,omitempty"`
 }

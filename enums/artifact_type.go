@@ -27,7 +27,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// ArtifactType denotes type and function of an artifact.
+// ArtifactType denotes type and function of an Artifact. Depends on Job Submission file.
 //
 // * IMAGE - image file.
 //

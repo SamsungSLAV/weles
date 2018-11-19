@@ -34,25 +34,26 @@ import (
 // swagger:model JobInfo
 type JobInfo struct {
 
-	// is the Job creation time in UTC.
+	// Created is the Job creation time (UTC).
 	// Format: date-time
-	Created strfmt.DateTime `json:"created,omitempty"`
+	Created strfmt.DateTime `json:"Created,omitempty"`
 
-	// provides additional information about current state, e.g. cause of failure
-	Info string `json:"info,omitempty"`
+	// Info provides additional information about current state, e.g. cause
+	// of failure
+	Info string `json:"Info,omitempty"`
 
-	// is a unique Job identifier
-	JobID JobID `json:"jobID,omitempty"`
+	// JobID is a unique Job identifier
+	JobID JobID `json:"JobID,omitempty"`
 
-	// is the Job name acquired from yaml file during Job creation.
-	Name string `json:"name,omitempty"`
+	// Name is the Job name acquired from yaml file during Job creation.
+	Name string `json:"Name,omitempty"`
 
-	// specifies current state of the Job.
-	Status enums.JobStatus `json:"status,omitempty"`
+	// Status specifies current state of the Job.
+	Status enums.JobStatus `json:"Status,omitempty"`
 
-	// is the time of latest Jobs' status modification.
+	// Updated is the time of latest Jobs' status modification (UTC).
 	// Format: date-time
-	Updated strfmt.DateTime `json:"updated,omitempty"`
+	Updated strfmt.DateTime `json:"Updated,omitempty"`
 }
 
 // Validate validates this job info
@@ -87,7 +88,7 @@ func (m *JobInfo) validateCreated(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.FormatOf("created", "body", "date-time", m.Created.String(), formats); err != nil {
+	if err := validate.FormatOf("Created", "body", "date-time", m.Created.String(), formats); err != nil {
 		return err
 	}
 
@@ -102,7 +103,7 @@ func (m *JobInfo) validateJobID(formats strfmt.Registry) error {
 
 	if err := m.JobID.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("jobID")
+			return ve.ValidateName("JobID")
 		}
 		return err
 	}
@@ -118,7 +119,7 @@ func (m *JobInfo) validateStatus(formats strfmt.Registry) error {
 
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("status")
+			return ve.ValidateName("Status")
 		}
 		return err
 	}
@@ -132,7 +133,7 @@ func (m *JobInfo) validateUpdated(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+	if err := validate.FormatOf("Updated", "body", "date-time", m.Updated.String(), formats); err != nil {
 		return err
 	}
 
