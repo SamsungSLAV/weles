@@ -192,19 +192,19 @@ func setJobPaginator(params jobs.JobListerParams, defaultPageLimit int32,
 func setJobSorter(si *weles.JobSorter) (so weles.JobSorter) {
 	if si == nil {
 		return weles.JobSorter{
-			SortOrder: weles.SortOrderAscending,
-			SortBy:    weles.JobSortByID,
+			Order: weles.SortOrderAscending,
+			By:    weles.JobSortByID,
 		}
 	}
-	if si.SortOrder == "" {
-		so.SortOrder = weles.SortOrderAscending
+	if si.Order == "" {
+		so.Order = weles.SortOrderAscending
 	} else {
-		so.SortOrder = si.SortOrder
+		so.Order = si.Order
 	}
-	if si.SortBy == "" {
-		so.SortBy = weles.JobSortByID
+	if si.By == "" {
+		so.By = weles.JobSortByID
 	} else {
-		so.SortBy = si.SortBy
+		so.By = si.By
 	}
 	return
 }
