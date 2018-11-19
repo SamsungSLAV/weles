@@ -51,9 +51,10 @@ func NewArtifactLister(ctx *middleware.Context, handler ArtifactListerHandler) *
 
 /*ArtifactLister swagger:route POST /artifacts/list artifacts artifactLister
 
-List artifacts with filter and sort features
+List Artifacts with filter and sort features
 
-ArtifactLister returns information on filtered Weles artifacts.
+Returns sorted list of Artifacts. If there are more records than default page size -  206 response is returned. If the page is last - 200 response is returned. If no Artifact passes filter - 404 response is returned.
+
 
 */
 type ArtifactLister struct {
