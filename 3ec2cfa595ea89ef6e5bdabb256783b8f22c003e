@@ -22,6 +22,30 @@
       "revId": "3ec2cfa595ea89ef6e5bdabb256783b8f22c003e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9cc6429_1d332cc5",
+        "filename": "artifacts/artifacts.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T08:46:51Z",
+      "side": 1,
+      "message": "why is it noun? I used is as a verb in this comment intentionally. is there some rule/practice saying func names should be nouns?",
+      "parentUuid": "32107c29_8caa5f37",
+      "range": {
+        "startLine": 97,
+        "startChar": 3,
+        "endLine": 97,
+        "endChar": 11
+      },
+      "revId": "3ec2cfa595ea89ef6e5bdabb256783b8f22c003e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
