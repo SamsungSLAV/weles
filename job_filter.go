@@ -30,35 +30,39 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// JobFilter is used to filter Weles Jobs.
+// JobFilter is used to filter Weles Jobs. Filling more than one struct member (e.g. JobID, Name) will result in searching for a Job with filled JobID and Name. Filling more than one member of an array/slice (in specific struct member) will result in searching for all members of array. Both aforementioned behaviours may occur simultainously. Some JobFilter fields support regular expressions (see fields documentation).
+//
 // swagger:model JobFilter
 type JobFilter struct {
 
-	// created after
+	// Time after which the Job was created.
 	// Format: date-time
 	CreatedAfter strfmt.DateTime `json:"CreatedAfter,omitempty"`
 
-	// created before
+	// Time before which the Job was created.
 	// Format: date-time
 	CreatedBefore strfmt.DateTime `json:"CreatedBefore,omitempty"`
 
-	// info
+	// Filter by Job info. Allows usage of regular expressions.
+	//
 	Info []string `json:"Info"`
 
 	// job ID
 	JobID []JobID `json:"JobID"`
 
-	// name
+	// Filter by name acquired Job Submission file (yaml format, job_name key's value). Allows usage of regular expressions.
+	//
 	Name []string `json:"Name"`
 
-	// status
+	// Filter by status. Providing multiple elements will result in all statuses returned. Omiting this parameter or filling it with empty value will result in all list of Jobs with all statuses.
+	//
 	Status []JobStatus `json:"Status"`
 
-	// updated after
+	// Time after which the Job was updated.
 	// Format: date-time
 	UpdatedAfter strfmt.DateTime `json:"UpdatedAfter,omitempty"`
 
-	// updated before
+	// Time before which the Job was updated.
 	// Format: date-time
 	UpdatedBefore strfmt.DateTime `json:"UpdatedBefore,omitempty"`
 }
