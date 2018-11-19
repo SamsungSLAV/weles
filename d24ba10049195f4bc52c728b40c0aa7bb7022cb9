@@ -22,6 +22,30 @@
       "revId": "d24ba10049195f4bc52c728b40c0aa7bb7022cb9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d857007e_0acf929a",
+        "filename": "artifactmanager.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T09:35:03Z",
+      "side": 1,
+      "message": "I left \"prepare\" and clarified it (artifactmanager creates directories)",
+      "parentUuid": "fd6b7d40_ab83fcfe",
+      "range": {
+        "startLine": 33,
+        "startChar": 46,
+        "endLine": 34,
+        "endChar": 31
+      },
+      "revId": "d24ba10049195f4bc52c728b40c0aa7bb7022cb9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
