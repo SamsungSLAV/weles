@@ -204,18 +204,30 @@ func (h *BoruterImpl) loop() {
 
 			switch status {
 			case boruta.INPROGRESS:
+				logger.WithProperties(logger.Properties{"JobID": j, "ReqID": rinfo.ID}).
+					Debug("Acquiring Dryad from Boruta.")
 				h.acquire(j, rinfo)
 			case boruta.CANCEL:
+				logger.WithProperties(logger.Properties{"JobID": j, "ReqID": rinfo.ID}).
+					Warning("Boruta request was canceled.")
 				h.remove(j, rinfo.ID)
 			case boruta.DONE:
+				logger.WithProperties(logger.Properties{"JobID": j, "ReqID": rinfo.ID}).
+					Debug("Boruta request finished..")
 				h.remove(j, rinfo.ID)
 			case boruta.TIMEOUT:
+				logger.WithProperties(logger.Properties{"JobID": j, "ReqID": rinfo.ID}).
+					Warning("Request timed out in Boruta.")
 				h.remove(j, rinfo.ID)
 				h.SendFail(j, "Timeout in Boruta.")
 			case boruta.INVALID:
+				logger.WithProperties(logger.Properties{"JobID": j, "ReqID": rinfo.ID}).
+					Warning("No suitable device in Boruta to run test.")
 				h.remove(j, rinfo.ID)
 				h.SendFail(j, "No suitable device in Boruta to run test.")
 			case boruta.FAILED:
+				logger.WithProperties(logger.Properties{"JobID": j, "ReqID": rinfo.ID}).
+					Warning("Boruta failed during request execution.")
 				h.remove(j, rinfo.ID)
 				h.SendFail(j, "Boruta failed during request execution.")
 			}
