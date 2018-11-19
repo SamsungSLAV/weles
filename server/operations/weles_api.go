@@ -75,7 +75,8 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 	}
 }
 
-/*WelesAPI This is a Weles server.   You can find out more about Weles at [http://tbd.tbd](http://tbd.tbd). */
+/*WelesAPI This is an instance of Weles. [More about this instance of Weles.](http://weles.yourdomain.com).
+ */
 type WelesAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context

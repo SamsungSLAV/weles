@@ -34,10 +34,12 @@ import (
 // swagger:model JobSorter
 type JobSorter struct {
 
-	// by
+	// Key by which Jobs will be sorted. See JobSortBy documentation.
+	//
 	By enums.JobSortBy `json:"By,omitempty"`
 
-	// order
+	// Order in which Jobs will be sorted. See SortOrder documentation.
+	//
 	Order enums.SortOrder `json:"Order,omitempty"`
 }
 

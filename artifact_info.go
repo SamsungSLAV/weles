@@ -30,21 +30,22 @@ import (
 	enums "github.com/SamsungSLAV/weles/enums"
 )
 
-// ArtifactInfo describes single artifact stored in ArtifactDB.
+// ArtifactInfo describes single Artifact stored in ArtifactDB.
 // swagger:model ArtifactInfo
 type ArtifactInfo struct {
 	ArtifactDescription
 
-	// unique identification of the artifact.
+	// unique identifier of an Artifact.
 	ID int64 `json:"ID,omitempty" db:",primarykey, autoincrement"`
 
-	// path
+	// Internal Path where Artifact is stored on Weles server.
+	//
 	Path ArtifactPath `json:"Path,omitempty"`
 
-	// status
+	// see documentation of ArtifactStatus.
 	Status enums.ArtifactStatus `json:"Status,omitempty"`
 
-	// is date of creating the artifact.
+	// is date of creating the Artifact.
 	// Format: date-time
 	Timestamp strfmt.DateTime `json:"Timestamp,omitempty"`
 }

@@ -29,20 +29,23 @@ import (
 	enums "github.com/SamsungSLAV/weles/enums"
 )
 
-// ArtifactDescription contains information needed to create new artifact in ArtifactDB.
+// ArtifactDescription contains minimal information needed to create new Artifact in ArtifactDB.
+//
 // swagger:model ArtifactDescription
 type ArtifactDescription struct {
 
-	// alias
+	// alternative name of an Artifact. Taken from the Job Submission file.
+	//
 	Alias ArtifactAlias `json:"Alias,omitempty"`
 
-	// specifies  Job for which artifact was created.
+	// specifies Job for which Artifact was created.
 	JobID JobID `json:"JobID,omitempty"`
 
-	// type
+	// see documentation of ArtifactType.
 	Type enums.ArtifactType `json:"Type,omitempty"`
 
-	// URI
+	// URI from which artifact was downloaded. Taken from the Job Submission file.
+	//
 	// Format: uri
 	URI ArtifactURI `json:"URI,omitempty"`
 }
