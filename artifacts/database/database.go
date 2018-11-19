@@ -105,8 +105,8 @@ func prepareQuery(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
 	conditions, args = prepareQueryFilter(filter)
 
 	if !totalRecords && paginator.ID != 0 {
-		if (paginator.Forward && sorter.SortOrder == enums.SortOrderDescending) ||
-			(!paginator.Forward && sorter.SortOrder == enums.SortOrderAscending) {
+		if (paginator.Forward && sorter.Order == enums.SortOrderDescending) ||
+			(!paginator.Forward && sorter.Order == enums.SortOrderAscending) {
 			conditions = append(conditions, " ID < ? ")
 			args = append(args, paginator.ID)
 		} else {
@@ -136,7 +136,7 @@ func prepareQuery(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
 func prepareQuerySorter(sorter weles.ArtifactSorter) string {
 	//TODO: make timestamp also db key, add to where clause and order by as described in:
 	// https://www.sqlite.org/rowvalue.html#scrolling_window_queries
-	if sorter.SortOrder == enums.SortOrderDescending {
+	if sorter.Order == enums.SortOrderDescending {
 		return " ORDER BY ID DESC "
 	}
 	return " ORDER BY ID ASC "

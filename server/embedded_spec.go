@@ -531,10 +531,10 @@ func init() {
       "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, artifacts are sorted by ID, Ascending.\n",
       "type": "object",
       "properties": {
-        "SortBy": {
+        "By": {
           "$ref": "#/definitions/ArtifactSortBy"
         },
-        "SortOrder": {
+        "Order": {
           "$ref": "#/definitions/SortOrder"
         }
       }
@@ -694,10 +694,10 @@ func init() {
       "description": "defines the key for sorting as well as direction of sorting.\n",
       "type": "object",
       "properties": {
-        "SortBy": {
+        "By": {
           "$ref": "#/definitions/JobSortBy"
         },
-        "SortOrder": {
+        "Order": {
           "$ref": "#/definitions/SortOrder"
         }
       }
@@ -1357,10 +1357,10 @@ func init() {
       "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, artifacts are sorted by ID, Ascending.\n",
       "type": "object",
       "properties": {
-        "SortBy": {
+        "By": {
           "$ref": "#/definitions/ArtifactSortBy"
         },
-        "SortOrder": {
+        "Order": {
           "$ref": "#/definitions/SortOrder"
         }
       }
@@ -1520,10 +1520,10 @@ func init() {
       "description": "defines the key for sorting as well as direction of sorting.\n",
       "type": "object",
       "properties": {
-        "SortBy": {
+        "By": {
           "$ref": "#/definitions/JobSortBy"
         },
-        "SortOrder": {
+        "Order": {
           "$ref": "#/definitions/SortOrder"
         }
       }
