@@ -33,34 +33,50 @@ import (
 )
 
 // JobFilter is used to filter Weles Jobs.
+// Filling more than one struct member (e.g. JobID, Name) will result in
+// searching for a Job with filled JobID and Name.
+// Filling more than one member of an array/slice (in specific struct
+// member) will result in searching for all members of array.
+// Both aforementioned behaviours may occur simultaneously. Some JobFilter
+// fields support regular expressions (see fields documentation).
 // swagger:model JobFilter
 type JobFilter struct {
 
-	// created after
+	// CreatedAfter means Jobs created after the supplied date. Records
+	// created at extacly the same time will be filtered out.
 	// Format: date-time
 	CreatedAfter strfmt.DateTime `json:"CreatedAfter,omitempty"`
 
-	// created before
+	// CreatedBefore means Jobs created before the supplied date. Records
+	// created at extacly the same time will be filtered out.
 	// Format: date-time
 	CreatedBefore strfmt.DateTime `json:"CreatedBefore,omitempty"`
 
-	// info
+	// Info is used to filter by Job info (detailed information from Weles
+	// about Job execution).
+	// Allows usage of regular expressions.
 	Info []string `json:"Info"`
 
-	// job ID
+	// JobID is used to filter Jobs by it's ID. Most commonly used filter.
 	JobID []JobID `json:"JobID"`
 
-	// name
+	// Name is used to filter using name acquired from Job Submission file
+	// (yaml format, job_name key's value).
+	// Allows usage of regular expressions.
 	Name []string `json:"Name"`
 
-	// status
+	// Status is used to receive only Jobs in specific status. When filled
+	// with more than one element, returned jobs will only be in those
+	// statuses.
 	Status []enums.JobStatus `json:"Status"`
 
-	// updated after
+	// UpdatedAfter means Jobs updated after the supplied date. Records
+	// updated at extacly the same time will be filtered out.
 	// Format: date-time
 	UpdatedAfter strfmt.DateTime `json:"UpdatedAfter,omitempty"`
 
-	// updated before
+	// UpdatedBefore means Jobs updated before the supplied date. Records
+	// updated at extacly the same time will be filtered out.
 	// Format: date-time
 	UpdatedBefore strfmt.DateTime `json:"UpdatedBefore,omitempty"`
 }

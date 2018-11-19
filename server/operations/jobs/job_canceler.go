@@ -46,9 +46,11 @@ func NewJobCanceler(ctx *middleware.Context, handler JobCancelerHandler) *JobCan
 
 /*JobCanceler swagger:route POST /jobs/{JobID}/cancel jobs jobCanceler
 
-Cancel existing job
+Cancel a Job.
 
-JobCanceler stops execution of Job identified by JobID.
+Stop execution of Job identified by JobID. Returns 204 on success. If
+Job does not exist, 404 response will be returned. If the Job is
+already in final state, 403 response will be returned.
 
 */
 type JobCanceler struct {

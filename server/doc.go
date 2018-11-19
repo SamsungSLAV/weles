@@ -17,20 +17,21 @@
 
 /*
 Package server Weles
-This is a Weles server.   You can find out more about Weles at [http://tbd.tbd](http://tbd.tbd).
+This is an instance of Weles. [More about this instance of
+Weles.](http://weles.yourdomain.com).
 
 Terms Of Service:
 
-http://tbd.tbd/terms/
+http://weles.yourdomain.com/terms/
 
 
     Schemes:
       http
-    Host: localhost:8088
+    Host: localhost:5010
     BasePath: /api/v1
     Version: v1
     License: Apache 2.0 http://www.apache.org/licenses/LICENSE-2.0.html
-    Contact: <tbd@tbd.com>
+    Contact: <admin@yourdomain.com>
 
     Consumes:
     - application/json

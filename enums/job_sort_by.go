@@ -31,13 +31,16 @@ import (
 //
 // * ID - default sort key.
 //
-// * CreatedDate - sorting by date of creation of the weles job.
+// * CreatedDate - sorting by date of creation of the weles Job.
 //
-// * UpdatedDate - sorting by date of update of the weles job.
+// * UpdatedDate - sorting by date of update of the weles Job.
 //
-// * JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.
+// * JobStatus - sorting by the Job Status. Descending order will sort in
+// the order JobStatuses are listed in the docs (from NEW at the start to
+// CANCELED at the end). Ascending will reverse this order.
 //
-// When sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)
+// When sorting is applied, and there are many Jobs with the same
+// date/status, they will be sorted by JobID (Ascending)
 //
 // swagger:model JobSortBy
 type JobSortBy string

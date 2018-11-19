@@ -24,7 +24,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// ArtifactPath describes path to artifact in ArtifactDB filesystem.
+// ArtifactPath describes path to Artifact in ArtifactDB filesystem.
 // swagger:model ArtifactPath
 type ArtifactPath string
 

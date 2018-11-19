@@ -48,7 +48,8 @@ func NewVersion(ctx *middleware.Context, handler VersionHandler) *Version {
 
 Show current version of Weles internals
 
-Version and state of API (e.g. v1 obsolete, v2 stable, v3 devel) and server version.
+Version and state of API (e.g. v1 obsolete, v2 stable, v3 devel) and
+server version.
 
 */
 type Version struct {

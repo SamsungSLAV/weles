@@ -31,20 +31,28 @@ import (
 	enums "github.com/SamsungSLAV/weles/enums"
 )
 
-// ArtifactFilter is used to filter results from ArtifactDB.
+// ArtifactFilter is used to filter Weles Artifacts. Filling more than one struct member
+// (e.g. JobID and Type) will result in searching for an Artifact(s) created
+// during execution of Job with JobID of specified Type. Filling more than
+// one member of an array/slice (in specific struct member - i.e. providing
+// 2 JobID) will result in searching for all members of that array. Both
+// aforementioned behaviours may occur simultaneously.
 // swagger:model ArtifactFilter
 type ArtifactFilter struct {
 
-	// alias
+	// Alias is used to filter Artifacts by ArtifactAlias (taken from Job Submission file).
 	Alias []ArtifactAlias `json:"Alias"`
 
-	// job ID
+	// JobID is used to filter Artifacts by it's JobID of related Weles Job.
+	// Most commonly used filter.
 	JobID []JobID `json:"JobID"`
 
-	// status
+	// Status is used to filter Artifacts by ArtifactStatus. Refer to ArtifactStatus documentation for possible values.
 	Status []enums.ArtifactStatus `json:"Status"`
 
-	// type
+	// Type is used to filter Artifacts by ArtifactType. Refer to
+	// ArtifactType documentation for possible values. Useful for e.g.
+	// requesting only RESULT artifacts from a Job.
 	Type []enums.ArtifactType `json:"Type"`
 }
 
