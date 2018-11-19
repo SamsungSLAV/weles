@@ -151,19 +151,19 @@ func setArtifactFilter(fi *weles.ArtifactFilter) (fo weles.ArtifactFilter) {
 func setArtifactSorter(si *weles.ArtifactSorter) (so weles.ArtifactSorter) {
 	if si == nil {
 		return weles.ArtifactSorter{
-			SortOrder: enums.SortOrderAscending,
-			SortBy:    enums.ArtifactSortByID,
+			Order: enums.SortOrderAscending,
+			By:    enums.ArtifactSortByID,
 		}
 	}
-	if si.SortOrder == "" {
-		so.SortOrder = enums.SortOrderAscending
+	if si.Order == "" {
+		so.Order = enums.SortOrderAscending
 	} else {
-		so.SortOrder = si.SortOrder
+		so.Order = si.Order
 	}
-	if si.SortBy == "" {
-		so.SortBy = enums.ArtifactSortByID
+	if si.By == "" {
+		so.By = enums.ArtifactSortByID
 	} else {
-		so.SortBy = si.SortBy
+		so.By = si.By
 	}
 	return
 }
