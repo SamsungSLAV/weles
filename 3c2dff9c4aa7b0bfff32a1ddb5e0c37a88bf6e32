@@ -370,6 +370,24 @@
     },
     {
       "key": {
+        "uuid": "7c361fa9_c5a9e771",
+        "filename": "controller/dryaderimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T16:25:22Z",
+      "side": 1,
+      "message": "im as successful as ash with pikachu on acid https://www.youtube.com/watch?v\u003dX5Izm1LQfw4",
+      "parentUuid": "c90ef243_0e4a9aa6",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "123c7be3_b3ad7f57",
         "filename": "controller/dryaderimpl.go",
         "patchSetId": 2
@@ -627,6 +645,24 @@
       "side": 1,
       "message": "YAML file is fine for the time being",
       "parentUuid": "444c380a_01bbe5f3",
+      "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "adf60e06_25d0c8e8",
+        "filename": "controller/parserimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T16:25:22Z",
+      "side": 1,
+      "message": "as agreed - job description.",
+      "parentUuid": "6935d0ca_60e69068",
       "revId": "3c2dff9c4aa7b0bfff32a1ddb5e0c37a88bf6e32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
