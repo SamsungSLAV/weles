@@ -47,11 +47,13 @@ type JobListerParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*JobID of the last element from previous page.
+	/*Fill this parameter with JobID of the last element from current
+	page to receive next one.
 	  In: query
 	*/
 	After *uint64
-	/*JobID of first element from next page.
+	/*Fill this parameter with JobID of the first element from current
+	page to receive previous one.
 	  In: query
 	*/
 	Before *uint64
@@ -59,7 +61,7 @@ type JobListerParams struct {
 	  In: body
 	*/
 	JobFilterAndSort JobListerBody
-	/*Custom page limit. Denotes number of JobInfo structures that will be returned.
+	/*Number of records to return. Overrides default server page limit.
 	  In: query
 	*/
 	Limit *int32

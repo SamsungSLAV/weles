@@ -27,7 +27,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// ArtifactURI is used to identify artifact's source.
+// ArtifactURI is used to identify Artifact's source.
 // swagger:model ArtifactURI
 type ArtifactURI strfmt.URI
 

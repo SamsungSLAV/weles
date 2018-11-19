@@ -28,6 +28,7 @@ import (
 )
 
 // ArtifactSortBy denotes the key for sorting list of all artifacts.
+//
 // * ID - sorting by artifact ID.
 //
 // swagger:model ArtifactSortBy

@@ -34,11 +34,12 @@ import (
 // swagger:model JobInfo
 type JobInfo struct {
 
-	// is the Job creation time in UTC.
+	// is the Job creation time (UTC).
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// provides additional information about current state, e.g. cause of failure
+	// provides additional information about current state, e.g. cause of
+	// failure
 	Info string `json:"info,omitempty"`
 
 	// is a unique Job identifier
@@ -50,7 +51,7 @@ type JobInfo struct {
 	// specifies current state of the Job.
 	Status enums.JobStatus `json:"status,omitempty"`
 
-	// is the time of latest Jobs' status modification.
+	// is the time of latest Jobs' status modification (UTC).
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
