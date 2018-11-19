@@ -284,13 +284,13 @@ func (js *JobsControllerImpl) sort(ret []weles.JobInfo, sorter weles.JobSorter) 
 		jobs: ret,
 		by:   byJobIDAsc,
 	}
-	switch sorter.SortBy {
+	switch sorter.By {
 	case weles.JobSortByCreatedDate:
-		ps.setByFunction(sorter.SortOrder, byCreatedAsc, byCreatedDesc)
+		ps.setByFunction(sorter.Order, byCreatedAsc, byCreatedDesc)
 	case weles.JobSortByUpdatedDate:
-		ps.setByFunction(sorter.SortOrder, byUpdatedAsc, byUpdatedDesc)
+		ps.setByFunction(sorter.Order, byUpdatedAsc, byUpdatedDesc)
 	case weles.JobSortByJobStatus:
-		ps.setByFunction(sorter.SortOrder, byStatusAsc, byStatusDesc)
+		ps.setByFunction(sorter.Order, byStatusAsc, byStatusDesc)
 	}
 	sort.Sort(ps)
 	return ps.jobs
