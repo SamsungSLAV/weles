@@ -24,7 +24,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// JobID is a unique identifier for Weles Job.
+// JobID is a unique identifier of a Weles Job.
 // swagger:model JobID
 type JobID uint64
 

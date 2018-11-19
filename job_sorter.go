@@ -32,10 +32,12 @@ import (
 // swagger:model JobSorter
 type JobSorter struct {
 
-	// by
+	// Key by which Jobs will be sorted. See JobSortBy documentation.
+	//
 	By JobSortBy `json:"By,omitempty"`
 
-	// order
+	// Order in which Jobs will be sorted. See SortOrder documentation.
+	//
 	Order SortOrder `json:"Order,omitempty"`
 }
 

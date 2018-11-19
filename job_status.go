@@ -31,21 +31,23 @@ import (
 
 // JobStatus specifies state of the Job.
 //
-// * NEW - The new Job has been created.
+// * NEW             - New Job has been created.
 //
-// * PARSING - Provided yaml file is being parsed and interpreted.
+// * PARSING         - Provided yaml file is being parsed and interpreted.
 //
-// * DOWNLOADING - Images and/or files required for the test are being downloaded.
+// * DOWNLOADING     - Images and/or files required for the test are being
+//                     downloaded.
 //
-// * WAITING - Job is waiting for Boruta worker.
+// * WAITING         - Job is waiting for Boruta worker.
 //
-// * RUNNING - Job is being executed.
+// * RUNNING         - Job is being executed.
 //
-// * COMPLETED - Job is completed. This is terminal state.
+// * COMPLETED       - Job is completed. This is terminal state.
 //
-// * FAILED - Job execution has failed. This is terminal state.
+// * FAILED          - Job execution has failed. This is terminal state.
 //
-// * CANCELED -Job has been canceled with API call. This is terminal state.
+// * CANCELED        - Job has been canceled with API call. This is terminal
+//                     state.
 //
 // swagger:model JobStatus
 type JobStatus string

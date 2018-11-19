@@ -29,7 +29,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// ArtifactStatus describes artifact status and availability.
+// ArtifactStatus describes Artifact status and availability.
 //
 // * DOWNLOADING - artifact is currently being downloaded.
 //

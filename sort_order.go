@@ -29,7 +29,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// SortOrder denotes direction of sorting of weles jobs or artifacts.
+// SortOrder denotes direction of sorting of weles Jobs or Artifacts.
 //
 // * Ascending - from oldest to newest.
 //

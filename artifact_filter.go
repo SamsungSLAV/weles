@@ -29,20 +29,22 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// ArtifactFilter is used to filter results from ArtifactDB.
+// ArtifactFilter is used to filter Weles Artifacts. Filling more than one struct member (e.g. JobID and Type) will result in searching for an Artifact(s) created during execution of Job with JobID of specified Type. Filling more than one member of an array/slice (in specific struct member - i.e. providing 2 JobID) will result in searching for all members of that array. Both aforementioned behaviours may occur simultainously.
+//
 // swagger:model ArtifactFilter
 type ArtifactFilter struct {
 
-	// alias
+	// Filter by ArtifactAlias (taken from Job Submission file).
 	Alias []ArtifactAlias `json:"Alias"`
 
-	// job ID
+	// Filter by JobID, most commonly used filter.
 	JobID []JobID `json:"JobID"`
 
-	// status
+	// Refer to ArtifactStatus documentation for possible values.
 	Status []ArtifactStatus `json:"Status"`
 
-	// type
+	// Refer to ArtifactType documentation for possible values. Useful for requesting only RESULT artifacts from a Job.
+	//
 	Type []ArtifactType `json:"Type"`
 }
 

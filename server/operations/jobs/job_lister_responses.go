@@ -37,17 +37,17 @@ const JobListerOKCode int = 200
 swagger:response jobListerOK
 */
 type JobListerOK struct {
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*URL suffix to request next page of data. Please note that the same body must be used as in initial request.
 
 
 	 */
 	Next string `json:"Next"`
-	/*URI to request previous page of data. Please note that the same body must be used as in initial request.
+	/*URL suffix to request previous page of data. Please note that the same body must be used as in initial request.
 
 
 	 */
 	Previous string `json:"Previous"`
-	/*count of records currently fulfilling the requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+	/*count of records currently fulfilling the requested JobFilter. Please note that this value may change when requesting for the same data at a different moments in time.
 
 
 	 */
@@ -153,22 +153,22 @@ const JobListerPartialContentCode int = 206
 swagger:response jobListerPartialContent
 */
 type JobListerPartialContent struct {
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*URL suffix to request next page of data. Please note that the same body must be used as in initial request.
 
 
 	 */
 	Next string `json:"Next"`
-	/*URI to request previous page of data. Please note that the same body must be used as in initial request.
+	/*URL suffix to request previous page of data. Please note that the same body must be used as in initial request.
 
 
 	 */
 	Previous string `json:"Previous"`
-	/*number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.
+	/*number of records after current page. Please note that this value may change when requesting for the same data at a different moments in time.
 
 
 	 */
 	RemainingRecords uint64 `json:"RemainingRecords"`
-	/*count of records currently fulfilling requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+	/*count of records currently fulfilling requested JobFilter. Please note that this value may change when requesting for the same data at a different moments in time.
 
 
 	 */

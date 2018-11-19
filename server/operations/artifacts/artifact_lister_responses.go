@@ -37,12 +37,12 @@ const ArtifactListerOKCode int = 200
 swagger:response artifactListerOK
 */
 type ArtifactListerOK struct {
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*URL suffix to request next page of data. Please note that the same body must be used as in initial request.
 
 
 	 */
 	Next string `json:"Next"`
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*URL suffix to request next page of data. Please note that the same body must be used as in initial request.
 
 
 	 */
@@ -153,12 +153,12 @@ const ArtifactListerPartialContentCode int = 206
 swagger:response artifactListerPartialContent
 */
 type ArtifactListerPartialContent struct {
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*URL to request next page of data. Please note that the same body must be used as in initial request.
 
 
 	 */
 	Next string `json:"Next"`
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*URL to request next page of data. Please note that the same body must be used as in initial request.
 
 
 	 */
