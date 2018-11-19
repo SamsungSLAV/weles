@@ -225,6 +225,30 @@
     },
     {
       "key": {
+        "uuid": "f7a3091f_d370b923",
+        "filename": "artifacts/database/database.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-19T17:28:03Z",
+      "side": 1,
+      "message": "Please don\u0027t if you want to merge this branch soon (I do!)\n\nIt\u0027s a new feature and we\u0027ll do it once this one (artifacts-fixes) is completed",
+      "parentUuid": "33b736a6_6a18ff1c",
+      "range": {
+        "startLine": 213,
+        "startChar": 2,
+        "endLine": 213,
+        "endChar": 8
+      },
+      "revId": "6b1cf0cc30a8bd15865878a4c3d73c547f2640d4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e97e40fa_3f22417c",
         "filename": "artifacts/database/database.go",
         "patchSetId": 3
