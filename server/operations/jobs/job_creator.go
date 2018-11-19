@@ -46,9 +46,10 @@ func NewJobCreator(ctx *middleware.Context, handler JobCreatorHandler) *JobCreat
 
 /*JobCreator swagger:route POST /jobs jobs jobCreator
 
-Add new job
+Add new Job
 
-adds new Job in Weles using recipe passed in YAML format.
+Add new Job to Weles. Job submission should be in YAML format. User will receive JobID number in response. Parsing the file and downloading Artifacts (if necessary) will be performed immidiately. Job will be executed when worker will be available. JobLister path should be used to query Weles for Job progress.
+
 
 */
 type JobCreator struct {

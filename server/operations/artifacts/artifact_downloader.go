@@ -46,9 +46,9 @@ func NewArtifactDownloader(ctx *middleware.Context, handler ArtifactDownloaderHa
 
 /*ArtifactDownloader swagger:route GET /artifacts/{ArtifactID} artifacts artifactDownloader
 
-Download artifact.
+Download Artifact
 
-ArtifactDownloader returns requested artifact.
+ArtifactDownloader returns requested Artifact.
 
 */
 type ArtifactDownloader struct {
