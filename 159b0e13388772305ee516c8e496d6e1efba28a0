@@ -22,6 +22,30 @@
       "revId": "159b0e13388772305ee516c8e496d6e1efba28a0",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30c4540a_a115a94a",
+        "filename": "cmd/weles-server/main.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T15:47:59Z",
+      "side": 1,
+      "message": "my bad, chnaged this function to public in logger to check if my thinking was correct and forgot to fix it up later. anything from the package needs to be called here, before server is initialized, so that server can use logger. This doesnt seem pretty, i guess we should pass logger explicitly rather than use global variable in the logger pkg",
+      "parentUuid": "30c609dc_e544ec48",
+      "range": {
+        "startLine": 63,
+        "startChar": 1,
+        "endLine": 63,
+        "endChar": 26
+      },
+      "revId": "159b0e13388772305ee516c8e496d6e1efba28a0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
