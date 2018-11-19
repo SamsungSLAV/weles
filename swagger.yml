@@ -1,17 +1,17 @@
 swagger: '2.0'
 info:
-  description: >-
-    This is a Weles server.   You can find out more about Weles at
-    [http://tbd.tbd](http://tbd.tbd).
+  description: >
+    This is an instance of Weles. [More about this instance of
+    Weles.](http://weles.yourdomain.com).
   version: v1
   title: Weles
-  termsOfService: 'http://tbd.tbd/terms/'
+  termsOfService: 'http://weles.yourdomain.com/terms/'
   contact:
-    email: tbd@tbd.com
+    email: admin@yourdomain.com
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-host: 'localhost:8088'
+host: 'localhost:5010'
 basePath: /api/v1
 consumes:
   - application/json
@@ -19,9 +19,9 @@ produces:
   - application/json
 tags:
   - name: jobs
-    description: Info and management of Weles jobs.
+    description: Info and management of Weles Jobs.
   - name: artifacts
-    description: Info about all artifacts used by Weles jobs.
+    description: Info about Artifacts used by Weles Jobs.
   - name: general
     description: Info about Weles (e.g. version)
 schemes:
@@ -31,8 +31,13 @@ paths:
     post:
       tags:
         - jobs
-      summary: Add new job
-      description: adds new Job in Weles using recipe passed in YAML format.
+      summary: Add new Job
+      description: >
+        Create job based on Job submission (in YAML format). User will receive
+        JobID number in response. Parsing the file and downloading Artifacts
+        (if necessary) will be performed immidiately.  Job will be executed
+        when worker will be available. JobLister path should be used to query
+        Weles for Job progress.
       operationId: JobCreator
       consumes:
         - multipart/form-data
@@ -59,8 +64,11 @@ paths:
     post:
       tags:
         - jobs
-      summary: Cancel existing job
-      description: JobCanceler stops execution of Job identified by JobID.
+      summary: Cancel a Job
+      description: >
+        Stop execution of Job identified by JobID. Returns 204 on success. If
+        Job does not exist, 404 response will be returned. If the Job is
+        already in final state, 403 response will be returned.
       operationId: JobCanceler
       consumes:
         - application/json
@@ -85,8 +93,11 @@ paths:
     post:
       tags:
         - jobs
-      summary: List jobs with filter and sort features
-      description: JobLister returns information on filtered Weles Jobs.
+      summary: List Jobs with filtering, sorting and pagination.
+      description: >
+        Returns sorted list of Jobs. If there are more records than returned
+        page, 206 response is returned. If the page is last - 200 response is
+        returned. If no Jobs satisfy passed filter, 404 response is returned.
       operationId: JobLister
       consumes:
         - application/json
@@ -107,17 +118,22 @@ paths:
                 $ref: '#/definitions/JobSorter'
         - in: query
           name: after
-          description: JobID of the last element from previous page.
+          description: >
+            Fill this parameter with JobID of the last element from current
+            page to receive next one.
           type: integer
           format: uint64
         - in: query
           name: before
-          description: JobID of first element from next page.
+          description: >
+            Fill this parameter with JobID of the first element from current
+            page to receive previous one.
           type: integer
           format: uint64
         - in: query
           name: limit
-          description: Custom page limit. Denotes number of JobInfo structures that will be returned.
+          description:  >
+            Number of records to return. Overrides default server page limit.
           type: integer
           format: int32
       responses:
@@ -132,17 +148,21 @@ paths:
               type: string
               format: URI
               description: >
-                URI to request previous page of data. Please note that the same body must be used as in initial request.
+                URL suffix to request previous page of data. Please note that
+                the same body must be used as in initial request.
             Next:
               type: string
               format: URI
               description: >
-                URI to request next page of data. Please note that the same body must be used as in initial request.
+                URL suffix to request next page of data. Please note that the
+                same body must be used as in initial request.
             TotalRecords:
               type: integer
               format: uint64
               description: >
-                count of records currently fulfilling the requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+                count of records currently fulfilling the requested JobFilter.
+                Please note that this value may change when requesting for the
+                same data at a different moments in time.
         '206':
           description: Partial Content
           schema:
@@ -154,22 +174,28 @@ paths:
               type: string
               format: URI
               description: >
-                URI to request previous page of data. Please note that the same body must be used as in initial request.
+                URL suffix to request previous page of data. Please note that
+                the same body must be used as in initial request.
             Next:
               type: string
               format: URI
               description: >
-                URI to request next page of data. Please note that the same body must be used as in initial request.
+                URL suffix to request next page of data. Please note that the
+                same body must be used as in initial request.
             TotalRecords:
               type: integer
               format: uint64
               description: >
-                 count of records currently fulfilling requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+                 count of records currently fulfilling requested JobFilter.
+                 Please note that this value may change when requesting for the
+                 same data at a different moments in time.
             RemainingRecords:
               type: integer
               format: uint64
               description: >
-                number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.
+                number of records after current page. Please note that this
+                value may change when requesting for the same data at a
+                different moments in time.
         '400':
           $ref: '#/responses/BadRequest'
         '404':
@@ -180,8 +206,12 @@ paths:
     post:
       tags:
         - artifacts
-      summary: List artifacts with filter and sort features
-      description: ArtifactLister returns information on filtered Weles artifacts.
+      summary: List Artifacts with filter and sort features
+      description: >
+        Returns sorted list of Artifacts. If there are more records than
+        default page size -  206 response is returned. If the page is last -
+        200 response is returned. If no Artifact passes filter - 404 response
+        is returned.
       operationId: ArtifactLister
       consumes:
         - application/json
@@ -202,17 +232,22 @@ paths:
                 $ref: '#/definitions/ArtifactSorter'
         - in: query
           name: after
-          description: ID of the last element from previous page.
+          description: >
+            Fill this parameter with Artifact's ID (don't mix it with JobID) of
+            the last element from current page to receive next one.
           type: integer
           format: int64
         - in: query
           name: before
-          description: ID of first element from next page.
+          description: >
+            Fill this parameter with Artifact's ID (don't mix it with JobID) of
+            the first element from current page to receive previous one.
           type: integer
           format: int64
         - in: query
           name: limit
-          description: Custom page limit. Denotes number of ArtifactInfo structures that will be returned.
+          description: >
+            Number of records to return. Overrides default server page limit.
           type: integer
           format: int32
       responses:
@@ -227,17 +262,21 @@ paths:
               type: string
               format: URI
               description: >
-                URI to request next page of data. Please note that the same body must be used as in initial request.
+                URL suffix to request next page of data. Please note that the
+                same body must be used as in initial request.
             Next:
               type: string
               format: URI
               description: >
-                URI to request next page of data. Please note that the same body must be used as in initial request.
+                URL suffix to request next page of data. Please note that the same
+                body must be used as in initial request.
             TotalRecords:
               type: integer
               format: uint64
               description: >
-                count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+                count of records currently fulfilling the requested
+                ArtifactFilter. Please note that this value may change when
+                requesting for the same data at a different moment in time.
         '206':
           description: Partial Content
           schema:
@@ -249,22 +288,28 @@ paths:
               type: string
               format: URI
               description: >
-                URI to request next page of data. Please note that the same body must be used as in initial request.
+                URL to request next page of data. Please note that the same
+                body must be used as in initial request.
             Next:
               type: string
               format: URI
               description: >
-                URI to request next page of data. Please note that the same body must be used as in initial request.
+                URL to request next page of data. Please note that the same
+                body must be used as in initial request.
             TotalRecords:
               type: integer
               format: uint64
               description: >
-                count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+                count of records currently fulfilling the requested
+                ArtifactFilter. Please note that this value may change when
+                requesting for the same data at a different moment in time.
             RemainingRecords:
               type: integer
               format: uint64
               description: >
-                number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.
+                number of records after current page. Please note that this
+                value may change when requesting for the same data at a
+                different moment in time.
         '400':
           $ref: '#/responses/BadRequest'
         '404':
@@ -336,7 +381,8 @@ definitions:
 
       * PARSING - Provided yaml file is being parsed and interpreted.
 
-      * DOWNLOADING - Images and/or files required for the test are being downloaded.
+      * DOWNLOADING - Images and/or files required for the test are being
+      downloaded.
 
       * WAITING - Job is waiting for Boruta worker.
 
@@ -367,7 +413,8 @@ definitions:
         description: is a unique Job identifier
       name:
         type: string
-        description: is the Job name acquired from yaml file during Job creation.
+        description: >
+          is the Job name acquired from yaml file during Job creation.
       created:
         type: string
         format: date-time
@@ -381,9 +428,17 @@ definitions:
         description: specifies current state of the Job.
       info:
         type: string
-        description: provides additional information about current state, e.g. cause of failure
+        description: >
+          provides additional information about current state, e.g. cause of
+          failure
   JobFilter:
-    description: is used to filter Weles Jobs.
+    description: >
+      is used to filter Weles Jobs. Filling more than one struct member (e.g.
+      JobID, Name) will result in searching for a Job with filled JobID and
+      Name. Filling more than one member of an array/slice (in specific struct
+      member) will result in searching for all members of array. Both
+      aforementioned behaviours may occur simultainously. Some JobFilter fields
+      support regular expressions (see documentation of struct)
     type: object
     properties:
       JobID:
@@ -391,6 +446,7 @@ definitions:
         items:
           $ref: '#/definitions/JobID'
       Name:
+        description: Allows usage of regular expressions.
         type: array
         items:
           type: string
@@ -411,6 +467,7 @@ definitions:
         items:
           $ref: '#/definitions/JobStatus'
       Info:
+        description: Allows usage of regular expressions.
         type: array
         items:
           type: string
@@ -420,13 +477,16 @@ definitions:
 
       * ID - default sort key.
 
-      * CreatedDate - sorting by date of creation of the weles job.
+      * CreatedDate - sorting by date of creation of the weles Job.
 
-      * UpdatedDate - sorting by date of update of the weles job.
+      * UpdatedDate - sorting by date of update of the weles Job.
 
-      * JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.
+      * JobStatus - sorting by the Job Status. Descending order will sort in
+      the order JobStatuses are listed in the docs (from NEW at the start to
+      CANCELED at the end). Ascending will reverse this order.
 
-      When sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)
+      When sorting is applied, and there are many Jobs with the same
+      date/status, they will be sorted by JobID (Ascending)
     type: string
     enum:
       - ID
@@ -435,7 +495,7 @@ definitions:
       - JobStatus
   SortOrder:
     description: |
-      denotes direction of sorting of weles jobs or artifacts.
+      denotes direction of sorting of weles Jobs or Artifacts.
 
       * Ascending - from oldest to newest.
 
@@ -456,7 +516,7 @@ definitions:
         $ref: '#/definitions/SortOrder'
   ArtifactType:
     description: |
-      denotes type and function of an artifact.
+      denotes type and function of an Artifact.
 
       * IMAGE - image file.
 
@@ -473,7 +533,7 @@ definitions:
       - TEST
       - YAML
   ArtifactPath:
-    description: describes path to artifact in ArtifactDB filesystem.
+    description: describes path to Artifact in ArtifactDB filesystem.
     type: string
   ArtifactStatus:
     description: |
@@ -494,19 +554,20 @@ definitions:
       - FAILED
       - PENDING
   ArtifactURI:
-    description: is used to identify artifact's source.
+    description: is used to identify Artifact's source.
     type: string
     format: uri
   ArtifactAlias:
-    description: is an alternative name of an artifact.
+    description: is an alternative name of an Artifact.
     type: string
   ArtifactDescription:
-    description: contains information needed to create new artifact in ArtifactDB.
+    description: >
+      contains information needed to create new Artifact in ArtifactDB.
     type: object
     properties:
       JobID:
         $ref: '#/definitions/JobID'
-        description: specifies  Job for which artifact was created.
+        description: specifies  Job for which Artifact was created.
       Type:
         $ref: '#/definitions/ArtifactType'
       Alias:
@@ -574,7 +635,7 @@ definitions:
   ArtifactSorter:
     description: |
       defines the key for sorting as well as direction of sorting.
-      When ArtifactSorter is empty, artifacts are sorted by ID, Ascending.
+      When ArtifactSorter is empty, Artifacts are sorted by ID, Ascending.
     type: object
     properties:
       By:
@@ -600,6 +661,6 @@ definitions:
           - stable
           - deprecated
 externalDocs:
-  description: TBD
-  url: 'http://TBD.tbd'
+  description: Official Weles documentation.
+  url: 'http://samsungslav.github.io/weles'
 

@@ -42,7 +42,7 @@ type ArtifactListerOK struct {
 
 	 */
 	Next string `json:"Next"`
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*URL suffix to request next page of data. Please note that the same body must be used as in initial request.
 
 
 	 */
