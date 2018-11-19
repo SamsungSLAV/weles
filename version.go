@@ -31,7 +31,6 @@ import (
 )
 
 // Version defines version of Weles API (and its state) and server.
-//
 // swagger:model Version
 type Version struct {
 

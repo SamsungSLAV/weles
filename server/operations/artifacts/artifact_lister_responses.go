@@ -37,20 +37,23 @@ const ArtifactListerOKCode int = 200
 swagger:response artifactListerOK
 */
 type ArtifactListerOK struct {
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*Next is the URL suffix to request next page of data. Please
+	note that the same body must be used as in initial request.
 
-
-	 */
+	*/
 	Next string `json:"Next"`
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*Previous  is the URL suffix to request next page of data.
+	Please note that the same body must be used as in initial
+	request.
 
-
-	 */
+	*/
 	Previous string `json:"Previous"`
-	/*count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+	/*TotalRecords is count of records currently fulfilling the
+	requested ArtifactFilter. Please note that this value may
+	change when requesting for the same data at a different moment
+	in time.
 
-
-	 */
+	*/
 	TotalRecords uint64 `json:"TotalRecords"`
 
 	/*
@@ -153,25 +156,28 @@ const ArtifactListerPartialContentCode int = 206
 swagger:response artifactListerPartialContent
 */
 type ArtifactListerPartialContent struct {
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*Next is URL to request next page of data. Please note that the same
+	body must be used as in initial request.
 
-
-	 */
+	*/
 	Next string `json:"Next"`
-	/*URI to request next page of data. Please note that the same body must be used as in initial request.
+	/*Previous is URL suffix to request next page of data. Please
+	note that the same body must be used as in initial request.
 
-
-	 */
+	*/
 	Previous string `json:"Previous"`
-	/*number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.
+	/*RemainingRecords is number of records after current page.
+	Please note that this value may change when requesting for the
+	same data at a different moment in time.
 
-
-	 */
+	*/
 	RemainingRecords uint64 `json:"RemainingRecords"`
-	/*count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.
+	/*TotalRecords is count of records currently fulfilling the
+	requested ArtifactFilter. Please note that this value may
+	change when requesting for the same data at a different moment
+	in time.
 
-
-	 */
+	*/
 	TotalRecords uint64 `json:"TotalRecords"`
 
 	/*

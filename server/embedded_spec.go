@@ -44,11 +44,11 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "This is a Weles server.   You can find out more about Weles at [http://tbd.tbd](http://tbd.tbd).",
+    "description": "This is an instance of Weles. [More about this instance of\nWeles.](http://weles.yourdomain.com).",
     "title": "Weles",
-    "termsOfService": "http://tbd.tbd/terms/",
+    "termsOfService": "http://weles.yourdomain.com/terms/",
     "contact": {
-      "email": "tbd@tbd.com"
+      "email": "admin@yourdomain.com"
     },
     "license": {
       "name": "Apache 2.0",
@@ -56,12 +56,12 @@ func init() {
     },
     "version": "v1"
   },
-  "host": "localhost:8088",
+  "host": "localhost:5010",
   "basePath": "/api/v1",
   "paths": {
     "/artifacts/list": {
       "post": {
-        "description": "ArtifactLister returns information on filtered Weles artifacts.",
+        "description": "Returns sorted list of Artifacts. If there are more records than\ndefault page size - 206 response is returned. If the page is last -\n200 response is returned. If no Artifact passes filter - 404 response\nis returned.\n\nProviding empty body and no query parameter will result in list with\ndefault values - no filter, sorted in Ascending order by ID.\nCheck ArtifactFilter and ArtifactSorter models documentation to see how\nto use them.\nTo ease automatic pagination, URL suffixes are returned with each\n2xx response.",
         "consumes": [
           "application/json"
         ],
@@ -71,7 +71,7 @@ func init() {
         "tags": [
           "artifacts"
         ],
-        "summary": "List artifacts with filter and sort features",
+        "summary": "List Artifacts with filter and sort features.",
         "operationId": "ArtifactLister",
         "parameters": [
           {
@@ -79,7 +79,7 @@ func init() {
             "name": "artifactFilterAndSort",
             "in": "body",
             "schema": {
-              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "description": "ArtifactFilterAndSort contains data for filtering and sorting\nWeles Artifacts lists. Please refer to ArtifactFilter and\nArtifactSorter documentation for more details.",
               "type": "object",
               "properties": {
                 "Filter": {
@@ -94,21 +94,21 @@ func init() {
           {
             "type": "integer",
             "format": "int64",
-            "description": "ID of the last element from previous page.",
+            "description": "After should be filled with Artifact's ID (don't mix it with JobID)\nof the last element from current page to receive next one.",
             "name": "after",
             "in": "query"
           },
           {
             "type": "integer",
             "format": "int64",
-            "description": "ID of first element from next page.",
+            "description": "Before should be filled with Artifact's ID (don't mix it with\nJobID) of the first element from current page to receive previous\none.",
             "name": "before",
             "in": "query"
           },
           {
             "type": "integer",
             "format": "int32",
-            "description": "Custom page limit. Denotes number of ArtifactInfo structures that will be returned.",
+            "description": "Limit is the number of records to return. Overrides default server\npage limit.",
             "name": "limit",
             "in": "query"
           }
@@ -126,17 +126,17 @@ func init() {
               "Next": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
               },
               "Previous": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Previous  is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
               },
               "TotalRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "TotalRecords is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
               }
             }
           },
@@ -152,22 +152,22 @@ func init() {
               "Next": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Next is URL to request next page of data. Please note that the same\nbody must be used as in initial request."
               },
               "Previous": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Previous is URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
               },
               "RemainingRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "RemainingRecords is number of records after current page.\nPlease note that this value may change when requesting for the\nsame data at a different moment in time."
               },
               "TotalRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "TotalRecords is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
               }
             }
           },
@@ -185,7 +185,7 @@ func init() {
     },
     "/jobs": {
       "post": {
-        "description": "adds new Job in Weles using recipe passed in YAML format.",
+        "description": "Create Job based on Job Submission file (in YAML format). Returns 201\nresponse with JobID on correct request.\n\nParsing the file and downloading Artifacts (if necessary) will be\nperformed immediately. Job will be executed when Worker will be\navailable. JobLister path should be used to query Weles for Job\nprogress.",
         "consumes": [
           "multipart/form-data"
         ],
@@ -195,7 +195,7 @@ func init() {
         "tags": [
           "jobs"
         ],
-        "summary": "Add new job",
+        "summary": "Add new Job.",
         "operationId": "JobCreator",
         "parameters": [
           {
@@ -227,7 +227,7 @@ func init() {
     },
     "/jobs/list": {
       "post": {
-        "description": "JobLister returns information on filtered Weles Jobs.",
+        "description": "Returns sorted list of Jobs. If there are more records than returned\npage, 206 response is returned. If the page is last - 200 response is\nreturned. If no Jobs satisfy passed filter, 404 response is returned.\nFilling both before and after query will result in 400 error response.\n\nProviding empty body and no query parameter will result in list with\ndefault values - no filter, sorted in Ascending order by JobID.\nCheck JobFilter and JobSorter models documentation to see how to use\nthem.\nTo ease automatic pagination, URL suffixes are returned with each\n2xx response.",
         "consumes": [
           "application/json"
         ],
@@ -237,7 +237,7 @@ func init() {
         "tags": [
           "jobs"
         ],
-        "summary": "List jobs with filter and sort features",
+        "summary": "List Jobs with filtering, sorting and pagination.",
         "operationId": "JobLister",
         "parameters": [
           {
@@ -245,7 +245,7 @@ func init() {
             "name": "jobFilterAndSort",
             "in": "body",
             "schema": {
-              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "description": "JobFilterAndSort contains data for filtering and sorting\nWeles Jobs lists. Please refer to JobFilter and\nJobSorter documentation for more details.",
               "type": "object",
               "properties": {
                 "Filter": {
@@ -260,21 +260,21 @@ func init() {
           {
             "type": "integer",
             "format": "uint64",
-            "description": "JobID of the last element from previous page.",
+            "description": "After should be filled with JobID of the last element from current\npage to receive next one.",
             "name": "after",
             "in": "query"
           },
           {
             "type": "integer",
             "format": "uint64",
-            "description": "JobID of first element from next page.",
+            "description": "Before should be filled with JobID of the first element from\ncurrent page to receive previous one.",
             "name": "before",
             "in": "query"
           },
           {
             "type": "integer",
             "format": "int32",
-            "description": "Custom page limit. Denotes number of JobInfo structures that will be returned.",
+            "description": "Limit is the number of records to return. Overrides default server\npage limit.",
             "name": "limit",
             "in": "query"
           }
@@ -292,17 +292,17 @@ func init() {
               "Next": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
               },
               "Previous": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request previous page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Previous is the URL suffix to request previous page of data.\nPlease note that the same body must be used as in initial\nrequest."
               },
               "TotalRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "count of records currently fulfilling the requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "TotalRecords is the count of records currently fulfilling the\nrequested JobFilter. Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
               }
             }
           },
@@ -318,22 +318,22 @@ func init() {
               "Next": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
               },
               "Previous": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request previous page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Previous is the URL suffix to request previous page of data.\nPlease note that the same body must be used as in initial\nrequest."
               },
               "RemainingRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "RemainingRecords is the number of records after current page.\nPlease note that this value may change when requesting for the\nsame data at a different moments in time."
               },
               "TotalRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "count of records currently fulfilling requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "TotalRecords is the count of records currently fulfilling\nrequested JobFilter.  Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
               }
             }
           },
@@ -351,7 +351,7 @@ func init() {
     },
     "/jobs/{JobID}/cancel": {
       "post": {
-        "description": "JobCanceler stops execution of Job identified by JobID.",
+        "description": "Stop execution of Job identified by JobID. Returns 204 on success. If\nJob does not exist, 404 response will be returned. If the Job is\nalready in final state, 403 response will be returned.",
         "consumes": [
           "application/json"
         ],
@@ -361,7 +361,7 @@ func init() {
         "tags": [
           "jobs"
         ],
-        "summary": "Cancel existing job",
+        "summary": "Cancel a Job.",
         "operationId": "JobCanceler",
         "parameters": [
           {
@@ -390,7 +390,7 @@ func init() {
     },
     "/version": {
       "get": {
-        "description": "Version and state of API (e.g. v1 obsolete, v2 stable, v3 devel) and server version.",
+        "description": "Version and state of API (e.g. v1 obsolete, v2 stable, v3 devel) and\nserver version.",
         "produces": [
           "application/json"
         ],
@@ -429,14 +429,15 @@ func init() {
   },
   "definitions": {
     "ArtifactAlias": {
-      "description": "is an alternative name of an artifact.",
+      "description": "is alternative name of an Artifact. Taken from the Job Submission file.",
       "type": "string"
     },
     "ArtifactDescription": {
-      "description": "contains information needed to create new artifact in ArtifactDB.",
+      "description": "contains minimal information needed to create new Artifact in ArtifactDB.",
       "type": "object",
       "properties": {
         "Alias": {
+          "description": "Alias is alternative name of an Artifact. Taken from the Job\nSubmission file.",
           "x-omitempty": true,
           "$ref": "#/definitions/ArtifactAlias"
         },
@@ -446,38 +447,44 @@ func init() {
           "$ref": "#/definitions/JobID"
         },
         "Type": {
+          "description": "Type of the Artifact. Refer to ArtifactType documentation to see all\npossible values with descriptions.",
           "x-omitempty": false,
           "$ref": "#/definitions/ArtifactType"
         },
         "URI": {
+          "description": "URI from which artifact was downloaded. Taken from the Job Submission\nfile.",
           "x-omitempty": true,
           "$ref": "#/definitions/ArtifactURI"
         }
       }
     },
     "ArtifactFilter": {
-      "description": "is used to filter results from ArtifactDB.",
+      "description": "is used to filter Weles Artifacts. Filling more than one struct member\n(e.g. JobID and Type) will result in searching for an Artifact(s) created\nduring execution of Job with JobID of specified Type. Filling more than\none member of an array/slice (in specific struct member - i.e. providing\n2 JobID) will result in searching for all members of that array. Both\naforementioned behaviours may occur simultaneously.",
       "type": "object",
       "properties": {
         "Alias": {
+          "description": "Alias is used to filter Artifacts by ArtifactAlias (taken from Job Submission file).",
           "type": "array",
           "items": {
             "$ref": "#/definitions/ArtifactAlias"
           }
         },
         "JobID": {
+          "description": "JobID is used to filter Artifacts by it's JobID of related Weles Job.\nMost commonly used filter.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/JobID"
           }
         },
         "Status": {
+          "description": "Status is used to filter Artifacts by ArtifactStatus. Refer to ArtifactStatus documentation for possible values.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/ArtifactStatus"
           }
         },
         "Type": {
+          "description": "Type is used to filter Artifacts by ArtifactType. Refer to\nArtifactType documentation for possible values. Useful for e.g.\nrequesting only RESULT artifacts from a Job.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/ArtifactType"
@@ -486,7 +493,7 @@ func init() {
       }
     },
     "ArtifactInfo": {
-      "description": "describes single artifact stored in ArtifactDB.",
+      "description": "describes single Artifact stored in ArtifactDB.",
       "type": "object",
       "allOf": [
         {
@@ -495,21 +502,23 @@ func init() {
       ],
       "properties": {
         "ID": {
-          "description": "unique identification of the artifact.",
+          "description": "ID is unique identifier of an Artifact.",
           "type": "integer",
           "format": "int64",
           "x-go-custom-tag": "db:\",primarykey, autoincrement\"",
           "x-omitempty": false
         },
         "Path": {
+          "description": "Path where Artifact is stored on Weles server.",
           "x-omitempty": true,
           "$ref": "#/definitions/ArtifactPath"
         },
         "Status": {
+          "description": "Status of Artifact. For details - see documentation of\nArtifactStatus.",
           "$ref": "#/definitions/ArtifactStatus"
         },
         "Timestamp": {
-          "description": "is date of creating the artifact.",
+          "description": "Timestamp is the date of creating an Artifact.",
           "type": "string",
           "format": "date-time",
           "x-omitempty": false
@@ -517,30 +526,32 @@ func init() {
       }
     },
     "ArtifactPath": {
-      "description": "describes path to artifact in ArtifactDB filesystem.",
+      "description": "describes path to Artifact in ArtifactDB filesystem.",
       "type": "string"
     },
     "ArtifactSortBy": {
-      "description": "denotes the key for sorting list of all artifacts.\n* ID - sorting by artifact ID.\n",
+      "description": "denotes the key for sorting list of all artifacts.\n\n* ID - sorting by artifact ID.\n",
       "type": "string",
       "enum": [
         "ID"
       ]
     },
     "ArtifactSorter": {
-      "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, artifacts are sorted by ID, Ascending.\n",
+      "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, Artifacts are sorted by ID, Ascending.",
       "type": "object",
       "properties": {
         "SortBy": {
+          "description": "SortBy denotes key used for sorting Artifacts. For more details, see\nArtifactSortBy documentation.",
           "$ref": "#/definitions/ArtifactSortBy"
         },
         "SortOrder": {
+          "description": "SortOrder in which Artifacts will be sorted. For more details, see\nSortOrder documentation.",
           "$ref": "#/definitions/SortOrder"
         }
       }
     },
     "ArtifactStatus": {
-      "description": "describes artifact status and availability.\n\n* DOWNLOADING - artifact is currently being downloaded.\n\n* READY - artifact has been downloaded and is ready to use.\n\n* FAILED - file is not available for use (e.g. download failed).\n\n* PENDING - artifact download has not started yet.\n",
+      "description": "describes Artifact status and availability.\n\n* DOWNLOADING - artifact is currently being downloaded.\n\n* READY - artifact has been downloaded and is ready to use.\n\n* FAILED - file is not available for use (e.g. download failed).\n\n* PENDING - artifact download has not started yet.\n",
       "type": "string",
       "enum": [
         "DOWNLOADING",
@@ -550,7 +561,7 @@ func init() {
       ]
     },
     "ArtifactType": {
-      "description": "denotes type and function of an artifact.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n",
+      "description": "denotes type and function of an Artifact. Depends on Job Submission file.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n",
       "type": "string",
       "enum": [
         "IMAGE",
@@ -560,7 +571,7 @@ func init() {
       ]
     },
     "ArtifactURI": {
-      "description": "is used to identify artifact's source.",
+      "description": "is used to identify Artifact's source.",
       "type": "string",
       "format": "uri"
     },
@@ -577,53 +588,61 @@ func init() {
       }
     },
     "JobFilter": {
-      "description": "is used to filter Weles Jobs.",
+      "description": "is used to filter Weles Jobs.\nFilling more than one struct member (e.g. JobID, Name) will result in\nsearching for a Job with filled JobID and Name.\nFilling more than one member of an array/slice (in specific struct\nmember) will result in searching for all members of array.\nBoth aforementioned behaviours may occur simultaneously. Some JobFilter\nfields support regular expressions (see fields documentation).",
       "type": "object",
       "properties": {
         "CreatedAfter": {
+          "description": "CreatedAfter means Jobs created after the supplied date. Records\ncreated at extacly the same time will be filtered out.",
           "type": "string",
           "format": "date-time"
         },
         "CreatedBefore": {
+          "description": "CreatedBefore means Jobs created before the supplied date. Records\ncreated at extacly the same time will be filtered out.",
           "type": "string",
           "format": "date-time"
         },
         "Info": {
+          "description": "Info is used to filter by Job info (detailed information from Weles\nabout Job execution).\nAllows usage of regular expressions.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "JobID": {
+          "description": "JobID is used to filter Jobs by it's ID. Most commonly used filter.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/JobID"
           }
         },
         "Name": {
+          "description": "Name is used to filter using name acquired from Job Submission file\n(yaml format, job_name key's value).\nAllows usage of regular expressions.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "Status": {
+          "description": "Status is used to receive only Jobs in specific status. When filled\nwith more than one element, returned jobs will only be in those\nstatuses.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/JobStatus"
           }
         },
         "UpdatedAfter": {
+          "description": "UpdatedAfter means Jobs updated after the supplied date. Records\nupdated at extacly the same time will be filtered out.",
           "type": "string",
           "format": "date-time"
         },
         "UpdatedBefore": {
+          "description": "UpdatedBefore means Jobs updated before the supplied date. Records\nupdated at extacly the same time will be filtered out.",
           "type": "string",
           "format": "date-time"
         }
       }
     },
     "JobID": {
-      "description": "is a unique identifier for Weles Job.",
+      "description": "is a unique identifier of a Weles Job.",
       "type": "integer",
       "format": "uint64"
     },
@@ -631,34 +650,34 @@ func init() {
       "description": "contains information about a Job available for public API.",
       "type": "object",
       "properties": {
-        "created": {
-          "description": "is the Job creation time in UTC.",
+        "Created": {
+          "description": "Created is the Job creation time (UTC).",
           "type": "string",
           "format": "date-time",
           "x-omitempty": false
         },
-        "info": {
-          "description": "provides additional information about current state, e.g. cause of failure",
+        "Info": {
+          "description": "Info provides additional information about current state, e.g. cause\nof failure",
           "type": "string",
           "x-omitempty": false
         },
-        "jobID": {
-          "description": "is a unique Job identifier",
+        "JobID": {
+          "description": "is a unique Job identifier.",
           "x-omitempty": false,
           "$ref": "#/definitions/JobID"
         },
-        "name": {
-          "description": "is the Job name acquired from yaml file during Job creation.",
+        "Name": {
+          "description": "Name is the Job name acquired from yaml file during Job creation.",
           "type": "string",
           "x-omitempty": true
         },
-        "status": {
-          "description": "specifies current state of the Job.",
+        "Status": {
+          "description": "Status specifies current state of the Job.",
           "x-omitempty": false,
           "$ref": "#/definitions/JobStatus"
         },
-        "updated": {
-          "description": "is the time of latest Jobs' status modification.",
+        "Updated": {
+          "description": "Updated is the time of latest Jobs' status modification (UTC).",
           "type": "string",
           "format": "date-time",
           "x-omitempty": false
@@ -666,7 +685,7 @@ func init() {
       }
     },
     "JobSortBy": {
-      "description": "denotes key for sorting Jobs list.\n\n* ID - default sort key.\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\n\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
+      "description": "denotes key for sorting Jobs list.\n\n* ID - default sort key.\n\n* CreatedDate - sorting by date of creation of the weles Job.\n\n* UpdatedDate - sorting by date of update of the weles Job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in\nthe order JobStatuses are listed in the docs (from NEW at the start to\nCANCELED at the end). Ascending will reverse this order.\n\nWhen sorting is applied, and there are many Jobs with the same\ndate/status, they will be sorted by JobID (Ascending)\n",
       "type": "string",
       "enum": [
         "ID",
@@ -676,19 +695,21 @@ func init() {
       ]
     },
     "JobSorter": {
-      "description": "defines the key for sorting as well as direction of sorting.\n",
+      "description": "defines the key for sorting as well as direction of sorting.",
       "type": "object",
       "properties": {
         "SortBy": {
+          "description": "SortBy denotes key used for sorting Jobs. For more details, see JobSortBy\ndocumentation.",
           "$ref": "#/definitions/JobSortBy"
         },
         "SortOrder": {
+          "description": "SortOrder in which Jobs will be sorted. For more details, see SortOrder\ndocumentation.",
           "$ref": "#/definitions/SortOrder"
         }
       }
     },
     "JobStatus": {
-      "description": "specifies state of the Job.\n\n* NEW - The new Job has been created.\n\n* PARSING - Provided yaml file is being parsed and interpreted.\n\n* DOWNLOADING - Images and/or files required for the test are being downloaded.\n\n* WAITING - Job is waiting for Boruta worker.\n\n* RUNNING - Job is being executed.\n\n* COMPLETED - Job is completed. This is terminal state.\n\n* FAILED - Job execution has failed. This is terminal state.\n\n* CANCELED -Job has been canceled with API call. This is terminal state.\n",
+      "description": "specifies state of the Job.\n\n* NEW             - New Job has been created.\n\n* PARSING         - Provided yaml file is being parsed and interpreted.\n\n* DOWNLOADING     - Images and/or files required for the test are being\n                    downloaded.\n\n* WAITING         - Job is waiting for Boruta worker.\n\n* RUNNING         - Job is being executed.\n\n* COMPLETED       - Job is completed. This is terminal state.\n\n* FAILED          - Job execution has failed. This is terminal state.\n\n* CANCELED        - Job has been canceled with API call. This is terminal\n                    state.\n",
       "type": "string",
       "enum": [
         "NEW",
@@ -702,7 +723,7 @@ func init() {
       ]
     },
     "SortOrder": {
-      "description": "denotes direction of sorting of weles jobs or artifacts.\n\n* Ascending - from oldest to newest.\n\n* Descending - from newest to oldest.\n",
+      "description": "denotes direction of sorting of weles Jobs or Artifacts.\n\n* Ascending - from oldest to newest.\n\n* Descending - from newest to oldest.\n",
       "type": "string",
       "enum": [
         "Ascending",
@@ -710,7 +731,7 @@ func init() {
       ]
     },
     "Version": {
-      "description": "defines version of Weles API (and its state) and server.\n",
+      "description": "defines version of Weles API (and its state) and server.",
       "type": "object",
       "properties": {
         "API": {
@@ -773,11 +794,11 @@ func init() {
   },
   "tags": [
     {
-      "description": "Info and management of Weles jobs.",
+      "description": "Info and management of Weles Jobs.",
       "name": "jobs"
     },
     {
-      "description": "Info about all artifacts used by Weles jobs.",
+      "description": "Info about Artifacts used by Weles Jobs.",
       "name": "artifacts"
     },
     {
@@ -786,8 +807,8 @@ func init() {
     }
   ],
   "externalDocs": {
-    "description": "TBD",
-    "url": "http://TBD.tbd"
+    "description": "Official Weles documentation.",
+    "url": "http://weles.rtfd.io"
   }
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
@@ -802,11 +823,11 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "This is a Weles server.   You can find out more about Weles at [http://tbd.tbd](http://tbd.tbd).",
+    "description": "This is an instance of Weles. [More about this instance of\nWeles.](http://weles.yourdomain.com).",
     "title": "Weles",
-    "termsOfService": "http://tbd.tbd/terms/",
+    "termsOfService": "http://weles.yourdomain.com/terms/",
     "contact": {
-      "email": "tbd@tbd.com"
+      "email": "admin@yourdomain.com"
     },
     "license": {
       "name": "Apache 2.0",
@@ -814,12 +835,12 @@ func init() {
     },
     "version": "v1"
   },
-  "host": "localhost:8088",
+  "host": "localhost:5010",
   "basePath": "/api/v1",
   "paths": {
     "/artifacts/list": {
       "post": {
-        "description": "ArtifactLister returns information on filtered Weles artifacts.",
+        "description": "Returns sorted list of Artifacts. If there are more records than\ndefault page size - 206 response is returned. If the page is last -\n200 response is returned. If no Artifact passes filter - 404 response\nis returned.\n\nProviding empty body and no query parameter will result in list with\ndefault values - no filter, sorted in Ascending order by ID.\nCheck ArtifactFilter and ArtifactSorter models documentation to see how\nto use them.\nTo ease automatic pagination, URL suffixes are returned with each\n2xx response.",
         "consumes": [
           "application/json"
         ],
@@ -829,7 +850,7 @@ func init() {
         "tags": [
           "artifacts"
         ],
-        "summary": "List artifacts with filter and sort features",
+        "summary": "List Artifacts with filter and sort features.",
         "operationId": "ArtifactLister",
         "parameters": [
           {
@@ -837,7 +858,7 @@ func init() {
             "name": "artifactFilterAndSort",
             "in": "body",
             "schema": {
-              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "description": "ArtifactFilterAndSort contains data for filtering and sorting\nWeles Artifacts lists. Please refer to ArtifactFilter and\nArtifactSorter documentation for more details.",
               "type": "object",
               "properties": {
                 "Filter": {
@@ -852,21 +873,21 @@ func init() {
           {
             "type": "integer",
             "format": "int64",
-            "description": "ID of the last element from previous page.",
+            "description": "After should be filled with Artifact's ID (don't mix it with JobID)\nof the last element from current page to receive next one.",
             "name": "after",
             "in": "query"
           },
           {
             "type": "integer",
             "format": "int64",
-            "description": "ID of first element from next page.",
+            "description": "Before should be filled with Artifact's ID (don't mix it with\nJobID) of the first element from current page to receive previous\none.",
             "name": "before",
             "in": "query"
           },
           {
             "type": "integer",
             "format": "int32",
-            "description": "Custom page limit. Denotes number of ArtifactInfo structures that will be returned.",
+            "description": "Limit is the number of records to return. Overrides default server\npage limit.",
             "name": "limit",
             "in": "query"
           }
@@ -884,17 +905,17 @@ func init() {
               "Next": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
               },
               "Previous": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Previous  is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
               },
               "TotalRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "TotalRecords is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
               }
             }
           },
@@ -910,22 +931,22 @@ func init() {
               "Next": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Next is URL to request next page of data. Please note that the same\nbody must be used as in initial request."
               },
               "Previous": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Previous is URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
               },
               "RemainingRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "RemainingRecords is number of records after current page.\nPlease note that this value may change when requesting for the\nsame data at a different moment in time."
               },
               "TotalRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "count of records currently fulfilling the requested ArtifactFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "TotalRecords is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
               }
             }
           },
@@ -952,7 +973,7 @@ func init() {
     },
     "/jobs": {
       "post": {
-        "description": "adds new Job in Weles using recipe passed in YAML format.",
+        "description": "Create Job based on Job Submission file (in YAML format). Returns 201\nresponse with JobID on correct request.\n\nParsing the file and downloading Artifacts (if necessary) will be\nperformed immediately. Job will be executed when Worker will be\navailable. JobLister path should be used to query Weles for Job\nprogress.",
         "consumes": [
           "multipart/form-data"
         ],
@@ -962,7 +983,7 @@ func init() {
         "tags": [
           "jobs"
         ],
-        "summary": "Add new job",
+        "summary": "Add new Job.",
         "operationId": "JobCreator",
         "parameters": [
           {
@@ -1003,7 +1024,7 @@ func init() {
     },
     "/jobs/list": {
       "post": {
-        "description": "JobLister returns information on filtered Weles Jobs.",
+        "description": "Returns sorted list of Jobs. If there are more records than returned\npage, 206 response is returned. If the page is last - 200 response is\nreturned. If no Jobs satisfy passed filter, 404 response is returned.\nFilling both before and after query will result in 400 error response.\n\nProviding empty body and no query parameter will result in list with\ndefault values - no filter, sorted in Ascending order by JobID.\nCheck JobFilter and JobSorter models documentation to see how to use\nthem.\nTo ease automatic pagination, URL suffixes are returned with each\n2xx response.",
         "consumes": [
           "application/json"
         ],
@@ -1013,7 +1034,7 @@ func init() {
         "tags": [
           "jobs"
         ],
-        "summary": "List jobs with filter and sort features",
+        "summary": "List Jobs with filtering, sorting and pagination.",
         "operationId": "JobLister",
         "parameters": [
           {
@@ -1021,7 +1042,7 @@ func init() {
             "name": "jobFilterAndSort",
             "in": "body",
             "schema": {
-              "description": "Data for filtering and sorting Weles Jobs lists.",
+              "description": "JobFilterAndSort contains data for filtering and sorting\nWeles Jobs lists. Please refer to JobFilter and\nJobSorter documentation for more details.",
               "type": "object",
               "properties": {
                 "Filter": {
@@ -1036,21 +1057,21 @@ func init() {
           {
             "type": "integer",
             "format": "uint64",
-            "description": "JobID of the last element from previous page.",
+            "description": "After should be filled with JobID of the last element from current\npage to receive next one.",
             "name": "after",
             "in": "query"
           },
           {
             "type": "integer",
             "format": "uint64",
-            "description": "JobID of first element from next page.",
+            "description": "Before should be filled with JobID of the first element from\ncurrent page to receive previous one.",
             "name": "before",
             "in": "query"
           },
           {
             "type": "integer",
             "format": "int32",
-            "description": "Custom page limit. Denotes number of JobInfo structures that will be returned.",
+            "description": "Limit is the number of records to return. Overrides default server\npage limit.",
             "name": "limit",
             "in": "query"
           }
@@ -1068,17 +1089,17 @@ func init() {
               "Next": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
               },
               "Previous": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request previous page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Previous is the URL suffix to request previous page of data.\nPlease note that the same body must be used as in initial\nrequest."
               },
               "TotalRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "count of records currently fulfilling the requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "TotalRecords is the count of records currently fulfilling the\nrequested JobFilter. Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
               }
             }
           },
@@ -1094,22 +1115,22 @@ func init() {
               "Next": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request next page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
               },
               "Previous": {
                 "type": "string",
                 "format": "URI",
-                "description": "URI to request previous page of data. Please note that the same body must be used as in initial request.\n"
+                "description": "Previous is the URL suffix to request previous page of data.\nPlease note that the same body must be used as in initial\nrequest."
               },
               "RemainingRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "number of records after current page. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "RemainingRecords is the number of records after current page.\nPlease note that this value may change when requesting for the\nsame data at a different moments in time."
               },
               "TotalRecords": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "count of records currently fulfilling requested JobFilter. Please note that this value may change when requesting for the same data at a different moment in time.\n"
+                "description": "TotalRecords is the count of records currently fulfilling\nrequested JobFilter.  Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
               }
             }
           },
@@ -1136,7 +1157,7 @@ func init() {
     },
     "/jobs/{JobID}/cancel": {
       "post": {
-        "description": "JobCanceler stops execution of Job identified by JobID.",
+        "description": "Stop execution of Job identified by JobID. Returns 204 on success. If\nJob does not exist, 404 response will be returned. If the Job is\nalready in final state, 403 response will be returned.",
         "consumes": [
           "application/json"
         ],
@@ -1146,7 +1167,7 @@ func init() {
         "tags": [
           "jobs"
         ],
-        "summary": "Cancel existing job",
+        "summary": "Cancel a Job.",
         "operationId": "JobCanceler",
         "parameters": [
           {
@@ -1184,7 +1205,7 @@ func init() {
     },
     "/version": {
       "get": {
-        "description": "Version and state of API (e.g. v1 obsolete, v2 stable, v3 devel) and server version.",
+        "description": "Version and state of API (e.g. v1 obsolete, v2 stable, v3 devel) and\nserver version.",
         "produces": [
           "application/json"
         ],
@@ -1226,14 +1247,15 @@ func init() {
   },
   "definitions": {
     "ArtifactAlias": {
-      "description": "is an alternative name of an artifact.",
+      "description": "is alternative name of an Artifact. Taken from the Job Submission file.",
       "type": "string"
     },
     "ArtifactDescription": {
-      "description": "contains information needed to create new artifact in ArtifactDB.",
+      "description": "contains minimal information needed to create new Artifact in ArtifactDB.",
       "type": "object",
       "properties": {
         "Alias": {
+          "description": "Alias is alternative name of an Artifact. Taken from the Job\nSubmission file.",
           "x-omitempty": true,
           "$ref": "#/definitions/ArtifactAlias"
         },
@@ -1243,38 +1265,44 @@ func init() {
           "$ref": "#/definitions/JobID"
         },
         "Type": {
+          "description": "Type of the Artifact. Refer to ArtifactType documentation to see all\npossible values with descriptions.",
           "x-omitempty": false,
           "$ref": "#/definitions/ArtifactType"
         },
         "URI": {
+          "description": "URI from which artifact was downloaded. Taken from the Job Submission\nfile.",
           "x-omitempty": true,
           "$ref": "#/definitions/ArtifactURI"
         }
       }
     },
     "ArtifactFilter": {
-      "description": "is used to filter results from ArtifactDB.",
+      "description": "is used to filter Weles Artifacts. Filling more than one struct member\n(e.g. JobID and Type) will result in searching for an Artifact(s) created\nduring execution of Job with JobID of specified Type. Filling more than\none member of an array/slice (in specific struct member - i.e. providing\n2 JobID) will result in searching for all members of that array. Both\naforementioned behaviours may occur simultaneously.",
       "type": "object",
       "properties": {
         "Alias": {
+          "description": "Alias is used to filter Artifacts by ArtifactAlias (taken from Job Submission file).",
           "type": "array",
           "items": {
             "$ref": "#/definitions/ArtifactAlias"
           }
         },
         "JobID": {
+          "description": "JobID is used to filter Artifacts by it's JobID of related Weles Job.\nMost commonly used filter.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/JobID"
           }
         },
         "Status": {
+          "description": "Status is used to filter Artifacts by ArtifactStatus. Refer to ArtifactStatus documentation for possible values.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/ArtifactStatus"
           }
         },
         "Type": {
+          "description": "Type is used to filter Artifacts by ArtifactType. Refer to\nArtifactType documentation for possible values. Useful for e.g.\nrequesting only RESULT artifacts from a Job.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/ArtifactType"
@@ -1283,7 +1311,7 @@ func init() {
       }
     },
     "ArtifactInfo": {
-      "description": "describes single artifact stored in ArtifactDB.",
+      "description": "describes single Artifact stored in ArtifactDB.",
       "type": "object",
       "allOf": [
         {
@@ -1292,21 +1320,23 @@ func init() {
       ],
       "properties": {
         "ID": {
-          "description": "unique identification of the artifact.",
+          "description": "ID is unique identifier of an Artifact.",
           "type": "integer",
           "format": "int64",
           "x-go-custom-tag": "db:\",primarykey, autoincrement\"",
           "x-omitempty": false
         },
         "Path": {
+          "description": "Path where Artifact is stored on Weles server.",
           "x-omitempty": true,
           "$ref": "#/definitions/ArtifactPath"
         },
         "Status": {
+          "description": "Status of Artifact. For details - see documentation of\nArtifactStatus.",
           "$ref": "#/definitions/ArtifactStatus"
         },
         "Timestamp": {
-          "description": "is date of creating the artifact.",
+          "description": "Timestamp is the date of creating an Artifact.",
           "type": "string",
           "format": "date-time",
           "x-omitempty": false
@@ -1314,30 +1344,32 @@ func init() {
       }
     },
     "ArtifactPath": {
-      "description": "describes path to artifact in ArtifactDB filesystem.",
+      "description": "describes path to Artifact in ArtifactDB filesystem.",
       "type": "string"
     },
     "ArtifactSortBy": {
-      "description": "denotes the key for sorting list of all artifacts.\n* ID - sorting by artifact ID.\n",
+      "description": "denotes the key for sorting list of all artifacts.\n\n* ID - sorting by artifact ID.\n",
       "type": "string",
       "enum": [
         "ID"
       ]
     },
     "ArtifactSorter": {
-      "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, artifacts are sorted by ID, Ascending.\n",
+      "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, Artifacts are sorted by ID, Ascending.",
       "type": "object",
       "properties": {
         "SortBy": {
+          "description": "SortBy denotes key used for sorting Artifacts. For more details, see\nArtifactSortBy documentation.",
           "$ref": "#/definitions/ArtifactSortBy"
         },
         "SortOrder": {
+          "description": "SortOrder in which Artifacts will be sorted. For more details, see\nSortOrder documentation.",
           "$ref": "#/definitions/SortOrder"
         }
       }
     },
     "ArtifactStatus": {
-      "description": "describes artifact status and availability.\n\n* DOWNLOADING - artifact is currently being downloaded.\n\n* READY - artifact has been downloaded and is ready to use.\n\n* FAILED - file is not available for use (e.g. download failed).\n\n* PENDING - artifact download has not started yet.\n",
+      "description": "describes Artifact status and availability.\n\n* DOWNLOADING - artifact is currently being downloaded.\n\n* READY - artifact has been downloaded and is ready to use.\n\n* FAILED - file is not available for use (e.g. download failed).\n\n* PENDING - artifact download has not started yet.\n",
       "type": "string",
       "enum": [
         "DOWNLOADING",
@@ -1347,7 +1379,7 @@ func init() {
       ]
     },
     "ArtifactType": {
-      "description": "denotes type and function of an artifact.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n",
+      "description": "denotes type and function of an Artifact. Depends on Job Submission file.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n",
       "type": "string",
       "enum": [
         "IMAGE",
@@ -1357,7 +1389,7 @@ func init() {
       ]
     },
     "ArtifactURI": {
-      "description": "is used to identify artifact's source.",
+      "description": "is used to identify Artifact's source.",
       "type": "string",
       "format": "uri"
     },
@@ -1374,53 +1406,61 @@ func init() {
       }
     },
     "JobFilter": {
-      "description": "is used to filter Weles Jobs.",
+      "description": "is used to filter Weles Jobs.\nFilling more than one struct member (e.g. JobID, Name) will result in\nsearching for a Job with filled JobID and Name.\nFilling more than one member of an array/slice (in specific struct\nmember) will result in searching for all members of array.\nBoth aforementioned behaviours may occur simultaneously. Some JobFilter\nfields support regular expressions (see fields documentation).",
       "type": "object",
       "properties": {
         "CreatedAfter": {
+          "description": "CreatedAfter means Jobs created after the supplied date. Records\ncreated at extacly the same time will be filtered out.",
           "type": "string",
           "format": "date-time"
         },
         "CreatedBefore": {
+          "description": "CreatedBefore means Jobs created before the supplied date. Records\ncreated at extacly the same time will be filtered out.",
           "type": "string",
           "format": "date-time"
         },
         "Info": {
+          "description": "Info is used to filter by Job info (detailed information from Weles\nabout Job execution).\nAllows usage of regular expressions.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "JobID": {
+          "description": "JobID is used to filter Jobs by it's ID. Most commonly used filter.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/JobID"
           }
         },
         "Name": {
+          "description": "Name is used to filter using name acquired from Job Submission file\n(yaml format, job_name key's value).\nAllows usage of regular expressions.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "Status": {
+          "description": "Status is used to receive only Jobs in specific status. When filled\nwith more than one element, returned jobs will only be in those\nstatuses.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/JobStatus"
           }
         },
         "UpdatedAfter": {
+          "description": "UpdatedAfter means Jobs updated after the supplied date. Records\nupdated at extacly the same time will be filtered out.",
           "type": "string",
           "format": "date-time"
         },
         "UpdatedBefore": {
+          "description": "UpdatedBefore means Jobs updated before the supplied date. Records\nupdated at extacly the same time will be filtered out.",
           "type": "string",
           "format": "date-time"
         }
       }
     },
     "JobID": {
-      "description": "is a unique identifier for Weles Job.",
+      "description": "is a unique identifier of a Weles Job.",
       "type": "integer",
       "format": "uint64"
     },
@@ -1428,34 +1468,34 @@ func init() {
       "description": "contains information about a Job available for public API.",
       "type": "object",
       "properties": {
-        "created": {
-          "description": "is the Job creation time in UTC.",
+        "Created": {
+          "description": "Created is the Job creation time (UTC).",
           "type": "string",
           "format": "date-time",
           "x-omitempty": false
         },
-        "info": {
-          "description": "provides additional information about current state, e.g. cause of failure",
+        "Info": {
+          "description": "Info provides additional information about current state, e.g. cause\nof failure",
           "type": "string",
           "x-omitempty": false
         },
-        "jobID": {
-          "description": "is a unique Job identifier",
+        "JobID": {
+          "description": "is a unique Job identifier.",
           "x-omitempty": false,
           "$ref": "#/definitions/JobID"
         },
-        "name": {
-          "description": "is the Job name acquired from yaml file during Job creation.",
+        "Name": {
+          "description": "Name is the Job name acquired from yaml file during Job creation.",
           "type": "string",
           "x-omitempty": true
         },
-        "status": {
-          "description": "specifies current state of the Job.",
+        "Status": {
+          "description": "Status specifies current state of the Job.",
           "x-omitempty": false,
           "$ref": "#/definitions/JobStatus"
         },
-        "updated": {
-          "description": "is the time of latest Jobs' status modification.",
+        "Updated": {
+          "description": "Updated is the time of latest Jobs' status modification (UTC).",
           "type": "string",
           "format": "date-time",
           "x-omitempty": false
@@ -1463,7 +1503,7 @@ func init() {
       }
     },
     "JobSortBy": {
-      "description": "denotes key for sorting Jobs list.\n\n* ID - default sort key.\n\n* CreatedDate - sorting by date of creation of the weles job.\n\n* UpdatedDate - sorting by date of update of the weles job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in the order JobStatuses are listed in the docs (from NEW at the start to CANCELED at the end). Ascending will reverse this order.\n\nWhen sorting is applied, and there are many jobs with the same date/status, they will be sorted by JobID (Ascending)\n",
+      "description": "denotes key for sorting Jobs list.\n\n* ID - default sort key.\n\n* CreatedDate - sorting by date of creation of the weles Job.\n\n* UpdatedDate - sorting by date of update of the weles Job.\n\n* JobStatus - sorting by the Job Status. Descending order will sort in\nthe order JobStatuses are listed in the docs (from NEW at the start to\nCANCELED at the end). Ascending will reverse this order.\n\nWhen sorting is applied, and there are many Jobs with the same\ndate/status, they will be sorted by JobID (Ascending)\n",
       "type": "string",
       "enum": [
         "ID",
@@ -1473,19 +1513,21 @@ func init() {
       ]
     },
     "JobSorter": {
-      "description": "defines the key for sorting as well as direction of sorting.\n",
+      "description": "defines the key for sorting as well as direction of sorting.",
       "type": "object",
       "properties": {
         "SortBy": {
+          "description": "SortBy denotes key used for sorting Jobs. For more details, see JobSortBy\ndocumentation.",
           "$ref": "#/definitions/JobSortBy"
         },
         "SortOrder": {
+          "description": "SortOrder in which Jobs will be sorted. For more details, see SortOrder\ndocumentation.",
           "$ref": "#/definitions/SortOrder"
         }
       }
     },
     "JobStatus": {
-      "description": "specifies state of the Job.\n\n* NEW - The new Job has been created.\n\n* PARSING - Provided yaml file is being parsed and interpreted.\n\n* DOWNLOADING - Images and/or files required for the test are being downloaded.\n\n* WAITING - Job is waiting for Boruta worker.\n\n* RUNNING - Job is being executed.\n\n* COMPLETED - Job is completed. This is terminal state.\n\n* FAILED - Job execution has failed. This is terminal state.\n\n* CANCELED -Job has been canceled with API call. This is terminal state.\n",
+      "description": "specifies state of the Job.\n\n* NEW             - New Job has been created.\n\n* PARSING         - Provided yaml file is being parsed and interpreted.\n\n* DOWNLOADING     - Images and/or files required for the test are being\n                    downloaded.\n\n* WAITING         - Job is waiting for Boruta worker.\n\n* RUNNING         - Job is being executed.\n\n* COMPLETED       - Job is completed. This is terminal state.\n\n* FAILED          - Job execution has failed. This is terminal state.\n\n* CANCELED        - Job has been canceled with API call. This is terminal\n                    state.\n",
       "type": "string",
       "enum": [
         "NEW",
@@ -1499,7 +1541,7 @@ func init() {
       ]
     },
     "SortOrder": {
-      "description": "denotes direction of sorting of weles jobs or artifacts.\n\n* Ascending - from oldest to newest.\n\n* Descending - from newest to oldest.\n",
+      "description": "denotes direction of sorting of weles Jobs or Artifacts.\n\n* Ascending - from oldest to newest.\n\n* Descending - from newest to oldest.\n",
       "type": "string",
       "enum": [
         "Ascending",
@@ -1507,7 +1549,7 @@ func init() {
       ]
     },
     "Version": {
-      "description": "defines version of Weles API (and its state) and server.\n",
+      "description": "defines version of Weles API (and its state) and server.",
       "type": "object",
       "properties": {
         "API": {
@@ -1570,11 +1612,11 @@ func init() {
   },
   "tags": [
     {
-      "description": "Info and management of Weles jobs.",
+      "description": "Info and management of Weles Jobs.",
       "name": "jobs"
     },
     {
-      "description": "Info about all artifacts used by Weles jobs.",
+      "description": "Info about Artifacts used by Weles Jobs.",
       "name": "artifacts"
     },
     {
@@ -1583,8 +1625,8 @@ func init() {
     }
   ],
   "externalDocs": {
-    "description": "TBD",
-    "url": "http://TBD.tbd"
+    "description": "Official Weles documentation.",
+    "url": "http://weles.rtfd.io"
   }
 }`))
 }

@@ -28,14 +28,15 @@ import (
 )
 
 // JobSorter defines the key for sorting as well as direction of sorting.
-//
 // swagger:model JobSorter
 type JobSorter struct {
 
-	// sort by
+	// SortBy denotes key used for sorting Jobs. For more details, see JobSortBy
+	// documentation.
 	SortBy JobSortBy `json:"SortBy,omitempty"`
 
-	// sort order
+	// SortOrder in which Jobs will be sorted. For more details, see SortOrder
+	// documentation.
 	SortOrder SortOrder `json:"SortOrder,omitempty"`
 }
 

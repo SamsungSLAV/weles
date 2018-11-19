@@ -28,15 +28,16 @@ import (
 )
 
 // ArtifactSorter defines the key for sorting as well as direction of sorting.
-// When ArtifactSorter is empty, artifacts are sorted by ID, Ascending.
-//
+// When ArtifactSorter is empty, Artifacts are sorted by ID, Ascending.
 // swagger:model ArtifactSorter
 type ArtifactSorter struct {
 
-	// sort by
+	// SortBy denotes key used for sorting Artifacts. For more details, see
+	// ArtifactSortBy documentation.
 	SortBy ArtifactSortBy `json:"SortBy,omitempty"`
 
-	// sort order
+	// SortOrder in which Artifacts will be sorted. For more details, see
+	// SortOrder documentation.
 	SortOrder SortOrder `json:"SortOrder,omitempty"`
 }
 

@@ -47,7 +47,8 @@ type ArtifactListerParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*ID of the last element from previous page.
+	/*After should be filled with Artifact's ID (don't mix it with JobID)
+	of the last element from current page to receive next one.
 	  In: query
 	*/
 	After *int64
@@ -55,11 +56,14 @@ type ArtifactListerParams struct {
 	  In: body
 	*/
 	ArtifactFilterAndSort ArtifactListerBody
-	/*ID of first element from next page.
+	/*Before should be filled with Artifact's ID (don't mix it with
+	JobID) of the first element from current page to receive previous
+	one.
 	  In: query
 	*/
 	Before *int64
-	/*Custom page limit. Denotes number of ArtifactInfo structures that will be returned.
+	/*Limit is the number of records to return. Overrides default server
+	page limit.
 	  In: query
 	*/
 	Limit *int32
