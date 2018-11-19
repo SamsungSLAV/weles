@@ -477,9 +477,9 @@ definitions:
       defines the key for sorting as well as direction of sorting.
     type: object
     properties:
-      SortBy:
+      By:
         $ref: '#/definitions/JobSortBy'
-      SortOrder:
+      Order:
         $ref: '#/definitions/SortOrder'
   ArtifactType:
     description: |
@@ -612,9 +612,9 @@ definitions:
       When ArtifactSorter is empty, artifacts are sorted by ID, Ascending.
     type: object
     properties:
-      SortBy:
+      By:
         $ref: '#/definitions/ArtifactSortBy'
-      SortOrder:
+      Order:
         $ref: '#/definitions/SortOrder'
   Version:
     description: |

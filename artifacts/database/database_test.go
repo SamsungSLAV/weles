@@ -144,15 +144,15 @@ var _ = Describe("ArtifactDB", func() {
 		emptyPaginator = weles.ArtifactPagination{}
 
 		descendingSorter = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderDescending,
-			SortBy:    weles.ArtifactSortByID,
+			Order: weles.SortOrderDescending,
+			By:    weles.ArtifactSortByID,
 		}
 
 		defaultSorter = descendingSorter
 
 		ascendingSorter = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderAscending,
-			SortBy:    weles.ArtifactSortByID,
+			Order: weles.SortOrderAscending,
+			By:    weles.ArtifactSortByID,
 		}
 	)
 	jobInDB := func(job weles.JobID, db ArtifactDB) bool {
@@ -352,7 +352,7 @@ var _ = Describe("ArtifactDB", func() {
 					result, _, err := goldenUnicorn.Filter(emptyFilter, sorter, emptyPaginator)
 					Expect(err).ToNot(HaveOccurred())
 					var currID int
-					if sorter.SortOrder == weles.SortOrderAscending {
+					if sorter.Order == weles.SortOrderAscending {
 						for _, a := range result {
 							if currID == 0 {
 								currID = int(a.ID)

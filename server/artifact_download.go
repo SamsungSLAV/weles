@@ -27,7 +27,7 @@ import (
 func (m *Managers) ArtifactDownloader(params artifacts.ArtifactDownloaderParams) middleware.Responder {
 	ai, li, err := m.AM.ListArtifact(
 		weles.ArtifactFilter{ID: []int64{params.ArtifactID}},
-		weles.ArtifactSorter{SortBy: weles.ArtifactSortByID, SortOrder: weles.SortOrderAscending},
+		weles.ArtifactSorter{By: weles.ArtifactSortByID, Order: weles.SortOrderAscending},
 		weles.ArtifactPagination{ID: 0, Forward: true})
 
 	if err != nil {
