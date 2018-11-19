@@ -68,25 +68,25 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 		sorterEmpty = weles.ArtifactSorter{}
 
 		sorterDescNoBy = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderDescending,
+			Order: weles.SortOrderDescending,
 		}
 
 		sorterAscNoBy = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderAscending,
+			Order: weles.SortOrderAscending,
 		}
 
 		sorterNoOrderID = weles.ArtifactSorter{
-			SortBy: weles.ArtifactSortByID,
+			By: weles.ArtifactSortByID,
 		}
 
 		sorterDescID = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderDescending,
-			SortBy:    weles.ArtifactSortByID,
+			Order: weles.SortOrderDescending,
+			By:    weles.ArtifactSortByID,
 		}
 
 		sorterAscID = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderAscending,
-			SortBy:    weles.ArtifactSortByID,
+			Order: weles.SortOrderAscending,
+			By:    weles.ArtifactSortByID,
 		}
 
 		// default value
@@ -251,18 +251,18 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 					sorterDescID, sorterDescID),
 				Entry("should pass descending order and set default by",
 					sorterDescNoBy, weles.ArtifactSorter{
-						SortOrder: sorterDescNoBy.SortOrder,
-						SortBy:    sorterDefault.SortBy,
+						Order: sorterDescNoBy.Order,
+						By:    sorterDefault.By,
 					}),
 				Entry("should pass ascending order and set default by",
 					sorterAscNoBy, weles.ArtifactSorter{
-						SortOrder: sorterAscNoBy.SortOrder,
-						SortBy:    sorterDefault.SortBy,
+						Order: sorterAscNoBy.Order,
+						By:    sorterDefault.By,
 					}),
 				Entry("should pass by ID and set default order",
 					sorterNoOrderID, weles.ArtifactSorter{
-						SortOrder: sorterDefault.SortOrder,
-						SortBy:    sorterNoOrderID.SortBy,
+						Order: sorterDefault.Order,
+						By:    sorterNoOrderID.By,
 					}),
 			)
 

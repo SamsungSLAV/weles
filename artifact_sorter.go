@@ -33,22 +33,22 @@ import (
 // swagger:model ArtifactSorter
 type ArtifactSorter struct {
 
-	// sort by
-	SortBy ArtifactSortBy `json:"SortBy,omitempty"`
+	// by
+	By ArtifactSortBy `json:"By,omitempty"`
 
-	// sort order
-	SortOrder SortOrder `json:"SortOrder,omitempty"`
+	// order
+	Order SortOrder `json:"Order,omitempty"`
 }
 
 // Validate validates this artifact sorter
 func (m *ArtifactSorter) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateSortBy(formats); err != nil {
+	if err := m.validateBy(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateSortOrder(formats); err != nil {
+	if err := m.validateOrder(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -58,15 +58,15 @@ func (m *ArtifactSorter) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ArtifactSorter) validateSortBy(formats strfmt.Registry) error {
+func (m *ArtifactSorter) validateBy(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.SortBy) { // not required
+	if swag.IsZero(m.By) { // not required
 		return nil
 	}
 
-	if err := m.SortBy.Validate(formats); err != nil {
+	if err := m.By.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("SortBy")
+			return ve.ValidateName("By")
 		}
 		return err
 	}
@@ -74,15 +74,15 @@ func (m *ArtifactSorter) validateSortBy(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ArtifactSorter) validateSortOrder(formats strfmt.Registry) error {
+func (m *ArtifactSorter) validateOrder(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.SortOrder) { // not required
+	if swag.IsZero(m.Order) { // not required
 		return nil
 	}
 
-	if err := m.SortOrder.Validate(formats); err != nil {
+	if err := m.Order.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("SortOrder")
+			return ve.ValidateName("Order")
 		}
 		return err
 	}
