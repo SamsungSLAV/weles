@@ -547,12 +547,12 @@ func init() {
       "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, Artifacts are sorted by ID, Ascending.",
       "type": "object",
       "properties": {
-        "SortBy": {
-          "description": "SortBy denotes key used for sorting Artifacts. For more details, see\nArtifactSortBy documentation.",
+        "By": {
+          "description": "By denotes key used for sorting Artifacts. For more details, see\nArtifactSortBy documentation.",
           "$ref": "#/definitions/ArtifactSortBy"
         },
-        "SortOrder": {
-          "description": "SortOrder in which Artifacts will be sorted. For more details, see\nSortOrder documentation.",
+        "Order": {
+          "description": "Order in which Artifacts will be sorted. For more details, see\nSortOrder documentation.",
           "$ref": "#/definitions/SortOrder"
         }
       }
@@ -726,12 +726,12 @@ func init() {
       "description": "defines the key for sorting as well as direction of sorting.",
       "type": "object",
       "properties": {
-        "SortBy": {
-          "description": "SortBy denotes key used for sorting Jobs. For more details, see JobSortBy\ndocumentation.",
+        "By": {
+          "description": "By denotes key used for sorting Jobs. For more details, see JobSortBy\ndocumentation.",
           "$ref": "#/definitions/JobSortBy"
         },
-        "SortOrder": {
-          "description": "SortOrder in which Jobs will be sorted. For more details, see SortOrder\ndocumentation.",
+        "Order": {
+          "description": "Order in which Jobs will be sorted. For more details, see SortOrder\ndocumentation.",
           "$ref": "#/definitions/SortOrder"
         }
       }
@@ -1407,12 +1407,12 @@ func init() {
       "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, Artifacts are sorted by ID, Ascending.",
       "type": "object",
       "properties": {
-        "SortBy": {
-          "description": "SortBy denotes key used for sorting Artifacts. For more details, see\nArtifactSortBy documentation.",
+        "By": {
+          "description": "By denotes key used for sorting Artifacts. For more details, see\nArtifactSortBy documentation.",
           "$ref": "#/definitions/ArtifactSortBy"
         },
-        "SortOrder": {
-          "description": "SortOrder in which Artifacts will be sorted. For more details, see\nSortOrder documentation.",
+        "Order": {
+          "description": "Order in which Artifacts will be sorted. For more details, see\nSortOrder documentation.",
           "$ref": "#/definitions/SortOrder"
         }
       }
@@ -1586,12 +1586,12 @@ func init() {
       "description": "defines the key for sorting as well as direction of sorting.",
       "type": "object",
       "properties": {
-        "SortBy": {
-          "description": "SortBy denotes key used for sorting Jobs. For more details, see JobSortBy\ndocumentation.",
+        "By": {
+          "description": "By denotes key used for sorting Jobs. For more details, see JobSortBy\ndocumentation.",
           "$ref": "#/definitions/JobSortBy"
         },
-        "SortOrder": {
-          "description": "SortOrder in which Jobs will be sorted. For more details, see SortOrder\ndocumentation.",
+        "Order": {
+          "description": "Order in which Jobs will be sorted. For more details, see SortOrder\ndocumentation.",
           "$ref": "#/definitions/SortOrder"
         }
       }

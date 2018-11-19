@@ -65,29 +65,29 @@ var _ = Describe("Listing jobs with server initialized", func() {
 		sorterEmpty = weles.JobSorter{}
 
 		sorterDescNoBy = weles.JobSorter{
-			SortOrder: enums.SortOrderDescending,
+			Order: enums.SortOrderDescending,
 		}
 
 		sorterAscNoBy = weles.JobSorter{
-			SortOrder: enums.SortOrderAscending,
+			Order: enums.SortOrderAscending,
 		}
 
 		sorterNoOrderID = weles.JobSorter{
-			SortBy: enums.JobSortByID,
+			By: enums.JobSortByID,
 		}
 
 		sorterNoOrderCreatedDate = weles.JobSorter{
-			SortBy: enums.JobSortByCreatedDate,
+			By: enums.JobSortByCreatedDate,
 		}
 
 		sorterDescID = weles.JobSorter{
-			SortOrder: enums.SortOrderDescending,
-			SortBy:    enums.JobSortByID,
+			Order: enums.SortOrderDescending,
+			By:    enums.JobSortByID,
 		}
 
 		sorterAscID = weles.JobSorter{
-			SortOrder: enums.SortOrderAscending,
-			SortBy:    enums.JobSortByID,
+			Order: enums.SortOrderAscending,
+			By:    enums.JobSortByID,
 		}
 
 		// default value
@@ -252,23 +252,23 @@ var _ = Describe("Listing jobs with server initialized", func() {
 					sorterDescID, sorterDescID),
 				Entry("should pass descending order and set default by",
 					sorterDescNoBy, weles.JobSorter{
-						SortOrder: sorterDescNoBy.SortOrder,
-						SortBy:    sorterDefault.SortBy,
+						Order: sorterDescNoBy.Order,
+						By:    sorterDefault.By,
 					}),
 				Entry("should pass ascending order and set default by",
 					sorterAscNoBy, weles.JobSorter{
-						SortOrder: sorterAscNoBy.SortOrder,
-						SortBy:    sorterDefault.SortBy,
+						Order: sorterAscNoBy.Order,
+						By:    sorterDefault.By,
 					}),
 				Entry("should pass by ID and set default order",
 					sorterNoOrderID, weles.JobSorter{
-						SortOrder: sorterDefault.SortOrder,
-						SortBy:    sorterNoOrderID.SortBy,
+						Order: sorterDefault.Order,
+						By:    sorterNoOrderID.By,
 					}),
 				Entry("should pass by CreatedDate and set default order",
 					sorterNoOrderCreatedDate, weles.JobSorter{
-						SortOrder: sorterDefault.SortOrder,
-						SortBy:    sorterNoOrderCreatedDate.SortBy,
+						Order: sorterDefault.Order,
+						By:    sorterNoOrderCreatedDate.By,
 					}),
 			)
 			DescribeTable("should respond with all jobs and correct headers",
