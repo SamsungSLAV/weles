@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "977ca748_3c848731",
+        "filename": "manager/dryad/device_communication_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "83b3a85f_b3c3aa79",
+      "range": {
+        "startLine": 54,
+        "startChar": 41,
+        "endLine": 54,
+        "endChar": 46
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d55b6301_19e160e2",
         "filename": "manager/dryad/device_communication_provider.go",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "dc298cc1_3cd6da67",
+        "filename": "manager/dryad/device_communication_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d55b6301_19e160e2",
+      "range": {
+        "startLine": 68,
+        "startChar": 26,
+        "endLine": 68,
+        "endChar": 31
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f38c7ee_5eaf3a70",
         "filename": "manager/dryad/device_communication_provider.go",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c99dfbd_bcaf01ff",
+        "filename": "manager/dryad/device_communication_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f38c7ee_5eaf3a70",
+      "range": {
+        "startLine": 83,
+        "startChar": 26,
+        "endLine": 83,
+        "endChar": 31
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +189,54 @@
     },
     {
       "key": {
+        "uuid": "ecb6ebad_6cbb83d7",
+        "filename": "manager/dryad/reverse_sshfs.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d40d37a2_dc2cf376",
+      "range": {
+        "startLine": 103,
+        "startChar": 40,
+        "endLine": 103,
+        "endChar": 45
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3e769db0_9ac66ebd",
+        "filename": "manager/dryad/reverse_sshfs.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "816d8d67_0af37f1f",
+      "range": {
+        "startLine": 103,
+        "startChar": 49,
+        "endLine": 103,
+        "endChar": 52
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ed359479_3c7cfb27",
         "filename": "manager/dryad/reverse_sshfs.go",
         "patchSetId": 3
@@ -137,6 +257,30 @@
       "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4e00bb5_7f5c4dbd",
+        "filename": "manager/dryad/reverse_sshfs.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ed359479_3c7cfb27",
+      "range": {
+        "startLine": 194,
+        "startChar": 55,
+        "endLine": 194,
+        "endChar": 62
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "385d859c_6477ee67",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a235a170_5bcb6301",
+      "range": {
+        "startLine": 75,
+        "startChar": 27,
+        "endLine": 75,
+        "endChar": 37
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cce0d07c_64bdb28a",
         "filename": "manager/dryad/session_provider.go",
         "patchSetId": 3
@@ -183,6 +351,30 @@
       "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "313d20f8_4c074fbd",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cce0d07c_64bdb28a",
+      "range": {
+        "startLine": 92,
+        "startChar": 48,
+        "endLine": 92,
+        "endChar": 55
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "eb134f9a_9fa68cad",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6f3c5163_689b4950",
+      "range": {
+        "startLine": 102,
+        "startChar": 48,
+        "endLine": 102,
+        "endChar": 55
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ecab8c51_afdc3b8f",
         "filename": "manager/dryad/session_provider.go",
         "patchSetId": 3
@@ -229,6 +445,30 @@
       "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfc48a85_06c66822",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ecab8c51_afdc3b8f",
+      "range": {
+        "startLine": 107,
+        "startChar": 48,
+        "endLine": 107,
+        "endChar": 55
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -255,6 +495,30 @@
     },
     {
       "key": {
+        "uuid": "19a5b82f_bcb7a806",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d4e9a19_f0075b26",
+      "range": {
+        "startLine": 141,
+        "startChar": 48,
+        "endLine": 141,
+        "endChar": 55
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "31f22e09_77ea5881",
         "filename": "manager/dryad/session_provider.go",
         "patchSetId": 3
@@ -272,6 +536,24 @@
     },
     {
       "key": {
+        "uuid": "077c1070_84587599",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "https://www.youtube.com/watch?v\u003dt93u0qg5q_M",
+      "parentUuid": "31f22e09_77ea5881",
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ea6b2350_7b82c076",
         "filename": "manager/dryad/session_provider.go",
         "patchSetId": 3
@@ -286,6 +568,24 @@
       "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44e0924e_aba55141",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "yankpaste err propagation",
+      "parentUuid": "ea6b2350_7b82c076",
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -335,6 +635,54 @@
     },
     {
       "key": {
+        "uuid": "6b45cc2d_9d0110c0",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c14505f4_31d0f70e",
+      "range": {
+        "startLine": 196,
+        "startChar": 51,
+        "endLine": 196,
+        "endChar": 61
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e8f57820_575f8052",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0be0c74d_d519ce1d",
+      "range": {
+        "startLine": 196,
+        "startChar": 47,
+        "endLine": 196,
+        "endChar": 50
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2a16b059_8f63664b",
         "filename": "manager/dryad_job.go",
         "patchSetId": 3
@@ -355,6 +703,30 @@
       "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40f2e67a_e0506bae",
+        "filename": "manager/dryad_job.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a16b059_8f63664b",
+      "range": {
+        "startLine": 95,
+        "startChar": 79,
+        "endLine": 95,
+        "endChar": 84
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -381,6 +753,30 @@
     },
     {
       "key": {
+        "uuid": "f2b4af77_18fe7384",
+        "filename": "manager/dryad_job_manager.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c384215_08b687c1",
+      "range": {
+        "startLine": 51,
+        "startChar": 63,
+        "endLine": 51,
+        "endChar": 66
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3273ff1d_0ed0a02d",
         "filename": "manager/dryad_job_manager.go",
         "patchSetId": 3
@@ -404,6 +800,30 @@
     },
     {
       "key": {
+        "uuid": "12358a8c_ab0aa682",
+        "filename": "manager/dryad_job_manager.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3273ff1d_0ed0a02d",
+      "range": {
+        "startLine": 67,
+        "startChar": 53,
+        "endLine": 67,
+        "endChar": 56
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "de90c775_0ddcabf6",
         "filename": "manager/dryad_job_runner.go",
         "patchSetId": 3
@@ -415,6 +835,30 @@
       "writtenOn": "2018-11-16T18:26:41Z",
       "side": 1,
       "message": "Enough ctx for Weles, but not SLAV debugging in general (you can obtain Dryad address from d.rusalka.dryad.Addr, but it would require exposing dryad from rusalka)\n\nMaybe alerting on Dryads should take care of such cases?",
+      "range": {
+        "startLine": 54,
+        "startChar": 2,
+        "endLine": 54,
+        "endChar": 8
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f204d190_6921b9e5",
+        "filename": "manager/dryad_job_runner.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "i guess we should discuss f2f",
+      "parentUuid": "de90c775_0ddcabf6",
       "range": {
         "startLine": 54,
         "startChar": 2,
@@ -450,6 +894,30 @@
     },
     {
       "key": {
+        "uuid": "7369b275_46bc07e4",
+        "filename": "manager/dryad_job_runner.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2aba1129_3f1ea8e6",
+      "range": {
+        "startLine": 89,
+        "startChar": 46,
+        "endLine": 89,
+        "endChar": 56
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "116538a9_9fdeec78",
         "filename": "manager/dryad_job_runner.go",
         "patchSetId": 3
@@ -470,6 +938,30 @@
       "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9f4a7a2_543e077c",
+        "filename": "manager/dryad_job_runner.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "116538a9_9fdeec78",
+      "range": {
+        "startLine": 108,
+        "startChar": 58,
+        "endLine": 108,
+        "endChar": 61
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -496,6 +988,30 @@
     },
     {
       "key": {
+        "uuid": "3329f214_75f04188",
+        "filename": "manager/dryad_job_runner.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18dd4d01_9466aecd",
+      "range": {
+        "startLine": 115,
+        "startChar": 41,
+        "endLine": 115,
+        "endChar": 52
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81fad64d_8190d5e2",
         "filename": "manager/dryad_job_runner.go",
         "patchSetId": 3
@@ -519,6 +1035,30 @@
     },
     {
       "key": {
+        "uuid": "520a587c_97182cd3",
+        "filename": "manager/dryad_job_runner.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "81fad64d_8190d5e2",
+      "range": {
+        "startLine": 120,
+        "startChar": 60,
+        "endLine": 120,
+        "endChar": 63
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a98e7d58_131a8d8b",
         "filename": "manager/dryad_job_runner_fota.go",
         "patchSetId": 3
@@ -539,6 +1079,30 @@
       "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee04224d_004f6b81",
+        "filename": "manager/dryad_job_runner_fota.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-19T17:10:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a98e7d58_131a8d8b",
+      "range": {
+        "startLine": 25,
+        "startChar": 2,
+        "endLine": 25,
+        "endChar": 27
+      },
+      "revId": "2663d4bc43c3bcc2719f7322f6412e29e3866a96",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
