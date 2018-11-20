@@ -16,6 +16,24 @@
       "revId": "72efe5fa673bd8332207335b90e43dec04b813c8",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51cffd31_e03550ca",
+        "filename": "cmd/weles-server/main.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T17:07:31Z",
+      "side": 1,
+      "message": "Dropped it myself",
+      "parentUuid": "585aa755_271aa84f",
+      "revId": "72efe5fa673bd8332207335b90e43dec04b813c8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
