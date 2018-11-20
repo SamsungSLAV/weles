@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4f46f7f_89619b53",
+        "filename": "artifactmanager.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T11:59:47Z",
+      "side": 1,
+      "message": "Verb removal follows convention you introduced in interface implementation (Download), but conflicts with other methods in this interface declaration\n\nI don\u0027t like it, but also don\u0027t want another patchset to review just to revert it",
+      "range": {
+        "startLine": 33,
+        "startChar": 11,
+        "endLine": 33,
+        "endChar": 33
+      },
+      "revId": "19cbccd97e191a4d654b15927f303553b3f25c73",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
