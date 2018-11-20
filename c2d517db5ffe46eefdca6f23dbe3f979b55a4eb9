@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c79b2ce8_37a0215d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T12:18:37Z",
+      "side": 1,
+      "message": "typo; fix IFF other changes required",
+      "range": {
+        "startLine": 9,
+        "startChar": 65,
+        "endLine": 9,
+        "endChar": 72
+      },
+      "revId": "c2d517db5ffe46eefdca6f23dbe3f979b55a4eb9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebaefb8a_31033a41",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T12:18:37Z",
+      "side": 1,
+      "message": "move full stop to the end of the sentence (after parenthesis) IFF other changes required",
+      "range": {
+        "startLine": 10,
+        "startChar": 8,
+        "endLine": 10,
+        "endChar": 9
+      },
+      "revId": "c2d517db5ffe46eefdca6f23dbe3f979b55a4eb9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
