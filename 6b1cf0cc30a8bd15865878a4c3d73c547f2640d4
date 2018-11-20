@@ -461,6 +461,30 @@
     },
     {
       "key": {
+        "uuid": "3ff9504d_b1324714",
+        "filename": "artifacts/database/database.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T16:23:53Z",
+      "side": 1,
+      "message": "yup; this way we\u0027ll get [this_file.go:this_line] first",
+      "parentUuid": "d5ace6f1_5c262c4d",
+      "range": {
+        "startLine": 257,
+        "startChar": 2,
+        "endLine": 257,
+        "endChar": 29
+      },
+      "revId": "6b1cf0cc30a8bd15865878a4c3d73c547f2640d4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2d53ffc0_dd1a0466",
         "filename": "artifacts/downloader/downloader.go",
         "patchSetId": 3
