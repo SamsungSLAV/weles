@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5f7e2100_b1a436c2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-20T15:02:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f5291ad5_cb7815f0",
+      "range": {
+        "startLine": 12,
+        "startChar": 37,
+        "endLine": 12,
+        "endChar": 38
+      },
+      "revId": "4da3df853f7e6ed11957c1146938f5ec4ca572fd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f99b774f_7bbe61d8",
         "filename": "/COMMIT_MSG",
         "patchSetId": 4
@@ -71,6 +95,54 @@
     },
     {
       "key": {
+        "uuid": "2c95ab65_6d9b4efc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-20T15:02:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f99b774f_7bbe61d8",
+      "range": {
+        "startLine": 14,
+        "startChar": 8,
+        "endLine": 14,
+        "endChar": 9
+      },
+      "revId": "4da3df853f7e6ed11957c1146938f5ec4ca572fd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fd426c28_17b72a77",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-20T15:02:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b4cdeea5_895919fa",
+      "range": {
+        "startLine": 14,
+        "startChar": 68,
+        "endLine": 14,
+        "endChar": 69
+      },
+      "revId": "4da3df853f7e6ed11957c1146938f5ec4ca572fd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dff581ac_bb04a340",
         "filename": "cmd/weles-server/main.go",
         "patchSetId": 4
@@ -91,6 +163,30 @@
       "revId": "4da3df853f7e6ed11957c1146938f5ec4ca572fd",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d74072b_e60a84c9",
+        "filename": "cmd/weles-server/main.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-20T15:02:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dff581ac_bb04a340",
+      "range": {
+        "startLine": 74,
+        "startChar": 17,
+        "endLine": 74,
+        "endChar": 24
+      },
+      "revId": "4da3df853f7e6ed11957c1146938f5ec4ca572fd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
