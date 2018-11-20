@@ -249,6 +249,30 @@
     },
     {
       "key": {
+        "uuid": "39164b5d_f130d8d1",
+        "filename": "artifacts/database/database.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-20T13:17:24Z",
+      "side": 1,
+      "message": "https://github.com/SamsungSLAV/weles/issues/1",
+      "parentUuid": "f7a3091f_d370b923",
+      "range": {
+        "startLine": 213,
+        "startChar": 2,
+        "endLine": 213,
+        "endChar": 8
+      },
+      "revId": "6b1cf0cc30a8bd15865878a4c3d73c547f2640d4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e97e40fa_3f22417c",
         "filename": "artifacts/database/database.go",
         "patchSetId": 3
