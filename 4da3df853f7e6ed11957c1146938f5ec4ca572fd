@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5291ad5_cb7815f0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T12:26:47Z",
+      "side": 1,
+      "message": "no punctuation? IFF other changes required",
+      "range": {
+        "startLine": 12,
+        "startChar": 37,
+        "endLine": 12,
+        "endChar": 38
+      },
+      "revId": "4da3df853f7e6ed11957c1146938f5ec4ca572fd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f99b774f_7bbe61d8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T12:26:47Z",
+      "side": 1,
+      "message": "one at the end is enough; IFF other changes required",
+      "range": {
+        "startLine": 14,
+        "startChar": 8,
+        "endLine": 14,
+        "endChar": 9
+      },
+      "revId": "4da3df853f7e6ed11957c1146938f5ec4ca572fd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4cdeea5_895919fa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T12:26:47Z",
+      "side": 1,
+      "message": "add close parenthesis IFF other changes required",
+      "range": {
+        "startLine": 14,
+        "startChar": 68,
+        "endLine": 14,
+        "endChar": 69
+      },
+      "revId": "4da3df853f7e6ed11957c1146938f5ec4ca572fd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dff581ac_bb04a340",
+        "filename": "cmd/weles-server/main.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T12:26:47Z",
+      "side": 1,
+      "message": "typo \"artifact\"; IFF other changes required",
+      "range": {
+        "startLine": 74,
+        "startChar": 17,
+        "endLine": 74,
+        "endChar": 24
+      },
+      "revId": "4da3df853f7e6ed11957c1146938f5ec4ca572fd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
