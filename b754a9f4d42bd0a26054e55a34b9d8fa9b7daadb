@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b705e9fe_b0060592",
+        "filename": "server/embedded_spec.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T12:48:44Z",
+      "side": 1,
+      "message": "not this patch",
+      "range": {
+        "startLine": 553,
+        "startChar": 260,
+        "endLine": 560,
+        "endChar": 13
+      },
+      "revId": "b754a9f4d42bd0a26054e55a34b9d8fa9b7daadb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4d33438_c798ba49",
+        "filename": "server/embedded_spec.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 1352,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-20T12:48:44Z",
+      "side": 1,
+      "message": "ibid",
+      "range": {
+        "startLine": 1345,
+        "startChar": 260,
+        "endLine": 1352,
+        "endChar": 13
+      },
+      "revId": "b754a9f4d42bd0a26054e55a34b9d8fa9b7daadb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
