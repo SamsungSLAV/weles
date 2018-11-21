@@ -45,6 +45,54 @@
       "revId": "81be4c72810ecde8f58c631bf9e1f5335e0440d3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c622ba0_bf21dcc1",
+        "filename": "artifactmanager.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-21T13:35:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0bb717df_13ff84b2",
+      "range": {
+        "startLine": 33,
+        "startChar": 62,
+        "endLine": 33,
+        "endChar": 68
+      },
+      "revId": "81be4c72810ecde8f58c631bf9e1f5335e0440d3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "75dad249_d345a4bb",
+        "filename": "artifactmanager.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-21T13:35:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc2dfd1a_c3ea48bf",
+      "range": {
+        "startLine": 33,
+        "startChar": 46,
+        "endLine": 33,
+        "endChar": 53
+      },
+      "revId": "81be4c72810ecde8f58c631bf9e1f5335e0440d3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
