@@ -13,7 +13,7 @@
     "gocyclo",
     "gofmt",
     "golint",
-    "gas",
+    "gosec",
     "ineffassign",
     "interfacer",
     "lll",
