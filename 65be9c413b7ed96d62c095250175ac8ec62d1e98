@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bca4861d_48ad2101",
+        "filename": "artifacts/artifacts.go",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-21T10:41:12Z",
+      "side": 1,
+      "message": "No longer true\n\nYou did to yourself; I liked dbDir/fsDir + ArtifactDB/ArtifactFS (new ones are also cool)",
+      "range": {
+        "startLine": 61,
+        "startChar": 69,
+        "endLine": 61,
+        "endChar": 74
+      },
+      "revId": "65be9c413b7ed96d62c095250175ac8ec62d1e98",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
