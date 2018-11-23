@@ -22,6 +22,10 @@ import (
 )
 
 // Version is Weles version information API endpoint handler.
+//
+// Due to go-swagger server generation, and how the API endpoint was designed, parameter to this
+// function will never be used.
+// nolint:unparam
 func (a *APIDefaults) Version(params general.VersionParams) middleware.Responder {
 	var v = &weles.Version{
 		Server: weles.SrvVersion,

@@ -165,13 +165,15 @@ func (c *Controller) loop() {
 // fail sets Job in FAILED state and if needed stops Job's execution on Dryad
 // and releases Dryad to Boruta.
 func (c *Controller) fail(j weles.JobID, msg string) {
-	_ = c.jobs.SetStatusAndInfo(j, weles.JobStatusFAILED, msg)
+	// errors logged in the SetStatusAndInfo.
+	_ = c.jobs.SetStatusAndInfo(j, weles.JobStatusFAILED, msg) // nolint:gosec
 	c.dryader.CancelJob(j)
 	c.boruter.Release(j)
 }
 
 // succeed sets Job in COMPLETED state.
 func (c *Controller) succeed(j weles.JobID) {
-	_ = c.jobs.SetStatusAndInfo(j, weles.JobStatusCOMPLETED, "")
+	// errors logged in the SetStatusAndInfo.
+	_ = c.jobs.SetStatusAndInfo(j, weles.JobStatusCOMPLETED, "") // nolint:gosec
 	c.boruter.Release(j)
 }

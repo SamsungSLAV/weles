@@ -21,6 +21,7 @@ package controller
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/SamsungSLAV/weles"
@@ -170,5 +171,8 @@ func (h *DryaderImpl) CancelJob(j weles.JobID) {
 	}
 
 	h.remove(j)
-	_ = h.djm.Cancel(j)
+	err := h.djm.Cancel(j)
+	if err != nil {
+		log.Printf("Failed to cancel %d Job execution in DryadJobManager.", j)
+	}
 }

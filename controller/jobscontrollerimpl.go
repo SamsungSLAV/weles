@@ -396,7 +396,8 @@ func prepareFilterRegexp(arr []string) (*regexp.Regexp, error) {
 	var str strings.Builder
 	str.Grow(size)
 	for _, s := range arr {
-		_, _ = str.WriteString("|(" + s + ")")
+		// WriteString never returns error (as of go 1.11.2) thus err is ignored.
+		_, _ = str.WriteString("|(" + s + ")") // nolint:gosec
 	}
 
 	return regexp.Compile(str.String()[1:])
