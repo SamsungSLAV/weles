@@ -22,6 +22,7 @@ package controller
 
 import (
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -300,5 +301,9 @@ func (h *BoruterImpl) Release(j weles.JobID) {
 	if err != nil {
 		return
 	}
-	_ = h.boruta.CloseRequest(r)
+	err = h.boruta.CloseRequest(r)
+	if err != nil {
+		log.Printf("While processing %d job, failed to close %d request in Bouta: %s",
+			j, r, err.Error())
+	}
 }

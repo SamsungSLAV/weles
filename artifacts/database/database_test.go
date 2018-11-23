@@ -414,7 +414,8 @@ var _ = Describe("ArtifactDB", func() {
 				func(paginator weles.ArtifactPagination,
 					expectedResponseLength, expectedRemainingRecords int) {
 
-					result, list, err := silverHoneybadger.Filter(emptyFilter, defaultSorter, paginator)
+					result, list, err := silverHoneybadger.Filter(
+						emptyFilter, defaultSorter, paginator)
 					Expect(err).ToNot(HaveOccurred())
 
 					Expect(len(result)).To(BeEquivalentTo(expectedResponseLength))
