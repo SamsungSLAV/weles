@@ -170,5 +170,5 @@ func (h *DryaderImpl) CancelJob(j weles.JobID) {
 	}
 
 	h.remove(j)
-	_ = h.djm.Cancel(j)
+	_ = h.djm.Cancel(j) // nolint:gosec
 }

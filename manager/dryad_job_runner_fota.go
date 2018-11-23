@@ -36,6 +36,10 @@ type fotaCmd struct {
 	URLs    []string
 }
 
+// newFotaCmd created new fotaCmd instance.
+// currently always receives same params thus nolint directive added.
+// those params should be based on job submission file.
+// nolint:unparam
 func newFotaCmd(sdcard, mapping string, urls []string) *fotaCmd {
 	return &fotaCmd{
 		sdcard:  sdcard,

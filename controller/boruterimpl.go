@@ -300,5 +300,5 @@ func (h *BoruterImpl) Release(j weles.JobID) {
 	if err != nil {
 		return
 	}
-	_ = h.boruta.CloseRequest(r)
+	_ = h.boruta.CloseRequest(r) // nolint:gosec
 }

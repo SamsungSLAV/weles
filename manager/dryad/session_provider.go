@@ -50,7 +50,10 @@ type sessionProvider struct {
 }
 
 func prepareSSHConfig(userName string, key rsa.PrivateKey) *ssh.ClientConfig {
-	signer, _ := ssh.NewSignerFromKey(&key)
+	signer, err := ssh.NewSignerFromKey(&key)
+	if err != nil {
+		panic(err)
+	}
 
 	return &ssh.ClientConfig{
 		User: userName,
