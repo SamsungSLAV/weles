@@ -184,6 +184,9 @@ func (s *Storage) getNewPath(ad weles.ArtifactDescription) (weles.ArtifactPath, 
 func (s *Storage) listenToChanges() {
 	for change := range s.notifier {
 		// Error handled in SetStatus function.
-		_ = s.db.SetStatus(change) //nolint: gas, gosec
+		err := s.db.SetStatus(change)
+		if err != nil {
+			log.Println("Failed to set status of artifact.")
+		}
 	}
 }

@@ -50,15 +50,20 @@ type sessionProvider struct {
 }
 
 func prepareSSHConfig(userName string, key rsa.PrivateKey) *ssh.ClientConfig {
-	signer, _ := ssh.NewSignerFromKey(&key)
+	signer, err := ssh.NewSignerFromKey(&key)
+	if err != nil {
+		log.Println("Failed to create signer from received ssh key.")
+		// TODO: If there is a problem with parsing ssh key, job should fail.
+	}
 
 	return &ssh.ClientConfig{
 		User: userName,
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(signer),
 		},
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Timeout:         30 * time.Second, // TODO: Use value from config when such appears.
+		// TODO: Below will accept any host key. This should change in the future.
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(), // nolint:gosec
+		Timeout:         30 * time.Second,            // TODO: Use value from config.
 	}
 }
 

@@ -56,5 +56,5 @@ type JobsController interface {
 	// - JobPagination containing element after/before which a page should be returned. It also
 	// contains information about direction of pagination and the size of the returned page which
 	// must always be set.
-	List(filter weles.JobFilter, sorter weles.JobSorter, paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) // nolint: lll
+	List(filter weles.JobFilter, sorter weles.JobSorter, paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) // nolint:lll
 }
