@@ -91,17 +91,17 @@ func main() {
 	//TODO: input validation
 
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, "Usage:\n")
-		fmt.Fprint(os.Stderr, "  weles-server [OPTIONS]\n\n")
+		_, _ = fmt.Fprint(os.Stderr, "Usage:\n")
+		_, _ = fmt.Fprint(os.Stderr, "  weles-server [OPTIONS]\n\n")
 
 		title := "Weles"
-		fmt.Fprint(os.Stderr, title+"\n\n")
+		_, _ = fmt.Fprint(os.Stderr, title+"\n\n")
 		desc := "This is a Weles server. " +
 			"You can find out more about Weles at [http://tbd.tbd](http://tbd.tbd)."
 		if desc != "" {
-			fmt.Fprintf(os.Stderr, desc+"\n\n")
+			_, _ = fmt.Fprintf(os.Stderr, desc+"\n\n")
 		}
-		fmt.Fprintln(os.Stderr, flag.CommandLine.FlagUsages())
+		_, _ = fmt.Fprintln(os.Stderr, flag.CommandLine.FlagUsages())
 	}
 	// parse the CLI flags
 	flag.Parse()

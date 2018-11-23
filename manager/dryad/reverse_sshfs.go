@@ -66,8 +66,8 @@ func (sshfs *reverseSSHFS) open(session *ssh.Session) (err error) {
 	//                                       ^log on stderr
 	ctx, cancel := context.WithCancel(sshfs.ctx)
 
-	// gas/gosec returns error here about subprocess launching with variable. This is intended.
-	sftp := exec.CommandContext(ctx, "/usr/lib/openssh/sftp-server", "-e", "-l", "INFO") //nolint: gas, gosec,lll
+	// gosec returns error here about subprocess launching with variable. This is intended.
+	sftp := exec.CommandContext(ctx, "/usr/lib/openssh/sftp-server", "-e", "-l", "INFO") //nolint: gosec,lll
 	session.Stdin, err = sftp.StdoutPipe()
 	if err != nil {
 		cancel()

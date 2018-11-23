@@ -50,15 +50,18 @@ type sessionProvider struct {
 }
 
 func prepareSSHConfig(userName string, key rsa.PrivateKey) *ssh.ClientConfig {
-	signer, _ := ssh.NewSignerFromKey(&key)
+	signer, err := ssh.NewSignerFromKey(&key)
+	if err != nil {
+		panic(err)
+	}
 
 	return &ssh.ClientConfig{
 		User: userName,
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(signer),
 		},
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Timeout:         30 * time.Second, // TODO: Use value from config when such appears.
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(), // nolint:gosec
+		Timeout:         30 * time.Second,            // TODO: Use value from config.
 	}
 }
 

@@ -111,8 +111,8 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 
 	// helper functions
 	createRequest := func(reqBody io.Reader, query, contentH, acceptH string) (req *http.Request) {
-		req, err := http.NewRequest(http.MethodPost, testserver.URL+basePath+listArtifactsPath+query,
-			reqBody)
+		req, err := http.NewRequest(
+			http.MethodPost, testserver.URL+basePath+listArtifactsPath+query, reqBody)
 		Expect(err).ToNot(HaveOccurred())
 		req.Header.Set("Content-Type", contentH)
 		req.Header.Set("Accept", acceptH)
