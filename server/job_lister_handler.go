@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
 
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/server/operations/jobs"
@@ -126,26 +127,25 @@ func responder200(listInfo weles.ListInfo, paginator weles.JobPagination,
 	return
 }
 
+// normalizeDate is a helper function - adjusts 0 value to 0001-01-01T00:00:00.000Z instead of
+// Unix 0- 1970-01-01T00:00:00.000Z. This is required by controller.
+func normalizeDate(i strfmt.DateTime) strfmt.DateTime {
+	if time.Time(i).Unix() != 0 {
+		return i
+	}
+	return strfmt.DateTime{}
+}
+
 // setJobFilter adjusts filter's 0 values to be consistent and acceptable by controller.
-// This is:
-// for strfmt.DateTime elements normalizing 0 time as (0001-01-01T00:00:00.000Z) instead of
-// Unix 0- 1970-01-01T00:00:00.000Z
 // Controller treats slices with 0 len as empty, slices with lenght of 1 and empty value should not
 // be passed to controller.
 func setJobFilter(i *weles.JobFilter) (o weles.JobFilter) {
 	if i != nil {
-		if time.Time(i.CreatedBefore).Unix() != 0 {
-			o.CreatedBefore = i.CreatedBefore
-		}
-		if time.Time(i.CreatedAfter).Unix() != 0 {
-			o.CreatedAfter = i.CreatedAfter
-		}
-		if time.Time(i.UpdatedBefore).Unix() != 0 {
-			o.UpdatedBefore = i.UpdatedBefore
-		}
-		if time.Time(i.UpdatedAfter).Unix() != 0 {
-			o.UpdatedAfter = i.UpdatedAfter
-		}
+		o.CreatedBefore = normalizeDate(i.CreatedBefore)
+		o.CreatedAfter = normalizeDate(i.CreatedAfter)
+		o.UpdatedBefore = normalizeDate(i.UpdatedBefore)
+		o.UpdatedAfter = normalizeDate(i.UpdatedAfter)
+
 		if len(i.JobID) > 0 {
 			if !(len(i.JobID) == 1 && i.JobID[0] == 0) {
 				o.JobID = i.JobID

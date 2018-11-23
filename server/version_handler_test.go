@@ -63,7 +63,8 @@ var _ = Describe("VersionHandler", func() {
 				Expect(resp.StatusCode).To(Equal(200))
 				Expect(resp.Header).To(HaveKeyWithValue("Weles-Api-Version", []string{v1on010.API}))
 				Expect(resp.Header).To(HaveKeyWithValue("Weles-Api-State", []string{v1on010.State}))
-				Expect(resp.Header).To(HaveKeyWithValue("Weles-Server-Version", []string{v1on010.Server}))
+				Expect(resp.Header).To(HaveKeyWithValue("Weles-Server-Version",
+					[]string{v1on010.Server}))
 
 				respBody, err := ioutil.ReadAll(resp.Body)
 				Expect(err).ToNot(HaveOccurred())
