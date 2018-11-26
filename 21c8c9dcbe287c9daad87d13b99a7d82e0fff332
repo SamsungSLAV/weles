@@ -71,6 +71,63 @@
     },
     {
       "key": {
+        "uuid": "aab75f8b_b907f718",
+        "filename": "artifactmanager.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "Do not ignore linter, break the line instead",
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d5debff_7c5ff6cd",
+        "filename": "artifacts/artifacts.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "Do not ignore linter, get and verify error. If there is nothing to be done at least log an error.",
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee1d372d_98b27c70",
+        "filename": "cmd/weles-server/main.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "Few remarks to this code:\n\n1) I hate so many \"_, _\" it looks like some bad ascii art. Why don\u0027t you create one string and then print it with single Fprintf. You can even use `` for making it preformatted, so no extra \\n\\n will be needed.\n\n2) I don\u0027t get the idea of:\n    desc :\u003d \"bla bla bla\"\n    if desc !\u003d \"\" {\nWhy don\u0027t you just skip this if?\n\n3) The whole text seems to be pretty static, would a const be better than variable ?",
+      "range": {
+        "startLine": 94,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 63
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b12e5acb_0b1baf8a",
         "filename": "cmd/weles-server/main.go",
         "patchSetId": 3
@@ -94,6 +151,91 @@
     },
     {
       "key": {
+        "uuid": "613dbde7_62676507",
+        "filename": "controller/boruterimpl.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "Don\u0027t ignore, log.",
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea829c51_a9e710be",
+        "filename": "controller/dryaderimpl.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "check and log",
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c300b4f4_bdd91319",
+        "filename": "controller/jobscontroller.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "Don\u0027ignore, break.",
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ced852e_77fa2e15",
+        "filename": "manager/dryad/reverse_sshfs.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "lll does not report issue,\n\nUse just gosec, if the lien will be too long, place nolint directive in previous line",
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2eb256bd_6ee8d840",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "You want to panic whole Weles, because parsing a single ssh key for a single dryad fails, right ?",
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1ececcb0_7c0f3a0a",
         "filename": "manager/dryad/session_provider.go",
         "patchSetId": 3
@@ -110,6 +252,29 @@
         "startChar": 2,
         "endLine": 55,
         "endChar": 12
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33fee3b1_27b74963",
+        "filename": "manager/dryad_job_runner_fota.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "creates",
+      "range": {
+        "startLine": 39,
+        "startChar": 14,
+        "endLine": 39,
+        "endChar": 21
       },
       "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
@@ -140,6 +305,29 @@
     },
     {
       "key": {
+        "uuid": "bda5f9e0_b23ff436",
+        "filename": "manager/dryad_job_runner_fota.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "Currently it",
+      "range": {
+        "startLine": 40,
+        "startChar": 3,
+        "endLine": 40,
+        "endChar": 12
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a5c0410b_b18472eb",
         "filename": "manager/dryad_job_runner_fota.go",
         "patchSetId": 3
@@ -156,6 +344,29 @@
         "startChar": 3,
         "endLine": 41,
         "endChar": 4
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1afe898a_19de60dd",
+        "filename": "manager/dryad_job_runner_fota.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-11-26T15:05:11Z",
+      "side": 1,
+      "message": "Those",
+      "range": {
+        "startLine": 41,
+        "startChar": 3,
+        "endLine": 41,
+        "endChar": 8
       },
       "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
