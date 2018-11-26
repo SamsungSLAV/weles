@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aef871e9_f8b6a444",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:28:31Z",
+      "side": 1,
+      "message": "typo: important",
+      "range": {
+        "startLine": 10,
+        "startChar": 44,
+        "endLine": 10,
+        "endChar": 54
+      },
+      "revId": "b9157ff17da40c51ace04e7e05ff085bab11fd6d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9fb76aaf_9f5b33ee",
+        "filename": "swagger.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:28:31Z",
+      "side": 1,
+      "message": "When did you join https://xkcd.com/703/ ?",
+      "range": {
+        "startLine": 34,
+        "startChar": 15,
+        "endLine": 36,
+        "endChar": 29
+      },
+      "revId": "b9157ff17da40c51ace04e7e05ff085bab11fd6d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d59d8bc0_aec5cb64",
+        "filename": "swagger.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:28:31Z",
+      "side": 1,
+      "message": "So Artifact ID; let\u0027s say it clearly and explicitly",
+      "range": {
+        "startLine": 236,
+        "startChar": 37,
+        "endLine": 236,
+        "endChar": 39
+      },
+      "revId": "b9157ff17da40c51ace04e7e05ff085bab11fd6d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6726ca5_2b667b08",
+        "filename": "swagger.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:28:31Z",
+      "side": 1,
+      "message": "[minor] the first?",
+      "range": {
+        "startLine": 243,
+        "startChar": 55,
+        "endLine": 243,
+        "endChar": 60
+      },
+      "revId": "b9157ff17da40c51ace04e7e05ff085bab11fd6d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65b0a2e3_d0a3db40",
+        "filename": "swagger.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:28:31Z",
+      "side": 1,
+      "message": "ibid",
+      "range": {
+        "startLine": 243,
+        "startChar": 37,
+        "endLine": 243,
+        "endChar": 39
+      },
+      "revId": "b9157ff17da40c51ace04e7e05ff085bab11fd6d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "849b0d9a_5bd1896e",
+        "filename": "swagger.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:28:31Z",
+      "side": 1,
+      "message": "Not a suffix anymore? BTW I don\u0027t know what\u0027s wrong w/ Identifier and how\u0027s Locator better",
+      "range": {
+        "startLine": 270,
+        "startChar": 18,
+        "endLine": 270,
+        "endChar": 19
+      },
+      "revId": "b9157ff17da40c51ace04e7e05ff085bab11fd6d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
