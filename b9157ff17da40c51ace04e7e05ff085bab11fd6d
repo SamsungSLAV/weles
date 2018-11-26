@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "66a5d2a9_b9acba12",
+        "filename": "swagger.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-26T19:11:20Z",
+      "side": 1,
+      "message": "but its called just ID here :(\n\nshould I rename it on artifact-fix branch/here?",
+      "parentUuid": "d59d8bc0_aec5cb64",
+      "range": {
+        "startLine": 236,
+        "startChar": 37,
+        "endLine": 236,
+        "endChar": 39
+      },
+      "revId": "b9157ff17da40c51ace04e7e05ff085bab11fd6d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a6726ca5_2b667b08",
         "filename": "swagger.yml",
         "patchSetId": 3
@@ -128,6 +152,30 @@
       "writtenOn": "2018-11-26T15:28:31Z",
       "side": 1,
       "message": "Not a suffix anymore? BTW I don\u0027t know what\u0027s wrong w/ Identifier and how\u0027s Locator better",
+      "range": {
+        "startLine": 270,
+        "startChar": 18,
+        "endLine": 270,
+        "endChar": 19
+      },
+      "revId": "b9157ff17da40c51ace04e7e05ff085bab11fd6d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7912da1d_f2d43554",
+        "filename": "swagger.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-26T19:11:20Z",
+      "side": 1,
+      "message": "Weles returns \"URL suffix\" (I googled URL decomposition and found this: https://sling.apache.org/documentation/the-sling-engine/url-decomposition.html )",
+      "parentUuid": "849b0d9a_5bd1896e",
       "range": {
         "startLine": 270,
         "startChar": 18,
