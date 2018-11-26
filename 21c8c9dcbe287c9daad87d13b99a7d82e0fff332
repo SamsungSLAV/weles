@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "065c3ff4_41f105b7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:01:53Z",
+      "side": 1,
+      "message": "I don\u0027t get it",
+      "range": {
+        "startLine": 12,
+        "startChar": 51,
+        "endLine": 12,
+        "endChar": 71
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00f06a9a_cab23497",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:01:53Z",
+      "side": 1,
+      "message": "Why is force necessary?\n\n $ gometalinter -h\n (snip)\n -f, --force   Pass -f to go tool when installing (DEPRECATED - use binary packages).\n\nDid you mean --config\u003d.gometaliner.json?",
+      "range": {
+        "startLine": 16,
+        "startChar": 32,
+        "endLine": 16,
+        "endChar": 34
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3c78913_1030c901",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:01:53Z",
+      "side": 1,
+      "message": "[minor] I prefer basic prompt (\"$\") as hint for running command in shell",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 3
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b12e5acb_0b1baf8a",
+        "filename": "cmd/weles-server/main.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:01:53Z",
+      "side": 1,
+      "message": "I was unable to reproduce linter report on this snippet (I used: gometalinter --config\u003d.gometalinter.json ./cmd/weles-server/main.go)\n\nPlease remember to make the whole usage message a raw string",
+      "range": {
+        "startLine": 93,
+        "startChar": 1,
+        "endLine": 105,
+        "endChar": 2
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ececcb0_7c0f3a0a",
+        "filename": "manager/dryad/session_provider.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:01:53Z",
+      "side": 1,
+      "message": "Please don\u0027t panic without adding at least a TODO to log and recover\n\nIf there is a problem while parsing key, new session should not be created and job should fail",
+      "range": {
+        "startLine": 55,
+        "startChar": 2,
+        "endLine": 55,
+        "endChar": 12
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11b01a50_df0c05e8",
+        "filename": "manager/dryad_job_runner_fota.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:01:53Z",
+      "side": 1,
+      "message": "[minor] Uppercase",
+      "range": {
+        "startLine": 40,
+        "startChar": 3,
+        "endLine": 40,
+        "endChar": 4
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5c0410b_b18472eb",
+        "filename": "manager/dryad_job_runner_fota.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:01:53Z",
+      "side": 1,
+      "message": "ibid",
+      "range": {
+        "startLine": 41,
+        "startChar": 3,
+        "endLine": 41,
+        "endChar": 4
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c06a8f5_c1ec8864",
+        "filename": "server/job_lister_handler.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:01:53Z",
+      "side": 1,
+      "message": "[minor] either add space before \u0027-\u0027 or remove it completely and wrap Epoch with parentheses",
+      "range": {
+        "startLine": 131,
+        "startChar": 9,
+        "endLine": 131,
+        "endChar": 35
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a3af6ba_b2fad35a",
+        "filename": "server/job_lister_handler.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-26T15:01:53Z",
+      "side": 1,
+      "message": "I wonder how it will affect test coverage ;)",
+      "range": {
+        "startLine": 132,
+        "startChar": 5,
+        "endLine": 132,
+        "endChar": 18
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
