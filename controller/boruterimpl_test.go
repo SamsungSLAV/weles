@@ -22,6 +22,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/SamsungSLAV/perun/testutil"
+
 	"github.com/SamsungSLAV/boruta"
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
@@ -40,6 +42,7 @@ var _ = Describe("BoruterImpl", func() {
 	var config weles.Config
 	var caps boruta.Capabilities
 	var priority boruta.Priority
+	lock := sync.Locker(new(sync.Mutex))
 	j := weles.JobID(0xCAFE)
 	rid := boruta.ReqID(0xD0DA)
 	period := 50 * time.Millisecond
@@ -83,6 +86,9 @@ var _ = Describe("BoruterImpl", func() {
 	}
 
 	BeforeEach(func() {
+		lock.Lock()
+		defer lock.Unlock()
+
 		ctrl = gomock.NewController(GinkgoT())
 
 		jc = cmock.NewMockJobsController(ctrl)
@@ -102,6 +108,9 @@ var _ = Describe("BoruterImpl", func() {
 		priority = boruta.Priority(7)
 	})
 	AfterEach(func() {
+		lock.Lock()
+		defer lock.Unlock()
+
 		h.(*BoruterImpl).Finish()
 		ctrl.Finish()
 	})
@@ -118,6 +127,7 @@ var _ = Describe("BoruterImpl", func() {
 	})
 	Describe("loop", func() {
 		It("should ignore ListRequests errors", func() {
+			lock.Lock()
 			counter := 5
 			mutex := &sync.Mutex{}
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
@@ -130,15 +140,23 @@ var _ = Describe("BoruterImpl", func() {
 					defer mutex.Unlock()
 					counter--
 				})
+			lock.Unlock()
 
-			h.Request(j)
-			Eventually(func() int {
-				mutex.Lock()
-				defer mutex.Unlock()
-				return counter
-			}).Should(BeNumerically("<", 0))
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.Request(j)
+				Eventually(func() int {
+					mutex.Lock()
+					defer mutex.Unlock()
+					return counter
+				}).Should(BeNumerically("<", 0))
 
-			expectRegistered(1)
+				expectRegistered(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to list Boruta requests."))
 		})
 	})
 	Describe("Request", func() {
@@ -196,48 +214,86 @@ var _ = Describe("BoruterImpl", func() {
 			expectRegistered(1)
 		})
 		It("should fail if NewRequest fails", func() {
+			lock.Lock()
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
 				boruta.ReqID(0), err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
+			lock.Unlock()
 
-			h.Request(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.Request(j)
 
-			eventuallyNoti(1, false, "Failed to create request in Boruta : test error")
-			eventuallyEmpty(1)
+				eventuallyNoti(1, false, "Failed to create request in Boruta : test error")
+				eventuallyEmpty(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to create request in Boruta."))
 		})
 		It("should fail if GetConfig fails", func() {
+			lock.Lock()
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(weles.Config{}, err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
+			lock.Unlock()
 
-			h.Request(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.Request(j)
 
-			eventuallyNoti(1, false, "Internal Weles error while getting Job config : test error")
-			eventuallyEmpty(1)
+				eventuallyNoti(1, false,
+					"Internal Weles error while getting Job config : test error")
+				eventuallyEmpty(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to get Job config."))
 		})
 		It("should fail if SetStatusAndInfo fails", func() {
+			lock.Lock()
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "").Return(err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
+			lock.Unlock()
 
-			h.Request(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.Request(j)
 
-			eventuallyNoti(1, false, "Internal Weles error while changing Job status : test error")
-			eventuallyEmpty(1)
+				eventuallyNoti(1, false,
+					"Internal Weles error while changing Job status : test error")
+				eventuallyEmpty(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to change JobStatus."))
 		})
 		It("should call NewRequest with empty caps if no device type provided", func() {
+			lock.Lock()
 			config.DeviceType = ""
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(boruta.Capabilities{}, priority, owner, gomock.Any(),
 				gomock.Any()).Return(boruta.ReqID(0), err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
+			lock.Unlock()
 
-			h.Request(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.Request(j)
 
-			eventuallyNoti(1, false, "Failed to create request in Boruta : test error")
-			eventuallyEmpty(1)
+				eventuallyNoti(1, false, "Failed to create request in Boruta : test error")
+				eventuallyEmpty(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to create request in Boruta."))
 		})
 		It("should call NewRequest with proper priority", func() {
 			m := map[weles.Priority]boruta.Priority{
@@ -247,17 +303,26 @@ var _ = Describe("BoruterImpl", func() {
 				weles.Priority("unknown"): boruta.Priority(7),
 			}
 			for k, v := range m {
+				lock.Lock()
 				config.Priority = k
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 				jc.EXPECT().GetConfig(j).Return(config, nil)
 				req.EXPECT().NewRequest(caps, v, owner, gomock.Any(), gomock.Any()).Return(
 					boruta.ReqID(0), err)
 				req.EXPECT().ListRequests(nil).AnyTimes()
+				lock.Unlock()
 
-				h.Request(j)
+				log, logerr := testutil.WithStderrMocked(func() {
+					defer GinkgoRecover()
+					lock.Lock()
+					defer lock.Unlock()
+					h.Request(j)
 
-				eventuallyNoti(1, false, "Failed to create request in Boruta : test error")
-				eventuallyEmpty(1)
+					eventuallyNoti(1, false, "Failed to create request in Boruta : test error")
+					eventuallyEmpty(1)
+				})
+				Expect(logerr).NotTo(HaveOccurred())
+				Expect(log).To(ContainSubstring("Failed to create request in Boruta."))
 			}
 		})
 	})
@@ -279,6 +344,9 @@ var _ = Describe("BoruterImpl", func() {
 			}}
 
 		BeforeEach(func() {
+			lock.Lock()
+			defer lock.Unlock()
+
 			var va, dl time.Time
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
@@ -352,6 +420,7 @@ var _ = Describe("BoruterImpl", func() {
 			eventuallyNoti(1, true, "")
 		})
 		It("should fail during acquire if SetDryad fails", func() {
+			lock.Lock()
 			req.EXPECT().AcquireWorker(rid).Return(ai, nil)
 			jc.EXPECT().SetDryad(
 				j, weles.Dryad{
@@ -359,29 +428,46 @@ var _ = Describe("BoruterImpl", func() {
 					Key:      ai.Key,
 					Username: "boruta-user",
 				}).Return(err)
+			lock.Unlock()
 
-			rinfo := boruta.ReqInfo{
-				ID:    rid,
-				State: boruta.INPROGRESS,
-				Job:   &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)},
-			}
-			listRequestRet <- []boruta.ReqInfo{rinfo}
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				rinfo := boruta.ReqInfo{
+					ID:    rid,
+					State: boruta.INPROGRESS,
+					Job:   &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)},
+				}
+				listRequestRet <- []boruta.ReqInfo{rinfo}
 
-			eventuallyNoti(1, false, "Internal Weles error while setting Dryad : test error")
-			eventuallyEmpty(1)
+				eventuallyNoti(1, false, "Internal Weles error while setting Dryad : test error")
+				eventuallyEmpty(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to set up the dryad."))
 		})
 		It("should fail during acquire if AcquireWorker fails", func() {
+			lock.Lock()
 			req.EXPECT().AcquireWorker(rid).Return(boruta.AccessInfo{}, err)
+			lock.Unlock()
 
-			rinfo := boruta.ReqInfo{
-				ID:    rid,
-				State: boruta.INPROGRESS,
-				Job:   &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)},
-			}
-			listRequestRet <- []boruta.ReqInfo{rinfo}
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				rinfo := boruta.ReqInfo{
+					ID:    rid,
+					State: boruta.INPROGRESS,
+					Job:   &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)},
+				}
+				listRequestRet <- []boruta.ReqInfo{rinfo}
 
-			eventuallyNoti(1, false, "Cannot acquire worker from Boruta : test error")
-			eventuallyEmpty(1)
+				eventuallyNoti(1, false, "Cannot acquire worker from Boruta : test error")
+				eventuallyEmpty(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to acquire worker from Boruta."))
 		})
 		It("should remove request if state changes to CANCEL", func() {
 			rinfo := boruta.ReqInfo{ID: rid, State: boruta.CANCEL}
@@ -425,8 +511,16 @@ var _ = Describe("BoruterImpl", func() {
 				eventuallyEmpty(1)
 			})
 			It("should ignore not existing request", func() {
-				h.Release(weles.JobID(0x0BCA))
-				expectRegistered(1)
+				log, logerr := testutil.WithStderrMocked(func() {
+					defer GinkgoRecover()
+					lock.Lock()
+					defer lock.Unlock()
+					h.Release(weles.JobID(0x0BCA))
+					expectRegistered(1)
+				})
+				Expect(logerr).NotTo(HaveOccurred())
+				Expect(log).To(ContainSubstring("JobID not found in BoruterImpl.info map."))
+				Expect(log).To(ContainSubstring("Failed to return Dryad to Boruta's pool."))
 			})
 		})
 	})
