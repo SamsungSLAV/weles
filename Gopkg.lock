@@ -31,6 +31,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:e0097f5f3150a9c3e5149be08f203bb1ae82dc3ecd0c2fdd1021fbb355aa58fa"
+  name = "github.com/SamsungSLAV/perun"
+  packages = ["testutil"]
+  pruneopts = ""
+  revision = "0e9457ffdb900cabfca951a605b3c1363aea2fed"
+
+[[projects]]
+  branch = "master"
   digest = "1:f3455ed311612e5821fbcb6003ef07d0ea910beec8a3eb29fb8b0ec796251ef7"
   name = "github.com/SamsungSLAV/slav"
   packages = ["logger"]
@@ -642,6 +650,7 @@
   input-imports = [
     "github.com/SamsungSLAV/boruta",
     "github.com/SamsungSLAV/boruta/http/client",
+    "github.com/SamsungSLAV/perun/testutil",
     "github.com/SamsungSLAV/slav/logger",
     "github.com/coreos/go-oidc",
     "github.com/davecgh/go-spew/spew",
