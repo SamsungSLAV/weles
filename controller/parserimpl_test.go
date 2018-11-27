@@ -19,6 +19,8 @@ package controller
 import (
 	"errors"
 
+	"github.com/SamsungSLAV/perun/testutil"
+
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
@@ -97,14 +99,18 @@ var _ = Describe("ParserImpl", func() {
 				jc.EXPECT().SetConfig(j, config).Return(err),
 			)
 
-			h.Parse(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				h.Parse(j)
 
-			expectedNotification := notifier.Notification{
-				JobID: j,
-				OK:    false,
-				Msg:   "Internal Weles error while setting config : " + err.Error(),
-			}
-			Eventually(r).Should(Receive(Equal(expectedNotification)))
+				expectedNotification := notifier.Notification{
+					JobID: j,
+					OK:    false,
+					Msg:   "Internal Weles error while setting config : " + err.Error(),
+				}
+				Eventually(r).Should(Receive(Equal(expectedNotification)))
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to set config for Job."))
 		})
 		It("should fail when unable to parse yaml", func() {
 			gomock.InOrder(
@@ -118,14 +124,18 @@ var _ = Describe("ParserImpl", func() {
 				yp.EXPECT().ParseYaml(yaml).Return(&weles.Config{}, err),
 			)
 
-			h.Parse(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				h.Parse(j)
 
-			expectedNotification := notifier.Notification{
-				JobID: j,
-				OK:    false,
-				Msg:   "Error parsing yaml file : " + err.Error(),
-			}
-			Eventually(r).Should(Receive(Equal(expectedNotification)))
+				expectedNotification := notifier.Notification{
+					JobID: j,
+					OK:    false,
+					Msg:   "Error parsing yaml file : " + err.Error(),
+				}
+				Eventually(r).Should(Receive(Equal(expectedNotification)))
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to parse Job description for job."))
 		})
 		It("should fail when unable to write yaml file", func() {
 			gomock.InOrder(
@@ -138,15 +148,19 @@ var _ = Describe("ParserImpl", func() {
 					}).Return(badpath, nil),
 			)
 
-			h.Parse(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				h.Parse(j)
 
-			expectedNotification := notifier.Notification{
-				JobID: j,
-				OK:    false,
-				Msg: "Internal Weles error while saving file in ArtifactDB : " +
-					"open " + string(badpath) + ": no such file or directory",
-			}
-			Eventually(r).Should(Receive(Equal(expectedNotification)))
+				expectedNotification := notifier.Notification{
+					JobID: j,
+					OK:    false,
+					Msg: "Internal Weles error while saving file in ArtifactDB : " +
+						"open " + string(badpath) + ": no such file or directory",
+				}
+				Eventually(r).Should(Receive(Equal(expectedNotification)))
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to write Job description to file."))
 		})
 		It("should fail when unable to create path in ArtifactDB", func() {
 			gomock.InOrder(
@@ -159,15 +173,19 @@ var _ = Describe("ParserImpl", func() {
 					}).Return(weles.ArtifactPath(""), err),
 			)
 
-			h.Parse(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				h.Parse(j)
 
-			expectedNotification := notifier.Notification{
-				JobID: j,
-				OK:    false,
-				Msg: "Internal Weles error while creating file path in ArtifactDB : " +
-					err.Error(),
-			}
-			Eventually(r).Should(Receive(Equal(expectedNotification)))
+				expectedNotification := notifier.Notification{
+					JobID: j,
+					OK:    false,
+					Msg: "Internal Weles error while creating file path in ArtifactDB : " +
+						err.Error(),
+				}
+				Eventually(r).Should(Receive(Equal(expectedNotification)))
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to create Job description."))
 		})
 		It("should fail when unable to get yaml", func() {
 			gomock.InOrder(
@@ -175,26 +193,34 @@ var _ = Describe("ParserImpl", func() {
 				jc.EXPECT().GetYaml(j).Return([]byte{}, err),
 			)
 
-			h.Parse(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				h.Parse(j)
 
-			expectedNotification := notifier.Notification{
-				JobID: j,
-				OK:    false,
-				Msg:   "Internal Weles error while getting yaml description : " + err.Error(),
-			}
-			Eventually(r).Should(Receive(Equal(expectedNotification)))
+				expectedNotification := notifier.Notification{
+					JobID: j,
+					OK:    false,
+					Msg:   "Internal Weles error while getting yaml description : " + err.Error(),
+				}
+				Eventually(r).Should(Receive(Equal(expectedNotification)))
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to get Job description."))
 		})
 		It("should fail when unable to change job status", func() {
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, "").Return(err)
 
-			h.Parse(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				h.Parse(j)
 
-			expectedNotification := notifier.Notification{
-				JobID: j,
-				OK:    false,
-				Msg:   "Internal Weles error while changing Job status : " + err.Error(),
-			}
-			Eventually(r).Should(Receive(Equal(expectedNotification)))
+				expectedNotification := notifier.Notification{
+					JobID: j,
+					OK:    false,
+					Msg:   "Internal Weles error while changing Job status : " + err.Error(),
+				}
+				Eventually(r).Should(Receive(Equal(expectedNotification)))
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to set JobStatus to PARSING."))
 		})
 	})
 })
