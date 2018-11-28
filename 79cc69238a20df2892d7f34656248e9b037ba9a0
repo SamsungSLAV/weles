@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e08eb47c_02486b35",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-28T16:06:13Z",
+      "side": 1,
+      "message": "True, it is merged now; removing comment\n\nWhat do you think about moving components to slav repo once it is used three or more times?\n\nMy proposal does not mean I don\u0027t want to move it now - just say a word",
+      "parentUuid": "c33a04b8_40e323d9",
+      "range": {
+        "startLine": 14,
+        "startChar": 45,
+        "endLine": 14,
+        "endChar": 69
+      },
+      "revId": "79cc69238a20df2892d7f34656248e9b037ba9a0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "43118489_5c309e15",
         "filename": "controller/parserimpl_test.go",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "8c189f9a_c21944b8",
+        "filename": "controller/parserimpl_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-28T16:06:13Z",
+      "side": 1,
+      "message": "I followed perun naming convention\n\nIs it more important to have it unified or not confusing?",
+      "parentUuid": "43118489_5c309e15",
+      "range": {
+        "startLine": 102,
+        "startChar": 8,
+        "endLine": 102,
+        "endChar": 14
+      },
+      "revId": "79cc69238a20df2892d7f34656248e9b037ba9a0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c53236d4_97f94f32",
         "filename": "controller/parserimpl_test.go",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2018-11-28T12:42:35Z",
       "side": 1,
       "message": "wouldnt it be better to move all those log strings to some consts?",
+      "range": {
+        "startLine": 113,
+        "startChar": 36,
+        "endLine": 113,
+        "endChar": 65
+      },
+      "revId": "79cc69238a20df2892d7f34656248e9b037ba9a0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a8ab13b_7d9dd144",
+        "filename": "controller/parserimpl_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-11-28T16:06:13Z",
+      "side": 1,
+      "message": "I don\u0027t think so; all of them are specific to certain circumstances (given TC) and verify only a single scenario - like e.g. expectedNotification.Msg",
+      "parentUuid": "c53236d4_97f94f32",
       "range": {
         "startLine": 113,
         "startChar": 36,
