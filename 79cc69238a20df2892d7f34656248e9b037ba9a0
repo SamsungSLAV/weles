@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c33a04b8_40e323d9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-28T12:42:35Z",
+      "side": 1,
+      "message": "already merged, i dont get why its in perun repo rather than in slav (it will be probably used across all slav projects)",
+      "range": {
+        "startLine": 14,
+        "startChar": 45,
+        "endLine": 14,
+        "endChar": 69
+      },
+      "revId": "79cc69238a20df2892d7f34656248e9b037ba9a0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43118489_5c309e15",
+        "filename": "controller/parserimpl_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-28T12:42:35Z",
+      "side": 1,
+      "message": "logErr (current name is misleading)",
+      "range": {
+        "startLine": 102,
+        "startChar": 8,
+        "endLine": 102,
+        "endChar": 14
+      },
+      "revId": "79cc69238a20df2892d7f34656248e9b037ba9a0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c53236d4_97f94f32",
+        "filename": "controller/parserimpl_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-28T12:42:35Z",
+      "side": 1,
+      "message": "wouldnt it be better to move all those log strings to some consts?",
+      "range": {
+        "startLine": 113,
+        "startChar": 36,
+        "endLine": 113,
+        "endChar": 65
+      },
+      "revId": "79cc69238a20df2892d7f34656248e9b037ba9a0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
