@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "d4a8f2db_efc164c4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-28T17:20:42Z",
+      "side": 1,
+      "message": "idk, i believe its best to do such things as soon as possible but its not mine decision (guess its Lukasz\u0027s)",
+      "parentUuid": "e08eb47c_02486b35",
+      "range": {
+        "startLine": 14,
+        "startChar": 45,
+        "endLine": 14,
+        "endChar": 69
+      },
+      "revId": "79cc69238a20df2892d7f34656248e9b037ba9a0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "43118489_5c309e15",
         "filename": "controller/parserimpl_test.go",
         "patchSetId": 1
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "I followed perun naming convention\n\nIs it more important to have it unified or not confusing?",
       "parentUuid": "43118489_5c309e15",
+      "range": {
+        "startLine": 102,
+        "startChar": 8,
+        "endLine": 102,
+        "endChar": 14
+      },
+      "revId": "79cc69238a20df2892d7f34656248e9b037ba9a0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f13848e6_5b4ae3c4",
+        "filename": "controller/parserimpl_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-11-28T17:20:42Z",
+      "side": 1,
+      "message": "logerr breaks go naming conventions so if someone should unify - its perun.",
+      "parentUuid": "8c189f9a_c21944b8",
       "range": {
         "startLine": 102,
         "startChar": 8,
