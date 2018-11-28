@@ -19,7 +19,9 @@ package controller
 import (
 	"errors"
 	"net"
+	"sync"
 
+	"github.com/SamsungSLAV/perun/testutil"
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
@@ -36,6 +38,7 @@ var _ = Describe("DryaderImpl", func() {
 	var djm *mock.MockDryadJobManager
 	var h Dryader
 	var ctrl *gomock.Controller
+	lock := sync.Locker(new(sync.Mutex))
 	j := weles.JobID(0xCAFE)
 	dryad := weles.Dryad{Addr: &net.IPNet{IP: net.IPv4(1, 2, 3, 4), Mask: net.IPv4Mask(5, 6, 7, 8)}}
 	err := errors.New("test error")
@@ -67,6 +70,9 @@ var _ = Describe("DryaderImpl", func() {
 	}
 
 	BeforeEach(func() {
+		lock.Lock()
+		defer lock.Unlock()
+
 		ctrl = gomock.NewController(GinkgoT())
 
 		jc = cmock.NewMockJobsController(ctrl)
@@ -76,6 +82,9 @@ var _ = Describe("DryaderImpl", func() {
 		r = h.Listen()
 	})
 	AfterEach(func() {
+		lock.Lock()
+		defer lock.Unlock()
+
 		h.(*DryaderImpl).Finish()
 		ctrl.Finish()
 	})
@@ -102,24 +111,42 @@ var _ = Describe("DryaderImpl", func() {
 			expectRegistered(1)
 		})
 		It("should fail if DryadJobManager.Create fails", func() {
+			lock.Lock()
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
 			jc.EXPECT().GetConfig(j).Return(conf, nil)
 			djm.EXPECT().Create(j, dryad, conf, (chan<- weles.DryadJobStatusChange)(
 				h.(*DryaderImpl).listener)).Return(err)
+			lock.Unlock()
 
-			h.StartJob(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.StartJob(j)
 
-			eventuallyNoti(1, false, "Cannot delegate Job to Dryad : test error")
-			eventuallyEmpty(1)
+				eventuallyNoti(1, false, "Cannot delegate Job to Dryad : test error")
+				eventuallyEmpty(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to start Job execution on Dryad."))
 		})
 		It("should fail if JobManager.GetDryad fails", func() {
+			lock.Lock()
 			jc.EXPECT().GetDryad(j).Return(weles.Dryad{}, err)
+			lock.Unlock()
 
-			h.StartJob(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.StartJob(j)
 
-			eventuallyNoti(1, false,
-				"Internal Weles error while getting Dryad for Job : test error")
-			eventuallyEmpty(1)
+				eventuallyNoti(1, false,
+					"Internal Weles error while getting Dryad for Job : test error")
+				eventuallyEmpty(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to get Dryad for Job."))
 		})
 	})
 
@@ -182,14 +209,23 @@ var _ = Describe("DryaderImpl", func() {
 		}()
 		DescribeTable("should fail if updating status of the Job fails",
 			func(s weles.DryadJobStatus, msg string) {
+				lock.Lock()
 				change := weles.DryadJobInfo{Job: j, Status: s}
 				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusRUNNING, msg).Return(err)
+				lock.Unlock()
 
-				h.(*DryaderImpl).listener <- weles.DryadJobStatusChange(change)
+				log, logerr := testutil.WithStderrMocked(func() {
+					defer GinkgoRecover()
+					lock.Lock()
+					defer lock.Unlock()
+					h.(*DryaderImpl).listener <- weles.DryadJobStatusChange(change)
 
-				eventuallyNoti(1, false,
-					"Internal Weles error while changing Job status : test error")
-				eventuallyEmpty(1)
+					eventuallyNoti(1, false,
+						"Internal Weles error while changing Job status : test error")
+					eventuallyEmpty(1)
+				})
+				Expect(logerr).NotTo(HaveOccurred())
+				Expect(log).To(ContainSubstring("Failed to change job state to RUNNING."))
 			},
 			updateTableEntries...,
 		)
