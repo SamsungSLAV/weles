@@ -19,8 +19,11 @@ package controller
 import (
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 	"sync"
 
+	"github.com/SamsungSLAV/perun/testutil"
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
@@ -36,6 +39,7 @@ var _ = Describe("DownloaderImpl", func() {
 	var am *mock.MockArtifactManager
 	var h *DownloaderImpl
 	var ctrl *gomock.Controller
+	lock := sync.Locker(new(sync.Mutex))
 	j := weles.JobID(0xCAFE)
 	paths := []string{}
 	for i := 0; i < 9; i++ {
@@ -88,6 +92,9 @@ var _ = Describe("DownloaderImpl", func() {
 	err := errors.New("test error")
 
 	BeforeEach(func() {
+		lock.Lock()
+		defer lock.Unlock()
+
 		ctrl = gomock.NewController(GinkgoT())
 
 		jc = cmock.NewMockJobsController(ctrl)
@@ -97,6 +104,9 @@ var _ = Describe("DownloaderImpl", func() {
 		r = h.Listen()
 	})
 	AfterEach(func() {
+		lock.Lock()
+		defer lock.Unlock()
+
 		ctrl.Finish()
 	})
 	Describe("NewDownloader", func() {
@@ -177,6 +187,12 @@ var _ = Describe("DownloaderImpl", func() {
 			eventuallyInfoEmpty(offset + 1)
 			sendChange(0, pathsNo, weles.ArtifactStatusREADY)
 			eventuallyPathEmpty(offset + 1)
+		}
+		// repeatedMsgRegexp returns regular expression that matches requested message given number
+		// of times with no regard to newline characters.
+		repeatedMsgRegexp := func(msg string, times int) string {
+			regexpSafeFullStopsMsg := strings.Replace(msg, ".", "[.]", -1)
+			return "(?s)(" + regexpSafeFullStopsMsg + ".*){" + strconv.Itoa(times) + "}"
 		}
 		defaultSetStatusAndInfo := func(successfulEntries int, fail bool) *gomock.Call {
 			var i int
@@ -295,76 +311,150 @@ var _ = Describe("DownloaderImpl", func() {
 			eventuallyEmpty(1)
 		})
 		It("should fail if cannot set config", func() {
+			lock.Lock()
 			defaultSetStatusAndInfo(1, false)
 			defaultGetConfig()
 			defaultPush(7, false)
 			defaultCreate(2, false)
 			jc.EXPECT().SetConfig(j, updatedConfig).Return(err)
+			lock.Unlock()
 
-			h.DispatchDownloads(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.DispatchDownloads(j)
 
-			expectFail(1, 7,
-				"Internal Weles error while setting config : test error")
+				expectFail(1, 7,
+					"Internal Weles error while setting config : test error")
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to set Job config."))
+			Expect(log).To(MatchRegexp(
+				repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 7)))
 		})
 		It("should fail if pull fails", func() {
+			lock.Lock()
 			defaultSetStatusAndInfo(1, false)
 			defaultGetConfig()
 			defaultPush(6, false)
 			defaultCreate(0, true)
+			lock.Unlock()
 
-			h.DispatchDownloads(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.DispatchDownloads(j)
 
-			expectFail(1, 6,
-				"Internal Weles error while creating a new path in ArtifactManager : "+
-					"test error")
+				expectFail(1, 6,
+					"Internal Weles error while creating a new path in ArtifactManager : "+
+						"test error")
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to create new path for TEST artifact."))
+			Expect(log).To(MatchRegexp(
+				repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 6)))
 		})
 		It("should fail if push for TESTFILE fails", func() {
+			lock.Lock()
 			defaultSetStatusAndInfo(1, false)
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			defaultPush(4, true)
+			lock.Unlock()
 
-			h.DispatchDownloads(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.DispatchDownloads(j)
 
-			expectFail(1, 4,
-				"Internal Weles error while registering URI:<uri_0> in ArtifactManager : "+
-					"test error")
+				expectFail(1, 4,
+					"Internal Weles error while registering URI:<uri_0> in ArtifactManager : "+
+						"test error")
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to push Artifact to DB."))
+			Expect(log).To(ContainSubstring("Failed to create path for TEST artifact."))
+
 		})
 		It("should fail if push for MD5 fails", func() {
+			lock.Lock()
 			defaultSetStatusAndInfo(1, false)
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			defaultPush(1, true)
+			lock.Unlock()
 
-			h.DispatchDownloads(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.DispatchDownloads(j)
 
-			expectFail(
-				1, 1, "Internal Weles error while registering URI:<md5_0> in ArtifactManager : "+
-					"test error")
+				expectFail(
+					1, 1, "Internal Weles error while registering URI:<md5_0> in ArtifactManager : "+
+						"test error")
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to push Artifact to DB."))
+			Expect(log).To(ContainSubstring("Failed to create path for IMAGE artifact."))
+			Expect(log).To(ContainSubstring("Failed to match ArtifactInfo with JobID."))
 		})
 		It("should fail if push for image fails", func() {
+			lock.Lock()
 			defaultSetStatusAndInfo(1, false)
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			defaultPush(2, true)
+			lock.Unlock()
 
-			h.DispatchDownloads(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.DispatchDownloads(j)
 
-			expectFail(1, 2, "Internal Weles error while registering URI:<image_1> in "+
-				"ArtifactManager : test error")
+				expectFail(1, 2, "Internal Weles error while registering URI:<image_1> in "+
+					"ArtifactManager : test error")
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to push Artifact to DB."))
+			Expect(log).To(ContainSubstring("Failed to create path for IMAGE artifact."))
+			Expect(log).To(MatchRegexp(
+				repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 2)))
 		})
 		It("should fail if getting config fails", func() {
+			lock.Lock()
 			defaultSetStatusAndInfo(1, false)
 			jc.EXPECT().GetConfig(j).Return(weles.Config{}, err)
+			lock.Unlock()
 
-			h.DispatchDownloads(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.DispatchDownloads(j)
 
-			expectFail(1, 0, "Internal Weles error while getting Job config : "+
-				"test error")
+				expectFail(1, 0, "Internal Weles error while getting Job config : "+
+					"test error")
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to get Job config."))
 		})
 		It("should fail if setting status fails", func() {
+			lock.Lock()
 			defaultSetStatusAndInfo(0, true)
+			lock.Unlock()
 
-			h.DispatchDownloads(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.DispatchDownloads(j)
 
-			expectFail(1, 0, "Internal Weles error while changing Job status : test error")
+				expectFail(1, 0, "Internal Weles error while changing Job status : test error")
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to set JobStatus to DOWNLOADING."))
 		})
 		It("should succeed when there is nothing to download", func() {
 			emptyConfig := weles.Config{Action: weles.Action{
@@ -402,6 +492,7 @@ var _ = Describe("DownloaderImpl", func() {
 			eventuallyNoti(1, true, "")
 		})
 		It("should handle downloading failure", func() {
+			lock.Lock()
 			c := defaultSetStatusAndInfo(4, false)
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusDOWNLOADING,
 				"Failed to download artifact").After(c)
@@ -409,21 +500,30 @@ var _ = Describe("DownloaderImpl", func() {
 			defaultPush(7, false)
 			defaultCreate(2, false)
 			defaultSetConfig()
+			lock.Unlock()
 
-			h.DispatchDownloads(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.DispatchDownloads(j)
 
-			expectPath(1, 0, 7)
-			expectInfo(1, true, 7)
+				expectPath(1, 0, 7)
+				expectInfo(1, true, 7)
 
-			sendChange(0, 3, weles.ArtifactStatusREADY)
-			sendChange(3, 4, weles.ArtifactStatusFAILED)
+				sendChange(0, 3, weles.ArtifactStatusREADY)
+				sendChange(3, 4, weles.ArtifactStatusFAILED)
 
-			eventuallyNoti(1, false, formatDownload)
-			expectPath(1, 4, 7)
-			eventuallyInfoEmpty(1)
+				eventuallyNoti(1, false, formatDownload)
+				expectPath(1, 4, 7)
+				eventuallyInfoEmpty(1)
 
-			sendChange(4, 7, weles.ArtifactStatusDOWNLOADING)
-			eventuallyPathEmpty(1)
+				sendChange(4, 7, weles.ArtifactStatusDOWNLOADING)
+				eventuallyPathEmpty(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(MatchRegexp(
+				repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 3)))
 		})
 		It("should block reply until configuration is saved and all artifacts are downloaded",
 			func() {
@@ -456,21 +556,32 @@ var _ = Describe("DownloaderImpl", func() {
 				eventuallyEmpty(1)
 			})
 		It("should handle failure in updating info", func() {
+			lock.Lock()
 			defaultSetStatusAndInfo(5, true)
 			defaultGetConfig()
 			defaultPush(7, false)
 			defaultCreate(2, false)
 			defaultSetConfig()
+			lock.Unlock()
 
-			h.DispatchDownloads(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				lock.Lock()
+				defer lock.Unlock()
+				h.DispatchDownloads(j)
 
-			expectPath(1, 0, 7)
-			expectInfo(1, true, 7)
+				expectPath(1, 0, 7)
+				expectInfo(1, true, 7)
 
-			sendChange(0, 7, weles.ArtifactStatusREADY)
+				sendChange(0, 7, weles.ArtifactStatusREADY)
 
-			eventuallyNoti(1, false, "Internal Weles error while changing Job status : test error")
-			eventuallyEmpty(1)
+				eventuallyNoti(1, false, "Internal Weles error while changing Job status : test error")
+				eventuallyEmpty(1)
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to set JobStatus to DOWNLOADING."))
+			Expect(log).To(MatchRegexp(
+				repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 2)))
 		})
 		It("should leave no data left if failure response is sent while still processing config",
 			func() {
