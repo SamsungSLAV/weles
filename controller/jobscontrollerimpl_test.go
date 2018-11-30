@@ -19,7 +19,10 @@ package controller
 import (
 	"fmt"
 	"net"
+	"sync"
 	"time"
+
+	"github.com/SamsungSLAV/perun/testutil"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -48,11 +51,15 @@ var _ = Describe("JobsControllerImpl", func() {
 	Describe("With JobsController initialized", func() {
 		var jc JobsController
 		var initID, invalidID weles.JobID
+		lock := sync.Locker(new(sync.Mutex))
 
 		ipAddr := &net.IPNet{IP: net.IPv4(1, 2, 3, 4), Mask: net.IPv4Mask(5, 6, 7, 8)}
 		testYaml := []byte("test yaml")
 
 		BeforeEach(func() {
+			lock.Lock()
+			defer lock.Unlock()
+
 			jc = NewJobsController()
 			initID = jc.(*JobsControllerImpl).lastID
 			invalidID = initID - 1
@@ -61,6 +68,9 @@ var _ = Describe("JobsControllerImpl", func() {
 			var j weles.JobID
 
 			BeforeEach(func() {
+				lock.Lock()
+				defer lock.Unlock()
+
 				var err error
 				j, err = jc.NewJob(testYaml)
 				Expect(err).NotTo(HaveOccurred())
@@ -96,9 +106,16 @@ var _ = Describe("JobsControllerImpl", func() {
 					Expect(yaml).To(Equal(testYaml))
 				})
 				It("should return error for not existing job", func() {
-					yaml, err := jc.GetYaml(invalidID)
-					Expect(err).To(Equal(weles.ErrJobNotFound))
-					Expect(yaml).To(BeZero())
+					log, logerr := testutil.WithStderrMocked(func() {
+						defer GinkgoRecover()
+						lock.Lock()
+						defer lock.Unlock()
+						yaml, err := jc.GetYaml(invalidID)
+						Expect(err).To(Equal(weles.ErrJobNotFound))
+						Expect(yaml).To(BeZero())
+					})
+					Expect(logerr).NotTo(HaveOccurred())
+					Expect(log).To(ContainSubstring("Failed to find job."))
 				})
 			})
 			Describe("SetStatus", func() {
@@ -155,23 +172,37 @@ var _ = Describe("JobsControllerImpl", func() {
 				}
 				It("should return error for not existing job", func() {
 					for _, status := range allStatus {
-						err := jc.SetStatusAndInfo(invalidID, status, "test info")
-						Expect(err).To(Equal(weles.ErrJobNotFound))
+						log, logerr := testutil.WithStderrMocked(func() {
+							err := jc.SetStatusAndInfo(invalidID, status, "test info")
+							Expect(err).To(Equal(weles.ErrJobNotFound))
+						})
+						Expect(logerr).NotTo(HaveOccurred())
+						Expect(log).To(ContainSubstring("Failed to find job."))
 					}
 				})
 				It("should work to change status only for valid transitions", func() {
 					job := jc.(*JobsControllerImpl).jobs[j]
 					for _, oldStatus := range allStatus {
 						for _, newStatus := range allStatus {
+							lock.Lock()
 							job.Status = oldStatus
+							lock.Unlock()
 							if _, ok := validChanges[oldStatus][newStatus]; !ok {
 								info := fmt.Sprintf("failing to change from '%s' to '%s'",
 									oldStatus, newStatus)
 								By(info, func() {
-									oldJob := *job
-									err := jc.SetStatusAndInfo(j, newStatus, info)
-									Expect(err).To(Equal(weles.ErrJobStatusChangeNotAllowed))
-									Expect(job).To(Equal(&oldJob))
+									log, logerr := testutil.WithStderrMocked(func() {
+										defer GinkgoRecover()
+										lock.Lock()
+										defer lock.Unlock()
+										oldJob := *job
+										err := jc.SetStatusAndInfo(j, newStatus, info)
+										Expect(err).To(Equal(weles.ErrJobStatusChangeNotAllowed))
+										Expect(job).To(Equal(&oldJob))
+									})
+									Expect(logerr).NotTo(HaveOccurred())
+									Expect(log).To(
+										ContainSubstring("Invalid status change requested."))
 								})
 							} else {
 								info := fmt.Sprintf("changing from '%s' to '%s'",
@@ -205,9 +236,16 @@ var _ = Describe("JobsControllerImpl", func() {
 						BeTemporally("<=", after))
 				})
 				It("should return error for not existing job", func() {
-					config := weles.Config{JobName: "Test Job"}
-					err := jc.SetConfig(invalidID, config)
-					Expect(err).To(Equal(weles.ErrJobNotFound))
+					log, logerr := testutil.WithStderrMocked(func() {
+						defer GinkgoRecover()
+						lock.Lock()
+						defer lock.Unlock()
+						config := weles.Config{JobName: "Test Job"}
+						err := jc.SetConfig(invalidID, config)
+						Expect(err).To(Equal(weles.ErrJobNotFound))
+					})
+					Expect(logerr).NotTo(HaveOccurred())
+					Expect(log).To(ContainSubstring("Failed to find job."))
 				})
 			})
 			Describe("GetConfig", func() {
@@ -221,9 +259,16 @@ var _ = Describe("JobsControllerImpl", func() {
 					Expect(config).To(Equal(expectedConfig))
 				})
 				It("should return error for not existing job", func() {
-					config, err := jc.GetConfig(invalidID)
-					Expect(err).To(Equal(weles.ErrJobNotFound))
-					Expect(config).To(BeZero())
+					log, logerr := testutil.WithStderrMocked(func() {
+						defer GinkgoRecover()
+						lock.Lock()
+						defer lock.Unlock()
+						config, err := jc.GetConfig(invalidID)
+						Expect(err).To(Equal(weles.ErrJobNotFound))
+						Expect(config).To(BeZero())
+					})
+					Expect(logerr).NotTo(HaveOccurred())
+					Expect(log).To(ContainSubstring("Failed to find job."))
 				})
 			})
 
@@ -236,9 +281,16 @@ var _ = Describe("JobsControllerImpl", func() {
 					Expect(jc.(*JobsControllerImpl).jobs[j].dryad).To(Equal(dryad))
 				})
 				It("should return error for not existing job", func() {
-					dryad := weles.Dryad{Addr: ipAddr}
-					err := jc.SetDryad(invalidID, dryad)
-					Expect(err).To(Equal(weles.ErrJobNotFound))
+					log, logerr := testutil.WithStderrMocked(func() {
+						defer GinkgoRecover()
+						lock.Lock()
+						defer lock.Unlock()
+						dryad := weles.Dryad{Addr: ipAddr}
+						err := jc.SetDryad(invalidID, dryad)
+						Expect(err).To(Equal(weles.ErrJobNotFound))
+					})
+					Expect(logerr).NotTo(HaveOccurred())
+					Expect(log).To(ContainSubstring("Failed to find job."))
 				})
 			})
 
@@ -253,9 +305,16 @@ var _ = Describe("JobsControllerImpl", func() {
 					Expect(dryad).To(Equal(expectedDryad))
 				})
 				It("should return error for not existing job", func() {
-					dryad, err := jc.GetDryad(invalidID)
-					Expect(err).To(Equal(weles.ErrJobNotFound))
-					Expect(dryad).To(BeZero())
+					log, logerr := testutil.WithStderrMocked(func() {
+						defer GinkgoRecover()
+						lock.Lock()
+						defer lock.Unlock()
+						dryad, err := jc.GetDryad(invalidID)
+						Expect(err).To(Equal(weles.ErrJobNotFound))
+						Expect(dryad).To(BeZero())
+					})
+					Expect(logerr).NotTo(HaveOccurred())
+					Expect(log).To(ContainSubstring("Failed to find job."))
 				})
 			})
 		})
@@ -373,6 +432,9 @@ var _ = Describe("JobsControllerImpl", func() {
 				})
 				Describe("Info", func() {
 					BeforeEach(func() {
+						lock.Lock()
+						defer lock.Unlock()
+
 						jc.(*JobsControllerImpl).mutex.Lock()
 						defer jc.(*JobsControllerImpl).mutex.Unlock()
 						jc.(*JobsControllerImpl).jobs[jobids[0]].JobInfo.Info = "Lumberjack"
@@ -415,13 +477,22 @@ var _ = Describe("JobsControllerImpl", func() {
 						expectIDs(list, info, []weles.JobID{jobids[0], jobids[3]})
 					})
 					It("should return error if Info regexp is invalid", func() {
-						f := weles.JobFilter{Info: []string{"[$$$*"}}
-						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
-						Expect(err).To(Equal(weles.ErrInvalidArgument(
-							"cannot compile regex from Info: error parsing regexp: " +
-								"missing closing ]: `[$$$*)`")))
-						Expect(list).To(BeNil())
-						Expect(info).To(BeZero())
+						log, logerr := testutil.WithStderrMocked(func() {
+							defer GinkgoRecover()
+							lock.Lock()
+							defer lock.Unlock()
+							f := weles.JobFilter{Info: []string{"[$$$*"}}
+							list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
+							Expect(err).To(Equal(weles.ErrInvalidArgument(
+								"cannot compile regex from Info: error parsing regexp: " +
+									"missing closing ]: `[$$$*)`")))
+							Expect(list).To(BeNil())
+							Expect(info).To(BeZero())
+						})
+						Expect(logerr).NotTo(HaveOccurred())
+						Expect(log).To(ContainSubstring("Failed to compile regex."))
+						Expect(log).To(ContainSubstring("Failed to prepare filter."))
+						Expect(log).To(ContainSubstring("Failed to filter jobs."))
 					})
 				})
 				Describe("JobID", func() {
@@ -488,13 +559,22 @@ var _ = Describe("JobsControllerImpl", func() {
 						expectIDs(list, info, []weles.JobID{jobids[0], jobids[3]})
 					})
 					It("should return error if Name regexp is invalid", func() {
-						f := weles.JobFilter{Name: []string{"[$$$*"}}
-						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
-						Expect(err).To(Equal(weles.ErrInvalidArgument(
-							"cannot compile regex from Name: error parsing regexp: " +
-								"missing closing ]: `[$$$*)`")))
-						Expect(list).To(BeNil())
-						Expect(info).To(BeZero())
+						log, logerr := testutil.WithStderrMocked(func() {
+							defer GinkgoRecover()
+							lock.Lock()
+							defer lock.Unlock()
+							f := weles.JobFilter{Name: []string{"[$$$*"}}
+							list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
+							Expect(err).To(Equal(weles.ErrInvalidArgument(
+								"cannot compile regex from Name: error parsing regexp: " +
+									"missing closing ]: `[$$$*)`")))
+							Expect(list).To(BeNil())
+							Expect(info).To(BeZero())
+						})
+						Expect(logerr).NotTo(HaveOccurred())
+						Expect(log).To(ContainSubstring("Failed to compile regex."))
+						Expect(log).To(ContainSubstring("Failed to prepare filter."))
+						Expect(log).To(ContainSubstring("Failed to filter jobs."))
 					})
 				})
 				Describe("Status", func() {
@@ -863,21 +943,37 @@ var _ = Describe("JobsControllerImpl", func() {
 				)
 				It("when iterating forward should return error when JobID does not exist",
 					func() {
-						list, info, err := jc.List(weles.JobFilter{}, weles.JobSorter{},
-							weles.JobPagination{Limit: 100, JobID: invalidID, Forward: true})
-						Expect(err).To(Equal(weles.ErrInvalidArgument(
-							fmt.Sprintf("JobID: %d not found", invalidID))))
-						Expect(list).To(BeNil())
-						Expect(info).To(BeZero())
+						log, logerr := testutil.WithStderrMocked(func() {
+							defer GinkgoRecover()
+							lock.Lock()
+							defer lock.Unlock()
+							list, info, err := jc.List(weles.JobFilter{}, weles.JobSorter{},
+								weles.JobPagination{Limit: 100, JobID: invalidID, Forward: true})
+							Expect(err).To(Equal(weles.ErrInvalidArgument(
+								fmt.Sprintf("JobID: %d not found", invalidID))))
+							Expect(list).To(BeNil())
+							Expect(info).To(BeZero())
+						})
+						Expect(logerr).NotTo(HaveOccurred())
+						Expect(log).To(ContainSubstring("Failed to find JobID from paginator."))
+						Expect(log).To(ContainSubstring("Failed to filter jobs."))
 					})
 				It("when iterating backwards should return error when JobID does not exist",
 					func() {
-						list, info, err := jc.List(weles.JobFilter{}, weles.JobSorter{},
-							weles.JobPagination{Limit: 100, JobID: invalidID, Forward: false})
-						Expect(err).To(Equal(weles.ErrInvalidArgument(
-							fmt.Sprintf("JobID: %d not found", invalidID))))
-						Expect(list).To(BeNil())
-						Expect(info).To(BeZero())
+						log, logerr := testutil.WithStderrMocked(func() {
+							defer GinkgoRecover()
+							lock.Lock()
+							defer lock.Unlock()
+							list, info, err := jc.List(weles.JobFilter{}, weles.JobSorter{},
+								weles.JobPagination{Limit: 100, JobID: invalidID, Forward: false})
+							Expect(err).To(Equal(weles.ErrInvalidArgument(
+								fmt.Sprintf("JobID: %d not found", invalidID))))
+							Expect(list).To(BeNil())
+							Expect(info).To(BeZero())
+						})
+						Expect(logerr).NotTo(HaveOccurred())
+						Expect(log).To(ContainSubstring("Failed to find JobID from paginator."))
+						Expect(log).To(ContainSubstring("Failed to filter jobs."))
 					})
 			})
 		})
