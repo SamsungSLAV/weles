@@ -21,6 +21,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/SamsungSLAV/perun/testutil"
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
@@ -140,10 +141,15 @@ var _ = Describe("Controller", func() {
 		It("should fail if JobsController.NewJob fails", func() {
 			jc.EXPECT().NewJob(yaml).Return(weles.JobID(0), testErr)
 
-			retJobID, retErr := h.CreateJob(yaml)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				retJobID, retErr := h.CreateJob(yaml)
 
-			Expect(retErr).To(Equal(testErr))
-			Expect(retJobID).To(Equal(weles.JobID(0)))
+				Expect(retErr).To(Equal(testErr))
+				Expect(retJobID).To(Equal(weles.JobID(0)))
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to create new job."))
 		})
 	})
 
@@ -160,9 +166,14 @@ var _ = Describe("Controller", func() {
 		It("should return error if Job fails to be cancelled", func() {
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusCANCELED, "").Return(testErr)
 
-			retErr := h.CancelJob(j)
+			log, logerr := testutil.WithStderrMocked(func() {
+				defer GinkgoRecover()
+				retErr := h.CancelJob(j)
 
-			Expect(retErr).To(Equal(testErr))
+				Expect(retErr).To(Equal(testErr))
+			})
+			Expect(logerr).NotTo(HaveOccurred())
+			Expect(log).To(ContainSubstring("Failed to cancel job."))
 		})
 	})
 	Describe("ListJobs", func() {
