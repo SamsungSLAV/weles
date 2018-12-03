@@ -32,7 +32,7 @@ var _ = Describe("DryadJobManager", func() {
 	artifactDBPath := "/artifact/db/path"
 
 	BeforeEach(func() {
-		djm = NewDryadJobManager(artifactDBPath)
+		djm = NewDryadJobManager(artifactDBPath, "")
 	})
 
 	create := func() {

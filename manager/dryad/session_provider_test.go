@@ -52,7 +52,7 @@ var _ = Describe("SessionProvider", func() {
 		testDir, err = ioutil.TempDir("", "test")
 		Expect(err).ToNot(HaveOccurred())
 
-		sp = NewSessionProvider(dryadInfo, testDir)
+		sp = NewSessionProvider(dryadInfo, testDir, "")
 	})
 
 	AfterEach(func() {

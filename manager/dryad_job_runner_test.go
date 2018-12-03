@@ -41,7 +41,7 @@ var _ = Describe("DryadJobRunner", func() {
 		ctrl = gomock.NewController(GinkgoT())
 		mockSession = dmock.NewMockSessionProvider(ctrl)
 		mockDevice = mock.NewMockDeviceCommunicationProvider(ctrl)
-		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, weles.Config{})
+		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, weles.Config{}, "")
 	})
 
 	AfterEach(func() {
@@ -49,7 +49,7 @@ var _ = Describe("DryadJobRunner", func() {
 	})
 
 	It("should execute the basic weles job definition", func() {
-		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, basicConfig)
+		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, basicConfig, "")
 		By("Deploy")
 		gomock.InOrder(
 			mockSession.EXPECT().TS(),

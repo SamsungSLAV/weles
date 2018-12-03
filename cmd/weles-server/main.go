@@ -42,6 +42,7 @@ var (
 	artifactDownloadQueueCap int
 	activeWorkersCap         int
 	notifierChannelCap       int
+	sshfsMountPoint          string
 	version                  bool
 )
 
@@ -86,6 +87,9 @@ func main() {
 
 	flag.IntVar(&notifierChannelCap, "notifier-channel-cap", 100, "Notifier channel capacity.")
 
+	flag.StringVar(&sshfsMountPoint, "sshfs-mount-point", "/tmp", "Point where sshfs will be "+
+		"mounted on Target Controller (MuxPi). Should not end with /")
+
 	flag.BoolVar(&version, "version", false, "Print Weles server version and exit.")
 
 	//TODO: input validation
@@ -120,7 +124,7 @@ func main() {
 		artifactDownloadQueueCap)
 	exitOnErr("failed to initialize ArtifactManager ", err)
 	bor := client.NewBorutaClient(borutaAddress)
-	djm := manager.NewDryadJobManager(artifactStorage)
+	djm := manager.NewDryadJobManager(artifactStorage, sshfsMountPoint)
 	jm := controller.NewJobManager(am, &yap, bor, borutaRefreshPeriod, djm)
 
 	api := operations.NewWelesAPI(swaggerSpec)

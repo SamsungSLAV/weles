@@ -30,14 +30,17 @@ type DryadJobs struct {
 	jobs           map[weles.JobID]*dryadJob
 	jobsMutex      *sync.RWMutex
 	artifactDBPath string
+	// Directory where Weles storage is mounted during Job execution.
+	sshfsMountPoint string
 }
 
 // NewDryadJobManager returns DryadJobManager interface of a new instance of DryadJobs.
-func NewDryadJobManager(artifactDBPath string) weles.DryadJobManager {
+func NewDryadJobManager(artifactDBPath, sshfsMountPoint string) weles.DryadJobManager {
 	return &DryadJobs{
-		jobs:           make(map[weles.JobID]*dryadJob),
-		jobsMutex:      new(sync.RWMutex),
-		artifactDBPath: artifactDBPath,
+		jobs:            make(map[weles.JobID]*dryadJob),
+		jobsMutex:       new(sync.RWMutex),
+		artifactDBPath:  artifactDBPath,
+		sshfsMountPoint: sshfsMountPoint,
 	}
 }
 
@@ -52,7 +55,7 @@ func (d *DryadJobs) Create(job weles.JobID, rusalka weles.Dryad, conf weles.Conf
 	d.jobsMutex.Lock()
 	defer d.jobsMutex.Unlock()
 	// FIXME(amistewicz): dryadJobs should not be stored indefinitely.
-	d.jobs[job] = newDryadJob(job, rusalka, conf, changes, d.artifactDBPath)
+	d.jobs[job] = newDryadJob(job, rusalka, conf, changes, d.artifactDBPath, d.sshfsMountPoint)
 	return nil
 }
 
