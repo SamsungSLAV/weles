@@ -45,7 +45,7 @@ func newReverseSSHFS(ctx context.Context, local, remote string) *reverseSSHFS {
 		ctx:    ctx,
 		errors: make(chan error),
 		local:  local,
-		remote: remote,
+		remote: "/tmp" + remote,
 	}
 }
 
