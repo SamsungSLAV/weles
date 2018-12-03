@@ -110,7 +110,7 @@ func (d *sessionProvider) executeRemoteCommand(cmd string) ([]byte, []byte, erro
 }
 
 // NewSessionProvider returns new instance of SessionProvider.
-func NewSessionProvider(dryad weles.Dryad, workdir string) SessionProvider {
+func NewSessionProvider(dryad weles.Dryad, workdir, sshfsMountPoint string) SessionProvider {
 	cfg := prepareSSHConfig(dryad.Username, dryad.Key)
 
 	return &sessionProvider{
@@ -118,7 +118,7 @@ func NewSessionProvider(dryad weles.Dryad, workdir string) SessionProvider {
 		connection: &sshClient{
 			config: cfg,
 		},
-		sshfs: newReverseSSHFS(context.Background(), workdir, workdir),
+		sshfs: newReverseSSHFS(context.Background(), workdir, sshfsMountPoint+workdir),
 	}
 }
 

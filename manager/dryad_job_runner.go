@@ -29,21 +29,23 @@ import (
 // dryadJobRunner implements DryadJobRunner interface.
 type dryadJobRunner struct {
 	DryadJobRunner
-	ctx     context.Context
-	rusalka dryad.SessionProvider
-	device  dryad.DeviceCommunicationProvider
-	conf    weles.Config
+	ctx             context.Context
+	rusalka         dryad.SessionProvider
+	device          dryad.DeviceCommunicationProvider
+	conf            weles.Config
+	sshfsMountPoint string
 }
 
 // newDryadJobRunner prepares a new instance of dryadJobRunner
 // and returns DryadJobRunner interface to it.
 func newDryadJobRunner(ctx context.Context, rusalka dryad.SessionProvider,
-	device dryad.DeviceCommunicationProvider, conf weles.Config) DryadJobRunner {
+	device dryad.DeviceCommunicationProvider, conf weles.Config, sshfsMountPoint string) DryadJobRunner {
 	return &dryadJobRunner{
-		ctx:     ctx,
-		rusalka: rusalka,
-		device:  device,
-		conf:    conf,
+		ctx:             ctx,
+		rusalka:         rusalka,
+		device:          device,
+		conf:            conf,
+		sshfsMountPoint: sshfsMountPoint,
 	}
 }
 
@@ -101,7 +103,7 @@ func (d *dryadJobRunner) Test() error {
 		for _, testaction := range testcase.TestActions {
 			switch action := testaction.(type) {
 			case weles.Push:
-				if err := d.device.CopyFilesTo([]string{action.Path}, action.Dest); err != nil {
+				if err := d.device.CopyFilesTo([]string{d.sshfsMountPoint + action.Path}, action.Dest); err != nil {
 					log.Println("Failed to copy files to DUT", err)
 					return err
 				}
@@ -113,7 +115,7 @@ func (d *dryadJobRunner) Test() error {
 					return err
 				}
 			case weles.Pull:
-				if err := d.device.CopyFilesFrom([]string{action.Src}, action.Path); err != nil {
+				if err := d.device.CopyFilesFrom([]string{action.Src}, d.sshfsMountPoint+action.Path); err != nil {
 					log.Println("Failed to copy files from DUT", err)
 					return err
 				}

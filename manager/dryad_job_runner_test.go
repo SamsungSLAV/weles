@@ -41,7 +41,7 @@ var _ = Describe("DryadJobRunner", func() {
 		ctrl = gomock.NewController(GinkgoT())
 		mockSession = dmock.NewMockSessionProvider(ctrl)
 		mockDevice = mock.NewMockDeviceCommunicationProvider(ctrl)
-		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, weles.Config{})
+		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, weles.Config{}, "")
 	})
 
 	AfterEach(func() {
@@ -49,7 +49,7 @@ var _ = Describe("DryadJobRunner", func() {
 	})
 
 	It("should execute the basic weles job definition", func() {
-		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, basicConfig)
+		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, basicConfig, "")
 		By("Deploy")
 		gomock.InOrder(
 			mockSession.EXPECT().TS(),
@@ -87,4 +87,21 @@ var _ = Describe("DryadJobRunner", func() {
 
 		Expect(djr.Test()).To(Succeed())
 	})
+	It("should execute basic weles job definition - Test part when sshfs mount point is provided.",
+		func() {
+			mountPoint := "/tmp"
+			djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, basicConfig, mountPoint)
+
+			gomock.InOrder(
+				mockDevice.EXPECT().CopyFilesTo(
+					[]string{mountPoint + basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Path},
+					basicConfig.Action.Test.TestCases[0].TestActions[0].(weles.Push).Dest),
+				mockDevice.EXPECT().Exec("command to be run"),
+				mockDevice.EXPECT().CopyFilesFrom(
+					[]string{basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Src},
+					mountPoint+basicConfig.Action.Test.TestCases[0].TestActions[2].(weles.Pull).Path),
+			)
+
+			Expect(djr.Test()).To(Succeed())
+		})
 })
