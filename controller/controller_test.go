@@ -21,10 +21,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
 	mock "github.com/SamsungSLAV/weles/mock"
+	"github.com/SamsungSLAV/weles/testutil"
 	gomock "github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -64,6 +66,7 @@ var _ = Describe("Controller", func() {
 		dryChan chan notifier.Notification
 		done    bool
 		mutex   *sync.Mutex
+		ws      *testutil.WriterString
 	)
 
 	j := weles.JobID(0xCAFE)
@@ -72,6 +75,14 @@ var _ = Describe("Controller", func() {
 	testMsg := "test msg"
 	notiOk := notifier.Notification{JobID: j, OK: true}
 	notiFail := notifier.Notification{JobID: j, OK: false, Msg: testMsg}
+
+	log := logger.NewLogger()
+	stderrLog := logger.NewLogger()
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
 
 	setDone := func(weles.JobID) {
 		mutex.Lock()
@@ -109,10 +120,19 @@ var _ = Describe("Controller", func() {
 
 		mutex = new(sync.Mutex)
 		done = false
+
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
 	})
 	AfterEach(func() {
 		h.Finish()
 		ctrl.Finish()
+		logger.SetDefault(stderrLog)
 	})
 
 	Describe("NewController", func() {
@@ -124,6 +144,10 @@ var _ = Describe("Controller", func() {
 			Expect(h.boruter).To(Equal(bor))
 			Expect(h.dryader).To(Equal(dry))
 			Expect(h.finish).NotTo(BeNil())
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 	})
 	Describe("CreateJob", func() {
@@ -136,6 +160,10 @@ var _ = Describe("Controller", func() {
 			Expect(retErr).NotTo(HaveOccurred())
 			Expect(retJobID).To(Equal(j))
 			eventuallyDone()
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should fail if JobsController.NewJob fails", func() {
 			jc.EXPECT().NewJob(yaml).Return(weles.JobID(0), testErr)
@@ -144,6 +172,10 @@ var _ = Describe("Controller", func() {
 
 			Expect(retErr).To(Equal(testErr))
 			Expect(retJobID).To(Equal(weles.JobID(0)))
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to create new job."))
 		})
 	})
 
@@ -156,6 +188,10 @@ var _ = Describe("Controller", func() {
 			retErr := h.CancelJob(j)
 
 			Expect(retErr).To(BeNil())
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should return error if Job fails to be cancelled", func() {
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusCANCELED, "").Return(testErr)
@@ -163,6 +199,10 @@ var _ = Describe("Controller", func() {
 			retErr := h.CancelJob(j)
 
 			Expect(retErr).To(Equal(testErr))
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to cancel job."))
 		})
 	})
 	Describe("ListJobs", func() {
@@ -184,6 +224,10 @@ var _ = Describe("Controller", func() {
 			Expect(retErr).To(Equal(testErr))
 			Expect(retInfo).To(Equal(info))
 			Expect(ret).To(Equal(list))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 	})
 	Describe("Actions", func() {
@@ -192,6 +236,10 @@ var _ = Describe("Controller", func() {
 				setMocks()
 				*cnn <- notiOk
 				eventuallyDone()
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			},
 			Entry("should start download when parser finished",
 				func() {
@@ -217,6 +265,10 @@ var _ = Describe("Controller", func() {
 				dry.EXPECT().CancelJob(j)
 				bor.EXPECT().Release(j)
 				*cnn <- notiFail
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			},
 			Entry("should fail when parser failed", &parChan),
 			Entry("should fail when downloader failed", &dowChan),
