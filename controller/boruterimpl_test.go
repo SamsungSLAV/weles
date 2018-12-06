@@ -23,9 +23,11 @@ import (
 	"time"
 
 	"github.com/SamsungSLAV/boruta"
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles/testutil"
 	gomock "github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -40,12 +42,21 @@ var _ = Describe("BoruterImpl", func() {
 	var config weles.Config
 	var caps boruta.Capabilities
 	var priority boruta.Priority
+	var ws *testutil.WriterString
 	j := weles.JobID(0xCAFE)
 	rid := boruta.ReqID(0xD0DA)
 	period := 50 * time.Millisecond
 	jobTimeout := time.Hour
 	owner := boruta.UserInfo{}
 	err := errors.New("test error")
+
+	log := logger.NewLogger()
+	stderrLog := logger.NewLogger()
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
 
 	expectRegistered := func(offset int) {
 		h.(*BoruterImpl).mutex.Lock()
@@ -100,10 +111,19 @@ var _ = Describe("BoruterImpl", func() {
 		}
 		caps = boruta.Capabilities{"device_type": "TestDeviceType"}
 		priority = boruta.Priority(7)
+
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
 	})
 	AfterEach(func() {
 		h.(*BoruterImpl).Finish()
 		ctrl.Finish()
+		logger.SetDefault(stderrLog)
 	})
 	Describe("NewBoruter", func() {
 		It("should create a new object", func() {
@@ -139,6 +159,10 @@ var _ = Describe("BoruterImpl", func() {
 			}).Should(BeNumerically("<", 0))
 
 			expectRegistered(1)
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to list Boruta requests."))
 		})
 	})
 	Describe("Request", func() {
@@ -166,6 +190,10 @@ var _ = Describe("BoruterImpl", func() {
 			Expect(dl).To(BeTemporally("<=", after.Add(jobTimeout)))
 
 			expectRegistered(1)
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should register job successfully even when JobTimout is not defined in Config", func() {
 			var va, dl time.Time
@@ -194,6 +222,10 @@ var _ = Describe("BoruterImpl", func() {
 			Expect(dl).To(BeTemporally("<=", after.Add(defaultDelay)))
 
 			expectRegistered(1)
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should fail if NewRequest fails", func() {
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
@@ -206,6 +238,10 @@ var _ = Describe("BoruterImpl", func() {
 
 			eventuallyNoti(1, false, "Failed to create request in Boruta : test error")
 			eventuallyEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to create request in Boruta."))
 		})
 		It("should fail if GetConfig fails", func() {
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
@@ -216,6 +252,10 @@ var _ = Describe("BoruterImpl", func() {
 
 			eventuallyNoti(1, false, "Internal Weles error while getting Job config : test error")
 			eventuallyEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to get Job config."))
 		})
 		It("should fail if SetStatusAndInfo fails", func() {
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "").Return(err)
@@ -225,6 +265,10 @@ var _ = Describe("BoruterImpl", func() {
 
 			eventuallyNoti(1, false, "Internal Weles error while changing Job status : test error")
 			eventuallyEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to change JobStatus."))
 		})
 		It("should call NewRequest with empty caps if no device type provided", func() {
 			config.DeviceType = ""
@@ -238,6 +282,10 @@ var _ = Describe("BoruterImpl", func() {
 
 			eventuallyNoti(1, false, "Failed to create request in Boruta : test error")
 			eventuallyEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to create request in Boruta."))
 		})
 		It("should call NewRequest with proper priority", func() {
 			m := map[weles.Priority]boruta.Priority{
@@ -258,6 +306,10 @@ var _ = Describe("BoruterImpl", func() {
 
 				eventuallyNoti(1, false, "Failed to create request in Boruta : test error")
 				eventuallyEmpty(1)
+
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(ContainSubstring("Failed to create request in Boruta."))
 			}
 		})
 	})
@@ -369,6 +421,10 @@ var _ = Describe("BoruterImpl", func() {
 
 			eventuallyNoti(1, false, "Internal Weles error while setting Dryad : test error")
 			eventuallyEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to set up the dryad."))
 		})
 		It("should fail during acquire if AcquireWorker fails", func() {
 			req.EXPECT().AcquireWorker(rid).Return(boruta.AccessInfo{}, err)
@@ -382,6 +438,10 @@ var _ = Describe("BoruterImpl", func() {
 
 			eventuallyNoti(1, false, "Cannot acquire worker from Boruta : test error")
 			eventuallyEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to acquire worker from Boruta."))
 		})
 		It("should remove request if state changes to CANCEL", func() {
 			rinfo := boruta.ReqInfo{ID: rid, State: boruta.CANCEL}
@@ -427,6 +487,13 @@ var _ = Describe("BoruterImpl", func() {
 			It("should ignore not existing request", func() {
 				h.Release(weles.JobID(0x0BCA))
 				expectRegistered(1)
+
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(SatisfyAll(
+					ContainSubstring("JobID not found in BoruterImpl.info map."),
+					ContainSubstring("Failed to return Dryad to Boruta's pool."),
+				))
 			})
 		})
 	})

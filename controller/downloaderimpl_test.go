@@ -19,12 +19,16 @@ package controller
 import (
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 	"sync"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
 	mock "github.com/SamsungSLAV/weles/mock"
+	"github.com/SamsungSLAV/weles/testutil"
 	gomock "github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -36,6 +40,7 @@ var _ = Describe("DownloaderImpl", func() {
 	var am *mock.MockArtifactManager
 	var h *DownloaderImpl
 	var ctrl *gomock.Controller
+	var ws *testutil.WriterString
 	j := weles.JobID(0xCAFE)
 	paths := []string{}
 	for i := 0; i < 9; i++ {
@@ -87,6 +92,14 @@ var _ = Describe("DownloaderImpl", func() {
 	}}
 	err := errors.New("test error")
 
+	log := logger.NewLogger()
+	stderrLog := logger.NewLogger()
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
+
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
 
@@ -95,9 +108,18 @@ var _ = Describe("DownloaderImpl", func() {
 
 		h = NewDownloader(jc, am).(*DownloaderImpl)
 		r = h.Listen()
+
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
 	})
 	AfterEach(func() {
 		ctrl.Finish()
+		logger.SetDefault(stderrLog)
 	})
 	Describe("NewDownloader", func() {
 		It("should create a new object", func() {
@@ -108,11 +130,19 @@ var _ = Describe("DownloaderImpl", func() {
 			Expect(h.path2Job).NotTo(BeNil())
 			Expect(h.info).NotTo(BeNil())
 			Expect(h.mutex).NotTo(BeNil())
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 	})
 	Describe("Loop", func() {
 		It("should stop loop function after closing collector channel", func() {
 			close(h.collector)
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 	})
 	Describe("DispatchDownloads", func() {
@@ -177,6 +207,12 @@ var _ = Describe("DownloaderImpl", func() {
 			eventuallyInfoEmpty(offset + 1)
 			sendChange(0, pathsNo, weles.ArtifactStatusREADY)
 			eventuallyPathEmpty(offset + 1)
+		}
+		// repeatedMsgRegexp returns regular expression that matches requested message given number
+		// of times with no regard to newline characters.
+		repeatedMsgRegexp := func(msg string, times int) string {
+			regexpSafeFullStopsMsg := strings.Replace(msg, ".", "[.]", -1)
+			return "(?s)(" + regexpSafeFullStopsMsg + ".*){" + strconv.Itoa(times) + "}"
 		}
 		defaultSetStatusAndInfo := func(successfulEntries int, fail bool) *gomock.Call {
 			var i int
@@ -293,6 +329,10 @@ var _ = Describe("DownloaderImpl", func() {
 
 			eventuallyNoti(1, true, "")
 			eventuallyEmpty(1)
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should fail if cannot set config", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -305,6 +345,13 @@ var _ = Describe("DownloaderImpl", func() {
 
 			expectFail(1, 7,
 				"Internal Weles error while setting config : test error")
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to set Job config."),
+				MatchRegexp(repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 7)),
+			))
 		})
 		It("should fail if pull fails", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -317,6 +364,13 @@ var _ = Describe("DownloaderImpl", func() {
 			expectFail(1, 6,
 				"Internal Weles error while creating a new path in ArtifactManager : "+
 					"test error")
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to create new path for TEST artifact."),
+				MatchRegexp(repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 6)),
+			))
 		})
 		It("should fail if push for TESTFILE fails", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -328,6 +382,14 @@ var _ = Describe("DownloaderImpl", func() {
 			expectFail(1, 4,
 				"Internal Weles error while registering URI:<uri_0> in ArtifactManager : "+
 					"test error")
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to push Artifact to DB."),
+				ContainSubstring("Failed to create path for TEST artifact."),
+				MatchRegexp(repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 4)),
+			))
 		})
 		It("should fail if push for MD5 fails", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -339,6 +401,14 @@ var _ = Describe("DownloaderImpl", func() {
 			expectFail(
 				1, 1, "Internal Weles error while registering URI:<md5_0> in ArtifactManager : "+
 					"test error")
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to push Artifact to DB."),
+				ContainSubstring("Failed to create path for IMAGE artifact."),
+				ContainSubstring("Failed to match ArtifactInfo with JobID."),
+			))
 		})
 		It("should fail if push for image fails", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -349,6 +419,14 @@ var _ = Describe("DownloaderImpl", func() {
 
 			expectFail(1, 2, "Internal Weles error while registering URI:<image_1> in "+
 				"ArtifactManager : test error")
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to push Artifact to DB."),
+				ContainSubstring("Failed to create path for IMAGE artifact."),
+				MatchRegexp(repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 2)),
+			))
 		})
 		It("should fail if getting config fails", func() {
 			defaultSetStatusAndInfo(1, false)
@@ -358,6 +436,12 @@ var _ = Describe("DownloaderImpl", func() {
 
 			expectFail(1, 0, "Internal Weles error while getting Job config : "+
 				"test error")
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to get Job config."),
+			))
 		})
 		It("should fail if setting status fails", func() {
 			defaultSetStatusAndInfo(0, true)
@@ -365,6 +449,12 @@ var _ = Describe("DownloaderImpl", func() {
 			h.DispatchDownloads(j)
 
 			expectFail(1, 0, "Internal Weles error while changing Job status : test error")
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to set JobStatus to DOWNLOADING."),
+			))
 		})
 		It("should succeed when there is nothing to download", func() {
 			emptyConfig := weles.Config{Action: weles.Action{
@@ -400,6 +490,10 @@ var _ = Describe("DownloaderImpl", func() {
 
 			eventuallyEmpty(1)
 			eventuallyNoti(1, true, "")
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should handle downloading failure", func() {
 			c := defaultSetStatusAndInfo(4, false)
@@ -424,6 +518,12 @@ var _ = Describe("DownloaderImpl", func() {
 
 			sendChange(4, 7, weles.ArtifactStatusDOWNLOADING)
 			eventuallyPathEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				MatchRegexp(repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 3)),
+			))
 		})
 		It("should block reply until configuration is saved and all artifacts are downloaded",
 			func() {
@@ -454,6 +554,10 @@ var _ = Describe("DownloaderImpl", func() {
 
 				eventuallyNoti(1, true, "")
 				eventuallyEmpty(1)
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			})
 		It("should handle failure in updating info", func() {
 			defaultSetStatusAndInfo(5, true)
@@ -471,6 +575,13 @@ var _ = Describe("DownloaderImpl", func() {
 
 			eventuallyNoti(1, false, "Internal Weles error while changing Job status : test error")
 			eventuallyEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to set JobStatus to DOWNLOADING."),
+				MatchRegexp(repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 2)),
+			))
 		})
 		It("should leave no data left if failure response is sent while still processing config",
 			func() {
@@ -503,6 +614,14 @@ var _ = Describe("DownloaderImpl", func() {
 				holdDownload.Done()
 
 				eventuallyEmpty(1)
+
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(SatisfyAll(
+					ContainSubstring("Failed to set JobStatus to DOWNLOADING."),
+					MatchRegexp(repeatedMsgRegexp("Failed to match ArtifactInfo with JobID.", 2)),
+					ContainSubstring("Failed to match jobsArtifactInfo with JobID."),
+				))
 			})
 		It("should leave no data left if failure response is sent while pushing", func() {
 			c := defaultSetStatusAndInfo(1, false)
@@ -534,6 +653,16 @@ var _ = Describe("DownloaderImpl", func() {
 			sendChange(1, 2, weles.ArtifactStatusREADY)
 
 			eventuallyEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to set JobStatus to DOWNLOADING."),
+				ContainSubstring("Failed to match jobsArtifactInfo with JobID."),
+				ContainSubstring("Failed to create path for IMAGE artifact."),
+				ContainSubstring("Failed to match Path with JobID."),
+				ContainSubstring("Failed to match JobInfo with JobID."),
+			))
 		})
 		It("should ignore changes to non-terminal states", func() {
 			defaultSetStatusAndInfo(8, false)
@@ -557,6 +686,10 @@ var _ = Describe("DownloaderImpl", func() {
 
 			eventuallyNoti(1, true, "")
 			eventuallyEmpty(1)
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 	})
 })

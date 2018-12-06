@@ -20,10 +20,12 @@ import (
 	"errors"
 	"net"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
 	mock "github.com/SamsungSLAV/weles/mock"
+	"github.com/SamsungSLAV/weles/testutil"
 	gomock "github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -36,10 +38,19 @@ var _ = Describe("DryaderImpl", func() {
 	var djm *mock.MockDryadJobManager
 	var h Dryader
 	var ctrl *gomock.Controller
+	var ws *testutil.WriterString
 	j := weles.JobID(0xCAFE)
 	dryad := weles.Dryad{Addr: &net.IPNet{IP: net.IPv4(1, 2, 3, 4), Mask: net.IPv4Mask(5, 6, 7, 8)}}
 	err := errors.New("test error")
 	conf := weles.Config{JobName: "test123"}
+
+	log := logger.NewLogger()
+	stderrLog := logger.NewLogger()
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
 
 	expectRegistered := func(offset int) {
 		h.(*DryaderImpl).mutex.Lock()
@@ -74,10 +85,19 @@ var _ = Describe("DryaderImpl", func() {
 
 		h = NewDryader(jc, djm)
 		r = h.Listen()
+
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
 	})
 	AfterEach(func() {
 		h.(*DryaderImpl).Finish()
 		ctrl.Finish()
+		logger.SetDefault(stderrLog)
 	})
 
 	Describe("NewBoruter", func() {
@@ -88,6 +108,10 @@ var _ = Describe("DryaderImpl", func() {
 			Expect(h.(*DryaderImpl).info).NotTo(BeNil())
 			Expect(h.(*DryaderImpl).mutex).NotTo(BeNil())
 			Expect(h.(*DryaderImpl).finish).NotTo(BeNil())
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 	})
 
@@ -100,6 +124,10 @@ var _ = Describe("DryaderImpl", func() {
 
 			h.StartJob(j)
 			expectRegistered(1)
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should fail if DryadJobManager.Create fails", func() {
 			jc.EXPECT().GetDryad(j).Return(dryad, nil)
@@ -111,6 +139,10 @@ var _ = Describe("DryaderImpl", func() {
 
 			eventuallyNoti(1, false, "Cannot delegate Job to Dryad : test error")
 			eventuallyEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to start Job execution on Dryad."))
 		})
 		It("should fail if JobManager.GetDryad fails", func() {
 			jc.EXPECT().GetDryad(j).Return(weles.Dryad{}, err)
@@ -120,6 +152,10 @@ var _ = Describe("DryaderImpl", func() {
 			eventuallyNoti(1, false,
 				"Internal Weles error while getting Dryad for Job : test error")
 			eventuallyEmpty(1)
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to get Dryad for Job."))
 		})
 	})
 
@@ -162,6 +198,10 @@ var _ = Describe("DryaderImpl", func() {
 
 				expectRegistered(1)
 			}
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should update status of the Job", func() {
 			for i, s := range updateStates {
@@ -172,6 +212,10 @@ var _ = Describe("DryaderImpl", func() {
 
 				expectRegistered(1)
 			}
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		updateTableEntries := func() []TableEntry {
 			var ret []TableEntry
@@ -190,6 +234,10 @@ var _ = Describe("DryaderImpl", func() {
 				eventuallyNoti(1, false,
 					"Internal Weles error while changing Job status : test error")
 				eventuallyEmpty(1)
+
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(ContainSubstring("Failed to change job state to RUNNING."))
 			},
 			updateTableEntries...,
 		)
@@ -201,6 +249,10 @@ var _ = Describe("DryaderImpl", func() {
 
 			eventuallyNoti(1, false, "Failed to execute test on Dryad.")
 			eventuallyEmpty(1)
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should notify about successfully completed Dryad Job", func() {
 			change := weles.DryadJobInfo{Job: j, Status: weles.DryadJobStatusOK}
@@ -209,6 +261,10 @@ var _ = Describe("DryaderImpl", func() {
 
 			eventuallyNoti(1, true, "")
 			eventuallyEmpty(1)
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 
 		Describe("CancelJob", func() {
@@ -218,6 +274,10 @@ var _ = Describe("DryaderImpl", func() {
 				h.CancelJob(j)
 
 				eventuallyEmpty(1)
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			})
 			It("should ignore djm's Cancel error", func() {
 				djm.EXPECT().Cancel(j).Return(err)
@@ -225,10 +285,18 @@ var _ = Describe("DryaderImpl", func() {
 				h.CancelJob(j)
 
 				eventuallyEmpty(1)
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			})
 			It("should ignore not existing request", func() {
 				h.CancelJob(weles.JobID(0x0BCA))
 				expectRegistered(1)
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			})
 		})
 	})
