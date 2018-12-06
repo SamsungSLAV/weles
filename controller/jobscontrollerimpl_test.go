@@ -27,10 +27,35 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/testutil"
 )
 
 var _ = Describe("JobsControllerImpl", func() {
+	var ws *testutil.WriterString
+
+	log := logger.NewLogger()
+	stderrLog := logger.NewLogger()
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
+
+	BeforeEach(func() {
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
+	})
+	AfterEach(func() {
+		logger.SetDefault(stderrLog)
+	})
+
 	Describe("NewJobsController", func() {
 		It("should create a new object", func() {
 			before := time.Now()
@@ -43,6 +68,10 @@ var _ = Describe("JobsControllerImpl", func() {
 			Expect(jc.(*JobsControllerImpl).jobs).To(BeEmpty())
 			Expect(jc.(*JobsControllerImpl).lastID).To(BeNumerically(">=", before.Unix()))
 			Expect(jc.(*JobsControllerImpl).lastID).To(BeNumerically("<=", after.Unix()))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 	})
 	Describe("With JobsController initialized", func() {
@@ -87,6 +116,10 @@ var _ = Describe("JobsControllerImpl", func() {
 					Expect(time.Time(job.Created)).To(BeTemporally("<=", after))
 					Expect(job.Status).To(Equal(weles.JobStatusNEW))
 					Expect(job.yaml).To(Equal(testYaml))
+
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
 				})
 			})
 			Describe("GetYaml", func() {
@@ -94,11 +127,19 @@ var _ = Describe("JobsControllerImpl", func() {
 					yaml, err := jc.GetYaml(j)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(yaml).To(Equal(testYaml))
+
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
 				})
 				It("should return error for not existing job", func() {
 					yaml, err := jc.GetYaml(invalidID)
 					Expect(err).To(Equal(weles.ErrJobNotFound))
 					Expect(yaml).To(BeZero())
+
+					Eventually(func() string {
+						return ws.GetString()
+					}).Should(ContainSubstring("Failed to find job."))
 				})
 			})
 			Describe("SetStatus", func() {
@@ -157,6 +198,10 @@ var _ = Describe("JobsControllerImpl", func() {
 					for _, status := range allStatus {
 						err := jc.SetStatusAndInfo(invalidID, status, "test info")
 						Expect(err).To(Equal(weles.ErrJobNotFound))
+
+						Eventually(func() string {
+							return ws.GetString()
+						}).Should(ContainSubstring("Failed to find job."))
 					}
 				})
 				It("should work to change status only for valid transitions", func() {
@@ -188,6 +233,9 @@ var _ = Describe("JobsControllerImpl", func() {
 							}
 						}
 					}
+					Eventually(func() string {
+						return ws.GetString()
+					}).Should(ContainSubstring("Invalid status change requested."))
 				})
 			})
 			Describe("SetConfig", func() {
@@ -203,11 +251,19 @@ var _ = Describe("JobsControllerImpl", func() {
 						BeTemporally(">=", before))
 					Expect(time.Time(jc.(*JobsControllerImpl).jobs[j].Updated)).To(
 						BeTemporally("<=", after))
+
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
 				})
 				It("should return error for not existing job", func() {
 					config := weles.Config{JobName: "Test Job"}
 					err := jc.SetConfig(invalidID, config)
 					Expect(err).To(Equal(weles.ErrJobNotFound))
+
+					Eventually(func() string {
+						return ws.GetString()
+					}).Should(ContainSubstring("Failed to find job."))
 				})
 			})
 			Describe("GetConfig", func() {
@@ -219,11 +275,19 @@ var _ = Describe("JobsControllerImpl", func() {
 					config, err := jc.GetConfig(j)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(config).To(Equal(expectedConfig))
+
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
 				})
 				It("should return error for not existing job", func() {
 					config, err := jc.GetConfig(invalidID)
 					Expect(err).To(Equal(weles.ErrJobNotFound))
 					Expect(config).To(BeZero())
+
+					Eventually(func() string {
+						return ws.GetString()
+					}).Should(ContainSubstring("Failed to find job."))
 				})
 			})
 
@@ -234,11 +298,19 @@ var _ = Describe("JobsControllerImpl", func() {
 					Expect(err).NotTo(HaveOccurred())
 
 					Expect(jc.(*JobsControllerImpl).jobs[j].dryad).To(Equal(dryad))
+
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
 				})
 				It("should return error for not existing job", func() {
 					dryad := weles.Dryad{Addr: ipAddr}
 					err := jc.SetDryad(invalidID, dryad)
 					Expect(err).To(Equal(weles.ErrJobNotFound))
+
+					Eventually(func() string {
+						return ws.GetString()
+					}).Should(ContainSubstring("Failed to find job."))
 				})
 			})
 
@@ -251,11 +323,19 @@ var _ = Describe("JobsControllerImpl", func() {
 					dryad, err := jc.GetDryad(j)
 					Expect(err).NotTo(HaveOccurred())
 					Expect(dryad).To(Equal(expectedDryad))
+
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
 				})
 				It("should return error for not existing job", func() {
 					dryad, err := jc.GetDryad(invalidID)
 					Expect(err).To(Equal(weles.ErrJobNotFound))
 					Expect(dryad).To(BeZero())
+
+					Eventually(func() string {
+						return ws.GetString()
+					}).Should(ContainSubstring("Failed to find job."))
 				})
 			})
 		})
@@ -294,6 +374,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						defaultPagination)
 					Expect(err).NotTo(HaveOccurred())
 					expectIDs(list, info, jobids)
+
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
 				})
 				Describe("Created", func() {
 					BeforeEach(func() {
@@ -312,6 +396,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, jobids[elems/2+1:])
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return only jobs created before magicDate", func() {
 						f := weles.JobFilter{
@@ -321,6 +409,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, jobids[:elems/2])
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return no jobs if created before and created after dates conflict",
 						func() {
@@ -331,6 +423,10 @@ var _ = Describe("JobsControllerImpl", func() {
 							list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 							Expect(err).NotTo(HaveOccurred())
 							expectIDs(list, info, []weles.JobID{})
+
+							Consistently(func() string {
+								return ws.GetString()
+							}).Should(BeEmpty())
 						})
 				})
 				Describe("Updated", func() {
@@ -350,6 +446,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, jobids[elems/2+1:])
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return only jobs updated before magicDate", func() {
 						f := weles.JobFilter{
@@ -359,6 +459,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, jobids[:elems/2])
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return no jobs if updated before and updated after dates conflict",
 						func() {
@@ -369,6 +473,10 @@ var _ = Describe("JobsControllerImpl", func() {
 							list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 							Expect(err).NotTo(HaveOccurred())
 							expectIDs(list, info, []weles.JobID{})
+
+							Consistently(func() string {
+								return ws.GetString()
+							}).Should(BeEmpty())
 						})
 				})
 				Describe("Info", func() {
@@ -391,6 +499,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[1], jobids[4]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return only jobs containing any substing in Info", func() {
 						f := weles.JobFilter{Info: []string{"ear", "I"}}
@@ -399,6 +511,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[1], jobids[3], jobids[4]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return only jobs matching pattern", func() {
 						f := weles.JobFilter{Info: []string{"a .*e"}}
@@ -406,6 +522,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[3]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return only jobs matching any pattern", func() {
 						f := weles.JobFilter{Info: []string{"a .*e", "k$"}}
@@ -413,6 +533,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[0], jobids[3]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return error if Info regexp is invalid", func() {
 						f := weles.JobFilter{Info: []string{"[$$$*"}}
@@ -422,6 +546,14 @@ var _ = Describe("JobsControllerImpl", func() {
 								"missing closing ]: `[$$$*)`")))
 						Expect(list).To(BeNil())
 						Expect(info).To(BeZero())
+
+						Eventually(func() string {
+							return ws.GetString()
+						}).Should(SatisfyAll(
+							ContainSubstring("Failed to compile regex."),
+							ContainSubstring("Failed to prepare filter."),
+							ContainSubstring("Failed to filter jobs."),
+						))
 					})
 				})
 				Describe("JobID", func() {
@@ -430,18 +562,30 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[0], jobids[2], jobids[4]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should ignore not existing JobIDs", func() {
 						f := weles.JobFilter{JobID: []weles.JobID{jobids[1], invalidID}}
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[1]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return all jobs if JobIDs slice is empty", func() {
 						f := weles.JobFilter{JobID: []weles.JobID{}}
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, jobids)
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 				})
 				Describe("Name", func() {
@@ -464,6 +608,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[1], jobids[4]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return only jobs containing any substing in Name", func() {
 						f := weles.JobFilter{Name: []string{"ear", "I"}}
@@ -472,6 +620,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[1], jobids[3], jobids[4]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return only jobs matching pattern", func() {
 						f := weles.JobFilter{Name: []string{"a .*e"}}
@@ -479,6 +631,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[3]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return only jobs matching any pattern", func() {
 						f := weles.JobFilter{Name: []string{"a .*e", "k$"}}
@@ -486,6 +642,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[0], jobids[3]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return error if Name regexp is invalid", func() {
 						f := weles.JobFilter{Name: []string{"[$$$*"}}
@@ -495,6 +655,14 @@ var _ = Describe("JobsControllerImpl", func() {
 								"missing closing ]: `[$$$*)`")))
 						Expect(list).To(BeNil())
 						Expect(info).To(BeZero())
+
+						Eventually(func() string {
+							return ws.GetString()
+						}).Should(SatisfyAll(
+							ContainSubstring("Failed to compile regex."),
+							ContainSubstring("Failed to prepare filter."),
+							ContainSubstring("Failed to filter jobs."),
+						))
 					})
 				})
 				Describe("Status", func() {
@@ -516,12 +684,20 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, jobids)
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return only jobs matching Status", func() {
 						f := weles.JobFilter{Status: []weles.JobStatus{weles.JobStatusWAITING}}
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[3], jobids[4]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should return only jobs matching any Status", func() {
 						f := weles.JobFilter{
@@ -530,6 +706,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[1], jobids[2]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 					It("should ignore not set Status", func() {
 						f := weles.JobFilter{
@@ -538,6 +718,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[0]})
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					})
 				})
 			})
@@ -632,6 +816,10 @@ var _ = Describe("JobsControllerImpl", func() {
 
 						Expect(err).NotTo(HaveOccurred())
 						checkOrder(list, info, jobids, order)
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					},
 					Entry("should sort by JobID if Sorter is empty",
 						weles.JobSorter{},
@@ -728,6 +916,10 @@ var _ = Describe("JobsControllerImpl", func() {
 						list, info, err := jc.List(f, weles.JobSorter{}, p)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDsFull(list, info, expected, total, remaining)
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					},
 					Entry("should return all records if limit is 0 (pagination disabled)",
 						weles.JobFilter{},
@@ -869,6 +1061,13 @@ var _ = Describe("JobsControllerImpl", func() {
 							fmt.Sprintf("JobID: %d not found", invalidID))))
 						Expect(list).To(BeNil())
 						Expect(info).To(BeZero())
+
+						Eventually(func() string {
+							return ws.GetString()
+						}).Should(SatisfyAll(
+							ContainSubstring("Failed to find JobID from paginator."),
+							ContainSubstring("Failed to filter jobs."),
+						))
 					})
 				It("when iterating backwards should return error when JobID does not exist",
 					func() {
@@ -878,6 +1077,13 @@ var _ = Describe("JobsControllerImpl", func() {
 							fmt.Sprintf("JobID: %d not found", invalidID))))
 						Expect(list).To(BeNil())
 						Expect(info).To(BeZero())
+
+						Eventually(func() string {
+							return ws.GetString()
+						}).Should(SatisfyAll(
+							ContainSubstring("Failed to find JobID from paginator."),
+							ContainSubstring("Failed to filter jobs."),
+						))
 					})
 			})
 		})
