@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "7542999c_1cf60de8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-12-07T18:15:33Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "21d212ec_5407f079",
+      "range": {
+        "startLine": 12,
+        "startChar": 51,
+        "endLine": 12,
+        "endChar": 71
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "00f06a9a_cab23497",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -131,6 +155,30 @@
       "side": 1,
       "message": "my bad, i dont know why i mixed it\n\n@\"(snip)\":\nhttps://www.youtube.com/watch?v\u003d5N7MSx53fgc",
       "parentUuid": "00f06a9a_cab23497",
+      "range": {
+        "startLine": 16,
+        "startChar": 32,
+        "endLine": 16,
+        "endChar": 34
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dead683f_4201f757",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-12-07T18:15:33Z",
+      "side": 1,
+      "message": "Ack (snip-snap-snip-snap)",
+      "parentUuid": "3cac5f53_f73c31ad",
       "range": {
         "startLine": 16,
         "startChar": 32,
@@ -811,6 +859,30 @@
     },
     {
       "key": {
+        "uuid": "4d5f9b98_98b9dcd2",
+        "filename": "server/job_lister_handler.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-12-07T18:15:33Z",
+      "side": 1,
+      "message": "Ack\n\nQuotation marks work too",
+      "parentUuid": "490e4618_30be75c1",
+      "range": {
+        "startLine": 131,
+        "startChar": 9,
+        "endLine": 131,
+        "endChar": 35
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a3af6ba_b2fad35a",
         "filename": "server/job_lister_handler.go",
         "patchSetId": 3
@@ -846,6 +918,30 @@
       "side": 1,
       "message": "wont be that bad!",
       "parentUuid": "5a3af6ba_b2fad35a",
+      "range": {
+        "startLine": 132,
+        "startChar": 5,
+        "endLine": 132,
+        "endChar": 18
+      },
+      "revId": "21c8c9dcbe287c9daad87d13b99a7d82e0fff332",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2766203c_55e55dad",
+        "filename": "server/job_lister_handler.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-12-07T18:15:33Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "962f1348_c4b3c6ff",
       "range": {
         "startLine": 132,
         "startChar": 5,
