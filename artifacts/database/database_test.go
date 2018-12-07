@@ -26,7 +26,9 @@ import (
 
 	"github.com/go-openapi/strfmt"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/testutil"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
@@ -186,7 +188,18 @@ var _ = Describe("ArtifactDB", func() {
 			SortOrder: weles.SortOrderAscending,
 			SortBy:    weles.ArtifactSortByID,
 		}
+
+		ws        *testutil.WriterString
+		log       *logger.Logger = logger.NewLogger()
+		stderrLog *logger.Logger = logger.NewLogger()
 	)
+
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
+
 	jobInDB := func(job weles.JobID, db ArtifactDB) bool {
 		n, err := db.dbmap.SelectInt(
 			`SELECT COUNT(*)
@@ -195,6 +208,19 @@ var _ = Describe("ArtifactDB", func() {
 		Expect(err).ToNot(HaveOccurred())
 		return bool(n > 0)
 	}
+
+	BeforeEach(func() {
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
+	})
+	AfterEach(func() {
+		logger.SetDefault(stderrLog)
+	})
 
 	Describe("Not pagination", func() {
 
@@ -224,6 +250,10 @@ var _ = Describe("ArtifactDB", func() {
  				AND type = 'table'`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(n).To(BeNumerically("==", 1))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 
 		It("should fail to open database on invalid path", func() {
@@ -233,6 +263,10 @@ var _ = Describe("ArtifactDB", func() {
 			err := goldenUnicorn.Open(invalidDatabasePath)
 			Expect(err).To(HaveOccurred())
 			Expect(invalidDatabasePath).ToNot(BeAnExistingFile())
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 
 		It("should insert new artifact to database", func() {
@@ -242,6 +276,10 @@ var _ = Describe("ArtifactDB", func() {
 			Expect(err).ToNot(HaveOccurred())
 
 			Expect(jobInDB(artifact.JobID, goldenUnicorn)).To(BeTrue())
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 
 		Describe("SetStatus", func() {
@@ -263,11 +301,22 @@ var _ = Describe("ArtifactDB", func() {
 						a, err = goldenUnicorn.SelectPath(change.Path)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(a.Status).To(Equal(change.NewStatus))
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					} else {
 						Expect(err).To(Equal(expectedErr))
 						a, err = goldenUnicorn.SelectPath(change.Path)
 						Expect(err).To(HaveOccurred())
 						Expect(a).To(Equal(weles.ArtifactInfo{}))
+
+						Eventually(func() string {
+							return ws.GetString()
+						}).Should(SatisfyAll(
+							ContainSubstring("Failed to select artifact."),
+							ContainSubstring("Failed to retrieve artifact based on its path."),
+						))
 					}
 				},
 				Entry("change status of artifact not present in ArtifactDB",
@@ -301,8 +350,16 @@ var _ = Describe("ArtifactDB", func() {
 
 					if expectedErr != nil {
 						Expect(err).To(Equal(expectedErr))
+
+						Eventually(func() string {
+							return ws.GetString()
+						}).Should(ContainSubstring("Failed to select artifact."))
 					} else {
 						Expect(err).ToNot(HaveOccurred())
+
+						Consistently(func() string {
+							return ws.GetString()
+						}).Should(BeEmpty())
 					}
 					expectedArtifact.ID = result.ID
 					Expect(result).To(Equal(expectedArtifact))
@@ -338,6 +395,10 @@ var _ = Describe("ArtifactDB", func() {
 						}
 					}
 					Expect(results).To(ConsistOf(expected))
+
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
 				},
 				Entry("filter one JobID", oneJobFilter, artifact),
 				Entry("filter more than one JobIDs", twoJobsFilter, artifact, aImageReady,
@@ -359,6 +420,10 @@ var _ = Describe("ArtifactDB", func() {
 				func(filter weles.ArtifactFilter, expected ...weles.ArtifactInfo) {
 					_, _, err := goldenUnicorn.Filter(filter, defaultSorter, emptyPaginator)
 					Expect(err).To(Equal(weles.ErrArtifactNotFound))
+
+					Eventually(func() string {
+						return ws.GetString()
+					}).Should(ContainSubstring("Failed to filter records."))
 				},
 				Entry("filter JobID not in db", noJobFilter),
 				Entry("filter Type not in db", noTypeFilter),
@@ -401,6 +466,10 @@ var _ = Describe("ArtifactDB", func() {
 							currID = int(a.ID)
 						}
 					}
+
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
 				},
 				Entry("By ID, Ascending", ascendingSorter),
 				Entry("By ID, Descending", descendingSorter),
@@ -420,6 +489,10 @@ var _ = Describe("ArtifactDB", func() {
 					Expect(len(result)).To(BeEquivalentTo(expectedResponseLength))
 					Expect(list.TotalRecords).To(BeEquivalentTo(generatedRecordsCount))
 					Expect(list.RemainingRecords).To(BeEquivalentTo(expectedRemainingRecords))
+
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
 				},
 				// please keep in mind that data is sorted in descending order.
 				Entry("first and last page (limit is 0)",

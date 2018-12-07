@@ -27,7 +27,9 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/testutil"
 
 	_ "github.com/mattn/go-sqlite3"
 	. "github.com/onsi/ginkgo"
@@ -84,6 +86,18 @@ With gently smiling jaws!
 		}
 	)
 
+	var (
+		ws        *testutil.WriterString
+		log       *logger.Logger = logger.NewLogger()
+		stderrLog *logger.Logger = logger.NewLogger()
+	)
+
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
+
 	BeforeEach(func() {
 		var err error
 		testDir, err = ioutil.TempDir("", "test-weles-")
@@ -93,6 +107,14 @@ With gently smiling jaws!
 		silverKangaroo, err = newArtifactManager(dbPath, testDir, 100, 16, 100)
 		//TODO add tests against different notifier cap, queue cap and workers count.
 		Expect(err).ToNot(HaveOccurred())
+
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
 	})
 
 	AfterEach(func() {
@@ -100,6 +122,8 @@ With gently smiling jaws!
 		Expect(err).ToNot(HaveOccurred())
 		err = silverKangaroo.Close()
 		Expect(err).ToNot(HaveOccurred())
+
+		logger.SetDefault(stderrLog)
 	})
 
 	checkPathInDb := func(path weles.ArtifactPath) bool {
@@ -137,6 +161,10 @@ With gently smiling jaws!
 			path, err = silverKangaroo.CreateArtifact(description)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(path).NotTo(BeNil())
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 
 		By("Check if all subdirs, and new file exists", func() {
@@ -144,6 +172,10 @@ With gently smiling jaws!
 			Expect(typeDir).To(BeADirectory())
 			Expect(string(path)).To(BeAnExistingFile())
 			Expect(string(path)).To(ContainSubstring(string(description.Alias)))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 
 		By("Add new artifact for the same JobID", func() {
@@ -155,6 +187,10 @@ With gently smiling jaws!
 
 			Expect(string(pathSame)).To(BeAnExistingFile())
 			Expect(string(pathSame)).To(ContainSubstring(string(dSameJobNType.Alias)))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 
 		By("Add artifact with other type for the same JobID", func() {
@@ -166,6 +202,10 @@ With gently smiling jaws!
 
 			Expect(string(pathType)).To(BeAnExistingFile())
 			Expect(string(pathType)).To(ContainSubstring(string(dSameJobOtherType.Alias)))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 
 		paths := []weles.ArtifactPath{path, pathSame, pathType}
@@ -177,12 +217,20 @@ With gently smiling jaws!
 				err = db.QueryRow("select count (*) from artifacts where path = ?", p).Scan(&n)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(n).NotTo(BeZero())
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			}
 		})
 
 		By("Check if it's possible to GetFileInfo", func() {
 			for _, p := range paths {
 				Expect(checkPathInDb(p)).To(BeTrue())
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			}
 		})
 	})
@@ -215,6 +263,10 @@ With gently smiling jaws!
 
 			err = os.RemoveAll(dir)
 			Expect(err).ToNot(HaveOccurred())
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		},
 			Entry("create database in default directory", defaultDb, defaultDir),
 			Entry("create database in custom directory", customDb, customDir),
@@ -276,9 +328,18 @@ With gently smiling jaws!
 					Expect(erro).ToNot(HaveOccurred())
 					Expect(string(content)).To(BeIdenticalTo(poem))
 
+					Consistently(func() string {
+						return ws.GetString()
+					}).Should(BeEmpty())
+
 				} else {
 					By("Check if file exists")
 					Expect(string(path)).NotTo(BeAnExistingFile())
+
+					Eventually(func() string {
+						return ws.GetString()
+					}).Should(ContainSubstring(
+						"Received wrong response from server after downloading artifact."))
 				}
 
 				Eventually(func() weles.ArtifactStatus {
