@@ -24,7 +24,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/testutil"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
@@ -58,6 +60,18 @@ I call it stupid of the pig.
 		queueCap     = 100
 	)
 
+	var (
+		ws        *testutil.WriterString
+		log       *logger.Logger = logger.NewLogger()
+		stderrLog *logger.Logger = logger.NewLogger()
+	)
+
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
+
 	checkChannels := func(ch1, ch2 chan weles.ArtifactStatusChange,
 		change weles.ArtifactStatusChange) {
 
@@ -82,6 +96,14 @@ I call it stupid of the pig.
 		invalidDir = filepath.Join(tmpDir, "invalid")
 
 		ch = make(chan weles.ArtifactStatusChange, 5)
+
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
 	})
 
 	AfterEach(func() {
@@ -89,6 +111,7 @@ I call it stupid of the pig.
 		err := os.RemoveAll(tmpDir)
 		Expect(err).ToNot(HaveOccurred())
 
+		logger.SetDefault(stderrLog)
 	})
 
 	prepareServer := func(url weles.ArtifactURI) *httptest.Server {
@@ -118,6 +141,10 @@ I call it stupid of the pig.
 			content, err := ioutil.ReadFile(string(filename))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(string(content)).To(Equal(pigs))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should fail when path is invalid", func() {
 			ts = prepareServer(validURL)
@@ -131,6 +158,10 @@ I call it stupid of the pig.
 			Expect(string(filename)).NotTo(BeAnExistingFile())
 			_, err = ioutil.ReadFile(string(filename))
 			Expect(err).To(HaveOccurred())
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to create file."))
 		})
 		DescribeTable("response to invalid url",
 			func(valid bool) {
@@ -150,6 +181,10 @@ I call it stupid of the pig.
 				_, err = ioutil.ReadFile(string(filename))
 				Expect(err).To(HaveOccurred())
 
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(ContainSubstring(
+					"Received wrong response from server after downloading artifact."))
 			},
 			Entry("fail when url is invalid", true),
 			Entry("fail when url and path are invalid", false),
@@ -180,6 +215,10 @@ I call it stupid of the pig.
 			content, err := ioutil.ReadFile(string(filename))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(string(content)).To(Equal(pigs))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should fail when path is invalid", func() {
 			ts = prepareServer(validURL)
@@ -202,6 +241,13 @@ I call it stupid of the pig.
 			checkChannels(ch, platinumKoala.notification, status)
 
 			Expect(string(filename)).NotTo(BeAnExistingFile())
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to create file."),
+				ContainSubstring("Failed to remove artifact."),
+			))
 		})
 		DescribeTable("response to invalid url",
 			func(valid bool) {
@@ -229,6 +275,13 @@ I call it stupid of the pig.
 
 				Expect(string(filename)).NotTo(BeAnExistingFile())
 
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(SatisfyAll(
+					ContainSubstring(
+						"Received wrong response from server after downloading artifact."),
+					ContainSubstring("Failed to remove artifact."),
+				))
 			},
 			Entry("fail when url is invalid", true),
 			Entry("fail when url and path are invalid", false),
@@ -257,6 +310,10 @@ I call it stupid of the pig.
 
 			status.NewStatus = weles.ArtifactStatusREADY
 			Eventually(ch).Should(Receive(Equal(status)))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 		It("should fail when path is invalid", func() {
 			ts = prepareServer(validURL)
@@ -279,6 +336,13 @@ I call it stupid of the pig.
 
 			status.NewStatus = weles.ArtifactStatusFAILED
 			Eventually(ch).Should(Receive(Equal(status)))
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to create file."),
+				ContainSubstring("Failed to remove artifact."),
+			))
 		})
 		DescribeTable("response to invalid url",
 			func(valid bool) {
@@ -305,6 +369,14 @@ I call it stupid of the pig.
 
 				status.NewStatus = weles.ArtifactStatusFAILED
 				Eventually(ch).Should(Receive(Equal(status)))
+
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(SatisfyAll(
+					ContainSubstring(
+						"Received wrong response from server after downloading artifact."),
+					ContainSubstring("Failed to remove artifact."),
+				))
 			},
 			Entry("fail when url is invalid", true),
 			Entry("fail when url and path are invalid", false),
@@ -338,6 +410,10 @@ I call it stupid of the pig.
 				content, err := ioutil.ReadFile(string(path))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(string(content)).To(BeIdenticalTo(poem))
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			} else {
 				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
 					Path:      path,
@@ -347,6 +423,13 @@ I call it stupid of the pig.
 				Expect(err).To(HaveOccurred())
 				Expect(content).To(BeNil())
 
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(SatisfyAll(
+					ContainSubstring(
+						"Received wrong response from server after downloading artifact."),
+					ContainSubstring("Failed to remove artifact."),
+				))
 			}
 		},
 		Entry("download valid file to valid path", validURL, "pigs", pigs),
@@ -365,6 +448,10 @@ I call it stupid of the pig.
 
 			err := ironGopher.Download(weles.ArtifactURI(ts.URL), path, ch)
 			Expect(err).To(Equal(ErrQueueFull))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 	})
 })
