@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b254ea2c_8248c6a5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:42:16Z",
+      "side": 1,
+      "message": "/... (or -r flag)",
+      "range": {
+        "startLine": 11,
+        "startChar": 26,
+        "endLine": 11,
+        "endChar": 27
+      },
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71f65f16_e3cfb6e9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:42:16Z",
+      "side": 1,
+      "message": "tests pass also witout -race flag\ngo test ./... PASS\nginkgo ./... PASS\nginkgo -race ./... PASS\ngo test -race ./... \n\n(all with -count\u003d1 parameter to disable using cached results)\n\nany particular reason for adding it?",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 14
+      },
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e31bd216_bef5b48c",
+        "filename": "controller/boruterimpl_test.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:42:16Z",
+      "side": 1,
+      "message": "on second thought- i guess this is better place for a comment regarding two loggers.\n\n1) stderrLog overrides default logger (the one from default go, with different filter) due to same name. this could be mentioned here.\n2) log could be named stringLog (consistently with stderrLog)\n3) this seems good place to explain why both are used.",
+      "range": {
+        "startLine": 53,
+        "startChar": 2,
+        "endLine": 54,
+        "endChar": 5
+      },
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1bcb21f_e1043161",
+        "filename": "controller/boruterimpl_test.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:42:16Z",
+      "side": 1,
+      "message": "i guess this deserves a comment (regarding our f2f)",
+      "range": {
+        "startLine": 126,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 30
+      },
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ec53f4c_89eecef5",
+        "filename": "controller/downloaderimpl_test.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:42:16Z",
+      "side": 1,
+      "message": "i guess this could be in slav/testutil also? will probably be useful for other tests not only weles.",
+      "range": {
+        "startLine": 211,
+        "startChar": 3,
+        "endLine": 216,
+        "endChar": 3
+      },
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c2fc382_d40d0198",
+        "filename": "controller/dryaderimpl_test.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:42:16Z",
+      "side": 1,
+      "message": "this is repeated across all tests- maybe it should also be moved to testutil? (function returning 2 logger instances - stringLog and stderrLog)",
+      "range": {
+        "startLine": 47,
+        "startChar": 1,
+        "endLine": 53,
+        "endChar": 3
+      },
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
