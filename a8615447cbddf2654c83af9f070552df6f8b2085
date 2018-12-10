@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28ab2188_a7e2e619",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:55:35Z",
+      "side": 1,
+      "message": "in",
+      "range": {
+        "startLine": 12,
+        "startChar": 48,
+        "endLine": 12,
+        "endChar": 50
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0c8ed1c_847e47d6",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:55:35Z",
+      "side": 1,
+      "message": "invalid path is separated, but invalid url is in table test (alone and with invalid path) any reason for such division?",
+      "range": {
+        "startLine": 122,
+        "startChar": 23,
+        "endLine": 122,
+        "endChar": 38
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5936a3c0_4baf6099",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:55:35Z",
+      "side": 1,
+      "message": "what value does this check provide? (when the file does not exist?)",
+      "range": {
+        "startLine": 150,
+        "startChar": 4,
+        "endLine": 151,
+        "endChar": 34
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e2eda4a_9b967386",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:55:35Z",
+      "side": 1,
+      "message": "if there is any gain in checking if it will fail to open I guess it should be also added here.",
+      "range": {
+        "startLine": 230,
+        "startChar": 13,
+        "endLine": 231,
+        "endChar": 0
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "326ac55c_182a859b",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:55:35Z",
+      "side": 1,
+      "message": "TC says \"valid file to valid path\" yet only artifact status is checked. (this does not pertain to this commit )",
+      "range": {
+        "startLine": 259,
+        "startChar": 0,
+        "endLine": 259,
+        "endChar": 48
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
