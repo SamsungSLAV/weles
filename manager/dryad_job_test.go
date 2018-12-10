@@ -20,8 +20,10 @@ import (
 	"context"
 	"errors"
 
+	"github.com/SamsungSLAV/slav/logger"
 	. "github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/manager/mock"
+	"github.com/SamsungSLAV/weles/testutil"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -39,7 +41,16 @@ var _ = Describe("dryadJob", func() {
 		mockDryadJobRunner DryadJobRunner
 		deploy, boot, test *gomock.Call
 		cancel             context.CancelFunc
+		ws                 *testutil.WriterString
+		log                *logger.Logger = logger.NewLogger()
+		stderrLog          *logger.Logger = logger.NewLogger()
 	)
+
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
 
 	newMockDryadJob := func(job JobID) (*dryadJob, chan struct{}) {
 		dJobSync := make(chan struct{})
@@ -66,11 +77,20 @@ var _ = Describe("dryadJob", func() {
 		jobID = 666
 		changes = make(chan DryadJobStatusChange, 6)
 		dj, djSync = newMockDryadJob(jobID)
+
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
 	})
 
 	AfterEach(func() {
 		Eventually(djSync).Should(BeClosed())
 		ctrl.Finish()
+		logger.SetDefault(stderrLog)
 	})
 
 	It("should go through proper states", func() {
@@ -81,6 +101,10 @@ var _ = Describe("dryadJob", func() {
 		for _, state := range states {
 			change := DryadJobStatusChange{Job: jobID, Status: state}
 			Eventually(changes).Should(Receive(Equal(change)))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		}
 	})
 
@@ -116,6 +140,13 @@ var _ = Describe("dryadJob", func() {
 			for _, state := range states {
 				change := DryadJobStatusChange{Job: jobID, Status: state}
 				Eventually(changes).Should(Receive(Equal(change)))
+
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(SatisfyAll(
+					ContainSubstring("Failed to execute phase."),
+					ContainSubstring("Dryad job run panicked."),
+				))
 			}
 		},
 		Entry("after deploy", func() []DryadJobStatus {
@@ -135,6 +166,10 @@ var _ = Describe("dryadJob", func() {
 			djSync <- struct{}{}
 			fail := DryadJobStatusChange{Job: jobID, Status: DryadJobStatusFAIL}
 			Eventually(changes).Should(Receive(Equal(fail)))
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Dryad job run panicked."))
 		},
 		Entry("deploy", func() {
 			deploy.Do(func() { panic("deploy") })
@@ -154,5 +189,9 @@ var _ = Describe("dryadJob", func() {
 		djSync <- struct{}{}
 		info := dj.GetJobInfo()
 		Expect(info.Job).To(Equal(jobID))
+
+		Consistently(func() string {
+			return ws.GetString()
+		}).Should(BeEmpty())
 	})
 })

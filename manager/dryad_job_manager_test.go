@@ -19,7 +19,9 @@ package manager
 import (
 	"sync"
 
+	"github.com/SamsungSLAV/slav/logger"
 	. "github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/testutil"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -28,16 +30,40 @@ import (
 
 var _ = Describe("DryadJobManager", func() {
 	var djm DryadJobManager
+	var ws *testutil.WriterString
 	jobID := JobID(666)
 	artifactDBPath := "/artifact/db/path"
+	log := logger.NewLogger()
+	stderrLog := logger.NewLogger()
+
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
 
 	BeforeEach(func() {
 		djm = NewDryadJobManager(artifactDBPath)
+
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
+	})
+	AfterEach(func() {
+		logger.SetDefault(stderrLog)
 	})
 
 	create := func() {
 		err := djm.Create(jobID, Dryad{}, Config{}, nil)
 		Expect(err).ToNot(HaveOccurred())
+
+		Eventually(func() string {
+			return ws.GetString()
+		}).Should(ContainSubstring("Dryad job run panicked."))
 	}
 
 	It("should work for a single job", func() {
@@ -54,11 +80,19 @@ var _ = Describe("DryadJobManager", func() {
 
 		err := djm.Create(jobID, Dryad{}, Config{}, nil)
 		Expect(err).To(Equal(ErrDuplicated))
+
+		Eventually(func() string {
+			return ws.GetString()
+		}).Should(ContainSubstring("Tried to create job that already exists."))
 	})
 
 	It("should fail to cancel non-existing job", func() {
 		err := djm.Cancel(jobID)
 		Expect(err).To(Equal(ErrNotExist))
+
+		Eventually(func() string {
+			return ws.GetString()
+		}).Should(ContainSubstring("Tried to cancel nonexistent job."))
 	})
 
 	Describe("list", func() {
@@ -92,6 +126,10 @@ var _ = Describe("DryadJobManager", func() {
 			l, err := djm.List(nil)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(l).To(HaveLen(len(list)))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 
 		DescribeTable("list of jobs with status",
@@ -106,6 +144,10 @@ var _ = Describe("DryadJobManager", func() {
 					Expect(j.Job).To(BeNumerically(">=", start))
 					Expect(j.Job).To(BeNumerically("<=", end))
 				}
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			},
 			Entry("NEW",
 				0, 2, []DryadJobStatus{DryadJobStatusNEW}),
@@ -133,6 +175,10 @@ var _ = Describe("DryadJobManager", func() {
 				for _, j := range l {
 					Expect(expected).To(ContainElement(Equal(j)))
 				}
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			},
 			Entry("any - 0", []JobID{0}, []int{0}),
 			Entry("any - 10", []JobID{10}, []int{10}),
@@ -152,6 +198,10 @@ var _ = Describe("DryadJobManager", func() {
 				for _, j := range l {
 					Expect(expected).To(ContainElement(Equal(j)))
 				}
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			},
 			Entry("NEW - 2, 3", DryadJobFilter{
 				References: []JobID{2, 3},
