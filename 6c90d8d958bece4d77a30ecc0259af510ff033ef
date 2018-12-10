@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7dac9584_1cc466ab",
+        "filename": "manager/dryad/reverse_sshfs.go",
+        "patchSetId": 5
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1015220
+      },
+      "writtenOn": "2018-12-10T16:12:14Z",
+      "side": 1,
+      "message": "I don\u0027t have strong preference, but adding another nolint instruction to justify previous one seems odd\n\nI wouldn\u0027t even notice it in the first place; I\u0027m fine with it as long as you make other reviewers happy too",
+      "range": {
+        "startLine": 70,
+        "startChar": 101,
+        "endLine": 70,
+        "endChar": 105
+      },
+      "revId": "6c90d8d958bece4d77a30ecc0259af510ff033ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
