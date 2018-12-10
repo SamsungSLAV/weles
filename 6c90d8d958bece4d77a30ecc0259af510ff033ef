@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "dc1a906b_a83af71e",
+        "filename": "artifactmanager.go",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-10T20:04:52Z",
+      "side": 1,
+      "message": "Let me disagree with maintainer.",
+      "parentUuid": "b6f708cb_747e7801",
+      "revId": "6c90d8d958bece4d77a30ecc0259af510ff033ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c51ef07c_bbe50712",
         "filename": "cmd/weles-server/main.go",
         "patchSetId": 5
