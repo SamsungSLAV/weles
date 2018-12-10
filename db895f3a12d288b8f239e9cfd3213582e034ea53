@@ -70,6 +70,74 @@
       "revId": "db895f3a12d288b8f239e9cfd3213582e034ea53",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5c516abc_036c9389",
+        "filename": "testutil/writer_string_test.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-10T20:54:44Z",
+      "side": 1,
+      "message": "Verify also fields of writer",
+      "revId": "db895f3a12d288b8f239e9cfd3213582e034ea53",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36444441_1af3b2c5",
+        "filename": "testutil/writer_string_test.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-10T20:54:44Z",
+      "side": 1,
+      "message": "I would add 2 types of tests: (the code is written in gerrit so don\u0027t expect it to work)\n1) mutual exclusion:\n    locked :\u003d sync.WaitGroup\n    locked.Add(1) // will block main goroutine until wait group is released, channels can be used instead or whatever\n    // additional goroutine\n    go func() {\n        ws.mutex.Lock()\n        defer ws.mutex.Unlock()\n        locked.Done() // release main goroutine\n\n        Expect(ws.b). To Consistently To Have No Content\n        \n    }()\n\n    // Wait until additional goroutine is in critical section\n    n, err:\u003d ws.Write(stuff)\n    Expect everything is written\n\n2) multiple writes\n    check that Write called few times stores all the messages passed to be written.\n    currently if the code would overwrite the message your tests would pass.",
+      "revId": "db895f3a12d288b8f239e9cfd3213582e034ea53",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed3cee11_59958974",
+        "filename": "testutil/writer_string_test.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-10T20:54:44Z",
+      "side": 1,
+      "message": "i would split it into 2 checks, it will be easier to find a bug if test fails.",
+      "revId": "db895f3a12d288b8f239e9cfd3213582e034ea53",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15d6cee6_e29160d9",
+        "filename": "testutil/writer_string_test.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-10T20:54:44Z",
+      "side": 1,
+      "message": "ad ibidem: mutual exclusion, reading after multiple writes.",
+      "revId": "db895f3a12d288b8f239e9cfd3213582e034ea53",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
