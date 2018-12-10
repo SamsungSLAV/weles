@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5c03d4a8_4ad22cbe",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T18:21:07Z",
+      "side": 1,
+      "message": "bad url\ntry: https://github.com/SamsungSLAV/slav/tree/master/logger",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 34
+      },
+      "revId": "db895f3a12d288b8f239e9cfd3213582e034ea53",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
