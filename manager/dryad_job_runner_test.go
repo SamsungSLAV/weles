@@ -19,10 +19,12 @@ package manager
 import (
 	"context"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/manager/dryad"
 	dmock "github.com/SamsungSLAV/weles/manager/dryad/mock"
 	"github.com/SamsungSLAV/weles/manager/mock"
+	"github.com/SamsungSLAV/weles/testutil"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -35,17 +37,35 @@ var _ = Describe("DryadJobRunner", func() {
 		mockDevice  *mock.MockDeviceCommunicationProvider
 		ctrl        *gomock.Controller
 		djr         DryadJobRunner
+		ws          *testutil.WriterString
+		log         *logger.Logger = logger.NewLogger()
+		stderrLog   *logger.Logger = logger.NewLogger()
 	)
+
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
 
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
 		mockSession = dmock.NewMockSessionProvider(ctrl)
 		mockDevice = mock.NewMockDeviceCommunicationProvider(ctrl)
 		djr = newDryadJobRunner(context.Background(), mockSession, mockDevice, weles.Config{})
+
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
 	})
 
 	AfterEach(func() {
 		ctrl.Finish()
+		logger.SetDefault(stderrLog)
 	})
 
 	It("should execute the basic weles job definition", func() {
@@ -86,5 +106,9 @@ var _ = Describe("DryadJobRunner", func() {
 		)
 
 		Expect(djr.Test()).To(Succeed())
+
+		Consistently(func() string {
+			return ws.GetString()
+		}).Should(BeEmpty())
 	})
 })
