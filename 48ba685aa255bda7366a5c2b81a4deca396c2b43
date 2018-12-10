@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b8b45a5_312a13f6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T19:05:18Z",
+      "side": 1,
+      "message": "im more fond of ./artifacts/... than -r parameter but thats just mine opinion",
+      "range": {
+        "startLine": 11,
+        "startChar": 15,
+        "endLine": 11,
+        "endChar": 29
+      },
+      "revId": "48ba685aa255bda7366a5c2b81a4deca396c2b43",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7927c75d_17e8f22d",
+        "filename": "artifacts/artifacts_test.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-10T19:05:18Z",
+      "side": 1,
+      "message": "i\u0027d much rather see both stderrLog and log (stringLog?) created using some function across all pkgs",
+      "range": {
+        "startLine": 91,
+        "startChar": 3,
+        "endLine": 99,
+        "endChar": 3
+      },
+      "revId": "48ba685aa255bda7366a5c2b81a4deca396c2b43",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
