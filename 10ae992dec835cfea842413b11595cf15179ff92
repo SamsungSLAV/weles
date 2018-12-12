@@ -48,6 +48,47 @@
     },
     {
       "key": {
+        "uuid": "aa2af70c_f2be0bf2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-12T17:04:59Z",
+      "side": 1,
+      "message": "yes, there is a reason. With this flag set, tests are run, but also there is a static and dynamical analysis of concurrent memory access from different goroutines. It allows detection of hazards and invalid synchronization.\nI always launch tests with this flag.",
+      "parentUuid": "71f65f16_e3cfb6e9",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 14
+      },
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4110811_29c6e76c",
+        "filename": "controller/boruterimpl_test.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-12T17:04:59Z",
+      "side": 1,
+      "message": "I completely don\u0027t understand, why you need 2 loggers.\nThe second one (stderrLog) is exactly same as default logger.",
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e31bd216_bef5b48c",
         "filename": "controller/boruterimpl_test.go",
         "patchSetId": 4
@@ -64,6 +105,29 @@
         "startChar": 2,
         "endLine": 54,
         "endChar": 5
+      },
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2079f11_a818b99d",
+        "filename": "controller/boruterimpl_test.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-12T17:04:59Z",
+      "side": 1,
+      "message": "Maybe it would be easier to add Reset() method to testutil Writer and do not play with logger\u0027s backends for every test case",
+      "range": {
+        "startLine": 115,
+        "startChar": 0,
+        "endLine": 115,
+        "endChar": 33
       },
       "revId": "10ae992dec835cfea842413b11595cf15179ff92",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
@@ -88,6 +152,63 @@
         "endLine": 126,
         "endChar": 30
       },
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1885f7a_a1e7fe9b",
+        "filename": "controller/boruterimpl_test.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-12T17:04:59Z",
+      "side": 1,
+      "message": "write simpler:\n    Consistently(ws.GetString).Should...",
+      "range": {
+        "startLine": 163,
+        "startChar": 3,
+        "endLine": 165,
+        "endChar": 12
+      },
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09540b6a_8bcfdc9e",
+        "filename": "controller/boruterimpl_test.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-12T17:04:59Z",
+      "side": 1,
+      "message": "Why don\u0027t you check other Its verifying that there are no logs ?",
+      "revId": "10ae992dec835cfea842413b11595cf15179ff92",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ed4bf5f_7e04bdb1",
+        "filename": "controller/controller_test.go",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-12T17:04:59Z",
+      "side": 1,
+      "message": "The initialization, beforeeach and aftereach code appears again here. Consider moving it to testutil and here just use just proper calls, e.g.\n   ws :\u003d NewLogInterceptor\n\n   ws.Init()\n\n   ws.Finish()\n\nYou can even also add a method, that will take (string...) variadic list of expected strings.\nIf variadic list is empty it can verify that nothing is logged.\nThat would remove many of duplicates.\n\nNow I came with idea of even better improvement.\nAdd method ws.ShouldContain(string) that would just store the string in ws\nThe check can be actually done in Finish. That won\u0027t require to add anything to the test cases which do not log anything as verification of an empty collection would be done in Finish. It would also verify all testcases automatically. Every test case will have check run in Finish.",
       "revId": "10ae992dec835cfea842413b11595cf15179ff92",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
