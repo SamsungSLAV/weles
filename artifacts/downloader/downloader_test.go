@@ -24,7 +24,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/testutil"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
@@ -58,6 +60,18 @@ I call it stupid of the pig.
 		queueCap     = 100
 	)
 
+	var (
+		ws        *testutil.WriterString
+		log       *logger.Logger = logger.NewLogger()
+		stderrLog *logger.Logger = logger.NewLogger()
+	)
+
+	stderrLog.AddBackend("default", logger.Backend{
+		Filter:     logger.NewFilterPassAll(),
+		Serializer: logger.NewSerializerText(),
+		Writer:     logger.NewWriterStderr(),
+	})
+
 	checkChannels := func(ch1, ch2 chan weles.ArtifactStatusChange,
 		change weles.ArtifactStatusChange) {
 
@@ -82,6 +96,14 @@ I call it stupid of the pig.
 		invalidDir = filepath.Join(tmpDir, "invalid")
 
 		ch = make(chan weles.ArtifactStatusChange, 5)
+
+		ws = testutil.NewWriterString()
+		log.AddBackend("string", logger.Backend{
+			Filter:     logger.NewFilterPassAll(),
+			Serializer: logger.NewSerializerText(),
+			Writer:     ws,
+		})
+		logger.SetDefault(log)
 	})
 
 	AfterEach(func() {
@@ -89,6 +111,7 @@ I call it stupid of the pig.
 		err := os.RemoveAll(tmpDir)
 		Expect(err).ToNot(HaveOccurred())
 
+		logger.SetDefault(stderrLog)
 	})
 
 	prepareServer := func(url weles.ArtifactURI) *httptest.Server {
@@ -104,46 +127,76 @@ I call it stupid of the pig.
 		return testServer
 	}
 
-	DescribeTable("getData(): Notify channels and save data to file",
-		func(url weles.ArtifactURI, valid bool, finalResult weles.ArtifactStatus) {
-			ts = prepareServer(url)
+	Describe("getData(): Notify channels and save data to file", func() {
+		It("should download valid file to valid path", func() {
+			ts = prepareServer(validURL)
 			defer ts.Close()
 
 			dir := validDir
-			if !valid {
-				dir = invalidDir
-			}
+			filename := weles.ArtifactPath(filepath.Join(dir, "test"))
+
+			err := platinumKoala.getData(weles.ArtifactURI(ts.URL), weles.ArtifactPath(filename))
+			Expect(err).ToNot(HaveOccurred())
+
+			content, err := ioutil.ReadFile(string(filename))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(string(content)).To(Equal(pigs))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
+		})
+		It("should fail when path is invalid", func() {
+			ts = prepareServer(validURL)
+			defer ts.Close()
+
+			dir := invalidDir
 			filename := weles.ArtifactPath(filepath.Join(dir, "test"))
 
 			err := platinumKoala.getData(weles.ArtifactURI(ts.URL), weles.ArtifactPath(filename))
 
-			if valid && url != invalidURL {
-				Expect(err).ToNot(HaveOccurred())
-				content, err := ioutil.ReadFile(string(filename))
-				Expect(err).ToNot(HaveOccurred())
-				Expect(string(content)).To(Equal(pigs))
-			} else {
+			Expect(string(filename)).NotTo(BeAnExistingFile())
+			_, err = ioutil.ReadFile(string(filename))
+			Expect(err).To(HaveOccurred())
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(ContainSubstring("Failed to create file."))
+		})
+		DescribeTable("response to invalid url",
+			func(valid bool) {
+				ts = prepareServer(invalidURL)
+				defer ts.Close()
+
+				dir := validDir
+				if !valid {
+					dir = invalidDir
+				}
+				filename := weles.ArtifactPath(filepath.Join(dir, "test"))
+
+				err := platinumKoala.getData(weles.ArtifactURI(ts.URL),
+					weles.ArtifactPath(filename))
+
 				Expect(string(filename)).NotTo(BeAnExistingFile())
-				_, err := ioutil.ReadFile(string(filename))
+				_, err = ioutil.ReadFile(string(filename))
 				Expect(err).To(HaveOccurred())
-			}
 
-		},
-		Entry("download valid file to valid path", validURL, true, weles.ArtifactStatusREADY),
-		Entry("fail when url is invalid", invalidURL, true, weles.ArtifactStatusFAILED),
-		Entry("fail when path is invalid", validURL, false, weles.ArtifactStatusFAILED),
-		Entry("fail when url and path are invalid", invalidURL, false, weles.ArtifactStatusFAILED),
-	)
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(ContainSubstring(
+					"Received wrong response from server after downloading artifact."))
+			},
+			Entry("fail when url is invalid", true),
+			Entry("fail when url and path are invalid", false),
+		)
+	})
 
-	DescribeTable("download(): Notify channels and save data to file",
-		func(url weles.ArtifactURI, valid bool, finalResult weles.ArtifactStatus) {
-			ts = prepareServer(url)
+	Describe("download(): Notify channels and save data to file", func() {
+		It("should download valid file to valid path", func() {
+			ts = prepareServer(validURL)
 			defer ts.Close()
 
 			dir := validDir
-			if !valid {
-				dir = invalidDir
-			}
 			filename := weles.ArtifactPath(filepath.Join(dir, "test"))
 
 			status := weles.ArtifactStatusChange{
@@ -156,33 +209,91 @@ I call it stupid of the pig.
 			status.NewStatus = weles.ArtifactStatusDOWNLOADING
 			checkChannels(ch, platinumKoala.notification, status)
 
-			status.NewStatus = finalResult
+			status.NewStatus = weles.ArtifactStatusREADY
 			checkChannels(ch, platinumKoala.notification, status)
 
-			if valid && url != invalidURL {
-				content, err := ioutil.ReadFile(string(filename))
-				Expect(err).ToNot(HaveOccurred())
-				Expect(string(content)).To(Equal(pigs))
-			} else {
-				Expect(string(filename)).NotTo(BeAnExistingFile())
+			content, err := ioutil.ReadFile(string(filename))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(string(content)).To(Equal(pigs))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
+		})
+		It("should fail when path is invalid", func() {
+			ts = prepareServer(validURL)
+			defer ts.Close()
+
+			dir := invalidDir
+			filename := weles.ArtifactPath(filepath.Join(dir, "test"))
+
+			status := weles.ArtifactStatusChange{
+				Path:      filename,
+				NewStatus: weles.ArtifactStatusDOWNLOADING,
 			}
 
-		},
-		Entry("download valid file to valid path", validURL, true, weles.ArtifactStatusREADY),
-		Entry("fail when url is invalid", invalidURL, true, weles.ArtifactStatusFAILED),
-		Entry("fail when path is invalid", validURL, false, weles.ArtifactStatusFAILED),
-		Entry("fail when url and path are invalid", invalidURL, false, weles.ArtifactStatusFAILED),
-	)
+			platinumKoala.download(weles.ArtifactURI(ts.URL), weles.ArtifactPath(filename), ch)
 
-	DescribeTable("Download(): Notify ch channel about any changes",
-		func(url weles.ArtifactURI, valid bool, finalResult weles.ArtifactStatus) {
-			ts = prepareServer(url)
+			status.NewStatus = weles.ArtifactStatusDOWNLOADING
+			checkChannels(ch, platinumKoala.notification, status)
+
+			status.NewStatus = weles.ArtifactStatusFAILED
+			checkChannels(ch, platinumKoala.notification, status)
+
+			Expect(string(filename)).NotTo(BeAnExistingFile())
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to create file."),
+				ContainSubstring("Failed to remove artifact."),
+			))
+		})
+		DescribeTable("response to invalid url",
+			func(valid bool) {
+				ts = prepareServer(invalidURL)
+				defer ts.Close()
+
+				dir := validDir
+				if !valid {
+					dir = invalidDir
+				}
+				filename := weles.ArtifactPath(filepath.Join(dir, "test"))
+
+				status := weles.ArtifactStatusChange{
+					Path:      filename,
+					NewStatus: weles.ArtifactStatusDOWNLOADING,
+				}
+
+				platinumKoala.download(weles.ArtifactURI(ts.URL), weles.ArtifactPath(filename), ch)
+
+				status.NewStatus = weles.ArtifactStatusDOWNLOADING
+				checkChannels(ch, platinumKoala.notification, status)
+
+				status.NewStatus = weles.ArtifactStatusFAILED
+				checkChannels(ch, platinumKoala.notification, status)
+
+				Expect(string(filename)).NotTo(BeAnExistingFile())
+
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(SatisfyAll(
+					ContainSubstring(
+						"Received wrong response from server after downloading artifact."),
+					ContainSubstring("Failed to remove artifact."),
+				))
+			},
+			Entry("fail when url is invalid", true),
+			Entry("fail when url and path are invalid", false),
+		)
+	})
+
+	Describe("Download(): Notify ch channel about any changes", func() {
+		It("should download valid file to valid path", func() {
+			ts = prepareServer(validURL)
 			defer ts.Close()
 
 			dir := validDir
-			if !valid {
-				dir = invalidDir
-			}
 			path := weles.ArtifactPath(filepath.Join(dir, "animal"))
 
 			err := platinumKoala.Download(weles.ArtifactURI(ts.URL), path, ch)
@@ -197,14 +308,80 @@ I call it stupid of the pig.
 			status.NewStatus = weles.ArtifactStatusDOWNLOADING
 			Eventually(ch).Should(Receive(Equal(status)))
 
-			status.NewStatus = finalResult
+			status.NewStatus = weles.ArtifactStatusREADY
 			Eventually(ch).Should(Receive(Equal(status)))
-		},
-		Entry("download valid file to valid path", validURL, true, weles.ArtifactStatusREADY),
-		Entry("fail when url is invalid", invalidURL, true, weles.ArtifactStatusFAILED),
-		Entry("fail when path is invalid", validURL, false, weles.ArtifactStatusFAILED),
-		Entry("fail when url and path are invalid", invalidURL, false, weles.ArtifactStatusFAILED),
-	)
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
+		})
+		It("should fail when path is invalid", func() {
+			ts = prepareServer(validURL)
+			defer ts.Close()
+
+			dir := invalidDir
+			path := weles.ArtifactPath(filepath.Join(dir, "animal"))
+
+			err := platinumKoala.Download(weles.ArtifactURI(ts.URL), path, ch)
+			Expect(err).ToNot(HaveOccurred())
+
+			status := weles.ArtifactStatusChange{
+				Path:      path,
+				NewStatus: weles.ArtifactStatusPENDING,
+			}
+			Eventually(ch).Should(Receive(Equal(status)))
+
+			status.NewStatus = weles.ArtifactStatusDOWNLOADING
+			Eventually(ch).Should(Receive(Equal(status)))
+
+			status.NewStatus = weles.ArtifactStatusFAILED
+			Eventually(ch).Should(Receive(Equal(status)))
+
+			Eventually(func() string {
+				return ws.GetString()
+			}).Should(SatisfyAll(
+				ContainSubstring("Failed to create file."),
+				ContainSubstring("Failed to remove artifact."),
+			))
+		})
+		DescribeTable("response to invalid url",
+			func(valid bool) {
+				ts = prepareServer(invalidURL)
+				defer ts.Close()
+
+				dir := validDir
+				if !valid {
+					dir = invalidDir
+				}
+				path := weles.ArtifactPath(filepath.Join(dir, "animal"))
+
+				err := platinumKoala.Download(weles.ArtifactURI(ts.URL), path, ch)
+				Expect(err).ToNot(HaveOccurred())
+
+				status := weles.ArtifactStatusChange{
+					Path:      path,
+					NewStatus: weles.ArtifactStatusPENDING,
+				}
+				Eventually(ch).Should(Receive(Equal(status)))
+
+				status.NewStatus = weles.ArtifactStatusDOWNLOADING
+				Eventually(ch).Should(Receive(Equal(status)))
+
+				status.NewStatus = weles.ArtifactStatusFAILED
+				Eventually(ch).Should(Receive(Equal(status)))
+
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(SatisfyAll(
+					ContainSubstring(
+						"Received wrong response from server after downloading artifact."),
+					ContainSubstring("Failed to remove artifact."),
+				))
+			},
+			Entry("fail when url is invalid", true),
+			Entry("fail when url and path are invalid", false),
+		)
+	})
 
 	DescribeTable("Download(): Download files to specified path.",
 		func(url weles.ArtifactURI, filename string, poem string) {
@@ -233,6 +410,10 @@ I call it stupid of the pig.
 				content, err := ioutil.ReadFile(string(path))
 				Expect(err).ToNot(HaveOccurred())
 				Expect(string(content)).To(BeIdenticalTo(poem))
+
+				Consistently(func() string {
+					return ws.GetString()
+				}).Should(BeEmpty())
 			} else {
 				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
 					Path:      path,
@@ -242,6 +423,13 @@ I call it stupid of the pig.
 				Expect(err).To(HaveOccurred())
 				Expect(content).To(BeNil())
 
+				Eventually(func() string {
+					return ws.GetString()
+				}).Should(SatisfyAll(
+					ContainSubstring(
+						"Received wrong response from server after downloading artifact."),
+					ContainSubstring("Failed to remove artifact."),
+				))
 			}
 		},
 		Entry("download valid file to valid path", validURL, "pigs", pigs),
@@ -260,6 +448,10 @@ I call it stupid of the pig.
 
 			err := ironGopher.Download(weles.ArtifactURI(ts.URL), path, ch)
 			Expect(err).To(Equal(ErrQueueFull))
+
+			Consistently(func() string {
+				return ws.GetString()
+			}).Should(BeEmpty())
 		})
 	})
 })

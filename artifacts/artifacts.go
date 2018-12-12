@@ -20,7 +20,6 @@ package artifacts
 import (
 	"errors"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -28,6 +27,7 @@ import (
 
 	"github.com/go-openapi/strfmt"
 
+	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/artifacts/database"
 	"github.com/SamsungSLAV/weles/artifacts/downloader"
@@ -61,6 +61,8 @@ func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
 ) (weles.ArtifactManager, error) {
 	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
+		logger.WithError(err).WithProperty("directory", dir).
+			Error("Failed to create artifact directory.")
 		return nil, err
 	}
 	notifier := make(chan weles.ArtifactStatusChange, notifierCap)
@@ -72,6 +74,8 @@ func newArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
 	}
 	err = am.db.Open(db)
 	if err != nil {
+		logger.WithError(err).WithProperty("database", db).
+			Error("Failed to open database connection.")
 		return nil, err
 	}
 
@@ -100,19 +104,27 @@ func (s *Storage) PushArtifact(artifact weles.ArtifactDescription,
 
 	path, err := s.CreateArtifact(artifact)
 	if err != nil {
+		logger.WithError(err).WithProperty("artifact", artifact).
+			Error("Failed to create artifact.")
 		return "", err
 	}
 
 	err = s.downloader.Download(artifact.URI, path, ch)
 	if err != nil {
+		logger.WithError(err).
+			WithProperties(logger.Properties{"URI": artifact.URI, "path": path}).
+			Error("Failed to download artifact.")
 		err2 := s.db.SetStatus(weles.ArtifactStatusChange{
 			Path:      path,
 			NewStatus: weles.ArtifactStatusFAILED,
 		})
 		if err2 != nil {
-			return "", errors.New(
-				"failed to download artifact: " + err.Error() +
-					" and failed to set artifacts status to failed: " + err2.Error())
+			e := errors.New("failed to download artifact: " + err.Error() +
+				" and failed to set artifacts status to failed: " + err2.Error())
+			logger.WithError(err2).
+				WithProperties(logger.Properties{"URI": artifact.URI, "path": path}).
+				Error("Failed to set artifacts status to FAILED.")
+			return "", e
 		}
 		return "", errors.New("failed to download artifact: " + err.Error())
 	}
@@ -123,16 +135,24 @@ func (s *Storage) PushArtifact(artifact weles.ArtifactDescription,
 func (s *Storage) CreateArtifact(artifact weles.ArtifactDescription) (weles.ArtifactPath, error) {
 	path, err := s.getNewPath(artifact)
 	if err != nil {
+		logger.WithError(err).
+			WithProperties(logger.Properties{
+				"JobID": artifact.JobID, "URI": artifact.URI}).
+			Error("Failed to create path for artifact.")
 		return "", err
 	}
-
-	err = s.db.InsertArtifactInfo(&weles.ArtifactInfo{
+	ai := weles.ArtifactInfo{
 		ArtifactDescription: artifact,
 		Path:                path,
 		Status:              "",
 		Timestamp:           strfmt.DateTime(time.Now().UTC()),
-	})
+	}
+	err = s.db.InsertArtifactInfo(&ai)
 	if err != nil {
+		logger.WithError(err).
+			WithProperties(logger.Properties{
+				"JobID": artifact.JobID, "URI": artifact.URI}).
+			Error("Failed to insert ArtifactInfo.")
 		return "", err
 	}
 	return path, nil
@@ -161,19 +181,23 @@ func (s *Storage) getNewPath(ad weles.ArtifactDescription) (weles.ArtifactPath, 
 	// Organize by filetypes
 	err = os.MkdirAll(typeDir, os.ModePerm)
 	if err != nil {
+		logger.WithError(err).WithProperty("path", typeDir).
+			Error("Failed to create directory.")
 		return "", err
 	}
 
 	// Add human readable prefix
 	f, err := ioutil.TempFile(typeDir, string(ad.Alias))
 	if err != nil {
+		logger.WithError(err).WithProperty("file", typeDir+string(ad.Alias)).
+			Error("Failed to create temporary file.")
 		return "", err
 	}
 
 	defer func() {
 		if err = f.Close(); err != nil {
-			log.Println("failed to close file")
-			//TODO: aalexanderr log
+			logger.WithError(err).WithProperty("file", typeDir+string(ad.Alias)).
+				Error("Failed to close file.")
 		}
 	}()
 	return weles.ArtifactPath(f.Name()), err
@@ -186,7 +210,10 @@ func (s *Storage) listenToChanges() {
 		// Error handled in SetStatus function.
 		err := s.db.SetStatus(change)
 		if err != nil {
-			log.Println("Failed to set status of artifact.")
+			logger.WithError(err).WithProperties(
+				logger.Properties{"path": change.Path, "new-status": change.NewStatus}).
+				Error("Failed to set status of artifact.")
+
 		}
 	}
 }
