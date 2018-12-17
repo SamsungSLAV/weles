@@ -25,6 +25,23 @@
     },
     {
       "key": {
+        "uuid": "161c53df_303238ff",
+        "filename": "artifacts/artifacts_test.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-17T15:56:43Z",
+      "side": 1,
+      "message": "I dislike such implementation. Same comments as in \"\nIntercept error logs from controller pkg tests\" apply here.\nMaybe lets talk it through F2F",
+      "revId": "48ba685aa255bda7366a5c2b81a4deca396c2b43",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7927c75d_17e8f22d",
         "filename": "artifacts/artifacts_test.go",
         "patchSetId": 2
