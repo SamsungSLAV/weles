@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "88ef1177_8a5e5878",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-17T15:16:58Z",
+      "side": 1,
+      "message": "There\u0027s no need to assign that to variable, when used once.",
+      "range": {
+        "startLine": 112,
+        "startChar": 3,
+        "endLine": 112,
+        "endChar": 6
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d0c8ed1c_847e47d6",
         "filename": "artifacts/downloader/downloader_test.go",
         "patchSetId": 1
@@ -45,6 +68,29 @@
       "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30b4ccc8_1c4ed305",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-17T15:16:58Z",
+      "side": 1,
+      "message": "ibidem",
+      "range": {
+        "startLine": 126,
+        "startChar": 3,
+        "endLine": 126,
+        "endChar": 6
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +117,52 @@
     },
     {
       "key": {
+        "uuid": "fbb9e95c_62719f0d",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-17T15:16:58Z",
+      "side": 1,
+      "message": "ibidem",
+      "range": {
+        "startLine": 164,
+        "startChar": 3,
+        "endLine": 164,
+        "endChar": 6
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "32812e81_5835e744",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-17T15:16:58Z",
+      "side": 1,
+      "message": "ibidem",
+      "range": {
+        "startLine": 207,
+        "startChar": 8,
+        "endLine": 207,
+        "endChar": 13
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3e2eda4a_9b967386",
         "filename": "artifacts/downloader/downloader_test.go",
         "patchSetId": 1
@@ -94,6 +186,29 @@
     },
     {
       "key": {
+        "uuid": "f3bdf531_54bff9d3",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-17T15:16:58Z",
+      "side": 1,
+      "message": "ibidem",
+      "range": {
+        "startLine": 243,
+        "startChar": 3,
+        "endLine": 243,
+        "endChar": 6
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "326ac55c_182a859b",
         "filename": "artifacts/downloader/downloader_test.go",
         "patchSetId": 1
@@ -114,6 +229,52 @@
       "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4d3b4c74_3c1fae76",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-17T15:16:58Z",
+      "side": 1,
+      "message": "ibidem",
+      "range": {
+        "startLine": 265,
+        "startChar": 3,
+        "endLine": 265,
+        "endChar": 6
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b8f4e9f_3e93f886",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-17T15:16:58Z",
+      "side": 1,
+      "message": "ibidem",
+      "range": {
+        "startLine": 288,
+        "startChar": 2,
+        "endLine": 291,
+        "endChar": 5
+      },
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
