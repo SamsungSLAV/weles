@@ -94,6 +94,40 @@
     },
     {
       "key": {
+        "uuid": "57e37fe8_b4e02adf",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-17T15:36:55Z",
+      "side": 1,
+      "message": "artifacts/downloader/downloader_test.go:129:4:warning: ineffectual assignment to err (ineffassign)",
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ac880f8_0d3ea1e9",
+        "filename": "artifacts/downloader/downloader_test.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-17T15:36:55Z",
+      "side": 1,
+      "message": "artifacts/downloader/downloader_test.go:146:5:warning: ineffectual assignment to err (ineffassign)",
+      "revId": "a8615447cbddf2654c83af9f070552df6f8b2085",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5936a3c0_4baf6099",
         "filename": "artifacts/downloader/downloader_test.go",
         "patchSetId": 1
