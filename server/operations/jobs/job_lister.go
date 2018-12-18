@@ -51,9 +51,10 @@ func NewJobLister(ctx *middleware.Context, handler JobListerHandler) *JobLister 
 
 /*JobLister swagger:route POST /jobs/list jobs jobLister
 
-List jobs with filter and sort features
+List Jobs with filtering, sorting and pagination.
 
-JobLister returns information on filtered Weles Jobs.
+Returns sorted list of Jobs. If there are more records than returned page, 206 response is returned. If the page is last - 200 response is returned. If no Jobs satisfy passed filter, 404 response is returned.
+
 
 */
 type JobLister struct {
