@@ -248,7 +248,7 @@ var _ = Describe("DownloaderImpl", func() {
 			return call
 		}
 		defaultCreate := func(successfulEntries int, fail bool) *gomock.Call {
-			types := []weles.ArtifactType{weles.ArtifactTypeTEST, weles.ArtifactTypeTEST}
+			types := []weles.ArtifactType{weles.ArtifactTypeRESULT, weles.ArtifactTypeRESULT}
 			aliases := []weles.ArtifactAlias{"alias_2", "alias_4"}
 			returnPaths := []weles.ArtifactPath{weles.ArtifactPath(paths[7]),
 				weles.ArtifactPath(paths[8])}
