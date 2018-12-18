@@ -60,14 +60,26 @@ func NewWelesAPI(spec *loads.Document) *WelesAPI {
 		ArtifactsArtifactListerHandler: artifacts.ArtifactListerHandlerFunc(func(params artifacts.ArtifactListerParams) middleware.Responder {
 			return middleware.NotImplemented("operation ArtifactsArtifactLister has not yet been implemented")
 		}),
+		ArtifactsArtifactListerOptionsHandler: artifacts.ArtifactListerOptionsHandlerFunc(func(params artifacts.ArtifactListerOptionsParams) middleware.Responder {
+			return middleware.NotImplemented("operation ArtifactsArtifactListerOptions has not yet been implemented")
+		}),
 		JobsJobCancelerHandler: jobs.JobCancelerHandlerFunc(func(params jobs.JobCancelerParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobCanceler has not yet been implemented")
+		}),
+		JobsJobCancelerOptionsHandler: jobs.JobCancelerOptionsHandlerFunc(func(params jobs.JobCancelerOptionsParams) middleware.Responder {
+			return middleware.NotImplemented("operation JobsJobCancelerOptions has not yet been implemented")
 		}),
 		JobsJobCreatorHandler: jobs.JobCreatorHandlerFunc(func(params jobs.JobCreatorParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobCreator has not yet been implemented")
 		}),
+		JobsJobCreatorOptionsHandler: jobs.JobCreatorOptionsHandlerFunc(func(params jobs.JobCreatorOptionsParams) middleware.Responder {
+			return middleware.NotImplemented("operation JobsJobCreatorOptions has not yet been implemented")
+		}),
 		JobsJobListerHandler: jobs.JobListerHandlerFunc(func(params jobs.JobListerParams) middleware.Responder {
 			return middleware.NotImplemented("operation JobsJobLister has not yet been implemented")
+		}),
+		JobsJobListerOptionsHandler: jobs.JobListerOptionsHandlerFunc(func(params jobs.JobListerOptionsParams) middleware.Responder {
+			return middleware.NotImplemented("operation JobsJobListerOptions has not yet been implemented")
 		}),
 		GeneralVersionHandler: general.VersionHandlerFunc(func(params general.VersionParams) middleware.Responder {
 			return middleware.NotImplemented("operation GeneralVersion has not yet been implemented")
@@ -108,12 +120,20 @@ type WelesAPI struct {
 
 	// ArtifactsArtifactListerHandler sets the operation handler for the artifact lister operation
 	ArtifactsArtifactListerHandler artifacts.ArtifactListerHandler
+	// ArtifactsArtifactListerOptionsHandler sets the operation handler for the artifact lister options operation
+	ArtifactsArtifactListerOptionsHandler artifacts.ArtifactListerOptionsHandler
 	// JobsJobCancelerHandler sets the operation handler for the job canceler operation
 	JobsJobCancelerHandler jobs.JobCancelerHandler
+	// JobsJobCancelerOptionsHandler sets the operation handler for the job canceler options operation
+	JobsJobCancelerOptionsHandler jobs.JobCancelerOptionsHandler
 	// JobsJobCreatorHandler sets the operation handler for the job creator operation
 	JobsJobCreatorHandler jobs.JobCreatorHandler
+	// JobsJobCreatorOptionsHandler sets the operation handler for the job creator options operation
+	JobsJobCreatorOptionsHandler jobs.JobCreatorOptionsHandler
 	// JobsJobListerHandler sets the operation handler for the job lister operation
 	JobsJobListerHandler jobs.JobListerHandler
+	// JobsJobListerOptionsHandler sets the operation handler for the job lister options operation
+	JobsJobListerOptionsHandler jobs.JobListerOptionsHandler
 	// GeneralVersionHandler sets the operation handler for the version operation
 	GeneralVersionHandler general.VersionHandler
 
@@ -187,16 +207,32 @@ func (o *WelesAPI) Validate() error {
 		unregistered = append(unregistered, "artifacts.ArtifactListerHandler")
 	}
 
+	if o.ArtifactsArtifactListerOptionsHandler == nil {
+		unregistered = append(unregistered, "artifacts.ArtifactListerOptionsHandler")
+	}
+
 	if o.JobsJobCancelerHandler == nil {
 		unregistered = append(unregistered, "jobs.JobCancelerHandler")
+	}
+
+	if o.JobsJobCancelerOptionsHandler == nil {
+		unregistered = append(unregistered, "jobs.JobCancelerOptionsHandler")
 	}
 
 	if o.JobsJobCreatorHandler == nil {
 		unregistered = append(unregistered, "jobs.JobCreatorHandler")
 	}
 
+	if o.JobsJobCreatorOptionsHandler == nil {
+		unregistered = append(unregistered, "jobs.JobCreatorOptionsHandler")
+	}
+
 	if o.JobsJobListerHandler == nil {
 		unregistered = append(unregistered, "jobs.JobListerHandler")
+	}
+
+	if o.JobsJobListerOptionsHandler == nil {
+		unregistered = append(unregistered, "jobs.JobListerOptionsHandler")
 	}
 
 	if o.GeneralVersionHandler == nil {
@@ -309,20 +345,40 @@ func (o *WelesAPI) initHandlerCache() {
 	}
 	o.handlers["POST"]["/artifacts/list"] = artifacts.NewArtifactLister(o.context, o.ArtifactsArtifactListerHandler)
 
+	if o.handlers["OPTIONS"] == nil {
+		o.handlers["OPTIONS"] = make(map[string]http.Handler)
+	}
+	o.handlers["OPTIONS"]["/artifacts/list"] = artifacts.NewArtifactListerOptions(o.context, o.ArtifactsArtifactListerOptionsHandler)
+
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/jobs/{JobID}/cancel"] = jobs.NewJobCanceler(o.context, o.JobsJobCancelerHandler)
+
+	if o.handlers["OPTIONS"] == nil {
+		o.handlers["OPTIONS"] = make(map[string]http.Handler)
+	}
+	o.handlers["OPTIONS"]["/jobs/{JobID}/cancel"] = jobs.NewJobCancelerOptions(o.context, o.JobsJobCancelerOptionsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/jobs"] = jobs.NewJobCreator(o.context, o.JobsJobCreatorHandler)
 
+	if o.handlers["OPTIONS"] == nil {
+		o.handlers["OPTIONS"] = make(map[string]http.Handler)
+	}
+	o.handlers["OPTIONS"]["/jobs"] = jobs.NewJobCreatorOptions(o.context, o.JobsJobCreatorOptionsHandler)
+
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/jobs/list"] = jobs.NewJobLister(o.context, o.JobsJobListerHandler)
+
+	if o.handlers["OPTIONS"] == nil {
+		o.handlers["OPTIONS"] = make(map[string]http.Handler)
+	}
+	o.handlers["OPTIONS"]["/jobs/list"] = jobs.NewJobListerOptions(o.context, o.JobsJobListerOptionsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

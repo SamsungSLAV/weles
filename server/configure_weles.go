@@ -24,6 +24,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/runtime/middleware"
+	"github.com/rs/cors"
 
 	"github.com/SamsungSLAV/slav/logger"
 	"github.com/SamsungSLAV/weles"
@@ -65,6 +67,38 @@ func welesConfigureAPI(api *operations.WelesAPI, a *APIDefaults) http.Handler {
 	api.JobsJobCancelerHandler = jobs.JobCancelerHandlerFunc(a.Managers.JobCanceller)
 	api.JobsJobListerHandler = jobs.JobListerHandlerFunc(a.JobLister)
 
+	api.JobsJobCreatorOptionsHandler = jobs.JobCreatorOptionsHandlerFunc(
+		func(params jobs.JobCreatorOptionsParams) middleware.Responder {
+			return jobs.NewJobCreatorOptionsOK().
+				WithAccessControlAllowMethods([]string{"POST", "OPTIONS"}).
+				WithAccessControlAllowHeaders([]string{"*"}).
+				WithAccessControlAllowOrigin("*")
+		})
+
+	api.JobsJobCancelerOptionsHandler = jobs.JobCancelerOptionsHandlerFunc(
+		func(params jobs.JobCancelerOptionsParams) middleware.Responder {
+			return jobs.NewJobCancelerOptionsOK().
+				WithAccessControlAllowMethods([]string{"POST", "OPTIONS"}).
+				WithAccessControlAllowHeaders([]string{"*"}).
+				WithAccessControlAllowOrigin("*")
+		})
+
+	api.JobsJobListerOptionsHandler = jobs.JobListerOptionsHandlerFunc(
+		func(params jobs.JobListerOptionsParams) middleware.Responder {
+			return jobs.NewJobListerOptionsOK().
+				WithAccessControlAllowMethods([]string{"POST", "OPTIONS"}).
+				WithAccessControlAllowHeaders([]string{"*"}).
+				WithAccessControlAllowOrigin("*")
+		})
+
+	api.ArtifactsArtifactListerOptionsHandler = artifacts.ArtifactListerOptionsHandlerFunc(
+		func(params artifacts.ArtifactListerOptionsParams) middleware.Responder {
+			return artifacts.NewArtifactListerOptionsOK().
+				WithAccessControlAllowMethods([]string{"POST", "OPTIONS"}).
+				WithAccessControlAllowHeaders([]string{"*"}).
+				WithAccessControlAllowOrigin("*")
+		})
+
 	api.ArtifactsArtifactListerHandler = artifacts.ArtifactListerHandlerFunc(a.ArtifactLister)
 
 	api.GeneralVersionHandler = general.VersionHandlerFunc(a.Version)
@@ -101,7 +135,14 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
-	return handler
+	corsHandler := cors.New(cors.Options{
+		Debug:          true,
+		AllowedHeaders: []string{"*"},
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"POST", "OPTIONS"},
+		MaxAge:         1000,
+	})
+	return corsHandler.Handler(handler)
 }
 
 func configureAPI(api *operations.WelesAPI) http.Handler {
