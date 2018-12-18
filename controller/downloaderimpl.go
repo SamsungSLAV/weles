@@ -213,7 +213,7 @@ func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias, uri st
 func (h *DownloaderImpl) pullCreate(j weles.JobID, alias string) (string, error) {
 	p, err := h.artifacts.CreateArtifact(weles.ArtifactDescription{
 		JobID: j,
-		Type:  weles.ArtifactTypeTEST,
+		Type:  weles.ArtifactTypeRESULT,
 		Alias: weles.ArtifactAlias(alias),
 	})
 	return string(p), err
