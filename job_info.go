@@ -36,24 +36,24 @@ type JobInfo struct {
 
 	// Created is the Job creation time (UTC).
 	// Format: date-time
-	Created strfmt.DateTime `json:"Created,omitempty"`
+	Created strfmt.DateTime `json:"Created"`
 
 	// Info provides additional information about current state, e.g. cause
 	// of failure
-	Info string `json:"Info,omitempty"`
+	Info string `json:"Info"`
 
 	// JobID is a unique Job identifier
-	JobID JobID `json:"JobID,omitempty"`
+	JobID JobID `json:"JobID"`
 
 	// Name is the Job name acquired from yaml file during Job creation.
 	Name string `json:"Name,omitempty"`
 
 	// Status specifies current state of the Job.
-	Status enums.JobStatus `json:"Status,omitempty"`
+	Status enums.JobStatus `json:"Status"`
 
 	// Updated is the time of latest Jobs' status modification (UTC).
 	// Format: date-time
-	Updated strfmt.DateTime `json:"Updated,omitempty"`
+	Updated strfmt.DateTime `json:"Updated"`
 }
 
 // Validate validates this job info

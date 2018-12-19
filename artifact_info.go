@@ -36,7 +36,7 @@ type ArtifactInfo struct {
 	ArtifactDescription
 
 	// ID is unique identifier of an Artifact.
-	ID int64 `json:"ID,omitempty" db:",primarykey, autoincrement"`
+	ID int64 `json:"ID" db:",primarykey, autoincrement"`
 
 	// Path where Artifact is stored on Weles server.
 	Path ArtifactPath `json:"Path,omitempty"`
@@ -47,7 +47,7 @@ type ArtifactInfo struct {
 
 	// Timestamp is the date of creating an Artifact.
 	// Format: date-time
-	Timestamp strfmt.DateTime `json:"Timestamp,omitempty"`
+	Timestamp strfmt.DateTime `json:"Timestamp"`
 }
 
 // UnmarshalJSON unmarshals this object from a JSON structure
@@ -61,13 +61,13 @@ func (m *ArtifactInfo) UnmarshalJSON(raw []byte) error {
 
 	// now for regular properties
 	var propsArtifactInfo struct {
-		ID int64 `json:"ID,omitempty"`
+		ID int64 `json:"ID"`
 
 		Path ArtifactPath `json:"Path,omitempty"`
 
 		Status enums.ArtifactStatus `json:"Status,omitempty"`
 
-		Timestamp strfmt.DateTime `json:"Timestamp,omitempty"`
+		Timestamp strfmt.DateTime `json:"Timestamp"`
 	}
 	if err := swag.ReadJSON(raw, &propsArtifactInfo); err != nil {
 		return err
@@ -95,13 +95,13 @@ func (m ArtifactInfo) MarshalJSON() ([]byte, error) {
 
 	// now for regular properties
 	var propsArtifactInfo struct {
-		ID int64 `json:"ID,omitempty"`
+		ID int64 `json:"ID"`
 
 		Path ArtifactPath `json:"Path,omitempty"`
 
 		Status enums.ArtifactStatus `json:"Status,omitempty"`
 
-		Timestamp strfmt.DateTime `json:"Timestamp,omitempty"`
+		Timestamp strfmt.DateTime `json:"Timestamp"`
 	}
 	propsArtifactInfo.ID = m.ID
 
