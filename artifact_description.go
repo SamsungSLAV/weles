@@ -37,10 +37,10 @@ type ArtifactDescription struct {
 	Alias ArtifactAlias `json:"Alias,omitempty"`
 
 	// specifies Job for which Artifact was created.
-	JobID JobID `json:"JobID,omitempty"`
+	JobID JobID `json:"JobID"`
 
 	// see documentation of ArtifactType.
-	Type ArtifactType `json:"Type,omitempty"`
+	Type ArtifactType `json:"Type"`
 
 	// URI from which artifact was downloaded. Taken from the Job Submission file.
 	//
