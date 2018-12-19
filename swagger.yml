@@ -435,27 +435,33 @@ definitions:
       JobID:
         $ref: '#/definitions/JobID'
         description: JobID is a unique Job identifier
+        x-omitempty: false
       Name:
         type: string
         description: |-
           Name is the Job name acquired from yaml file during Job creation.
+        x-omitempty: true
       Created:
         type: string
         format: date-time
         description: Created is the Job creation time (UTC).
+        x-omitempty: false
       Updated:
         type: string
         format: date-time
         description: |-
           Updated is the time of latest Jobs' status modification (UTC).
+        x-omitempty: false
       Status:
         $ref: '#/definitions/JobStatus'
         description: Status specifies current state of the Job.
+        x-omitempty: false
       Info:
         type: string
         description: |-
           Info provides additional information about current state, e.g. cause
           of failure
+        x-omitempty: false
   JobFilter:
     description: |-
       is used to filter Weles Jobs.i
@@ -641,21 +647,25 @@ definitions:
       JobID:
         $ref: '#/definitions/JobID'
         description: JobID specifies Job for which Artifact was created.
+        x-omitempty: false
       Type:
         $ref: '#/definitions/ArtifactType'
         description: |-
           Type of the Artifact. Refer to ArtifactType documentation to see all
           possible values with descriptions.
+        x-omitempty: false
       Alias:
         $ref: '#/definitions/ArtifactAlias'
         description: |-
           Alias is alternative name of an Artifact. Taken from the Job
           Submission file.
+        x-omitempty: true
       URI:
         $ref: '#/definitions/ArtifactURI'
         description: |-
           URI from which artifact was downloaded. Taken from the Job Submission
           file.
+        x-omitempty: true
   ArtifactInfo:
     description: describes single Artifact stored in ArtifactDB.
     type: object
@@ -666,6 +676,7 @@ definitions:
         $ref: '#/definitions/ArtifactPath'
         description: |-
           Path where Artifact is stored on Weles server.
+        x-omitempty: true
       Status:
         $ref: '#/definitions/ArtifactStatus'
         description: |-
@@ -675,10 +686,12 @@ definitions:
         description: Timestamp is the date of creating an Artifact.
         type: string
         format: date-time
+        x-omitempty: false
       ID:
         description: ID is unique identifier of an Artifact.
         type: integer
         format: int64
+        x-omitempty: false
         x-go-custom-tag: "db:\",primarykey, autoincrement\""
   ArtifactFilter:
     description: |-

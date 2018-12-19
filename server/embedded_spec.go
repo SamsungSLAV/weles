@@ -438,18 +438,22 @@ func init() {
       "properties": {
         "Alias": {
           "description": "Alias is alternative name of an Artifact. Taken from the Job\nSubmission file.",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactAlias"
         },
         "JobID": {
           "description": "JobID specifies Job for which Artifact was created.",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobID"
         },
         "Type": {
           "description": "Type of the Artifact. Refer to ArtifactType documentation to see all\npossible values with descriptions.",
+          "x-omitempty": false,
           "$ref": "#/definitions/ArtifactType"
         },
         "URI": {
           "description": "URI from which artifact was downloaded. Taken from the Job Submission\nfile.",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactURI"
         }
       }
@@ -501,10 +505,12 @@ func init() {
           "description": "ID is unique identifier of an Artifact.",
           "type": "integer",
           "format": "int64",
-          "x-go-custom-tag": "db:\",primarykey, autoincrement\""
+          "x-go-custom-tag": "db:\",primarykey, autoincrement\"",
+          "x-omitempty": false
         },
         "Path": {
           "description": "Path where Artifact is stored on Weles server.",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactPath"
         },
         "Status": {
@@ -514,7 +520,8 @@ func init() {
         "Timestamp": {
           "description": "Timestamp is the date of creating an Artifact.",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         }
       }
     },
@@ -667,28 +674,34 @@ func init() {
         "Created": {
           "description": "Created is the Job creation time (UTC).",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         },
         "Info": {
           "description": "Info provides additional information about current state, e.g. cause\nof failure",
-          "type": "string"
+          "type": "string",
+          "x-omitempty": false
         },
         "JobID": {
           "description": "JobID is a unique Job identifier",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobID"
         },
         "Name": {
           "description": "Name is the Job name acquired from yaml file during Job creation.",
-          "type": "string"
+          "type": "string",
+          "x-omitempty": true
         },
         "Status": {
           "description": "Status specifies current state of the Job.",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobStatus"
         },
         "Updated": {
           "description": "Updated is the time of latest Jobs' status modification (UTC).",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         }
       }
     },
@@ -1285,18 +1298,22 @@ func init() {
       "properties": {
         "Alias": {
           "description": "Alias is alternative name of an Artifact. Taken from the Job\nSubmission file.",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactAlias"
         },
         "JobID": {
           "description": "JobID specifies Job for which Artifact was created.",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobID"
         },
         "Type": {
           "description": "Type of the Artifact. Refer to ArtifactType documentation to see all\npossible values with descriptions.",
+          "x-omitempty": false,
           "$ref": "#/definitions/ArtifactType"
         },
         "URI": {
           "description": "URI from which artifact was downloaded. Taken from the Job Submission\nfile.",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactURI"
         }
       }
@@ -1348,10 +1365,12 @@ func init() {
           "description": "ID is unique identifier of an Artifact.",
           "type": "integer",
           "format": "int64",
-          "x-go-custom-tag": "db:\",primarykey, autoincrement\""
+          "x-go-custom-tag": "db:\",primarykey, autoincrement\"",
+          "x-omitempty": false
         },
         "Path": {
           "description": "Path where Artifact is stored on Weles server.",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactPath"
         },
         "Status": {
@@ -1361,7 +1380,8 @@ func init() {
         "Timestamp": {
           "description": "Timestamp is the date of creating an Artifact.",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         }
       }
     },
@@ -1514,28 +1534,34 @@ func init() {
         "Created": {
           "description": "Created is the Job creation time (UTC).",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         },
         "Info": {
           "description": "Info provides additional information about current state, e.g. cause\nof failure",
-          "type": "string"
+          "type": "string",
+          "x-omitempty": false
         },
         "JobID": {
           "description": "JobID is a unique Job identifier",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobID"
         },
         "Name": {
           "description": "Name is the Job name acquired from yaml file during Job creation.",
-          "type": "string"
+          "type": "string",
+          "x-omitempty": true
         },
         "Status": {
           "description": "Status specifies current state of the Job.",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobStatus"
         },
         "Updated": {
           "description": "Updated is the time of latest Jobs' status modification (UTC).",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         }
       }
     },
