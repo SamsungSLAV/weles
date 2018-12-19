@@ -45,7 +45,7 @@ version = "v1.1.1"
 # in other required packages (which do not have stable version tagged)
 [[constraint]]
 name = "github.com/go-swagger/go-swagger"
-version = "v0.16.0"
+version = "v0.17.2"
 
 
 # https://github.com/golang/dep/issues/1799
