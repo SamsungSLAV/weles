@@ -59,7 +59,8 @@ func init() {
 
 var (
 	enabledListeners []string
-	cleanupTimout    time.Duration
+	cleanupTimeout   time.Duration
+	gracefulTimeout  time.Duration
 	maxHeaderSize    flagext.ByteSize
 
 	socketPath string
@@ -86,7 +87,8 @@ func init() {
 	maxHeaderSize = flagext.ByteSize(1000000)
 
 	flag.StringSliceVar(&enabledListeners, "scheme", defaultSchemes, "the listeners to enable, this can be repeated and defaults to the schemes in the swagger spec")
-	flag.DurationVar(&cleanupTimout, "cleanup-timeout", 10*time.Second, "grace period for which to wait before shutting down the server")
+	flag.DurationVar(&cleanupTimeout, "cleanup-timeout", 10*time.Second, "grace period for which to wait before killing idle connections")
+	flag.DurationVar(&gracefulTimeout, "graceful-timeout", 15*time.Second, "grace period for which to wait before shutting down the server")
 	flag.Var(&maxHeaderSize, "max-header-size", "controls the maximum number of bytes the server will read parsing the request header's keys and values, including the request line. It does not limit the size of the request body")
 
 	flag.StringVar(&socketPath, "socket-path", "/var/run/todo-list.sock", "the unix socket to listen on")
@@ -143,7 +145,8 @@ func NewServer(api *operations.WelesAPI) *Server {
 	s := new(Server)
 
 	s.EnabledListeners = enabledListeners
-	s.CleanupTimeout = cleanupTimout
+	s.CleanupTimeout = cleanupTimeout
+	s.GracefulTimeout = gracefulTimeout
 	s.MaxHeaderSize = maxHeaderSize
 	s.SocketPath = socketPath
 	s.Host = stringEnvOverride(host, "", "HOST")
@@ -185,6 +188,7 @@ func (s *Server) ConfigureFlags() {
 type Server struct {
 	EnabledListeners []string
 	CleanupTimeout   time.Duration
+	GracefulTimeout  time.Duration
 	MaxHeaderSize    flagext.ByteSize
 
 	SocketPath    string
@@ -216,7 +220,6 @@ type Server struct {
 	shuttingDown int32
 	interrupted  bool
 	interrupt    chan os.Signal
-	chanLock     sync.RWMutex
 }
 
 // Logf logs message either via defined user logger or via system one if no user logger is defined.
@@ -532,7 +535,7 @@ func (s *Server) handleShutdown(wg *sync.WaitGroup, serversPtr *[]*http.Server) 
 
 	servers := *serversPtr
 
-	ctx, cancel := context.WithTimeout(context.TODO(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.TODO(), s.GracefulTimeout)
 	defer cancel()
 
 	shutdownChan := make(chan bool)
@@ -611,7 +614,9 @@ func handleInterrupt(once *sync.Once, s *Server) {
 			}
 			s.interrupted = true
 			s.Logf("Shutting down... ")
-			s.Shutdown()
+			if err := s.Shutdown(); err != nil {
+				s.Logf("HTTP server Shutdown: %v", err)
+			}
 		}
 	})
 }
