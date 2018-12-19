@@ -7,10 +7,6 @@ SWAGGER_BIN = $(DEV_TOOLS_DIR)/swagger
 
 DEV_TOOLS_BIN = $(MOCKGEN_BIN) $(SWAGGER_BIN)
 
-rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
-
-WELES_FILES = $(filter-out *_test.go, $(call rwildcard, , *.go))
-
 SERVER_MAIN = cmd/weles-server/main.go
 SERVER_BIN = $(BIN_DIR)/weles
 
@@ -49,7 +45,7 @@ clean-docker-build:
 	-rmdir "$(BIN_DIR)"
 
 .PHONY: server
-server: vendor $(WELES_FILES)
+server: vendor
 	go build -o $(SERVER_BIN) $(SERVER_MAIN)
 
 # dep ensure is run after swagger generation to update Gopkg.lock with packages needed to build server
