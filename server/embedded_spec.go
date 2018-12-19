@@ -438,18 +438,22 @@ func init() {
       "properties": {
         "Alias": {
           "description": "alternative name of an Artifact. Taken from the Job Submission file.\n",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactAlias"
         },
         "JobID": {
           "description": "specifies Job for which Artifact was created.",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobID"
         },
         "Type": {
           "description": "see documentation of ArtifactType.",
+          "x-omitempty": false,
           "$ref": "#/definitions/ArtifactType"
         },
         "URI": {
           "description": "URI from which artifact was downloaded. Taken from the Job Submission file.\n",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactURI"
         }
       }
@@ -501,10 +505,12 @@ func init() {
           "description": "unique identifier of an Artifact.",
           "type": "integer",
           "format": "int64",
-          "x-go-custom-tag": "db:\",primarykey, autoincrement\""
+          "x-go-custom-tag": "db:\",primarykey, autoincrement\"",
+          "x-omitempty": false
         },
         "Path": {
           "description": "Internal Path where Artifact is stored on Weles server.\n",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactPath"
         },
         "Status": {
@@ -514,7 +520,8 @@ func init() {
         "Timestamp": {
           "description": "is date of creating the Artifact.",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         }
       }
     },
@@ -666,28 +673,34 @@ func init() {
         "created": {
           "description": "is the Job creation time (UTC).",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         },
         "info": {
           "description": "provides additional information about current state, e.g. cause of failure\n",
-          "type": "string"
+          "type": "string",
+          "x-omitempty": false
         },
         "jobID": {
           "description": "is a unique Job identifier",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobID"
         },
         "name": {
           "description": "is the Job name acquired from yaml file during Job creation.\n",
-          "type": "string"
+          "type": "string",
+          "x-omitempty": true
         },
         "status": {
           "description": "specifies current state of the Job.",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobStatus"
         },
         "updated": {
           "description": "is the time of latest Jobs' status modification (UTC).",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         }
       }
     },
@@ -1284,18 +1297,22 @@ func init() {
       "properties": {
         "Alias": {
           "description": "alternative name of an Artifact. Taken from the Job Submission file.\n",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactAlias"
         },
         "JobID": {
           "description": "specifies Job for which Artifact was created.",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobID"
         },
         "Type": {
           "description": "see documentation of ArtifactType.",
+          "x-omitempty": false,
           "$ref": "#/definitions/ArtifactType"
         },
         "URI": {
           "description": "URI from which artifact was downloaded. Taken from the Job Submission file.\n",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactURI"
         }
       }
@@ -1347,10 +1364,12 @@ func init() {
           "description": "unique identifier of an Artifact.",
           "type": "integer",
           "format": "int64",
-          "x-go-custom-tag": "db:\",primarykey, autoincrement\""
+          "x-go-custom-tag": "db:\",primarykey, autoincrement\"",
+          "x-omitempty": false
         },
         "Path": {
           "description": "Internal Path where Artifact is stored on Weles server.\n",
+          "x-omitempty": true,
           "$ref": "#/definitions/ArtifactPath"
         },
         "Status": {
@@ -1360,7 +1379,8 @@ func init() {
         "Timestamp": {
           "description": "is date of creating the Artifact.",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         }
       }
     },
@@ -1512,28 +1532,34 @@ func init() {
         "created": {
           "description": "is the Job creation time (UTC).",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         },
         "info": {
           "description": "provides additional information about current state, e.g. cause of failure\n",
-          "type": "string"
+          "type": "string",
+          "x-omitempty": false
         },
         "jobID": {
           "description": "is a unique Job identifier",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobID"
         },
         "name": {
           "description": "is the Job name acquired from yaml file during Job creation.\n",
-          "type": "string"
+          "type": "string",
+          "x-omitempty": true
         },
         "status": {
           "description": "specifies current state of the Job.",
+          "x-omitempty": false,
           "$ref": "#/definitions/JobStatus"
         },
         "updated": {
           "description": "is the time of latest Jobs' status modification (UTC).",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-omitempty": false
         }
       }
     },

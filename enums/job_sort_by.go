@@ -65,7 +65,7 @@ var jobSortByEnum []interface{}
 
 func init() {
 	var res []JobSortBy
-	if err := json.Unmarshal([]byte(`["ID","CreatedDate","UpdatedDate","JobStatus,"""]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ID","CreatedDate","UpdatedDate","JobStatus",""]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
