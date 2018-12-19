@@ -35,10 +35,10 @@ type ArtifactDescription struct {
 	Alias ArtifactAlias `json:"Alias,omitempty"`
 
 	// specifies  Job for which artifact was created.
-	JobID JobID `json:"JobID,omitempty"`
+	JobID JobID `json:"JobID"`
 
 	// type
-	Type ArtifactType `json:"Type,omitempty"`
+	Type ArtifactType `json:"Type"`
 
 	// URI
 	// Format: uri
