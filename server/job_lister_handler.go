@@ -106,8 +106,10 @@ func responder200(listInfo weles.ListInfo, paginator weles.JobPagination,
 	if paginator.JobID != 0 { //not the first page
 		// keep in mind that JobID in paginator is taken from query parameter, not jobmanager
 		if paginator.Forward {
-			tmp := uint64(jobInfoReturned[0].JobID)
-			jobListerURL.Before = &tmp
+			if len(jobInfoReturned) != 0 {
+				tmp := uint64(jobInfoReturned[0].JobID)
+				jobListerURL.Before = &tmp
+			}
 			if defaultPageLimit != paginator.Limit {
 				tmp := paginator.Limit
 				jobListerURL.Limit = &tmp

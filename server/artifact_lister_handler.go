@@ -99,8 +99,10 @@ func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 		// keep in mind that ArtifactPath in paginator is taken from query parameter,
 		// not ArtifactManager
 		if paginator.Forward {
-			tmp := artifactInfoReturned[0].ID
-			artifactListerURL.Before = &tmp
+			if len(artifactInfoReturned) != 0 {
+				tmp := artifactInfoReturned[0].ID
+				artifactListerURL.Before = &tmp
+			}
 			if defaultPageLimit != paginator.Limit {
 				tmp := paginator.Limit
 				artifactListerURL.Limit = &tmp
