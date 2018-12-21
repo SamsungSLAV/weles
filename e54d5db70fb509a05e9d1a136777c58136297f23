@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc847315_6fead541",
+        "filename": "swagger.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 665,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-21T18:22:26Z",
+      "side": 1,
+      "message": "404",
+      "revId": "e54d5db70fb509a05e9d1a136777c58136297f23",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
