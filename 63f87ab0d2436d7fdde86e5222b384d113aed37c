@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3fe59da0_befa171d",
+        "filename": "server/artifact_lister_handler.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-21T18:39:19Z",
+      "side": 1,
+      "message": "there will be similar problem here",
+      "range": {
+        "startLine": 112,
+        "startChar": 31,
+        "endLine": 112,
+        "endChar": 58
+      },
+      "revId": "63f87ab0d2436d7fdde86e5222b384d113aed37c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
