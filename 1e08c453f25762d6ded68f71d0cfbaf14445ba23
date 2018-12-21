@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "55442ce8_a9c3e7e4",
+        "filename": "swagger.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 581,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-21T18:12:11Z",
+      "side": 1,
+      "message": "description: By should has description.",
+      "revId": "1e08c453f25762d6ded68f71d0cfbaf14445ba23",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e013b07e_aea177eb",
+        "filename": "swagger.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-21T18:12:11Z",
+      "side": 1,
+      "message": "description: Order should has description too.",
+      "revId": "1e08c453f25762d6ded68f71d0cfbaf14445ba23",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
