@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9b43950d_1f05d479",
+        "filename": "swagger.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 581,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-27T09:04:33Z",
+      "side": 1,
+      "message": "https://knowyourmeme.com/memes/ackchyually it already does in L640-644\n\nIt is reported as error by default swagger engine when reference has description. \n\nLastly - I guess I will add those descriptions as go-swagger as they are not inherited in code but it will be done in next commit",
+      "parentUuid": "55442ce8_a9c3e7e4",
+      "revId": "1e08c453f25762d6ded68f71d0cfbaf14445ba23",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e013b07e_aea177eb",
         "filename": "swagger.yml",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2018-12-21T18:12:11Z",
       "side": 1,
       "message": "description: Order should has description too.",
+      "revId": "1e08c453f25762d6ded68f71d0cfbaf14445ba23",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37cf1dcc_e5cd0c3f",
+        "filename": "swagger.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2018-12-27T09:04:33Z",
+      "side": 1,
+      "message": "ibid - L503-509",
+      "parentUuid": "e013b07e_aea177eb",
       "revId": "1e08c453f25762d6ded68f71d0cfbaf14445ba23",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
