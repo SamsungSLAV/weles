@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6fea8b89_f6f959c7",
+        "filename": "server/embedded_spec.go",
+        "patchSetId": 7
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-28T17:51:26Z",
+      "side": 1,
+      "message": "x-go-type changes unrelated to the patch",
+      "revId": "23f0f653b0508ce8cb27893e02c109c8dc15c79f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
