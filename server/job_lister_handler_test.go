@@ -48,7 +48,7 @@ var _ = Describe("Listing jobs with server initialized", func() {
 
 	type queryPaginator struct {
 		query     string
-		paginator weles.JobPagination
+		paginator weles.JobPaginator
 	}
 	// data to test against
 	var (
@@ -94,9 +94,9 @@ var _ = Describe("Listing jobs with server initialized", func() {
 		sorterDefault = sorterAscID
 
 		// when pagination is on and no query params are set. When used, limit should also be set.
-		emptyPaginatorOn = weles.JobPagination{Forward: true}
+		emptyPaginatorOn = weles.JobPaginator{Forward: true}
 		// when pagination is off
-		emptyPaginatorOff = weles.JobPagination{}
+		emptyPaginatorOff = weles.JobPaginator{}
 
 		jobInfo420 = createJobInfoSlice(420)
 	)
@@ -325,7 +325,7 @@ var _ = Describe("Listing jobs with server initialized", func() {
 					TotalRecords:     uint64(len(jobInfo420)),
 					RemainingRecords: 0,
 				}
-				var paginator weles.JobPagination
+				var paginator weles.JobPaginator
 				if pageLimit == 0 {
 					paginator = emptyPaginatorOff
 				} else {
@@ -367,7 +367,7 @@ var _ = Describe("Listing jobs with server initialized", func() {
 	Describe("Pagination turned on", func() {
 		Describe("Correct request", func() {
 			DescribeTable("server should set paginator object depending on query params",
-				func(query string, expectedPaginator weles.JobPagination) {
+				func(query string, expectedPaginator weles.JobPaginator) {
 					apiDefaults.PageLimit = 500
 
 					listInfo := weles.ListInfo{
@@ -387,17 +387,17 @@ var _ = Describe("Listing jobs with server initialized", func() {
 
 				},
 				Entry("when no query params set", "",
-					weles.JobPagination{Forward: true, Limit: 500}),
+					weles.JobPaginator{Forward: true, Limit: 500}),
 				Entry("when after param is set", "?after=30",
-					weles.JobPagination{Forward: true, Limit: 500, JobID: 30}),
+					weles.JobPaginator{Forward: true, Limit: 500, JobID: 30}),
 				Entry("when after and limit params are set", "?after=30&limit=20",
-					weles.JobPagination{Forward: true, Limit: 20, JobID: 30}),
+					weles.JobPaginator{Forward: true, Limit: 20, JobID: 30}),
 				Entry("when before param is set", "?before=30",
-					weles.JobPagination{Forward: false, Limit: 500, JobID: 30}),
+					weles.JobPaginator{Forward: false, Limit: 500, JobID: 30}),
 				Entry("when before and limit params are set", "?before=30&limit=15",
-					weles.JobPagination{Forward: false, Limit: 15, JobID: 30}),
+					weles.JobPaginator{Forward: false, Limit: 15, JobID: 30}),
 				Entry("when limit param is set", "?limit=30",
-					weles.JobPagination{Forward: true, Limit: 30}),
+					weles.JobPaginator{Forward: true, Limit: 30}),
 			)
 
 			DescribeTable("server should respond with 200/206 depending on "+

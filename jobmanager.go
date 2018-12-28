@@ -32,5 +32,5 @@ type JobManager interface {
 	// - JobPagination containing element after/before which a page should be returned. It also
 	// contains information about direction of listing and the size of the returned page which
 	// must always be set.
-	ListJobs(JobFilter, JobSorter, JobPagination) ([]JobInfo, ListInfo, error)
+	ListJobs(JobFilter, JobSorter, JobPaginator) ([]JobInfo, ListInfo, error)
 }

@@ -14,7 +14,7 @@
 
 package weles
 
-// JobPagination holds information neccessary to request for a single page of data.
+// JobPaginator holds information neccessary to request for a single page of data.
 // When JobID is set, and Forward is false - Controller should return a page of records before the
 // supplied JobID.
 // When JobID is set, and Forward is true -  Controller should return page of record after the
@@ -23,7 +23,7 @@ package weles
 // Limit denotes the number of records to be returned on the page.
 // When Limit is set to 0, pagination is disabled, JobID and Forward fields are ignored
 // and all records are returned.
-type JobPagination struct {
+type JobPaginator struct {
 	JobID   JobID
 	Forward bool
 	Limit   int32
