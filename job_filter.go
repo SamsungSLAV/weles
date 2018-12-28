@@ -28,6 +28,8 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
+
+	enums "github.com/SamsungSLAV/weles/enums"
 )
 
 // JobFilter is used to filter Weles Jobs.
@@ -52,7 +54,7 @@ type JobFilter struct {
 	Name []string `json:"Name"`
 
 	// status
-	Status []JobStatus `json:"Status"`
+	Status []enums.JobStatus `json:"Status"`
 
 	// updated after
 	// Format: date-time

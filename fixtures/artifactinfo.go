@@ -24,6 +24,7 @@ import (
 	"github.com/tideland/golib/audit"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 const (
@@ -61,18 +62,18 @@ func CreateArtifactInfoSlice(sliceLength int) []weles.ArtifactInfo {
 		tmp.ID = int64(i + 1)
 		tmp.ArtifactDescription.Alias = weles.ArtifactAlias(gen.Word())
 		tmp.ArtifactDescription.JobID = weles.JobID(jobID)
-		tmp.ArtifactDescription.Type = weles.ArtifactType(gen.OneStringOf(
-			string(weles.ArtifactTypeIMAGE),
-			string(weles.ArtifactTypeRESULT),
-			string(weles.ArtifactTypeTEST),
-			string(weles.ArtifactTypeYAML)))
+		tmp.ArtifactDescription.Type = enums.ArtifactType(gen.OneStringOf(
+			string(enums.ArtifactTypeIMAGE),
+			string(enums.ArtifactTypeRESULT),
+			string(enums.ArtifactTypeTEST),
+			string(enums.ArtifactTypeYAML)))
 		tmp.ArtifactDescription.URI = weles.ArtifactURI(gen.URL())
 		tmp.Path = weles.ArtifactPath(gen.URL())
-		tmp.Status = weles.ArtifactStatus(gen.OneStringOf(
-			string(weles.ArtifactStatusDOWNLOADING),
-			string(weles.ArtifactStatusPENDING),
-			string(weles.ArtifactStatusREADY),
-			string(weles.ArtifactStatusFAILED)))
+		tmp.Status = enums.ArtifactStatus(gen.OneStringOf(
+			string(enums.ArtifactStatusDOWNLOADING),
+			string(enums.ArtifactStatusPENDING),
+			string(enums.ArtifactStatusREADY),
+			string(enums.ArtifactStatusFAILED)))
 
 		dateTimeIter = dateTimeIter.Add(durationIncrement)
 		artifactInfo[i] = tmp

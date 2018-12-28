@@ -18,6 +18,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 	"github.com/SamsungSLAV/weles/server/operations/artifacts"
 )
 
@@ -150,17 +151,17 @@ func setArtifactFilter(fi *weles.ArtifactFilter) (fo weles.ArtifactFilter) {
 func setArtifactSorter(si *weles.ArtifactSorter) (so weles.ArtifactSorter) {
 	if si == nil {
 		return weles.ArtifactSorter{
-			SortOrder: weles.SortOrderAscending,
-			SortBy:    weles.ArtifactSortByID,
+			SortOrder: enums.SortOrderAscending,
+			SortBy:    enums.ArtifactSortByID,
 		}
 	}
 	if si.SortOrder == "" {
-		so.SortOrder = weles.SortOrderAscending
+		so.SortOrder = enums.SortOrderAscending
 	} else {
 		so.SortOrder = si.SortOrder
 	}
 	if si.SortBy == "" {
-		so.SortBy = weles.ArtifactSortByID
+		so.SortBy = enums.ArtifactSortByID
 	} else {
 		so.SortBy = si.SortBy
 	}

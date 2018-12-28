@@ -28,6 +28,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 var _ = Describe("JobsControllerImpl", func() {
@@ -85,7 +86,7 @@ var _ = Describe("JobsControllerImpl", func() {
 					Expect(job.Created).To(Equal(job.Updated))
 					Expect(time.Time(job.Created)).To(BeTemporally(">=", before))
 					Expect(time.Time(job.Created)).To(BeTemporally("<=", after))
-					Expect(job.Status).To(Equal(weles.JobStatusNEW))
+					Expect(job.Status).To(Equal(enums.JobStatusNEW))
 					Expect(job.yaml).To(Equal(testYaml))
 				})
 			})
@@ -102,55 +103,55 @@ var _ = Describe("JobsControllerImpl", func() {
 				})
 			})
 			Describe("SetStatus", func() {
-				allStatus := []weles.JobStatus{
-					weles.JobStatusNEW,
-					weles.JobStatusPARSING,
-					weles.JobStatusDOWNLOADING,
-					weles.JobStatusWAITING,
-					weles.JobStatusRUNNING,
-					weles.JobStatusFAILED,
-					weles.JobStatusCANCELED,
-					weles.JobStatusCOMPLETED,
+				allStatus := []enums.JobStatus{
+					enums.JobStatusNEW,
+					enums.JobStatusPARSING,
+					enums.JobStatusDOWNLOADING,
+					enums.JobStatusWAITING,
+					enums.JobStatusRUNNING,
+					enums.JobStatusFAILED,
+					enums.JobStatusCANCELED,
+					enums.JobStatusCOMPLETED,
 				}
-				validChanges := map[weles.JobStatus](map[weles.JobStatus]bool){
-					weles.JobStatusNEW: map[weles.JobStatus]bool{
-						weles.JobStatusNEW:      true,
-						weles.JobStatusPARSING:  true,
-						weles.JobStatusFAILED:   true,
-						weles.JobStatusCANCELED: true,
+				validChanges := map[enums.JobStatus](map[enums.JobStatus]bool){
+					enums.JobStatusNEW: map[enums.JobStatus]bool{
+						enums.JobStatusNEW:      true,
+						enums.JobStatusPARSING:  true,
+						enums.JobStatusFAILED:   true,
+						enums.JobStatusCANCELED: true,
 					},
-					weles.JobStatusPARSING: map[weles.JobStatus]bool{
-						weles.JobStatusPARSING:     true,
-						weles.JobStatusDOWNLOADING: true,
-						weles.JobStatusFAILED:      true,
-						weles.JobStatusCANCELED:    true,
+					enums.JobStatusPARSING: map[enums.JobStatus]bool{
+						enums.JobStatusPARSING:     true,
+						enums.JobStatusDOWNLOADING: true,
+						enums.JobStatusFAILED:      true,
+						enums.JobStatusCANCELED:    true,
 					},
-					weles.JobStatusDOWNLOADING: map[weles.JobStatus]bool{
-						weles.JobStatusDOWNLOADING: true,
-						weles.JobStatusWAITING:     true,
-						weles.JobStatusFAILED:      true,
-						weles.JobStatusCANCELED:    true,
+					enums.JobStatusDOWNLOADING: map[enums.JobStatus]bool{
+						enums.JobStatusDOWNLOADING: true,
+						enums.JobStatusWAITING:     true,
+						enums.JobStatusFAILED:      true,
+						enums.JobStatusCANCELED:    true,
 					},
-					weles.JobStatusWAITING: map[weles.JobStatus]bool{
-						weles.JobStatusWAITING:  true,
-						weles.JobStatusRUNNING:  true,
-						weles.JobStatusFAILED:   true,
-						weles.JobStatusCANCELED: true,
+					enums.JobStatusWAITING: map[enums.JobStatus]bool{
+						enums.JobStatusWAITING:  true,
+						enums.JobStatusRUNNING:  true,
+						enums.JobStatusFAILED:   true,
+						enums.JobStatusCANCELED: true,
 					},
-					weles.JobStatusRUNNING: map[weles.JobStatus]bool{
-						weles.JobStatusRUNNING:   true,
-						weles.JobStatusFAILED:    true,
-						weles.JobStatusCANCELED:  true,
-						weles.JobStatusCOMPLETED: true,
+					enums.JobStatusRUNNING: map[enums.JobStatus]bool{
+						enums.JobStatusRUNNING:   true,
+						enums.JobStatusFAILED:    true,
+						enums.JobStatusCANCELED:  true,
+						enums.JobStatusCOMPLETED: true,
 					},
-					weles.JobStatusFAILED: map[weles.JobStatus]bool{
-						weles.JobStatusFAILED: true,
+					enums.JobStatusFAILED: map[enums.JobStatus]bool{
+						enums.JobStatusFAILED: true,
 					},
-					weles.JobStatusCANCELED: map[weles.JobStatus]bool{
-						weles.JobStatusCANCELED: true,
+					enums.JobStatusCANCELED: map[enums.JobStatus]bool{
+						enums.JobStatusCANCELED: true,
 					},
-					weles.JobStatusCOMPLETED: map[weles.JobStatus]bool{
-						weles.JobStatusCOMPLETED: true,
+					enums.JobStatusCOMPLETED: map[enums.JobStatus]bool{
+						enums.JobStatusCOMPLETED: true,
 					},
 				}
 				It("should return error for not existing job", func() {
@@ -501,40 +502,40 @@ var _ = Describe("JobsControllerImpl", func() {
 					BeforeEach(func() {
 						jc.(*JobsControllerImpl).mutex.Lock()
 						defer jc.(*JobsControllerImpl).mutex.Unlock()
-						jc.(*JobsControllerImpl).jobs[jobids[0]].JobInfo.Status = weles.JobStatusNEW
+						jc.(*JobsControllerImpl).jobs[jobids[0]].JobInfo.Status = enums.JobStatusNEW
 						jc.(*JobsControllerImpl).jobs[jobids[1]].JobInfo.Status =
-							weles.JobStatusPARSING
+							enums.JobStatusPARSING
 						jc.(*JobsControllerImpl).jobs[jobids[2]].JobInfo.Status =
-							weles.JobStatusDOWNLOADING
+							enums.JobStatusDOWNLOADING
 						jc.(*JobsControllerImpl).jobs[jobids[3]].JobInfo.Status =
-							weles.JobStatusWAITING
+							enums.JobStatusWAITING
 						jc.(*JobsControllerImpl).jobs[jobids[4]].JobInfo.Status =
-							weles.JobStatusWAITING
+							enums.JobStatusWAITING
 					})
 					It("should return all jobs if Status slice is empty", func() {
-						f := weles.JobFilter{Status: []weles.JobStatus{}}
+						f := weles.JobFilter{Status: []enums.JobStatus{}}
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, jobids)
 					})
 					It("should return only jobs matching Status", func() {
-						f := weles.JobFilter{Status: []weles.JobStatus{weles.JobStatusWAITING}}
+						f := weles.JobFilter{Status: []enums.JobStatus{enums.JobStatusWAITING}}
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[3], jobids[4]})
 					})
 					It("should return only jobs matching any Status", func() {
 						f := weles.JobFilter{
-							Status: []weles.JobStatus{weles.JobStatusPARSING,
-								weles.JobStatusDOWNLOADING}}
+							Status: []enums.JobStatus{enums.JobStatusPARSING,
+								enums.JobStatusDOWNLOADING}}
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[1], jobids[2]})
 					})
 					It("should ignore not set Status", func() {
 						f := weles.JobFilter{
-							Status: []weles.JobStatus{
-								weles.JobStatusNEW, weles.JobStatus("ThereIsNoSuchStatus")}}
+							Status: []enums.JobStatus{
+								enums.JobStatusNEW, enums.JobStatus("ThereIsNoSuchStatus")}}
 						list, info, err := jc.List(f, weles.JobSorter{}, defaultPagination)
 						Expect(err).NotTo(HaveOccurred())
 						expectIDs(list, info, []weles.JobID{jobids[0]})
@@ -568,62 +569,62 @@ var _ = Describe("JobsControllerImpl", func() {
 						JobID:   jobids[0],
 						Created: strfmt.DateTime(magicDate.AddDate(5, 0, 0)),
 						Updated: strfmt.DateTime(magicDate.AddDate(3, 0, 0)),
-						Status:  weles.JobStatusNEW,
+						Status:  enums.JobStatusNEW,
 					}
 					jc.(*JobsControllerImpl).jobs[jobids[1]].JobInfo = weles.JobInfo{
 						JobID:   jobids[1],
 						Created: strfmt.DateTime(magicDate.AddDate(4, 0, 0)),
 						Updated: strfmt.DateTime(magicDate.AddDate(1, 0, 0)),
-						Status:  weles.JobStatusWAITING,
+						Status:  enums.JobStatusWAITING,
 					}
 					jc.(*JobsControllerImpl).jobs[jobids[2]].JobInfo = weles.JobInfo{
 						JobID:   jobids[2],
 						Created: strfmt.DateTime(magicDate.AddDate(2, 0, 0)),
 						Updated: strfmt.DateTime(magicDate.AddDate(2, 0, 0)),
-						Status:  weles.JobStatusCANCELED,
+						Status:  enums.JobStatusCANCELED,
 					}
 					jc.(*JobsControllerImpl).jobs[jobids[3]].JobInfo = weles.JobInfo{
 						JobID:   jobids[3],
 						Created: strfmt.DateTime(magicDate.AddDate(3, 0, 0)),
 						Updated: strfmt.DateTime(magicDate.AddDate(4, 0, 0)),
-						Status:  weles.JobStatusPARSING,
+						Status:  enums.JobStatusPARSING,
 					}
 					jc.(*JobsControllerImpl).jobs[jobids[4]].JobInfo = weles.JobInfo{
 						JobID:   jobids[4],
 						Created: strfmt.DateTime(magicDate.AddDate(1, 0, 0)),
 						Updated: strfmt.DateTime(magicDate.AddDate(5, 0, 0)),
-						Status:  weles.JobStatusDOWNLOADING,
+						Status:  enums.JobStatusDOWNLOADING,
 					}
 
 					jc.(*JobsControllerImpl).jobs[jobids[5]].JobInfo = weles.JobInfo{
 						JobID:   jobids[5],
 						Created: strfmt.DateTime(magicDate.AddDate(6, 0, 0)),
 						Updated: strfmt.DateTime(magicDate.AddDate(6, 0, 0)),
-						Status:  weles.JobStatusRUNNING,
+						Status:  enums.JobStatusRUNNING,
 					}
 					jc.(*JobsControllerImpl).jobs[jobids[6]].JobInfo = weles.JobInfo{
 						JobID:   jobids[6],
 						Created: strfmt.DateTime(magicDate.AddDate(6, 1, 0)),
 						Updated: strfmt.DateTime(magicDate.AddDate(6, 1, 0)),
-						Status:  weles.JobStatusFAILED,
+						Status:  enums.JobStatusFAILED,
 					}
 					jc.(*JobsControllerImpl).jobs[jobids[7]].JobInfo = weles.JobInfo{
 						JobID:   jobids[7],
 						Created: strfmt.DateTime(magicDate.AddDate(6, 2, 0)),
 						Updated: strfmt.DateTime(magicDate.AddDate(6, 2, 0)),
-						Status:  weles.JobStatusCOMPLETED,
+						Status:  enums.JobStatusCOMPLETED,
 					}
 					jc.(*JobsControllerImpl).jobs[jobids[8]].JobInfo = weles.JobInfo{
 						JobID:   jobids[8],
 						Created: strfmt.DateTime(magicDate.AddDate(6, 3, 0)),
 						Updated: strfmt.DateTime(magicDate.AddDate(6, 3, 0)),
-						Status:  weles.JobStatus("InvalidJobStatus"),
+						Status:  enums.JobStatus("InvalidJobStatus"),
 					}
 					jc.(*JobsControllerImpl).jobs[jobids[9]].JobInfo = weles.JobInfo{
 						JobID:   jobids[9],
 						Created: strfmt.DateTime(magicDate.AddDate(1, 0, 0)),
 						Updated: strfmt.DateTime(magicDate.AddDate(5, 0, 0)),
-						Status:  weles.JobStatusDOWNLOADING,
+						Status:  enums.JobStatusDOWNLOADING,
 					}
 				})
 				DescribeTable("sorter",
@@ -637,60 +638,60 @@ var _ = Describe("JobsControllerImpl", func() {
 						weles.JobSorter{},
 						[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
 					Entry("should sort by JobID if SortBy is invalid",
-						weles.JobSorter{SortBy: weles.JobSortBy("InvalidSortBy")},
+						weles.JobSorter{SortBy: enums.JobSortBy("InvalidSortBy")},
 						[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
 					Entry("should sort by JobID if SortBy is CreatedDate and SortOrder is invalid ",
 						weles.JobSorter{
-							SortBy:    weles.JobSortByCreatedDate,
-							SortOrder: weles.SortOrder("InvalidSortOrder"),
+							SortBy:    enums.JobSortByCreatedDate,
+							SortOrder: enums.SortOrder("InvalidSortOrder"),
 						},
 						[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
 					Entry("should sort by JobID if SortBy is UpdatedDate and SortOrder is invalid ",
 						weles.JobSorter{
-							SortBy:    weles.JobSortByUpdatedDate,
-							SortOrder: weles.SortOrder("InvalidSortOrder"),
+							SortBy:    enums.JobSortByUpdatedDate,
+							SortOrder: enums.SortOrder("InvalidSortOrder"),
 						},
 						[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
 					Entry("should sort by JobID if SortBy is Status and SortOrder is invalid ",
 						weles.JobSorter{
-							SortBy:    weles.JobSortByJobStatus,
-							SortOrder: weles.SortOrder("InvalidSortOrder"),
+							SortBy:    enums.JobSortByJobStatus,
+							SortOrder: enums.SortOrder("InvalidSortOrder"),
 						},
 						[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
 					Entry("should sort by CreatedAsc",
 						weles.JobSorter{
-							SortBy:    weles.JobSortByCreatedDate,
-							SortOrder: weles.SortOrderAscending,
+							SortBy:    enums.JobSortByCreatedDate,
+							SortOrder: enums.SortOrderAscending,
 						},
 						[]int{4, 9, 2, 3, 1, 0, 5, 6, 7, 8}),
 					Entry("should sort by CreatedDesc",
 						weles.JobSorter{
-							SortBy:    weles.JobSortByCreatedDate,
-							SortOrder: weles.SortOrderDescending,
+							SortBy:    enums.JobSortByCreatedDate,
+							SortOrder: enums.SortOrderDescending,
 						},
 						[]int{8, 7, 6, 5, 0, 1, 3, 2, 4, 9}),
 					Entry("should sort by UpdatedAsc",
 						weles.JobSorter{
-							SortBy:    weles.JobSortByUpdatedDate,
-							SortOrder: weles.SortOrderAscending,
+							SortBy:    enums.JobSortByUpdatedDate,
+							SortOrder: enums.SortOrderAscending,
 						},
 						[]int{1, 2, 0, 3, 4, 9, 5, 6, 7, 8}),
 					Entry("should sort by UpdatesDesc",
 						weles.JobSorter{
-							SortBy:    weles.JobSortByUpdatedDate,
-							SortOrder: weles.SortOrderDescending,
+							SortBy:    enums.JobSortByUpdatedDate,
+							SortOrder: enums.SortOrderDescending,
 						},
 						[]int{8, 7, 6, 5, 4, 9, 3, 0, 2, 1}),
 					Entry("should sort by StatusAsc",
 						weles.JobSorter{
-							SortBy:    weles.JobSortByJobStatus,
-							SortOrder: weles.SortOrderAscending,
+							SortBy:    enums.JobSortByJobStatus,
+							SortOrder: enums.SortOrderAscending,
 						},
 						[]int{8, 0, 3, 4, 9, 1, 5, 7, 6, 2}),
 					Entry("should sort by StatusDesc",
 						weles.JobSorter{
-							SortBy:    weles.JobSortByJobStatus,
-							SortOrder: weles.SortOrderDescending,
+							SortBy:    enums.JobSortByJobStatus,
+							SortOrder: enums.SortOrderDescending,
 						},
 						[]int{2, 6, 7, 5, 1, 4, 9, 3, 0, 8}),
 				)

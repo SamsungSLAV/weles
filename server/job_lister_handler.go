@@ -21,6 +21,7 @@ import (
 	"github.com/go-openapi/strfmt"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 	"github.com/SamsungSLAV/weles/server/operations/jobs"
 )
 
@@ -192,17 +193,17 @@ func setJobPaginator(params jobs.JobListerParams, defaultPageLimit int32,
 func setJobSorter(si *weles.JobSorter) (so weles.JobSorter) {
 	if si == nil {
 		return weles.JobSorter{
-			SortOrder: weles.SortOrderAscending,
-			SortBy:    weles.JobSortByID,
+			SortOrder: enums.SortOrderAscending,
+			SortBy:    enums.JobSortByID,
 		}
 	}
 	if si.SortOrder == "" {
-		so.SortOrder = weles.SortOrderAscending
+		so.SortOrder = enums.SortOrderAscending
 	} else {
 		so.SortOrder = si.SortOrder
 	}
 	if si.SortBy == "" {
-		so.SortBy = weles.JobSortByID
+		so.SortBy = enums.JobSortByID
 	} else {
 		so.SortBy = si.SortBy
 	}

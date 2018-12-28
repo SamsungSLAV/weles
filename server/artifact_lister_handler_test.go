@@ -30,6 +30,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 	"github.com/SamsungSLAV/weles/fixtures"
 	"github.com/SamsungSLAV/weles/mock"
 	"github.com/SamsungSLAV/weles/server"
@@ -55,38 +56,38 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 		filledFilter = weles.ArtifactFilter{
 			Alias: []weles.ArtifactAlias{"sdaaa", "aalliass"},
 			JobID: []weles.JobID{1, 43, 3},
-			Status: []weles.ArtifactStatus{
-				weles.ArtifactStatusDOWNLOADING,
-				weles.ArtifactStatusREADY,
+			Status: []enums.ArtifactStatus{
+				enums.ArtifactStatusDOWNLOADING,
+				enums.ArtifactStatusREADY,
 			},
-			Type: []weles.ArtifactType{
-				weles.ArtifactTypeRESULT,
-				weles.ArtifactTypeYAML,
+			Type: []enums.ArtifactType{
+				enums.ArtifactTypeRESULT,
+				enums.ArtifactTypeYAML,
 			},
 		}
 
 		sorterEmpty = weles.ArtifactSorter{}
 
 		sorterDescNoBy = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderDescending,
+			SortOrder: enums.SortOrderDescending,
 		}
 
 		sorterAscNoBy = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderAscending,
+			SortOrder: enums.SortOrderAscending,
 		}
 
 		sorterNoOrderID = weles.ArtifactSorter{
-			SortBy: weles.ArtifactSortByID,
+			SortBy: enums.ArtifactSortByID,
 		}
 
 		sorterDescID = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderDescending,
-			SortBy:    weles.ArtifactSortByID,
+			SortOrder: enums.SortOrderDescending,
+			SortBy:    enums.ArtifactSortByID,
 		}
 
 		sorterAscID = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderAscending,
-			SortBy:    weles.ArtifactSortByID,
+			SortOrder: enums.SortOrderAscending,
+			SortBy:    enums.ArtifactSortByID,
 		}
 
 		// default value

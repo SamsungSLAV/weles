@@ -31,6 +31,7 @@ import (
 	"github.com/go-openapi/strfmt"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 // JobsControllerImpl structure stores Weles' Jobs data. It controls
@@ -93,7 +94,7 @@ func (js *JobsControllerImpl) NewJob(yaml []byte) (weles.JobID, error) {
 			JobID:   j,
 			Created: now,
 			Updated: now,
-			Status:  weles.JobStatusNEW,
+			Status:  enums.JobStatusNEW,
 		},
 		yaml: yaml,
 	}
@@ -133,34 +134,34 @@ func (js *JobsControllerImpl) SetConfig(j weles.JobID, conf weles.Config) error 
 
 // isStatusChangeValid verifies if Job's status change is valid.
 // It is a helper function for SetStatusAndInfo.
-func isStatusChangeValid(oldStatus, newStatus weles.JobStatus) bool {
+func isStatusChangeValid(oldStatus, newStatus enums.JobStatus) bool {
 	if oldStatus == newStatus {
 		return true
 	}
 	switch oldStatus {
-	case weles.JobStatusNEW:
+	case enums.JobStatusNEW:
 		switch newStatus {
-		case weles.JobStatusPARSING, weles.JobStatusCANCELED, weles.JobStatusFAILED:
+		case enums.JobStatusPARSING, enums.JobStatusCANCELED, enums.JobStatusFAILED:
 			return true
 		}
-	case weles.JobStatusPARSING:
+	case enums.JobStatusPARSING:
 		switch newStatus {
-		case weles.JobStatusDOWNLOADING, weles.JobStatusCANCELED, weles.JobStatusFAILED:
+		case enums.JobStatusDOWNLOADING, enums.JobStatusCANCELED, enums.JobStatusFAILED:
 			return true
 		}
-	case weles.JobStatusDOWNLOADING:
+	case enums.JobStatusDOWNLOADING:
 		switch newStatus {
-		case weles.JobStatusWAITING, weles.JobStatusCANCELED, weles.JobStatusFAILED:
+		case enums.JobStatusWAITING, enums.JobStatusCANCELED, enums.JobStatusFAILED:
 			return true
 		}
-	case weles.JobStatusWAITING:
+	case enums.JobStatusWAITING:
 		switch newStatus {
-		case weles.JobStatusRUNNING, weles.JobStatusCANCELED, weles.JobStatusFAILED:
+		case enums.JobStatusRUNNING, enums.JobStatusCANCELED, enums.JobStatusFAILED:
 			return true
 		}
-	case weles.JobStatusRUNNING:
+	case enums.JobStatusRUNNING:
 		switch newStatus {
-		case weles.JobStatusCOMPLETED, weles.JobStatusCANCELED, weles.JobStatusFAILED:
+		case enums.JobStatusCOMPLETED, enums.JobStatusCANCELED, enums.JobStatusFAILED:
 			return true
 		}
 	}
@@ -178,7 +179,7 @@ func isStatusChangeValid(oldStatus, newStatus weles.JobStatus) bool {
 // * JobStatusDOWNLOADING --> {JobStatusWAITING, JobStatusCANCELED, JobStatusFAILED}
 // * JobStatusWAITING --> {JobStatusRUNNING, JobStatusCANCELED, JobStatusFAILED}
 // * JobStatusRUNNING --> {JobStatusCOMPLETED, JobStatusCANCELED, JobStatusFAILED}
-func (js *JobsControllerImpl) SetStatusAndInfo(j weles.JobID, newStatus weles.JobStatus, msg string,
+func (js *JobsControllerImpl) SetStatusAndInfo(j weles.JobID, newStatus enums.JobStatus, msg string,
 ) error {
 
 	js.mutex.Lock()
@@ -285,11 +286,11 @@ func (js *JobsControllerImpl) sort(ret []weles.JobInfo, sorter weles.JobSorter) 
 		by:   byJobIDAsc,
 	}
 	switch sorter.SortBy {
-	case weles.JobSortByCreatedDate:
+	case enums.JobSortByCreatedDate:
 		ps.setByFunction(sorter.SortOrder, byCreatedAsc, byCreatedDesc)
-	case weles.JobSortByUpdatedDate:
+	case enums.JobSortByUpdatedDate:
 		ps.setByFunction(sorter.SortOrder, byUpdatedAsc, byUpdatedDesc)
-	case weles.JobSortByJobStatus:
+	case enums.JobSortByJobStatus:
 		ps.setByFunction(sorter.SortOrder, byStatusAsc, byStatusDesc)
 	}
 	sort.Sort(ps)
@@ -380,7 +381,7 @@ type filter struct {
 	Info          *regexp.Regexp
 	JobID         map[weles.JobID]interface{}
 	Name          *regexp.Regexp
-	Status        map[weles.JobStatus]interface{}
+	Status        map[enums.JobStatus]interface{}
 }
 
 func prepareFilterRegexp(arr []string) (*regexp.Regexp, error) {
@@ -425,7 +426,7 @@ func prepareFilter(in *weles.JobFilter) (out *filter, err error) {
 		return nil, weles.ErrInvalidArgument("cannot compile regex from Name: " + regErr.Error())
 	}
 	if len(in.Status) > 0 {
-		out.Status = make(map[weles.JobStatus]interface{})
+		out.Status = make(map[enums.JobStatus]interface{})
 		for _, x := range in.Status {
 			out.Status[x] = nil
 		}
@@ -556,11 +557,11 @@ func (s *jobSorter) Less(i, j int) bool {
 // by is the type of a "less" function that defines the ordering of its JobInfo arguments.
 type by func(p1, p2 *weles.JobInfo) bool
 
-func (s *jobSorter) setByFunction(order weles.SortOrder, asc, desc by) {
+func (s *jobSorter) setByFunction(order enums.SortOrder, asc, desc by) {
 	switch order {
-	case weles.SortOrderAscending:
+	case enums.SortOrderAscending:
 		s.by = asc
-	case weles.SortOrderDescending:
+	case enums.SortOrderDescending:
 		s.by = desc
 	}
 }
