@@ -90,7 +90,7 @@ func NewArtifactManager(db, dir string, notifierCap, workersCount, queueCap int,
 
 // ListArtifact is part of implementation of ArtifactManager interface.
 func (s *Storage) ListArtifact(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
-	paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+	paginator weles.ArtifactPaginator) ([]weles.ArtifactInfo, weles.ListInfo, error) {
 
 	return s.db.Filter(filter, sorter, paginator)
 }

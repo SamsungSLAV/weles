@@ -174,7 +174,7 @@ var _ = Describe("ArtifactDB", func() {
 		}
 		emptyFilter = weles.ArtifactFilter{}
 
-		emptyPaginator = weles.ArtifactPagination{}
+		emptyPaginator = weles.ArtifactPaginator{}
 
 		descendingSorter = weles.ArtifactSorter{
 			SortOrder: enums.SortOrderDescending,
@@ -412,7 +412,7 @@ var _ = Describe("ArtifactDB", func() {
 	Describe("Pagination", func() {
 		Context("Database is filled with generatedRecordsCount records", func() {
 			DescribeTable("paginating through artifacts",
-				func(paginator weles.ArtifactPagination,
+				func(paginator weles.ArtifactPaginator,
 					expectedResponseLength, expectedRemainingRecords int) {
 
 					result, list, err := silverHoneybadger.Filter(
@@ -425,15 +425,15 @@ var _ = Describe("ArtifactDB", func() {
 				},
 				// please keep in mind that data is sorted in descending order.
 				Entry("first and last page (limit is 0)",
-					weles.ArtifactPagination{ID: 0, Limit: 0, Forward: true},
+					weles.ArtifactPaginator{ID: 0, Limit: 0, Forward: true},
 					generatedRecordsCount, 0),
 
 				Entry("first page, paginating forward",
-					weles.ArtifactPagination{ID: 0, Limit: pageLimit, Forward: true},
+					weles.ArtifactPaginator{ID: 0, Limit: pageLimit, Forward: true},
 					pageLimit, (generatedRecordsCount-pageLimit)),
 
 				Entry("second page, paginating forward",
-					weles.ArtifactPagination{
+					weles.ArtifactPaginator{
 						ID:      (generatedRecordsCount - pageLimit + 1),
 						Limit:   pageLimit,
 						Forward: true,
@@ -442,7 +442,7 @@ var _ = Describe("ArtifactDB", func() {
 					(generatedRecordsCount-(2*pageLimit))),
 
 				Entry("last page, paginating forward",
-					weles.ArtifactPagination{
+					weles.ArtifactPaginator{
 						ID: int64(generatedRecordsCount -
 							(pageLimit * int(generatedRecordsCount/pageLimit)) + 1),
 						Limit:   pageLimit,
@@ -452,7 +452,7 @@ var _ = Describe("ArtifactDB", func() {
 					0),
 
 				Entry("second to last page, paginating backward",
-					weles.ArtifactPagination{
+					weles.ArtifactPaginator{
 						ID: int64(generatedRecordsCount -
 							(pageLimit * int(generatedRecordsCount/pageLimit))),
 						Limit:   pageLimit,
@@ -462,7 +462,7 @@ var _ = Describe("ArtifactDB", func() {
 					pageLimit*(pageCount-2)),
 
 				Entry("first page, paginating backward",
-					weles.ArtifactPagination{
+					weles.ArtifactPaginator{
 						ID:      int64(generatedRecordsCount - pageLimit),
 						Limit:   pageLimit,
 						Forward: false,

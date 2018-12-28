@@ -123,7 +123,7 @@ func (c *Controller) CancelJob(j weles.JobID) error {
 // ListJobs returns information on Jobs.
 // It is a part of JobManager implementation.
 func (c *Controller) ListJobs(filter weles.JobFilter, sorter weles.JobSorter,
-	paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) {
+	paginator weles.JobPaginator) ([]weles.JobInfo, weles.ListInfo, error) {
 	return c.jobs.List(filter, sorter, paginator)
 }
 

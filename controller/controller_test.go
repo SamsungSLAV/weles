@@ -170,7 +170,7 @@ var _ = Describe("Controller", func() {
 		It("should call JobsController method", func() {
 			filter := weles.JobFilter{}
 			sorter := weles.JobSorter{}
-			paginator := weles.JobPagination{}
+			paginator := weles.JobPaginator{}
 			list := []weles.JobInfo{
 				{
 					JobID: weles.JobID(3),
