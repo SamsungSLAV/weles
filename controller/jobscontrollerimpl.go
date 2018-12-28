@@ -243,7 +243,7 @@ func (js *JobsControllerImpl) GetDryad(j weles.JobID) (weles.Dryad, error) {
 	return job.dryad, nil
 }
 
-func (js *JobsControllerImpl) filter(filter weles.JobFilter, paginator weles.JobPagination) (
+func (js *JobsControllerImpl) filter(filter weles.JobFilter, paginator weles.JobPaginator) (
 	[]weles.JobInfo, bool, error) {
 	// extra defines if the returned collection of JobInfo contain additionally pagination JobID.
 	var extra = false
@@ -297,7 +297,7 @@ func (js *JobsControllerImpl) sort(ret []weles.JobInfo, sorter weles.JobSorter) 
 	return ps.jobs
 }
 
-func (js *JobsControllerImpl) paginate(ret []weles.JobInfo, paginator weles.JobPagination) (
+func (js *JobsControllerImpl) paginate(ret []weles.JobInfo, paginator weles.JobPaginator) (
 	total, elems, left, index int) {
 	// Pagination.
 	total = len(ret)
@@ -336,11 +336,11 @@ func (js *JobsControllerImpl) paginate(ret []weles.JobInfo, paginator weles.JobP
 // List returns information on Jobs. It takes 3 arguments:
 // - JobFilter containing filters
 // - JobSorter containing sorting key and sorting direction
-// - JobPagination containing element after/before which a page should be returned. It also
+// - JobPaginator containing element after/before which a page should be returned. It also
 // contains information about direction of listing and the size of the returned page which
 // must always be set.
 func (js *JobsControllerImpl) List(filter weles.JobFilter, sorter weles.JobSorter,
-	paginator weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) {
+	paginator weles.JobPaginator) ([]weles.JobInfo, weles.ListInfo, error) {
 
 	js.mutex.RLock()
 	defer js.mutex.RUnlock()

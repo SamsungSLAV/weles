@@ -27,7 +27,7 @@ import (
 
 // JobLister is a handler which passess requests for listing jobs to jobmanager.
 func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responder {
-	paginator := weles.JobPagination{}
+	paginator := weles.JobPaginator{}
 	if a.PageLimit != 0 {
 		if (params.After != nil) && (params.Before != nil) {
 			return jobs.NewJobListerBadRequest().WithPayload(
@@ -65,7 +65,7 @@ func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responde
 	return responder206(listInfo, paginator, jobInfoReturned, a.PageLimit)
 }
 
-func responder206(listInfo weles.ListInfo, paginator weles.JobPagination,
+func responder206(listInfo weles.ListInfo, paginator weles.JobPaginator,
 	jobInfoReturned []*weles.JobInfo, defaultPageLimit int32,
 ) (responder *jobs.JobListerPartialContent) {
 	var jobListerURL jobs.JobListerURL
@@ -96,7 +96,7 @@ func responder206(listInfo weles.ListInfo, paginator weles.JobPagination,
 	return
 }
 
-func responder200(listInfo weles.ListInfo, paginator weles.JobPagination,
+func responder200(listInfo weles.ListInfo, paginator weles.JobPaginator,
 	jobInfoReturned []*weles.JobInfo, defaultPageLimit int32,
 ) (responder *jobs.JobListerOK) {
 	var jobListerURL jobs.JobListerURL
@@ -172,7 +172,7 @@ func setJobFilter(i *weles.JobFilter) (o weles.JobFilter) {
 }
 
 func setJobPaginator(params jobs.JobListerParams, defaultPageLimit int32,
-) (paginator weles.JobPagination) {
+) (paginator weles.JobPaginator) {
 	paginator.Forward = true
 	if params.After != nil {
 		paginator.JobID = weles.JobID(*params.After)

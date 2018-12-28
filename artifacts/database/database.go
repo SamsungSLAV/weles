@@ -92,7 +92,7 @@ func (aDB *ArtifactDB) SelectPath(path weles.ArtifactPath) (weles.ArtifactInfo, 
 // prepareQuery prepares query based on given filter.
 // TODO code duplication
 func prepareQuery(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
-	paginator weles.ArtifactPagination, totalRecords, remainingRecords bool, offset int64,
+	paginator weles.ArtifactPaginator, totalRecords, remainingRecords bool, offset int64,
 ) (query string, args []interface{}) {
 
 	if !totalRecords && !remainingRecords {
@@ -181,7 +181,7 @@ func prepareQueryFilter(filter weles.ArtifactFilter) (conditions []string, args 
 
 // Filter fetches elements matching ArtifactFilter from database.
 func (aDB *ArtifactDB) Filter(filter weles.ArtifactFilter, sorter weles.ArtifactSorter,
-	paginator weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+	paginator weles.ArtifactPaginator) ([]weles.ArtifactInfo, weles.ListInfo, error) {
 
 	results := []weles.ArtifactInfo{}
 	var tr, rr int64

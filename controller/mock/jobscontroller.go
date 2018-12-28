@@ -74,7 +74,7 @@ func (mr *MockJobsControllerMockRecorder) GetYaml(arg0 interface{}) *gomock.Call
 }
 
 // List mocks base method
-func (m *MockJobsController) List(arg0 weles.JobFilter, arg1 weles.JobSorter, arg2 weles.JobPagination) ([]weles.JobInfo, weles.ListInfo, error) {
+func (m *MockJobsController) List(arg0 weles.JobFilter, arg1 weles.JobSorter, arg2 weles.JobPaginator) ([]weles.JobInfo, weles.ListInfo, error) {
 	ret := m.ctrl.Call(m, "List", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]weles.JobInfo)
 	ret1, _ := ret[1].(weles.ListInfo)

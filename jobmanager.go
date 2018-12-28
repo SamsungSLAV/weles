@@ -29,8 +29,8 @@ type JobManager interface {
 	// ListJobs returns information on Jobs. It takes 3 arguments:
 	// - JobFilter containing filters
 	// - JobSorter containing sorting key and sorting direction
-	// - JobPagination containing element after/before which a page should be returned. It also
+	// - JobPaginator containing element after/before which a page should be returned. It also
 	// contains information about direction of listing and the size of the returned page which
 	// must always be set.
-	ListJobs(JobFilter, JobSorter, JobPagination) ([]JobInfo, ListInfo, error)
+	ListJobs(JobFilter, JobSorter, JobPaginator) ([]JobInfo, ListInfo, error)
 }

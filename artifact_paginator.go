@@ -14,17 +14,18 @@
 
 package weles
 
-// JobPagination holds information neccessary to request for a single page of data.
-// When JobID is set, and Forward is false - Controller should return a page of records before the
-// supplied JobID.
-// When JobID is set, and Forward is true -  Controller should return page of record after the
-// supplied JobID.
-// In both cases, returned page should not include supplied JobID.
+// ArtifactPaginator holds information neccessary to request for a single page of data from
+// artifactmanager.
+// When ID is set, and Forward is false - ArtifactManager should return a page of records before the
+// supplied ID.
+// When ID is set, and Forward is true -  ArtifactManager should return page of records after the
+// supplied ID.
+// In both cases, returned page should not include supplied ID.
 // Limit denotes the number of records to be returned on the page.
-// When Limit is set to 0, pagination is disabled, JobID and Forward fields are ignored
+// When Limit is set to 0, pagination is disabled, ID and Forward fields are ignored
 // and all records are returned.
-type JobPagination struct {
-	JobID   JobID
+type ArtifactPaginator struct {
+	ID      int64
 	Forward bool
 	Limit   int32
 }
