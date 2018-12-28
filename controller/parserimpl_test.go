@@ -22,6 +22,7 @@ import (
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles/enums"
 	mock "github.com/SamsungSLAV/weles/mock"
 	gomock "github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -66,12 +67,12 @@ var _ = Describe("ParserImpl", func() {
 	Describe("Parse", func() {
 		It("should handle job successfully", func() {
 			gomock.InOrder(
-				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
+				jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
 				am.EXPECT().CreateArtifact(
 					weles.ArtifactDescription{
 						JobID: j,
-						Type:  weles.ArtifactTypeYAML,
+						Type:  enums.ArtifactTypeYAML,
 					}).Return(goodpath, nil),
 				yp.EXPECT().ParseYaml(yaml).Return(&config, nil),
 				jc.EXPECT().SetConfig(j, config),
@@ -86,12 +87,12 @@ var _ = Describe("ParserImpl", func() {
 		})
 		It("should fail when unable to set config", func() {
 			gomock.InOrder(
-				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
+				jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
 				am.EXPECT().CreateArtifact(
 					weles.ArtifactDescription{
 						JobID: j,
-						Type:  weles.ArtifactTypeYAML,
+						Type:  enums.ArtifactTypeYAML,
 					}).Return(goodpath, nil),
 				yp.EXPECT().ParseYaml(yaml).Return(&config, nil),
 				jc.EXPECT().SetConfig(j, config).Return(err),
@@ -108,12 +109,12 @@ var _ = Describe("ParserImpl", func() {
 		})
 		It("should fail when unable to parse yaml", func() {
 			gomock.InOrder(
-				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
+				jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
 				am.EXPECT().CreateArtifact(
 					weles.ArtifactDescription{
 						JobID: j,
-						Type:  weles.ArtifactTypeYAML,
+						Type:  enums.ArtifactTypeYAML,
 					}).Return(goodpath, nil),
 				yp.EXPECT().ParseYaml(yaml).Return(&weles.Config{}, err),
 			)
@@ -129,12 +130,12 @@ var _ = Describe("ParserImpl", func() {
 		})
 		It("should fail when unable to write yaml file", func() {
 			gomock.InOrder(
-				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
+				jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
 				am.EXPECT().CreateArtifact(
 					weles.ArtifactDescription{
 						JobID: j,
-						Type:  weles.ArtifactTypeYAML,
+						Type:  enums.ArtifactTypeYAML,
 					}).Return(badpath, nil),
 			)
 
@@ -150,12 +151,12 @@ var _ = Describe("ParserImpl", func() {
 		})
 		It("should fail when unable to create path in ArtifactDB", func() {
 			gomock.InOrder(
-				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
+				jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return(yaml, nil),
 				am.EXPECT().CreateArtifact(
 					weles.ArtifactDescription{
 						JobID: j,
-						Type:  weles.ArtifactTypeYAML,
+						Type:  enums.ArtifactTypeYAML,
 					}).Return(weles.ArtifactPath(""), err),
 			)
 
@@ -171,7 +172,7 @@ var _ = Describe("ParserImpl", func() {
 		})
 		It("should fail when unable to get yaml", func() {
 			gomock.InOrder(
-				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, ""),
+				jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusPARSING, ""),
 				jc.EXPECT().GetYaml(j).Return([]byte{}, err),
 			)
 
@@ -185,7 +186,7 @@ var _ = Describe("ParserImpl", func() {
 			Eventually(r).Should(Receive(Equal(expectedNotification)))
 		})
 		It("should fail when unable to change job status", func() {
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusPARSING, "").Return(err)
+			jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusPARSING, "").Return(err)
 
 			h.Parse(j)
 

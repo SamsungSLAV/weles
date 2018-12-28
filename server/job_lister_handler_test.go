@@ -32,6 +32,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 	"github.com/SamsungSLAV/weles/mock"
 	"github.com/SamsungSLAV/weles/server"
 	"github.com/SamsungSLAV/weles/server/operations/jobs"
@@ -64,29 +65,29 @@ var _ = Describe("Listing jobs with server initialized", func() {
 		sorterEmpty = weles.JobSorter{}
 
 		sorterDescNoBy = weles.JobSorter{
-			SortOrder: weles.SortOrderDescending,
+			SortOrder: enums.SortOrderDescending,
 		}
 
 		sorterAscNoBy = weles.JobSorter{
-			SortOrder: weles.SortOrderAscending,
+			SortOrder: enums.SortOrderAscending,
 		}
 
 		sorterNoOrderID = weles.JobSorter{
-			SortBy: weles.JobSortByID,
+			SortBy: enums.JobSortByID,
 		}
 
 		sorterNoOrderCreatedDate = weles.JobSorter{
-			SortBy: weles.JobSortByCreatedDate,
+			SortBy: enums.JobSortByCreatedDate,
 		}
 
 		sorterDescID = weles.JobSorter{
-			SortOrder: weles.SortOrderDescending,
-			SortBy:    weles.JobSortByID,
+			SortOrder: enums.SortOrderDescending,
+			SortBy:    enums.JobSortByID,
 		}
 
 		sorterAscID = weles.JobSorter{
-			SortOrder: weles.SortOrderAscending,
-			SortBy:    weles.JobSortByID,
+			SortOrder: enums.SortOrderAscending,
+			SortBy:    enums.JobSortByID,
 		}
 
 		// default value

@@ -31,6 +31,7 @@ import (
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/artifacts/database"
 	"github.com/SamsungSLAV/weles/artifacts/downloader"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 // ArtifactDownloader downloads requested file if there is need to.
@@ -107,7 +108,7 @@ func (s *Storage) PushArtifact(artifact weles.ArtifactDescription,
 	if err != nil {
 		err2 := s.db.SetStatus(weles.ArtifactStatusChange{
 			Path:      path,
-			NewStatus: weles.ArtifactStatusFAILED,
+			NewStatus: enums.ArtifactStatusFAILED,
 		})
 		if err2 != nil {
 			return "", errors.New(

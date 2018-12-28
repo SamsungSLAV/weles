@@ -27,6 +27,7 @@ import (
 	"github.com/go-openapi/strfmt"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
@@ -37,52 +38,52 @@ var _ = Describe("ArtifactDB", func() {
 		job           weles.JobID          = 58008
 		invalidJob    weles.JobID          = 1
 		invalidPath   weles.ArtifactPath   = "invalidPath"
-		invalidStatus weles.ArtifactStatus = "invalidStatus"
-		invalidType   weles.ArtifactType   = "invalidType"
+		invalidStatus enums.ArtifactStatus = "invalidStatus"
+		invalidType   enums.ArtifactType   = "invalidType"
 		invalidAlias  weles.ArtifactAlias  = "invalidAlias"
 
 		artifact = weles.ArtifactInfo{
 			ArtifactDescription: weles.ArtifactDescription{
 				Alias: "some alias",
 				JobID: job,
-				Type:  weles.ArtifactTypeIMAGE,
+				Type:  enums.ArtifactTypeIMAGE,
 				URI:   "http://example.com",
 			},
 			Path:      "path1",
-			Status:    weles.ArtifactStatusPENDING,
+			Status:    enums.ArtifactStatusPENDING,
 			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
 		aImageReady = weles.ArtifactInfo{
 			ArtifactDescription: weles.ArtifactDescription{
 				Alias: "other alias",
 				JobID: job + 1,
-				Type:  weles.ArtifactTypeIMAGE,
+				Type:  enums.ArtifactTypeIMAGE,
 				URI:   "http://example.com/1",
 			},
 			Path:      "path2",
-			Status:    weles.ArtifactStatusREADY,
+			Status:    enums.ArtifactStatusREADY,
 			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
 		aYamlFailed = weles.ArtifactInfo{
 			ArtifactDescription: weles.ArtifactDescription{
 				Alias: "other alias",
 				JobID: job + 1,
-				Type:  weles.ArtifactTypeYAML,
+				Type:  enums.ArtifactTypeYAML,
 				URI:   "http://example.com/2",
 			},
 			Path:      "path3",
-			Status:    weles.ArtifactStatusFAILED,
+			Status:    enums.ArtifactStatusFAILED,
 			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 		}
 		aTestFailed = weles.ArtifactInfo{
 			ArtifactDescription: weles.ArtifactDescription{
 				Alias: "alias",
 				JobID: job + 2,
-				Type:  weles.ArtifactTypeTEST,
+				Type:  enums.ArtifactTypeTEST,
 				URI:   "http://example.com/3",
 			},
 			Path:      "path4",
-			Status:    weles.ArtifactStatusFAILED,
+			Status:    enums.ArtifactStatusFAILED,
 			Timestamp: strfmt.DateTime(time.Unix(3000, 60).Round(time.Millisecond).UTC()),
 		}
 		testArtifacts = []weles.ArtifactInfo{artifact, aImageReady, aYamlFailed, aTestFailed}
@@ -107,38 +108,38 @@ var _ = Describe("ArtifactDB", func() {
 		}
 		oneTypeFilter = weles.ArtifactFilter{
 			JobID:  nil,
-			Type:   []weles.ArtifactType{aYamlFailed.Type},
+			Type:   []enums.ArtifactType{aYamlFailed.Type},
 			Status: nil,
 			Alias:  nil,
 		}
 		twoTypesFilter = weles.ArtifactFilter{
 			JobID:  nil,
-			Type:   []weles.ArtifactType{aYamlFailed.Type, aTestFailed.Type},
+			Type:   []enums.ArtifactType{aYamlFailed.Type, aTestFailed.Type},
 			Status: nil,
 			Alias:  nil,
 		}
 		noTypeFilter = weles.ArtifactFilter{
 			JobID:  nil,
-			Type:   []weles.ArtifactType{invalidType},
+			Type:   []enums.ArtifactType{invalidType},
 			Status: nil,
 			Alias:  nil,
 		}
 		oneStatusFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   nil,
-			Status: []weles.ArtifactStatus{artifact.Status},
+			Status: []enums.ArtifactStatus{artifact.Status},
 			Alias:  nil,
 		}
 		twoStatusFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   nil,
-			Status: []weles.ArtifactStatus{artifact.Status, aYamlFailed.Status},
+			Status: []enums.ArtifactStatus{artifact.Status, aYamlFailed.Status},
 			Alias:  nil,
 		}
 		noStatusFilter = weles.ArtifactFilter{
 			JobID:  nil,
 			Type:   nil,
-			Status: []weles.ArtifactStatus{invalidStatus},
+			Status: []enums.ArtifactStatus{invalidStatus},
 			Alias:  nil,
 		}
 		oneAliasFilter = weles.ArtifactFilter{
@@ -176,15 +177,15 @@ var _ = Describe("ArtifactDB", func() {
 		emptyPaginator = weles.ArtifactPagination{}
 
 		descendingSorter = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderDescending,
-			SortBy:    weles.ArtifactSortByID,
+			SortOrder: enums.SortOrderDescending,
+			SortBy:    enums.ArtifactSortByID,
 		}
 
 		defaultSorter = descendingSorter
 
 		ascendingSorter = weles.ArtifactSorter{
-			SortOrder: weles.SortOrderAscending,
-			SortBy:    weles.ArtifactSortByID,
+			SortOrder: enums.SortOrderAscending,
+			SortBy:    enums.ArtifactSortByID,
 		}
 	)
 	jobInDB := func(job weles.JobID, db ArtifactDB) bool {
@@ -273,13 +274,13 @@ var _ = Describe("ArtifactDB", func() {
 				Entry("change status of artifact not present in ArtifactDB",
 					weles.ArtifactStatusChange{
 						Path:      invalidPath,
-						NewStatus: weles.ArtifactStatusDOWNLOADING,
+						NewStatus: enums.ArtifactStatusDOWNLOADING,
 					},
 					sql.ErrNoRows),
 				Entry("change status of artifact present in ArtifactDB",
 					weles.ArtifactStatusChange{
 						Path:      artifact.Path,
-						NewStatus: weles.ArtifactStatusDOWNLOADING,
+						NewStatus: enums.ArtifactStatusDOWNLOADING,
 					},
 					nil),
 			)
@@ -382,7 +383,7 @@ var _ = Describe("ArtifactDB", func() {
 					result, _, err := goldenUnicorn.Filter(emptyFilter, sorter, emptyPaginator)
 					Expect(err).ToNot(HaveOccurred())
 					var currID int
-					if sorter.SortOrder == weles.SortOrderAscending {
+					if sorter.SortOrder == enums.SortOrderAscending {
 						for _, a := range result {
 							if currID == 0 {
 								currID = int(a.ID)

@@ -29,6 +29,7 @@ import (
 	"github.com/SamsungSLAV/boruta"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 // Controller binds all major components of Weles and provides logic layer
@@ -110,7 +111,7 @@ func (c *Controller) CreateJob(yaml []byte) (weles.JobID, error) {
 // CancelJob cancels Job identified by argument. Job execution is stopped.
 // It is a part of JobManager implementation.
 func (c *Controller) CancelJob(j weles.JobID) error {
-	err := c.jobs.SetStatusAndInfo(j, weles.JobStatusCANCELED, "")
+	err := c.jobs.SetStatusAndInfo(j, enums.JobStatusCANCELED, "")
 	if err != nil {
 		return err
 	}
@@ -166,7 +167,7 @@ func (c *Controller) loop() {
 // and releases Dryad to Boruta.
 func (c *Controller) fail(j weles.JobID, msg string) {
 	// errors logged in the SetStatusAndInfo.
-	_ = c.jobs.SetStatusAndInfo(j, weles.JobStatusFAILED, msg) // nolint:gosec
+	_ = c.jobs.SetStatusAndInfo(j, enums.JobStatusFAILED, msg) // nolint:gosec
 	c.dryader.CancelJob(j)
 	c.boruter.Release(j)
 }
@@ -174,6 +175,6 @@ func (c *Controller) fail(j weles.JobID, msg string) {
 // succeed sets Job in COMPLETED state.
 func (c *Controller) succeed(j weles.JobID) {
 	// errors logged in the SetStatusAndInfo.
-	_ = c.jobs.SetStatusAndInfo(j, weles.JobStatusCOMPLETED, "") // nolint:gosec
+	_ = c.jobs.SetStatusAndInfo(j, enums.JobStatusCOMPLETED, "") // nolint:gosec
 	c.boruter.Release(j)
 }

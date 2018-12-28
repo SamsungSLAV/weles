@@ -23,6 +23,7 @@ import (
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles/enums"
 	mock "github.com/SamsungSLAV/weles/mock"
 	gomock "github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -166,7 +167,7 @@ var _ = Describe("DryaderImpl", func() {
 		It("should update status of the Job", func() {
 			for i, s := range updateStates {
 				change := weles.DryadJobInfo{Job: j, Status: s}
-				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusRUNNING, updateMsgs[i])
+				jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusRUNNING, updateMsgs[i])
 
 				h.(*DryaderImpl).listener <- weles.DryadJobStatusChange(change)
 
@@ -183,7 +184,7 @@ var _ = Describe("DryaderImpl", func() {
 		DescribeTable("should fail if updating status of the Job fails",
 			func(s weles.DryadJobStatus, msg string) {
 				change := weles.DryadJobInfo{Job: j, Status: s}
-				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusRUNNING, msg).Return(err)
+				jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusRUNNING, msg).Return(err)
 
 				h.(*DryaderImpl).listener <- weles.DryadJobStatusChange(change)
 
