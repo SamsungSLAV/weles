@@ -14,9 +14,11 @@
 
 package weles
 
+import "github.com/SamsungSLAV/weles/enums"
+
 // ArtifactStatusChange contains information about new status of an artifact.
 // It is used to monitor status changes.
 type ArtifactStatusChange struct {
 	Path      ArtifactPath
-	NewStatus ArtifactStatus
+	NewStatus enums.ArtifactStatus
 }

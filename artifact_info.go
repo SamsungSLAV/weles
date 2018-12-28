@@ -26,6 +26,8 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
+
+	enums "github.com/SamsungSLAV/weles/enums"
 )
 
 // ArtifactInfo describes single artifact stored in ArtifactDB.
@@ -40,7 +42,7 @@ type ArtifactInfo struct {
 	Path ArtifactPath `json:"Path,omitempty"`
 
 	// status
-	Status ArtifactStatus `json:"Status,omitempty"`
+	Status enums.ArtifactStatus `json:"Status,omitempty"`
 
 	// is date of creating the artifact.
 	// Format: date-time
@@ -62,7 +64,7 @@ func (m *ArtifactInfo) UnmarshalJSON(raw []byte) error {
 
 		Path ArtifactPath `json:"Path,omitempty"`
 
-		Status ArtifactStatus `json:"Status,omitempty"`
+		Status enums.ArtifactStatus `json:"Status,omitempty"`
 
 		Timestamp strfmt.DateTime `json:"Timestamp,omitempty"`
 	}
@@ -96,7 +98,7 @@ func (m ArtifactInfo) MarshalJSON() ([]byte, error) {
 
 		Path ArtifactPath `json:"Path,omitempty"`
 
-		Status ArtifactStatus `json:"Status,omitempty"`
+		Status enums.ArtifactStatus `json:"Status,omitempty"`
 
 		Timestamp strfmt.DateTime `json:"Timestamp,omitempty"`
 	}

@@ -28,6 +28,7 @@ import (
 	"github.com/tideland/golib/audit"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 	"github.com/SamsungSLAV/weles/mock"
 	"github.com/SamsungSLAV/weles/server"
 	"github.com/SamsungSLAV/weles/server/operations"
@@ -85,11 +86,11 @@ func createJobInfoSlice(sliceLenght int) (ret []weles.JobInfo) {
 		tmp.Updated = strfmt.DateTime(gen.Time(time.Local, createdTime, durationIncrement2))
 		tmp.Info = gen.Sentence()
 		tmp.Name = gen.Word()
-		tmp.Status = weles.JobStatus(gen.OneStringOf(string(weles.JobStatusNEW),
-			string(weles.JobStatusPARSING), string(weles.JobStatusDOWNLOADING),
-			string(weles.JobStatusWAITING), string(weles.JobStatusRUNNING),
-			string(weles.JobStatusCOMPLETED), string(weles.JobStatusFAILED),
-			string(weles.JobStatusCANCELED)))
+		tmp.Status = enums.JobStatus(gen.OneStringOf(string(enums.JobStatusNEW),
+			string(enums.JobStatusPARSING), string(enums.JobStatusDOWNLOADING),
+			string(enums.JobStatusWAITING), string(enums.JobStatusRUNNING),
+			string(enums.JobStatusCOMPLETED), string(enums.JobStatusFAILED),
+			string(enums.JobStatusCANCELED)))
 		tmp.JobID = weles.JobID(i + 1)
 		dateTimeIter = dateTimeIter.Add(durationIncrement)
 		jobInfo[i] = tmp

@@ -25,6 +25,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+
+	enums "github.com/SamsungSLAV/weles/enums"
 )
 
 // ArtifactDescription contains information needed to create new artifact in ArtifactDB.
@@ -38,7 +40,7 @@ type ArtifactDescription struct {
 	JobID JobID `json:"JobID,omitempty"`
 
 	// type
-	Type ArtifactType `json:"Type,omitempty"`
+	Type enums.ArtifactType `json:"Type,omitempty"`
 
 	// URI
 	// Format: uri
