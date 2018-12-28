@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c5b875e_67d7cdce",
+        "filename": ".gometalinter.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-28T16:16:21Z",
+      "side": 1,
+      "message": "maybe sort this also lexicographicaly",
+      "range": {
+        "startLine": 41,
+        "startChar": 1,
+        "endLine": 43,
+        "endChar": 30
+      },
+      "revId": "4bbb5080fd79059f6ccc91c8a91c1e2acb1a4515",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b13bd6d_a6054f9f",
+        "filename": ".gometalinter.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-28T16:16:21Z",
+      "side": 1,
+      "message": "I don\u0027t think this one is automatically generated. It look like a creation of a human.",
+      "revId": "4bbb5080fd79059f6ccc91c8a91c1e2acb1a4515",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
