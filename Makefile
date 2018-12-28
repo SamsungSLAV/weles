@@ -112,9 +112,7 @@ clean-vendor:
 # it is up to the developer to regenerate mocks after interface changes.
 .PHONY: mocks
 mocks: tools
-	go generate ./mock
-	go generate ./manager
-	go generate ./controller/mock
+	go generate -x ./...
 
 .PHONY: tools
 tools: vendor $(DEV_TOOLS_BIN)
