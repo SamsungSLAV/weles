@@ -29,6 +29,7 @@ import (
 	"github.com/SamsungSLAV/boruta"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 // TODO ProlongAccess to Dryad in Boruta, before time expires.
@@ -266,7 +267,7 @@ func (h *BoruterImpl) getDeadline(config weles.Config) time.Time {
 
 // Request registers new request in Boruta and adds it to monitored requests.
 func (h *BoruterImpl) Request(j weles.JobID) {
-	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusWAITING, "")
+	err := h.jobs.SetStatusAndInfo(j, enums.JobStatusWAITING, "")
 	if err != nil {
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",
 			err.Error()))

@@ -27,6 +27,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+
+	enums "github.com/SamsungSLAV/weles/enums"
 )
 
 // ArtifactFilter is used to filter results from ArtifactDB.
@@ -40,10 +42,10 @@ type ArtifactFilter struct {
 	JobID []JobID `json:"JobID"`
 
 	// status
-	Status []ArtifactStatus `json:"Status"`
+	Status []enums.ArtifactStatus `json:"Status"`
 
 	// type
-	Type []ArtifactType `json:"Type"`
+	Type []enums.ArtifactType `json:"Type"`
 }
 
 // Validate validates this artifact filter

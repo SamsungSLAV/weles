@@ -28,6 +28,7 @@ import (
 	"strconv"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 
 	_ "github.com/mattn/go-sqlite3"
 	. "github.com/onsi/ginkgo"
@@ -65,21 +66,21 @@ With gently smiling jaws!
 		description = weles.ArtifactDescription{
 			Alias: "alias",
 			JobID: job,
-			Type:  weles.ArtifactTypeIMAGE,
+			Type:  enums.ArtifactTypeIMAGE,
 			URI:   "uri",
 		}
 
 		dSameJobNType = weles.ArtifactDescription{
 			Alias: "other alias",
 			JobID: job,
-			Type:  weles.ArtifactTypeIMAGE,
+			Type:  enums.ArtifactTypeIMAGE,
 			URI:   "other uri",
 		}
 
 		dSameJobOtherType = weles.ArtifactDescription{
 			Alias: "another alias",
 			JobID: job,
-			Type:  weles.ArtifactTypeYAML,
+			Type:  enums.ArtifactTypeYAML,
 			URI:   "another uri",
 		}
 	)
@@ -229,14 +230,14 @@ With gently smiling jaws!
 			ad weles.ArtifactDescription = weles.ArtifactDescription{
 				Alias: "somealias",
 				JobID: job,
-				Type:  weles.ArtifactTypeIMAGE,
+				Type:  enums.ArtifactTypeIMAGE,
 				URI:   validURL,
 			}
 
 			adInvalid weles.ArtifactDescription = weles.ArtifactDescription{
 				Alias: "somealias",
 				JobID: job,
-				Type:  weles.ArtifactTypeIMAGE,
+				Type:  enums.ArtifactTypeIMAGE,
 				URI:   invalidURL,
 			}
 		)
@@ -246,7 +247,7 @@ With gently smiling jaws!
 		})
 
 		DescribeTable("Push artifact",
-			func(ad weles.ArtifactDescription, finalStatus weles.ArtifactStatus) {
+			func(ad weles.ArtifactDescription, finalStatus enums.ArtifactStatus) {
 
 				ts := prepareServer(ad.URI)
 				defer ts.Close()
@@ -258,18 +259,18 @@ With gently smiling jaws!
 
 				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
 					Path:      path,
-					NewStatus: weles.ArtifactStatusPENDING,
+					NewStatus: enums.ArtifactStatusPENDING,
 				})))
 				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
 					Path:      path,
-					NewStatus: weles.ArtifactStatusDOWNLOADING,
+					NewStatus: enums.ArtifactStatusDOWNLOADING,
 				})))
 				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
 					Path:      path,
 					NewStatus: finalStatus,
 				})))
 
-				if finalStatus != weles.ArtifactStatusFAILED {
+				if finalStatus != enums.ArtifactStatusFAILED {
 					By("Check if file exists and has proper content")
 					content, erro := ioutil.ReadFile(string(path))
 
@@ -281,7 +282,7 @@ With gently smiling jaws!
 					Expect(string(path)).NotTo(BeAnExistingFile())
 				}
 
-				Eventually(func() weles.ArtifactStatus {
+				Eventually(func() enums.ArtifactStatus {
 					ai, err := silverKangaroo.GetArtifactInfo(path)
 					Expect(err).ToNot(HaveOccurred())
 					return ai.Status
@@ -290,8 +291,8 @@ With gently smiling jaws!
 				By("Check if artifact is in ArtifactDB")
 				Expect(checkPathInDb(path)).To(BeTrue())
 			},
-			Entry("push artifact to db and download file", ad, weles.ArtifactStatusREADY),
-			Entry("do not push an invalid artifact", adInvalid, weles.ArtifactStatusFAILED),
+			Entry("push artifact to db and download file", ad, enums.ArtifactStatusREADY),
+			Entry("do not push an invalid artifact", adInvalid, enums.ArtifactStatusFAILED),
 		)
 	})
 })

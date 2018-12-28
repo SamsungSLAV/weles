@@ -26,6 +26,7 @@ import (
 	"sync"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 // Downloader implements ArtifactDownloader interface.
@@ -116,7 +117,7 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath,
 
 	change := weles.ArtifactStatusChange{
 		Path:      path,
-		NewStatus: weles.ArtifactStatusDOWNLOADING,
+		NewStatus: enums.ArtifactStatusDOWNLOADING,
 	}
 	channels := []chan weles.ArtifactStatusChange{ch, d.notification}
 	notify(change, channels)
@@ -126,9 +127,9 @@ func (d *Downloader) download(URI weles.ArtifactURI, path weles.ArtifactPath,
 		if err = os.Remove(string(path)); err != nil {
 			log.Println("failed to remove an artifact: ", path, " due to: "+err.Error())
 		}
-		change.NewStatus = weles.ArtifactStatusFAILED
+		change.NewStatus = enums.ArtifactStatusFAILED
 	} else {
-		change.NewStatus = weles.ArtifactStatusREADY
+		change.NewStatus = enums.ArtifactStatusREADY
 	}
 	notify(change, channels)
 }
@@ -139,7 +140,7 @@ func (d *Downloader) Download(URI weles.ArtifactURI, path weles.ArtifactPath,
 	ch chan weles.ArtifactStatusChange) error {
 
 	channels := []chan weles.ArtifactStatusChange{ch, d.notification}
-	notify(weles.ArtifactStatusChange{Path: path, NewStatus: weles.ArtifactStatusPENDING}, channels)
+	notify(weles.ArtifactStatusChange{Path: path, NewStatus: enums.ArtifactStatusPENDING}, channels)
 
 	job := downloadJob{
 		path: path,

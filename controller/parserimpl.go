@@ -24,6 +24,7 @@ import (
 
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 // ParserImpl implements Parser for Controller.
@@ -52,7 +53,7 @@ func NewParser(j JobsController, a weles.ArtifactManager, p weles.Parser) Parser
 // Parse prepares new Job to be processed by saving yaml file in ArtifactDB,
 // parsing yaml and preparing Job's configuration.
 func (h *ParserImpl) Parse(j weles.JobID) {
-	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusPARSING, "")
+	err := h.jobs.SetStatusAndInfo(j, enums.JobStatusPARSING, "")
 	if err != nil {
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",
 			err.Error()))
@@ -68,7 +69,7 @@ func (h *ParserImpl) Parse(j weles.JobID) {
 
 	path, err := h.artifacts.CreateArtifact(weles.ArtifactDescription{
 		JobID: j,
-		Type:  weles.ArtifactTypeYAML,
+		Type:  enums.ArtifactTypeYAML,
 	})
 	if err != nil {
 		h.SendFail(j, fmt.Sprintf(

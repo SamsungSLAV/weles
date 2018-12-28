@@ -25,6 +25,7 @@ import (
 	"path/filepath"
 
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
@@ -105,7 +106,7 @@ I call it stupid of the pig.
 	}
 
 	DescribeTable("getData(): Notify channels and save data to file",
-		func(url weles.ArtifactURI, valid bool, finalResult weles.ArtifactStatus) {
+		func(url weles.ArtifactURI, valid bool, finalResult enums.ArtifactStatus) {
 			ts = prepareServer(url)
 			defer ts.Close()
 
@@ -129,14 +130,14 @@ I call it stupid of the pig.
 			}
 
 		},
-		Entry("download valid file to valid path", validURL, true, weles.ArtifactStatusREADY),
-		Entry("fail when url is invalid", invalidURL, true, weles.ArtifactStatusFAILED),
-		Entry("fail when path is invalid", validURL, false, weles.ArtifactStatusFAILED),
-		Entry("fail when url and path are invalid", invalidURL, false, weles.ArtifactStatusFAILED),
+		Entry("download valid file to valid path", validURL, true, enums.ArtifactStatusREADY),
+		Entry("fail when url is invalid", invalidURL, true, enums.ArtifactStatusFAILED),
+		Entry("fail when path is invalid", validURL, false, enums.ArtifactStatusFAILED),
+		Entry("fail when url and path are invalid", invalidURL, false, enums.ArtifactStatusFAILED),
 	)
 
 	DescribeTable("download(): Notify channels and save data to file",
-		func(url weles.ArtifactURI, valid bool, finalResult weles.ArtifactStatus) {
+		func(url weles.ArtifactURI, valid bool, finalResult enums.ArtifactStatus) {
 			ts = prepareServer(url)
 			defer ts.Close()
 
@@ -148,12 +149,12 @@ I call it stupid of the pig.
 
 			status := weles.ArtifactStatusChange{
 				Path:      filename,
-				NewStatus: weles.ArtifactStatusDOWNLOADING,
+				NewStatus: enums.ArtifactStatusDOWNLOADING,
 			}
 
 			platinumKoala.download(weles.ArtifactURI(ts.URL), weles.ArtifactPath(filename), ch)
 
-			status.NewStatus = weles.ArtifactStatusDOWNLOADING
+			status.NewStatus = enums.ArtifactStatusDOWNLOADING
 			checkChannels(ch, platinumKoala.notification, status)
 
 			status.NewStatus = finalResult
@@ -168,14 +169,14 @@ I call it stupid of the pig.
 			}
 
 		},
-		Entry("download valid file to valid path", validURL, true, weles.ArtifactStatusREADY),
-		Entry("fail when url is invalid", invalidURL, true, weles.ArtifactStatusFAILED),
-		Entry("fail when path is invalid", validURL, false, weles.ArtifactStatusFAILED),
-		Entry("fail when url and path are invalid", invalidURL, false, weles.ArtifactStatusFAILED),
+		Entry("download valid file to valid path", validURL, true, enums.ArtifactStatusREADY),
+		Entry("fail when url is invalid", invalidURL, true, enums.ArtifactStatusFAILED),
+		Entry("fail when path is invalid", validURL, false, enums.ArtifactStatusFAILED),
+		Entry("fail when url and path are invalid", invalidURL, false, enums.ArtifactStatusFAILED),
 	)
 
 	DescribeTable("Download(): Notify ch channel about any changes",
-		func(url weles.ArtifactURI, valid bool, finalResult weles.ArtifactStatus) {
+		func(url weles.ArtifactURI, valid bool, finalResult enums.ArtifactStatus) {
 			ts = prepareServer(url)
 			defer ts.Close()
 
@@ -190,20 +191,20 @@ I call it stupid of the pig.
 
 			status := weles.ArtifactStatusChange{
 				Path:      path,
-				NewStatus: weles.ArtifactStatusPENDING,
+				NewStatus: enums.ArtifactStatusPENDING,
 			}
 			Eventually(ch).Should(Receive(Equal(status)))
 
-			status.NewStatus = weles.ArtifactStatusDOWNLOADING
+			status.NewStatus = enums.ArtifactStatusDOWNLOADING
 			Eventually(ch).Should(Receive(Equal(status)))
 
 			status.NewStatus = finalResult
 			Eventually(ch).Should(Receive(Equal(status)))
 		},
-		Entry("download valid file to valid path", validURL, true, weles.ArtifactStatusREADY),
-		Entry("fail when url is invalid", invalidURL, true, weles.ArtifactStatusFAILED),
-		Entry("fail when path is invalid", validURL, false, weles.ArtifactStatusFAILED),
-		Entry("fail when url and path are invalid", invalidURL, false, weles.ArtifactStatusFAILED),
+		Entry("download valid file to valid path", validURL, true, enums.ArtifactStatusREADY),
+		Entry("fail when url is invalid", invalidURL, true, enums.ArtifactStatusFAILED),
+		Entry("fail when path is invalid", validURL, false, enums.ArtifactStatusFAILED),
+		Entry("fail when url and path are invalid", invalidURL, false, enums.ArtifactStatusFAILED),
 	)
 
 	DescribeTable("Download(): Download files to specified path.",
@@ -218,17 +219,17 @@ I call it stupid of the pig.
 
 			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
 				Path:      path,
-				NewStatus: weles.ArtifactStatusPENDING,
+				NewStatus: enums.ArtifactStatusPENDING,
 			})))
 			Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
 				Path:      path,
-				NewStatus: weles.ArtifactStatusDOWNLOADING,
+				NewStatus: enums.ArtifactStatusDOWNLOADING,
 			})))
 
 			if poem != "" {
 				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
 					Path:      path,
-					NewStatus: weles.ArtifactStatusREADY,
+					NewStatus: enums.ArtifactStatusREADY,
 				})))
 				content, err := ioutil.ReadFile(string(path))
 				Expect(err).ToNot(HaveOccurred())
@@ -236,7 +237,7 @@ I call it stupid of the pig.
 			} else {
 				Eventually(ch).Should(Receive(Equal(weles.ArtifactStatusChange{
 					Path:      path,
-					NewStatus: weles.ArtifactStatusFAILED,
+					NewStatus: enums.ArtifactStatusFAILED,
 				})))
 				content, err := ioutil.ReadFile(string(path))
 				Expect(err).To(HaveOccurred())

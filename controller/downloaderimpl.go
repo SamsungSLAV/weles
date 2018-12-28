@@ -24,6 +24,7 @@ import (
 
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 const (
@@ -86,7 +87,7 @@ func NewDownloader(j JobsController, a weles.ArtifactManager) Downloader {
 
 // pathStatusChange reacts on notification from ArtifactManager and updates
 // path and job structures.
-func (h *DownloaderImpl) pathStatusChange(path string, status weles.ArtifactStatus,
+func (h *DownloaderImpl) pathStatusChange(path string, status enums.ArtifactStatus,
 ) (changed bool, j weles.JobID, info string) {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
@@ -100,10 +101,10 @@ func (h *DownloaderImpl) pathStatusChange(path string, status weles.ArtifactStat
 		return
 	}
 	switch status {
-	case weles.ArtifactStatusREADY:
+	case enums.ArtifactStatusREADY:
 		i.ready++
 		info = fmt.Sprintf(formatReady, i.ready, i.paths)
-	case weles.ArtifactStatusFAILED:
+	case enums.ArtifactStatusFAILED:
 		i.failed++
 		info = "Failed to download artifact"
 	default:
@@ -137,7 +138,7 @@ func (h *DownloaderImpl) loop() {
 			continue
 		}
 
-		err := h.jobs.SetStatusAndInfo(j, weles.JobStatusDOWNLOADING, info)
+		err := h.jobs.SetStatusAndInfo(j, enums.JobStatusDOWNLOADING, info)
 		if err != nil {
 			h.removePath(string(change.Path))
 			h.fail(j, fmt.Sprintf(formatJobStatus, err.Error()))
@@ -184,7 +185,7 @@ func (h *DownloaderImpl) removeJobInfo(j weles.JobID) error {
 }
 
 // push delegates downloading single uri to ArtifactDB.
-func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias, uri string,
+func (h *DownloaderImpl) push(j weles.JobID, t enums.ArtifactType, alias, uri string,
 ) (string, error) {
 	p, err := h.artifacts.PushArtifact(weles.ArtifactDescription{
 		JobID: j,
@@ -213,7 +214,7 @@ func (h *DownloaderImpl) push(j weles.JobID, t weles.ArtifactType, alias, uri st
 func (h *DownloaderImpl) pullCreate(j weles.JobID, alias string) (string, error) {
 	p, err := h.artifacts.CreateArtifact(weles.ArtifactDescription{
 		JobID: j,
-		Type:  weles.ArtifactTypeRESULT,
+		Type:  enums.ArtifactTypeRESULT,
 		Alias: weles.ArtifactAlias(alias),
 	})
 	return string(p), err
@@ -274,7 +275,7 @@ func (h *DownloaderImpl) sendIfReady(j weles.JobID) {
 func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 	h.initializeJobInfo(j)
 
-	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusDOWNLOADING, "")
+	err := h.jobs.SetStatusAndInfo(j, enums.JobStatusDOWNLOADING, "")
 	if err != nil {
 		h.fail(j, fmt.Sprintf(formatJobStatus, err.Error()))
 		return
@@ -289,7 +290,7 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 	for i, image := range config.Action.Deploy.Images {
 		if image.URI != "" {
 			var path string
-			path, err = h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("Image_%d", i), image.URI)
+			path, err = h.push(j, enums.ArtifactTypeIMAGE, fmt.Sprintf("Image_%d", i), image.URI)
 			if err != nil {
 				h.fail(j, fmt.Sprintf(formatURI, image.URI, err.Error()))
 				return
@@ -298,7 +299,7 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 		}
 		if image.ChecksumURI != "" {
 			var path string
-			path, err = h.push(j, weles.ArtifactTypeIMAGE, fmt.Sprintf("ImageMD5_%d", i),
+			path, err = h.push(j, enums.ArtifactTypeIMAGE, fmt.Sprintf("ImageMD5_%d", i),
 				image.ChecksumURI)
 			if err != nil {
 				h.fail(j, fmt.Sprintf(formatURI, image.ChecksumURI, err.Error()))
@@ -313,7 +314,7 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 			switch ta.(type) {
 			case weles.Push:
 				action := ta.(weles.Push)
-				path, err = h.push(j, weles.ArtifactTypeTEST, action.Alias, action.URI)
+				path, err = h.push(j, enums.ArtifactTypeTEST, action.Alias, action.URI)
 				if err != nil {
 					h.fail(j, fmt.Sprintf(formatURI, action.URI, err.Error()))
 					return

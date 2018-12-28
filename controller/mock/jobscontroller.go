@@ -6,6 +6,7 @@ package mock
 
 import (
 	weles "github.com/SamsungSLAV/weles"
+	enums "github.com/SamsungSLAV/weles/enums"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -124,7 +125,7 @@ func (mr *MockJobsControllerMockRecorder) SetDryad(arg0, arg1 interface{}) *gomo
 }
 
 // SetStatusAndInfo mocks base method
-func (m *MockJobsController) SetStatusAndInfo(arg0 weles.JobID, arg1 weles.JobStatus, arg2 string) error {
+func (m *MockJobsController) SetStatusAndInfo(arg0 weles.JobID, arg1 enums.JobStatus, arg2 string) error {
 	ret := m.ctrl.Call(m, "SetStatusAndInfo", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
