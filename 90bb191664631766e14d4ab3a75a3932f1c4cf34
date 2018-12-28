@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7173ab93_1c4fe1c2",
+        "filename": "manager/dryad_job_manager.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-28T09:27:09Z",
+      "side": 1,
+      "message": "Comment should start with field name\n\n  //sshfsMountPoint is a directory ...",
+      "revId": "90bb191664631766e14d4ab3a75a3932f1c4cf34",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
