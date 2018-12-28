@@ -82,7 +82,7 @@ var jobStatusEnum []interface{}
 
 func init() {
 	var res []JobStatus
-	if err := json.Unmarshal([]byte(`["NEW","PARSING","DOWNLOADING","WAITING","RUNNING","COMPLETED","FAILED","CANCELED",""]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["NEW","PARSING","DOWNLOADING","WAITING","RUNNING","COMPLETED","FAILED","CANCELED"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

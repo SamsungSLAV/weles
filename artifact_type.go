@@ -62,7 +62,7 @@ var artifactTypeEnum []interface{}
 
 func init() {
 	var res []ArtifactType
-	if err := json.Unmarshal([]byte(`["IMAGE","RESULT","TEST","YAML",""]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["IMAGE","RESULT","TEST","YAML"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
