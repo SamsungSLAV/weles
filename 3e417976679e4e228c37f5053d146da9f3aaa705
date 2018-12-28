@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "334e64d7_29218a33",
+        "filename": "artifact_description.go",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-28T17:58:01Z",
+      "side": 1,
+      "message": "comment should start with field name. Applies to all comments.",
+      "revId": "3e417976679e4e228c37f5053d146da9f3aaa705",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17f1f86a_177ae16e",
+        "filename": "artifact_description.go",
+        "patchSetId": 8
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-28T17:58:01Z",
+      "side": 1,
+      "message": "I hate this empty line and all other also",
+      "revId": "3e417976679e4e228c37f5053d146da9f3aaa705",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e24e5d5_37694d0d",
+        "filename": "artifact_filter.go",
+        "patchSetId": 8
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-28T17:58:01Z",
+      "side": 1,
+      "message": "I know it\u0027s generated, but can\u0027t you break it?\nIt\u0027s unreadable this way.",
+      "revId": "3e417976679e4e228c37f5053d146da9f3aaa705",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
