@@ -25,6 +25,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+
+	enums "github.com/SamsungSLAV/weles/enums"
 )
 
 // ArtifactSorter defines the key for sorting as well as direction of sorting.
@@ -34,11 +36,11 @@ type ArtifactSorter struct {
 
 	// SortBy denotes key used for sorting Artifacts. For more details, see
 	// ArtifactSortBy documentation.
-	SortBy ArtifactSortBy `json:"SortBy,omitempty"`
+	SortBy enums.ArtifactSortBy `json:"SortBy,omitempty"`
 
 	// SortOrder in which Artifacts will be sorted. For more details, see
 	// SortOrder documentation.
-	SortOrder SortOrder `json:"SortOrder,omitempty"`
+	SortOrder enums.SortOrder `json:"SortOrder,omitempty"`
 }
 
 // Validate validates this artifact sorter

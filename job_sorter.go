@@ -25,6 +25,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+
+	enums "github.com/SamsungSLAV/weles/enums"
 )
 
 // JobSorter defines the key for sorting as well as direction of sorting.
@@ -33,11 +35,11 @@ type JobSorter struct {
 
 	// SortBy denotes key used for sorting Jobs. For more details, see JobSortBy
 	// documentation.
-	SortBy JobSortBy `json:"SortBy,omitempty"`
+	SortBy enums.JobSortBy `json:"SortBy,omitempty"`
 
 	// SortOrder in which Jobs will be sorted. For more details, see SortOrder
 	// documentation.
-	SortOrder SortOrder `json:"SortOrder,omitempty"`
+	SortOrder enums.SortOrder `json:"SortOrder,omitempty"`
 }
 
 // Validate validates this job sorter

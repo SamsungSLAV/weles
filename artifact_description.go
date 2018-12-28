@@ -25,6 +25,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+
+	enums "github.com/SamsungSLAV/weles/enums"
 )
 
 // ArtifactDescription contains minimal information needed to create new Artifact in ArtifactDB.
@@ -40,7 +42,7 @@ type ArtifactDescription struct {
 
 	// Type of the Artifact. Refer to ArtifactType documentation to see all
 	// possible values with descriptions.
-	Type ArtifactType `json:"Type"`
+	Type enums.ArtifactType `json:"Type"`
 
 	// URI from which artifact was downloaded. Taken from the Job Submission
 	// file.

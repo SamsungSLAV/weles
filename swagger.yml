@@ -439,6 +439,11 @@ definitions:
       - COMPLETED
       - FAILED
       - CANCELED
+    x-go-type:
+      import:
+        package: "github.com/SamsungSLAV/weles/enums"
+        alias: "enums"
+      type: "JobStatus"
   JobInfo:
     description: contains information about a Job available for public API.
     type: object
@@ -560,6 +565,11 @@ definitions:
       - CreatedDate
       - UpdatedDate
       - JobStatus
+    x-go-type:
+      import:
+        package: "github.com/SamsungSLAV/weles/enums"
+        alias: "enums"
+      type: "JobSortBy"
   SortOrder:
     description: |
       denotes direction of sorting of weles Jobs or Artifacts.
@@ -572,6 +582,11 @@ definitions:
     enum:
       - Ascending
       - Descending
+    x-go-type:
+      import:
+        package: "github.com/SamsungSLAV/weles/enums"
+        alias: "enums"
+      type: "SortOrder"
   JobSorter:
     description: |-
       defines the key for sorting as well as direction of sorting.
@@ -605,6 +620,11 @@ definitions:
       - RESULT
       - TEST
       - YAML
+    x-go-type:
+      import:
+        package: "github.com/SamsungSLAV/weles/enums"
+        alias: "enums"
+      type: "ArtifactType"
   ArtifactPath:
     description: describes path to Artifact in ArtifactDB filesystem.
     type: string
@@ -626,6 +646,11 @@ definitions:
       - READY
       - FAILED
       - PENDING
+    x-go-type:
+      import:
+        package: "github.com/SamsungSLAV/weles/enums"
+        alias: "enums"
+      type: "ArtifactStatus"
   ArtifactURI:
     description: is used to identify Artifact's source.
     type: string
@@ -736,6 +761,11 @@ definitions:
     type: string
     enum:
       - ID
+    x-go-type:
+      import:
+        package: "github.com/SamsungSLAV/weles/enums"
+        alias: "enums"
+      type: "ArtifactSortBy"
   ArtifactSorter:
     description: |-
       defines the key for sorting as well as direction of sorting.

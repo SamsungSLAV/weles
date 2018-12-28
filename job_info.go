@@ -26,6 +26,8 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
+
+	enums "github.com/SamsungSLAV/weles/enums"
 )
 
 // JobInfo contains information about a Job available for public API.
@@ -47,7 +49,7 @@ type JobInfo struct {
 	Name string `json:"Name,omitempty"`
 
 	// Status specifies current state of the Job.
-	Status JobStatus `json:"Status"`
+	Status enums.JobStatus `json:"Status"`
 
 	// Updated is the time of latest Jobs' status modification (UTC).
 	// Format: date-time

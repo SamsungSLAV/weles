@@ -26,6 +26,7 @@ import (
 
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 // DryaderImpl implements Dryader. It delegates and controls Job execution
@@ -91,7 +92,7 @@ func (h *DryaderImpl) remove(j weles.JobID) {
 
 // setStatus sets Jobs status to RUNNING and updates info.
 func (h *DryaderImpl) setStatus(j weles.JobID, msg string) {
-	err := h.jobs.SetStatusAndInfo(j, weles.JobStatusRUNNING, msg)
+	err := h.jobs.SetStatusAndInfo(j, enums.JobStatusRUNNING, msg)
 	if err != nil {
 		h.remove(j)
 		h.SendFail(j, fmt.Sprintf("Internal Weles error while changing Job status : %s",

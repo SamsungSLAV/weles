@@ -534,7 +534,14 @@ func init() {
       "type": "string",
       "enum": [
         "ID"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "ArtifactSortBy"
+      }
     },
     "ArtifactSorter": {
       "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, Artifacts are sorted by ID, Ascending.",
@@ -558,7 +565,14 @@ func init() {
         "READY",
         "FAILED",
         "PENDING"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "ArtifactStatus"
+      }
     },
     "ArtifactType": {
       "description": "denotes type and function of an Artifact. Depends on Job Submission file.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n",
@@ -568,7 +582,14 @@ func init() {
         "RESULT",
         "TEST",
         "YAML"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "ArtifactType"
+      }
     },
     "ArtifactURI": {
       "description": "is used to identify Artifact's source.",
@@ -692,7 +713,14 @@ func init() {
         "CreatedDate",
         "UpdatedDate",
         "JobStatus"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "JobSortBy"
+      }
     },
     "JobSorter": {
       "description": "defines the key for sorting as well as direction of sorting.",
@@ -720,7 +748,14 @@ func init() {
         "COMPLETED",
         "FAILED",
         "CANCELED"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "JobStatus"
+      }
     },
     "SortOrder": {
       "description": "denotes direction of sorting of weles Jobs or Artifacts.\n\n* Ascending - from oldest to newest.\n\n* Descending - from newest to oldest.\n",
@@ -728,7 +763,14 @@ func init() {
       "enum": [
         "Ascending",
         "Descending"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "SortOrder"
+      }
     },
     "Version": {
       "description": "defines version of Weles API (and its state) and server.",
@@ -1352,7 +1394,14 @@ func init() {
       "type": "string",
       "enum": [
         "ID"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "ArtifactSortBy"
+      }
     },
     "ArtifactSorter": {
       "description": "defines the key for sorting as well as direction of sorting.\nWhen ArtifactSorter is empty, Artifacts are sorted by ID, Ascending.",
@@ -1376,7 +1425,14 @@ func init() {
         "READY",
         "FAILED",
         "PENDING"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "ArtifactStatus"
+      }
     },
     "ArtifactType": {
       "description": "denotes type and function of an Artifact. Depends on Job Submission file.\n\n* IMAGE - image file.\n\n* RESULT - all outputs, files built during tests, etc.\n\n* TEST - additional files uploaded by user for conducting test.\n\n* YAML - yaml file describing Weles Job.\n",
@@ -1386,7 +1442,14 @@ func init() {
         "RESULT",
         "TEST",
         "YAML"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "ArtifactType"
+      }
     },
     "ArtifactURI": {
       "description": "is used to identify Artifact's source.",
@@ -1510,7 +1573,14 @@ func init() {
         "CreatedDate",
         "UpdatedDate",
         "JobStatus"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "JobSortBy"
+      }
     },
     "JobSorter": {
       "description": "defines the key for sorting as well as direction of sorting.",
@@ -1538,7 +1608,14 @@ func init() {
         "COMPLETED",
         "FAILED",
         "CANCELED"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "JobStatus"
+      }
     },
     "SortOrder": {
       "description": "denotes direction of sorting of weles Jobs or Artifacts.\n\n* Ascending - from oldest to newest.\n\n* Descending - from newest to oldest.\n",
@@ -1546,7 +1623,14 @@ func init() {
       "enum": [
         "Ascending",
         "Descending"
-      ]
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "SortOrder"
+      }
     },
     "Version": {
       "description": "defines version of Weles API (and its state) and server.",

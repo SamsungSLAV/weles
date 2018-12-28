@@ -23,6 +23,7 @@ package controller
 
 import (
 	"github.com/SamsungSLAV/weles"
+	"github.com/SamsungSLAV/weles/enums"
 )
 
 // Job contains all information about Job embedding public part - JobInfo.
@@ -43,7 +44,7 @@ type JobsController interface {
 	// SetConfig sets config in Job.
 	SetConfig(weles.JobID, weles.Config) error
 	// SetStatusAndInfo changes status and info of the Job.
-	SetStatusAndInfo(weles.JobID, weles.JobStatus, string) error
+	SetStatusAndInfo(weles.JobID, enums.JobStatus, string) error
 	// GetConfig gets Job's config.
 	GetConfig(weles.JobID) (weles.Config, error)
 	// SetDryad saves access info for acquired Dryad.

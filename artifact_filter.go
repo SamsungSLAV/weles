@@ -27,6 +27,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+
+	enums "github.com/SamsungSLAV/weles/enums"
 )
 
 // ArtifactFilter is used to filter Weles Artifacts. Filling more than one struct member
@@ -46,12 +48,12 @@ type ArtifactFilter struct {
 	JobID []JobID `json:"JobID"`
 
 	// Status is used to filter Artifacts by ArtifactStatus. Refer to ArtifactStatus documentation for possible values.
-	Status []ArtifactStatus `json:"Status"`
+	Status []enums.ArtifactStatus `json:"Status"`
 
 	// Type is used to filter Artifacts by ArtifactType. Refer to
 	// ArtifactType documentation for possible values. Useful for e.g.
 	// requesting only RESULT artifacts from a Job.
-	Type []ArtifactType `json:"Type"`
+	Type []enums.ArtifactType `json:"Type"`
 }
 
 // Validate validates this artifact filter

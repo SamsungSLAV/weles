@@ -26,6 +26,7 @@ import (
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
+	"github.com/SamsungSLAV/weles/enums"
 	gomock "github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -120,7 +121,7 @@ var _ = Describe("BoruterImpl", func() {
 		It("should ignore ListRequests errors", func() {
 			counter := 5
 			mutex := &sync.Mutex{}
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
 				rid, nil)
@@ -144,7 +145,7 @@ var _ = Describe("BoruterImpl", func() {
 	Describe("Request", func() {
 		It("should register job successfully", func() {
 			var va, dl time.Time
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
 				rid, nil).Do(
@@ -172,7 +173,7 @@ var _ = Describe("BoruterImpl", func() {
 			config.Timeouts.JobTimeout = weles.ValidPeriod(0)
 			defaultDelay := 24 * time.Hour
 
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
 				rid, nil).Do(
@@ -196,7 +197,7 @@ var _ = Describe("BoruterImpl", func() {
 			expectRegistered(1)
 		})
 		It("should fail if NewRequest fails", func() {
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
 				boruta.ReqID(0), err)
@@ -208,7 +209,7 @@ var _ = Describe("BoruterImpl", func() {
 			eventuallyEmpty(1)
 		})
 		It("should fail if GetConfig fails", func() {
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(weles.Config{}, err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
 
@@ -218,7 +219,7 @@ var _ = Describe("BoruterImpl", func() {
 			eventuallyEmpty(1)
 		})
 		It("should fail if SetStatusAndInfo fails", func() {
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "").Return(err)
+			jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusWAITING, "").Return(err)
 			req.EXPECT().ListRequests(nil).AnyTimes()
 
 			h.Request(j)
@@ -228,7 +229,7 @@ var _ = Describe("BoruterImpl", func() {
 		})
 		It("should call NewRequest with empty caps if no device type provided", func() {
 			config.DeviceType = ""
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(boruta.Capabilities{}, priority, owner, gomock.Any(),
 				gomock.Any()).Return(boruta.ReqID(0), err)
@@ -248,7 +249,7 @@ var _ = Describe("BoruterImpl", func() {
 			}
 			for k, v := range m {
 				config.Priority = k
-				jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
+				jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusWAITING, "")
 				jc.EXPECT().GetConfig(j).Return(config, nil)
 				req.EXPECT().NewRequest(caps, v, owner, gomock.Any(), gomock.Any()).Return(
 					boruta.ReqID(0), err)
@@ -280,7 +281,7 @@ var _ = Describe("BoruterImpl", func() {
 
 		BeforeEach(func() {
 			var va, dl time.Time
-			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
+			jc.EXPECT().SetStatusAndInfo(j, enums.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
 				rid, nil).Do(
