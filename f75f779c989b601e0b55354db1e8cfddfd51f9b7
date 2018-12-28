@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "efb0f452_936a4879",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2018-12-28T17:46:22Z",
+      "side": 1,
+      "message": "well, but there is one file changed:\n server/embedded_spec.go\nthat should be also updated by this patch",
+      "revId": "f75f779c989b601e0b55354db1e8cfddfd51f9b7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
