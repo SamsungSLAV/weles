@@ -24,7 +24,7 @@ import (
 
 // ArtifactLister is a handler which passess requests for listing artifacts to ArtifactManager.
 func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) middleware.Responder {
-	paginator := weles.ArtifactPagination{}
+	paginator := weles.ArtifactPaginator{}
 	if a.PageLimit != 0 {
 		if (params.After != nil) && (params.Before != nil) {
 			return artifacts.NewArtifactListerBadRequest().WithPayload(&weles.ErrResponse{
@@ -56,7 +56,7 @@ func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) midd
 }
 
 // responderArtifact206 builds 206 HTTP response with appropriate headers and body.
-func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPagination,
+func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPaginator,
 	artifactInfoReturned []*weles.ArtifactInfo, defaultPageLimit int32,
 ) (responder *artifacts.ArtifactListerPartialContent) {
 	var artifactListerURL artifacts.ArtifactListerURL
@@ -90,7 +90,7 @@ func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 }
 
 // responderArtifact200 builds 200 HTTP response with appropriate headers and body.
-func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPagination,
+func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPaginator,
 	artifactInfoReturned []*weles.ArtifactInfo, defaultPageLimit int32,
 ) (responder *artifacts.ArtifactListerOK) {
 	var artifactListerURL artifacts.ArtifactListerURL
@@ -170,7 +170,7 @@ func setArtifactSorter(si *weles.ArtifactSorter) (so weles.ArtifactSorter) {
 
 // setArtifactPaginator creates and fills paginator object with default values.
 func setArtifactPaginator(params artifacts.ArtifactListerParams, defaultPageLimit int32,
-) (paginator weles.ArtifactPagination) {
+) (paginator weles.ArtifactPaginator) {
 	paginator.Forward = true
 	if params.After != nil {
 		paginator.ID = *params.After

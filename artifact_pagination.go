@@ -14,7 +14,7 @@
 
 package weles
 
-// ArtifactPagination holds information neccessary to request for a single page of data from
+// ArtifactPaginator holds information neccessary to request for a single page of data from
 // artifactmanager.
 // When ID is set, and Forward is false - ArtifactManager should return a page of records before the
 // supplied ID.
@@ -24,7 +24,7 @@ package weles
 // Limit denotes the number of records to be returned on the page.
 // When Limit is set to 0, pagination is disabled, ID and Forward fields are ignored
 // and all records are returned.
-type ArtifactPagination struct {
+type ArtifactPaginator struct {
 	ID      int64
 	Forward bool
 	Limit   int32

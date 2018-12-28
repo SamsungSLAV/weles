@@ -72,7 +72,7 @@ func (mr *MockArtifactManagerMockRecorder) GetArtifactInfo(arg0 interface{}) *go
 }
 
 // ListArtifact mocks base method
-func (m *MockArtifactManager) ListArtifact(arg0 weles.ArtifactFilter, arg1 weles.ArtifactSorter, arg2 weles.ArtifactPagination) ([]weles.ArtifactInfo, weles.ListInfo, error) {
+func (m *MockArtifactManager) ListArtifact(arg0 weles.ArtifactFilter, arg1 weles.ArtifactSorter, arg2 weles.ArtifactPaginator) ([]weles.ArtifactInfo, weles.ListInfo, error) {
 	ret := m.ctrl.Call(m, "ListArtifact", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]weles.ArtifactInfo)
 	ret1, _ := ret[1].(weles.ListInfo)
