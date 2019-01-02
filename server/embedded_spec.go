@@ -493,7 +493,7 @@ func init() {
       }
     },
     "ArtifactInfo": {
-      "description": "describes single Artifact stored in ArtifactDB.",
+      "description": "contains public information about single Artifact stored in ArtifactDB.",
       "type": "object",
       "allOf": [
         {
@@ -508,11 +508,6 @@ func init() {
           "x-go-custom-tag": "db:\",primarykey, autoincrement\"",
           "x-omitempty": false
         },
-        "Path": {
-          "description": "Path where Artifact is stored on Weles server.",
-          "x-omitempty": true,
-          "$ref": "#/definitions/ArtifactPath"
-        },
         "Status": {
           "description": "Status of Artifact. For details - see documentation of\nArtifactStatus.",
           "$ref": "#/definitions/ArtifactStatus"
@@ -523,11 +518,8 @@ func init() {
           "format": "date-time",
           "x-omitempty": false
         }
-      }
-    },
-    "ArtifactPath": {
-      "description": "describes path to Artifact in ArtifactDB filesystem.",
-      "type": "string"
+      },
+      "x-go-name": "ArtifactInfoExt"
     },
     "ArtifactSortBy": {
       "description": "denotes the key for sorting list of all artifacts.\n\n* ID - sorting by artifact ID.\n",
@@ -1353,7 +1345,7 @@ func init() {
       }
     },
     "ArtifactInfo": {
-      "description": "describes single Artifact stored in ArtifactDB.",
+      "description": "contains public information about single Artifact stored in ArtifactDB.",
       "type": "object",
       "allOf": [
         {
@@ -1368,11 +1360,6 @@ func init() {
           "x-go-custom-tag": "db:\",primarykey, autoincrement\"",
           "x-omitempty": false
         },
-        "Path": {
-          "description": "Path where Artifact is stored on Weles server.",
-          "x-omitempty": true,
-          "$ref": "#/definitions/ArtifactPath"
-        },
         "Status": {
           "description": "Status of Artifact. For details - see documentation of\nArtifactStatus.",
           "$ref": "#/definitions/ArtifactStatus"
@@ -1383,11 +1370,8 @@ func init() {
           "format": "date-time",
           "x-omitempty": false
         }
-      }
-    },
-    "ArtifactPath": {
-      "description": "describes path to Artifact in ArtifactDB filesystem.",
-      "type": "string"
+      },
+      "x-go-name": "ArtifactInfoExt"
     },
     "ArtifactSortBy": {
       "description": "denotes the key for sorting list of all artifacts.\n\n* ID - sorting by artifact ID.\n",
