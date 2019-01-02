@@ -57,7 +57,7 @@ func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) midd
 
 // responderArtifact206 builds 206 HTTP response with appropriate headers and body.
 func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPaginator,
-	artifactInfoReturned []*weles.ArtifactInfo, defaultPageLimit int32,
+	artifactInfoReturned []*weles.ArtifactInfoExt, defaultPageLimit int32,
 ) (responder *artifacts.ArtifactListerPartialContent) {
 	var artifactListerURL artifacts.ArtifactListerURL
 
@@ -91,7 +91,7 @@ func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 
 // responderArtifact200 builds 200 HTTP response with appropriate headers and body.
 func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPaginator,
-	artifactInfoReturned []*weles.ArtifactInfo, defaultPageLimit int32,
+	artifactInfoReturned []*weles.ArtifactInfoExt, defaultPageLimit int32,
 ) (responder *artifacts.ArtifactListerOK) {
 	var artifactListerURL artifacts.ArtifactListerURL
 	responder = artifacts.NewArtifactListerOK()
@@ -193,10 +193,10 @@ func setArtifactPaginator(params artifacts.ArtifactListerParams, defaultPageLimi
 // artifactInfoReceivedToReturn creates slice of pointers from slice of values of ArtifactInfo
 // struct. Very similiar function can be found in job_lister_handler.go. Separate functions are
 // present as generic one would need to use reflect which affects performance.
-func artifactInfoReceivedToReturn(artifactInfoReceived []weles.ArtifactInfo) []*weles.ArtifactInfo {
-	artifactInfoReturned := make([]*weles.ArtifactInfo, len(artifactInfoReceived))
+func artifactInfoReceivedToReturn(artifactInfoReceived []weles.ArtifactInfo) []*weles.ArtifactInfoExt {
+	artifactInfoReturned := make([]*weles.ArtifactInfoExt, len(artifactInfoReceived))
 	for i := range artifactInfoReceived {
-		artifactInfoReturned[i] = &artifactInfoReceived[i]
+		artifactInfoReturned[i] = &artifactInfoReceived[i].ArtifactInfoExt
 	}
 	return artifactInfoReturned
 

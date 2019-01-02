@@ -625,9 +625,6 @@ definitions:
         package: "github.com/SamsungSLAV/weles/enums"
         alias: "enums"
       type: "ArtifactType"
-  ArtifactPath:
-    description: describes path to Artifact in ArtifactDB filesystem.
-    type: string
   ArtifactStatus:
     description: |
       describes Artifact status and availability.
@@ -687,16 +684,13 @@ definitions:
           file.
         x-omitempty: true
   ArtifactInfo:
-    description: describes single Artifact stored in ArtifactDB.
+    x-go-name: ArtifactInfoExt
+    description: |-
+      contains public information about single Artifact stored in ArtifactDB.
     type: object
     allOf:
      - $ref: '#/definitions/ArtifactDescription'
     properties:
-      Path:
-        $ref: '#/definitions/ArtifactPath'
-        description: |-
-          Path where Artifact is stored on Weles server.
-        x-omitempty: true
       Status:
         $ref: '#/definitions/ArtifactStatus'
         description: |-

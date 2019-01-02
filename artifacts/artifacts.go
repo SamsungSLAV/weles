@@ -128,10 +128,12 @@ func (s *Storage) CreateArtifact(artifact weles.ArtifactDescription) (weles.Arti
 	}
 
 	err = s.db.InsertArtifactInfo(&weles.ArtifactInfo{
-		ArtifactDescription: artifact,
-		Path:                path,
-		Status:              "",
-		Timestamp:           strfmt.DateTime(time.Now().UTC()),
+		ArtifactInfoExt: weles.ArtifactInfoExt{
+			ArtifactDescription: artifact,
+			Status:              "",
+			Timestamp:           strfmt.DateTime(time.Now().UTC()),
+		},
+		Path: path,
 	})
 	if err != nil {
 		return "", err
