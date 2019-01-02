@@ -43,48 +43,56 @@ var _ = Describe("ArtifactDB", func() {
 		invalidAlias  weles.ArtifactAlias  = "invalidAlias"
 
 		artifact = weles.ArtifactInfo{
-			ArtifactDescription: weles.ArtifactDescription{
-				Alias: "some alias",
-				JobID: job,
-				Type:  enums.ArtifactTypeIMAGE,
-				URI:   "http://example.com",
+			ArtifactInfoExt: weles.ArtifactInfoExt{
+				ArtifactDescription: weles.ArtifactDescription{
+					Alias: "some alias",
+					JobID: job,
+					Type:  enums.ArtifactTypeIMAGE,
+					URI:   "http://example.com",
+				},
+				Status:    enums.ArtifactStatusPENDING,
+				Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 			},
-			Path:      "path1",
-			Status:    enums.ArtifactStatusPENDING,
-			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
+			Path: "path1",
 		}
 		aImageReady = weles.ArtifactInfo{
-			ArtifactDescription: weles.ArtifactDescription{
-				Alias: "other alias",
-				JobID: job + 1,
-				Type:  enums.ArtifactTypeIMAGE,
-				URI:   "http://example.com/1",
+			ArtifactInfoExt: weles.ArtifactInfoExt{
+				ArtifactDescription: weles.ArtifactDescription{
+					Alias: "other alias",
+					JobID: job + 1,
+					Type:  enums.ArtifactTypeIMAGE,
+					URI:   "http://example.com/1",
+				},
+				Status:    enums.ArtifactStatusREADY,
+				Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 			},
-			Path:      "path2",
-			Status:    enums.ArtifactStatusREADY,
-			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
+			Path: "path2",
 		}
 		aYamlFailed = weles.ArtifactInfo{
-			ArtifactDescription: weles.ArtifactDescription{
-				Alias: "other alias",
-				JobID: job + 1,
-				Type:  enums.ArtifactTypeYAML,
-				URI:   "http://example.com/2",
+			ArtifactInfoExt: weles.ArtifactInfoExt{
+				ArtifactDescription: weles.ArtifactDescription{
+					Alias: "other alias",
+					JobID: job + 1,
+					Type:  enums.ArtifactTypeYAML,
+					URI:   "http://example.com/2",
+				},
+				Status:    enums.ArtifactStatusFAILED,
+				Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
 			},
-			Path:      "path3",
-			Status:    enums.ArtifactStatusFAILED,
-			Timestamp: strfmt.DateTime(time.Now().Round(time.Millisecond).UTC()),
+			Path: "path3",
 		}
 		aTestFailed = weles.ArtifactInfo{
-			ArtifactDescription: weles.ArtifactDescription{
-				Alias: "alias",
-				JobID: job + 2,
-				Type:  enums.ArtifactTypeTEST,
-				URI:   "http://example.com/3",
+			ArtifactInfoExt: weles.ArtifactInfoExt{
+				ArtifactDescription: weles.ArtifactDescription{
+					Alias: "alias",
+					JobID: job + 2,
+					Type:  enums.ArtifactTypeTEST,
+					URI:   "http://example.com/3",
+				},
+				Status:    enums.ArtifactStatusFAILED,
+				Timestamp: strfmt.DateTime(time.Unix(3000, 60).Round(time.Millisecond).UTC()),
 			},
-			Path:      "path4",
-			Status:    enums.ArtifactStatusFAILED,
-			Timestamp: strfmt.DateTime(time.Unix(3000, 60).Round(time.Millisecond).UTC()),
+			Path: "path4",
 		}
 		testArtifacts = []weles.ArtifactInfo{artifact, aImageReady, aYamlFailed, aTestFailed}
 

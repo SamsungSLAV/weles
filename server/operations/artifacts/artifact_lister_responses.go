@@ -59,7 +59,7 @@ type ArtifactListerOK struct {
 	/*
 	  In: Body
 	*/
-	Payload []*weles.ArtifactInfo `json:"body,omitempty"`
+	Payload []*weles.ArtifactInfoExt `json:"body,omitempty"`
 }
 
 // NewArtifactListerOK creates ArtifactListerOK with default headers values
@@ -102,13 +102,13 @@ func (o *ArtifactListerOK) SetTotalRecords(totalRecords uint64) {
 }
 
 // WithPayload adds the payload to the artifact lister o k response
-func (o *ArtifactListerOK) WithPayload(payload []*weles.ArtifactInfo) *ArtifactListerOK {
+func (o *ArtifactListerOK) WithPayload(payload []*weles.ArtifactInfoExt) *ArtifactListerOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the artifact lister o k response
-func (o *ArtifactListerOK) SetPayload(payload []*weles.ArtifactInfo) {
+func (o *ArtifactListerOK) SetPayload(payload []*weles.ArtifactInfoExt) {
 	o.Payload = payload
 }
 
@@ -139,7 +139,7 @@ func (o *ArtifactListerOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	rw.WriteHeader(200)
 	payload := o.Payload
 	if payload == nil {
-		payload = make([]*weles.ArtifactInfo, 0, 50)
+		payload = make([]*weles.ArtifactInfoExt, 0, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {
@@ -183,7 +183,7 @@ type ArtifactListerPartialContent struct {
 	/*
 	  In: Body
 	*/
-	Payload []*weles.ArtifactInfo `json:"body,omitempty"`
+	Payload []*weles.ArtifactInfoExt `json:"body,omitempty"`
 }
 
 // NewArtifactListerPartialContent creates ArtifactListerPartialContent with default headers values
@@ -237,13 +237,13 @@ func (o *ArtifactListerPartialContent) SetTotalRecords(totalRecords uint64) {
 }
 
 // WithPayload adds the payload to the artifact lister partial content response
-func (o *ArtifactListerPartialContent) WithPayload(payload []*weles.ArtifactInfo) *ArtifactListerPartialContent {
+func (o *ArtifactListerPartialContent) WithPayload(payload []*weles.ArtifactInfoExt) *ArtifactListerPartialContent {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the artifact lister partial content response
-func (o *ArtifactListerPartialContent) SetPayload(payload []*weles.ArtifactInfo) {
+func (o *ArtifactListerPartialContent) SetPayload(payload []*weles.ArtifactInfoExt) {
 	o.Payload = payload
 }
 
@@ -281,7 +281,7 @@ func (o *ArtifactListerPartialContent) WriteResponse(rw http.ResponseWriter, pro
 	rw.WriteHeader(206)
 	payload := o.Payload
 	if payload == nil {
-		payload = make([]*weles.ArtifactInfo, 0, 50)
+		payload = make([]*weles.ArtifactInfoExt, 0, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {
