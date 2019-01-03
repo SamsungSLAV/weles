@@ -22,6 +22,30 @@
       "revId": "63f87ab0d2436d7fdde86e5222b384d113aed37c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ddd43e29_8c9dec1b",
+        "filename": "server/artifact_lister_handler.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2019-01-03T12:38:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3fe59da0_befa171d",
+      "range": {
+        "startLine": 112,
+        "startChar": 31,
+        "endLine": 112,
+        "endChar": 58
+      },
+      "revId": "63f87ab0d2436d7fdde86e5222b384d113aed37c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
