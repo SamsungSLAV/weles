@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7f6e4524_0bcbf161",
+        "filename": ".gometalinter.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2019-01-04T14:07:57Z",
+      "side": 1,
+      "message": "yeah, its a time.Duration field. changed to 5min",
+      "parentUuid": "1bd0c5b4_31ac1929",
+      "revId": "080456c738ea717bdfbe015ea7bd3bdef61db6d1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8f391bd0_ded94d97",
         "filename": ".gometalinter.json",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2019-01-04T07:45:03Z",
       "side": 1,
       "message": "good job for the first step of sorting.\ndoc \u003c embedded \u003c server. very nice \u003d\u003e approved\n\nyou are ready for step two:\nas server \u003e artifact",
+      "range": {
+        "startLine": 42,
+        "startChar": 2,
+        "endLine": 44,
+        "endChar": 23
+      },
+      "revId": "080456c738ea717bdfbe015ea7bd3bdef61db6d1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "42879a55_99304d93",
+        "filename": ".gometalinter.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2019-01-04T14:07:57Z",
+      "side": 1,
+      "message": "it was intentional - directories first, than files, like in ls ouput for example. changed to be fully alphabetical.",
+      "parentUuid": "8f391bd0_ded94d97",
       "range": {
         "startLine": 42,
         "startChar": 2,
