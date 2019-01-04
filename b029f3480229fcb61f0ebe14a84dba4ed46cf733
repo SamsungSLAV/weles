@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "182f6eaa_aa49d2df",
+        "filename": "controller/jobscontroller.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T08:18:23Z",
+      "side": 1,
+      "message": "JobPaginator",
+      "range": {
+        "startLine": 57,
+        "startChar": 6,
+        "endLine": 57,
+        "endChar": 19
+      },
+      "revId": "b029f3480229fcb61f0ebe14a84dba4ed46cf733",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eb88725c_750cc247",
+        "filename": "controller/jobscontrollerimpl.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T08:18:23Z",
+      "side": 1,
+      "message": "JobPaginator",
+      "range": {
+        "startLine": 339,
+        "startChar": 5,
+        "endLine": 339,
+        "endChar": 18
+      },
+      "revId": "b029f3480229fcb61f0ebe14a84dba4ed46cf733",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "785dc307_ca5089be",
+        "filename": "controller/jobscontrollerimpl_test.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T08:18:23Z",
+      "side": 1,
+      "message": "shouldn\u0027t it be also changed to defaultPaginator ?",
+      "range": {
+        "startLine": 281,
+        "startChar": 3,
+        "endLine": 281,
+        "endChar": 20
+      },
+      "revId": "b029f3480229fcb61f0ebe14a84dba4ed46cf733",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8b2c1289_7ae55547",
+        "filename": "jobmanager.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T08:18:23Z",
+      "side": 1,
+      "message": "JobPaginator",
+      "range": {
+        "startLine": 32,
+        "startChar": 6,
+        "endLine": 32,
+        "endChar": 19
+      },
+      "revId": "b029f3480229fcb61f0ebe14a84dba4ed46cf733",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
