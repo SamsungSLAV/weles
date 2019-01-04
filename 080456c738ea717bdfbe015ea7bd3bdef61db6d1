@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1bd0c5b4_31ac1929",
+        "filename": ".gometalinter.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T07:45:03Z",
+      "side": 1,
+      "message": "you can also write using minutes, e.g. \"2m\" instead of \"120s\", but currently the lint checking takes about 90s on my PC when it\u0027s idle. When I do some other things in background, linting can take even more than 3 minutes.\nI suggest to increase this time to \"5m\"",
+      "revId": "080456c738ea717bdfbe015ea7bd3bdef61db6d1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f391bd0_ded94d97",
+        "filename": ".gometalinter.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T07:45:03Z",
+      "side": 1,
+      "message": "good job for the first step of sorting.\ndoc \u003c embedded \u003c server. very nice \u003d\u003e approved\n\nyou are ready for step two:\nas server \u003e artifact",
+      "range": {
+        "startLine": 42,
+        "startChar": 2,
+        "endLine": 44,
+        "endChar": 23
+      },
+      "revId": "080456c738ea717bdfbe015ea7bd3bdef61db6d1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
