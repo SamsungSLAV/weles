@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "73e5ae19_1eddb3e7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:56:10Z",
+      "side": 1,
+      "message": "Compiler:\n# github.com/SamsungSLAV/weles/artifacts/database [github.com/SamsungSLAV/weles/artifacts/database.test]\nartifacts/database/database_test.go:46:4: cannot use promoted field ArtifactInfoExt.ArtifactDescription in struct literal of type weles.ArtifactInfo\nartifacts/database/database_test.go:53:4: cannot use promoted field ArtifactInfoExt.Status in struct literal of type weles.ArtifactInfo\nartifacts/database/database_test.go:54:4: cannot use promoted field ArtifactInfoExt.Timestamp in struct literal of type weles.ArtifactInfo\nartifacts/database/database_test.go:57:4: cannot use promoted field ArtifactInfoExt.ArtifactDescription in struct literal of type weles.ArtifactInfo\nartifacts/database/database_test.go:64:4: cannot use promoted field ArtifactInfoExt.Status in struct literal of type weles.ArtifactInfo\nartifacts/database/database_test.go:65:4: cannot use promoted field ArtifactInfoExt.Timestamp in struct literal of type weles.ArtifactInfo\nartifacts/database/database_test.go:68:4: cannot use promoted field ArtifactInfoExt.ArtifactDescription in struct literal of type weles.ArtifactInfo\nartifacts/database/database_test.go:75:4: cannot use promoted field ArtifactInfoExt.Status in struct literal of type weles.ArtifactInfo\nartifacts/database/database_test.go:76:4: cannot use promoted field ArtifactInfoExt.Timestamp in struct literal of type weles.ArtifactInfo\nartifacts/database/database_test.go:79:4: cannot use promoted field ArtifactInfoExt.ArtifactDescription in struct literal of type weles.ArtifactInfo\nartifacts/database/database_test.go:79:4: too many errors",
+      "revId": "7e58d777de3481eb723f1a98f9fae63930abd1b5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f561ccf3_7e3bcdf5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:56:10Z",
+      "side": 1,
+      "message": "Linter:\n\nartifact_info_ext.go:156::warning: line is 110 characters (lll)\nartifacts/database/database_test.go:46:4:warning: cannot use promoted field ArtifactInfoExt.ArtifactDescription in struct literal of type weles.ArtifactInfo (vet, vetshadow)\nartifacts/database/database_test.go:46:4:warning: unknown field ArtifactDescription in struct literal (megacheck)\nartifacts/database/database_test.go:46:4:warning: unused variable or constant unknown field ArtifactDescription in struct literal (varcheck)\nartifacts/database/database_test.go:53:4:warning: unused variable or constant unknown field Status in struct literal (varcheck)\nartifacts/database/database_test.go:53:4:warning: cannot use promoted field ArtifactInfoExt.Status in struct literal of type weles.ArtifactInfo (vet, vetshadow)\nartifacts/database/database_test.go:54:4:warning: unused variable or constant unknown field Timestamp in struct literal (varcheck)\nartifacts/database/database_test.go:54:4:warning: cannot use promoted field ArtifactInfoExt.Timestamp in struct literal of type weles.ArtifactInfo (vet, vetshadow)\nartifacts/database/database_test.go:57:4:warning: unused variable or constant unknown field ArtifactDescription in struct literal (varcheck)\nartifacts/database/database_test.go:57:4:warning: cannot use promoted field ArtifactInfoExt.ArtifactDescription in struct literal of type weles.ArtifactInfo (vet, vetshadow)\nartifacts/database/database_test.go:64:4:warning: unused variable or constant unknown field Status in struct literal (varcheck)\nartifacts/database/database_test.go:64:4:warning: cannot use promoted field ArtifactInfoExt.Status in struct literal of type weles.ArtifactInfo (vet, vetshadow)\nartifacts/database/database_test.go:65:4:warning: cannot use promoted field ArtifactInfoExt.Timestamp in struct literal of type weles.ArtifactInfo (vet, vetshadow)\nartifacts/database/database_test.go:65:4:warning: unused variable or constant unknown field Timestamp in struct literal (varcheck)\nartifacts/database/database_test.go:68:4:warning: cannot use promoted field ArtifactInfoExt.ArtifactDescription in struct literal of type weles.ArtifactInfo (vet, vetshadow)\nartifacts/database/database_test.go:68:4:warning: unused variable or constant unknown field ArtifactDescription in struct literal (varcheck)\nartifacts/database/database_test.go:75:4:warning: unused variable or constant unknown field Status in struct literal (varcheck)\nartifacts/database/database_test.go:75:4:warning: cannot use promoted field ArtifactInfoExt.Status in struct literal of type weles.ArtifactInfo (vet, vetshadow)\nartifacts/database/database_test.go:76:4:warning: unused variable or constant unknown field Timestamp in struct literal (varcheck)\nartifacts/database/database_test.go:76:4:warning: cannot use promoted field ArtifactInfoExt.Timestamp in struct literal of type weles.ArtifactInfo (vet, vetshadow)\nartifacts/database/database_test.go:79:4:warning: unused variable or constant unknown field ArtifactDescription in struct literal (varcheck)\nartifacts/database/database_test.go:79:4:warning: too many errors (vet, vetshadow)\nartifacts/database/database_test.go:79:4:warning: cannot use promoted field ArtifactInfoExt.ArtifactDescription in struct literal of type weles.ArtifactInfo (vet, vetshadow)\nartifacts/database/database_test.go:86:4:warning: unused variable or constant unknown field Status in struct literal (varcheck)\nartifacts/database/database_test.go:87:4:warning: unused variable or constant unknown field Timestamp in struct literal (varcheck)",
+      "revId": "7e58d777de3481eb723f1a98f9fae63930abd1b5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
