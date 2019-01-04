@@ -1,0 +1,729 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7b3d97b8_8d5af557",
+        "filename": "artifact_filter.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "simultaneously",
+      "range": {
+        "startLine": 39,
+        "startChar": 39,
+        "endLine": 39,
+        "endChar": 53
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e207f9b_efdaf2b8",
+        "filename": "job_filter.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 35,
+        "startChar": 42,
+        "endLine": 35,
+        "endChar": 43
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7bd1350_f57387d9",
+        "filename": "job_filter.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "One space is enough",
+      "range": {
+        "startLine": 36,
+        "startChar": 44,
+        "endLine": 36,
+        "endChar": 45
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ac341c34_06c45694",
+        "filename": "job_filter.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "simultaneously",
+      "range": {
+        "startLine": 40,
+        "startChar": 44,
+        "endLine": 40,
+        "endChar": 58
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7f32c18e_abb1bf82",
+        "filename": "job_filter.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "not precise. records created at exactly same time are also omited\n\nNotice:\nafter !\u003d ~before",
+      "range": {
+        "startLine": 45,
+        "startChar": 41,
+        "endLine": 45,
+        "endChar": 70
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f1926840_824938db",
+        "filename": "job_filter.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "ibidem",
+      "range": {
+        "startLine": 49,
+        "startChar": 42,
+        "endLine": 49,
+        "endChar": 70
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5fb81d84_28b7b955",
+        "filename": "job_filter.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 61,
+        "startChar": 47,
+        "endLine": 61,
+        "endChar": 51
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a3c626a_eb963c15",
+        "filename": "job_filter.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "ibidem",
+      "range": {
+        "startLine": 71,
+        "startChar": 49,
+        "endLine": 71,
+        "endChar": 70
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a94cbb1_1982efd9",
+        "filename": "job_filter.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "ibidem",
+      "range": {
+        "startLine": 75,
+        "startChar": 50,
+        "endLine": 75,
+        "endChar": 70
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4a8c025_4a43a609",
+        "filename": "server/operations/artifacts/artifact_lister.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "one space is enough",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b1cb7b0c_beeb21af",
+        "filename": "server/operations/artifacts/artifact_lister_parameters.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "should be HTTPRequest without spaces. Sentence should end with dot.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "197c956c_8c254f0e",
+        "filename": "server/operations/artifacts/artifact_lister_parameters.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Comment should start with \"After\"",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 3
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4798e7ea_3e9b6233",
+        "filename": "server/operations/artifacts/artifact_lister_parameters.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with \"ArtifactFilterAndSort\"",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 3
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b75c426_6cbab2c7",
+        "filename": "server/operations/artifacts/artifact_lister_parameters.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with \"Before\".",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 3
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5e4d4b3_95bc3841",
+        "filename": "server/operations/artifacts/artifact_lister_parameters.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with \"Limit\".",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 3
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a08e2ed_18b6e8c6",
+        "filename": "server/operations/artifacts/artifact_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a595bb10_7784630f",
+        "filename": "server/operations/artifacts/artifact_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "124d373f_d3c77def",
+        "filename": "server/operations/artifacts/artifact_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b25c6257_52c40f06",
+        "filename": "server/operations/artifacts/artifact_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7da5107c_e4003868",
+        "filename": "server/operations/artifacts/artifact_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d9861de_ad6a9610",
+        "filename": "server/operations/artifacts/artifact_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5652662_757d1c5c",
+        "filename": "server/operations/artifacts/artifact_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f0458e02_36fa988a",
+        "filename": "server/operations/jobs/job_creator.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Dot at end of sentence.",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 11
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d671e7ef_1e134f8d",
+        "filename": "server/operations/jobs/job_creator.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "One space is enough",
+      "range": {
+        "startLine": 55,
+        "startChar": 22,
+        "endLine": 55,
+        "endChar": 25
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a74f0d9_cb2d8c4a",
+        "filename": "server/operations/jobs/job_lister_parameters.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3257f6f9_a1bab9ab",
+        "filename": "server/operations/jobs/job_lister_parameters.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "88f3e7f4_4cf80277",
+        "filename": "server/operations/jobs/job_lister_parameters.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cb7043e1_fc18afbf",
+        "filename": "server/operations/jobs/job_lister_parameters.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84bc2787_f3dd7306",
+        "filename": "server/operations/jobs/job_lister_parameters.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd1ba109_a4b8e1fc",
+        "filename": "server/operations/jobs/job_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ad1c35d_70af7522",
+        "filename": "server/operations/jobs/job_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e578a29_33132a8d",
+        "filename": "server/operations/jobs/job_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0059edc5_0de43d34",
+        "filename": "server/operations/jobs/job_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "89933152_cd99cbe7",
+        "filename": "server/operations/jobs/job_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e44c0901_766ce7b9",
+        "filename": "server/operations/jobs/job_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eee4ab3f_72025abc",
+        "filename": "server/operations/jobs/job_lister_responses.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "Should start with field name.",
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "393dc606_1656af70",
+        "filename": "server/operations/weles_api.go",
+        "patchSetId": 10
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:27:33Z",
+      "side": 1,
+      "message": "drop this",
+      "range": {
+        "startLine": 78,
+        "startChar": 11,
+        "endLine": 78,
+        "endChar": 15
+      },
+      "revId": "e31465417dd1421b2e099a344c340a8d56512362",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
