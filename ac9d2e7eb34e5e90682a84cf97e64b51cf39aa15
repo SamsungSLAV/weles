@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "61be66ac_0f7e8b39",
+        "filename": "artifacts/database/database.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1015222
+      },
+      "writtenOn": "2019-01-04T10:07:13Z",
+      "side": 1,
+      "message": "I don\u0027t know if we are planning to enlarge filter and add new fields, but maybe its time to reformat this function to avoid code repetition.",
+      "range": {
+        "startLine": 144,
+        "startChar": 1,
+        "endLine": 144,
+        "endChar": 53
+      },
+      "revId": "ac9d2e7eb34e5e90682a84cf97e64b51cf39aa15",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
