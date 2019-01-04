@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8af8f67_96408bae",
+        "filename": "artifact_info.go",
+        "patchSetId": 7
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:45:19Z",
+      "side": 1,
+      "message": "What will happen if status is omitted ? Which enum will it be casted to ? If it will remain \"\" string. It would be an invalid value (out of possible enum list)",
+      "revId": "50383f816a23a9abd93d0918a25454bee88f4c17",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
