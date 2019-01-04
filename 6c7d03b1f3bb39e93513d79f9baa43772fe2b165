@@ -16,6 +16,24 @@
       "revId": "6c7d03b1f3bb39e93513d79f9baa43772fe2b165",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae33f7c2_a869c524",
+        "filename": "enums/job_status.go",
+        "patchSetId": 3
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2019-01-04T14:14:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3348e7d1_69ff769e",
+      "revId": "6c7d03b1f3bb39e93513d79f9baa43772fe2b165",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
