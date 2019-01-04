@@ -16,6 +16,24 @@
       "revId": "50383f816a23a9abd93d0918a25454bee88f4c17",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ab5fe41_bdca03dc",
+        "filename": "artifact_info.go",
+        "patchSetId": 7
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1015231
+      },
+      "writtenOn": "2019-01-04T15:56:25Z",
+      "side": 1,
+      "message": "when ArtifactInfo is marshalled and a record has no Status field, it will be omited.\nLike:\nArtifactInfo{ID: 666, Path: \"/asd/fewq\", Status: \"\", ...}\nit will be marshalled to:\n{\"ID\":666,\"Path\":\"/asd/fewq\", ...}\n\nthats what omitempty is for- to omit a field when it is empty.\n\n\nIf this is regarding user input- a bit misleading place to leave this comment as ArtifactInfo is only created by Weles and marshalled ot JSON not the other way around. But there is ArtifactStatus in filter. When someone provides empty value in JSON or omits it, it will result in same value of ArtifactStatus which is ArtifactStatus{}.\n\nium not sure i understood the comment",
+      "parentUuid": "a8af8f67_96408bae",
+      "revId": "50383f816a23a9abd93d0918a25454bee88f4c17",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
