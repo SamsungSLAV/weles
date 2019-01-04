@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "480204d5_eb3bef75",
+        "filename": "server/list_panic_test.go",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:49:00Z",
+      "side": 1,
+      "message": "copyrights and license missing",
+      "revId": "5c35b57201b6eb523a03691dbf0ff97895846b61",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "77ec3174_9af9795b",
+        "filename": "server/list_panic_test.go",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:49:00Z",
+      "side": 1,
+      "message": "Does not compile!\n\nserver/list_panic_test.go:13:17:warning: unused variable or constant ArtifactPagination not declared by package weles (varcheck)\nserver/list_panic_test.go:13:17:warning: ArtifactPagination not declared by package weles (megacheck)\nserver/list_panic_test.go:13:11:error: undefined: weles.ArtifactPagination (vet, vetshadow)\nserver/list_panic_test.go:18:34:error: undefined: weles.ArtifactPagination (vet, vetshadow)\nserver/list_panic_test.go:18:40:warning: unused variable or constant ArtifactPagination not declared by package weles (varcheck)\nserver/list_panic_test.go:19:33:error: undefined: weles.ArtifactPagination (vet, vetshadow)\nserver/list_panic_test.go:19:39:warning: unused variable or constant ArtifactPagination not declared by package weles (varcheck)\nserver/list_panic_test.go:22:11:error: undefined: weles.JobPagination (vet, vetshadow)\nserver/list_panic_test.go:22:17:warning: unused variable or constant JobPagination not declared by package weles (varcheck)\nserver/list_panic_test.go:27:40:warning: unused variable or constant JobPagination not declared by package weles (varcheck)\nserver/list_panic_test.go:27:34:error: undefined: weles.JobPagination (vet, vetshadow)\nserver/list_panic_test.go:28:33:error: undefined: weles.JobPagination (vet, vetshadow)\nserver/list_panic_test.go:28:39:warning: unused variable or constant JobPagination not declared by package weles (varcheck)",
+      "revId": "5c35b57201b6eb523a03691dbf0ff97895846b61",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e7abbf1_b0dcbac8",
+        "filename": "server/list_panic_test.go",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1015221
+      },
+      "writtenOn": "2019-01-04T09:49:00Z",
+      "side": 1,
+      "message": "unnecessary empty line",
+      "revId": "5c35b57201b6eb523a03691dbf0ff97895846b61",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
