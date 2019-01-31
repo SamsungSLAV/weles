@@ -298,11 +298,11 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 					By("Response must have 200 statuscode")
 					Expect(resp.StatusCode).To(Equal(200))
 					By("Next, Previous, RemainingRecords Headers should not be set")
-					Expect(resp.Header.Get("Next")).To(Equal(""))
-					Expect(resp.Header.Get("Previous")).To(Equal(""))
-					Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
+					Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
 					By("TotalRecords should be set to length of list")
-					Expect(resp.Header.Get("TotalRecords")).To(Equal(strconv.Itoa(
+					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(strconv.Itoa(
 						len(artifactInfo))))
 
 				},
@@ -348,10 +348,10 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 				checkReceivedArtifactErr(respBody, amerr)
 				By("Headers should not be set")
 				Expect(resp.StatusCode).To(Equal(statusCode))
-				Expect(resp.Header.Get("Next")).To(Equal(""))
-				Expect(resp.Header.Get("Previous")).To(Equal(""))
-				Expect(resp.Header.Get("TotalRecords")).To(Equal(""))
-				Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
+				Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+				Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+				Expect(resp.Header.Get(ListTotalHdr)).To(Equal(""))
+				Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
 
 			},
 			Entry("pagination off, 404 status, Artifact not found error",
@@ -444,10 +444,10 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 
 					Expect(resp.StatusCode).To(Equal(400))
 					By("Headers should not be set")
-					Expect(resp.Header.Get("Next")).To(Equal(""))
-					Expect(resp.Header.Get("Previous")).To(Equal(""))
-					Expect(resp.Header.Get("TotalRecords")).To(Equal(""))
-					Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
+					Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
 
 				},
 				Entry("empty body", "?before=10&after=20"),

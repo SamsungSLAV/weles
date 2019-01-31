@@ -123,20 +123,25 @@ func init() {
               }
             },
             "headers": {
-              "Next": {
-                "type": "string",
-                "format": "URI",
-                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
+              "Weles-List-Batch-Size": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Weles-List-Batch-Size is the count of records returned on\ncurrent page."
               },
-              "Previous": {
-                "type": "string",
-                "format": "URI",
-                "description": "Previous  is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "TotalRecords": {
+              "Weles-List-Total": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "TotalRecords is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
+                "description": "Weles-List-Total is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
+              },
+              "Weles-Next-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
+              },
+              "Weles-Previous-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Previous-Page is the URL suffix to request next page of\ndata.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -149,25 +154,30 @@ func init() {
               }
             },
             "headers": {
-              "Next": {
-                "type": "string",
-                "format": "URI",
-                "description": "Next is URL to request next page of data. Please note that the same\nbody must be used as in initial request."
+              "Weles-List-Batch-Size": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Weles-List-Batch-Size is the count of records returned on\ncurrent page."
               },
-              "Previous": {
-                "type": "string",
-                "format": "URI",
-                "description": "Previous is URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
-              },
-              "RemainingRecords": {
+              "Weles-List-Remaining": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "RemainingRecords is number of records after current page.\nPlease note that this value may change when requesting for the\nsame data at a different moment in time."
+                "description": "Weles-List-Remaining is number of records after current page.\nPlease note that this value may change when requesting for the\nsame data at a different moment in time."
               },
-              "TotalRecords": {
+              "Weles-List-Total": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "TotalRecords is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
+                "description": "Weles-List-Total is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
+              },
+              "Weles-Next-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Next-Page is URL to request next page of data. Please\nnote that the same body must be used as in initial request."
+              },
+              "Weles-Previous-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Previous-Page is URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
               }
             }
           },
@@ -289,20 +299,25 @@ func init() {
               }
             },
             "headers": {
-              "Next": {
-                "type": "string",
-                "format": "URI",
-                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
+              "Weles-List-Batch-Size": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Weles-List-Batch-Size is the count of records returned on\ncurrent page."
               },
-              "Previous": {
-                "type": "string",
-                "format": "URI",
-                "description": "Previous is the URL suffix to request previous page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "TotalRecords": {
+              "Weles-List-Total": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "TotalRecords is the count of records currently fulfilling the\nrequested JobFilter. Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
+                "description": "Weles-List-Total is the count of records currently\nfulfilling the requested JobFilter. Please note that this value\nmay change when requesting for the same data at a different\nmoments in time."
+              },
+              "Weles-Next-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
+              },
+              "Weles-Previous-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Previous-Page is the URL suffix to request previous page\nof data.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -315,25 +330,30 @@ func init() {
               }
             },
             "headers": {
-              "Next": {
-                "type": "string",
-                "format": "URI",
-                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
+              "Weles-List-Batch-Size": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Weles-List-Batch-Size is the count of records returned on\ncurrent page."
               },
-              "Previous": {
-                "type": "string",
-                "format": "URI",
-                "description": "Previous is the URL suffix to request previous page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "RemainingRecords": {
+              "Weles-List-Remaining": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "RemainingRecords is the number of records after current page.\nPlease note that this value may change when requesting for the\nsame data at a different moments in time."
+                "description": "Weles-List-Remaining is the number of records after current\npage.  Please note that this value may change when requesting\nfor the same data at a different moments in time."
               },
-              "TotalRecords": {
+              "Weles-List-Total": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "TotalRecords is the count of records currently fulfilling\nrequested JobFilter.  Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
+                "description": "Weles-List-Total is the count of records currently fulfilling\nrequested JobFilter.  Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
+              },
+              "Weles-Next-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
+              },
+              "Weles-Previous-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Previous-Page is the URL suffix to request previous page\nof data.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -406,11 +426,11 @@ func init() {
               "$ref": "#/definitions/Version"
             },
             "headers": {
-              "Weles-API-State": {
+              "Weles-Api-State": {
                 "type": "string",
                 "description": "State of Weles API."
               },
-              "Weles-API-Version": {
+              "Weles-Api-Version": {
                 "type": "string",
                 "description": "Version of Weles API."
               },
@@ -936,20 +956,25 @@ func init() {
               }
             },
             "headers": {
-              "Next": {
-                "type": "string",
-                "format": "URI",
-                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
+              "Weles-List-Batch-Size": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Weles-List-Batch-Size is the count of records returned on\ncurrent page."
               },
-              "Previous": {
-                "type": "string",
-                "format": "URI",
-                "description": "Previous  is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "TotalRecords": {
+              "Weles-List-Total": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "TotalRecords is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
+                "description": "Weles-List-Total is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
+              },
+              "Weles-Next-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
+              },
+              "Weles-Previous-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Previous-Page is the URL suffix to request next page of\ndata.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -962,25 +987,30 @@ func init() {
               }
             },
             "headers": {
-              "Next": {
-                "type": "string",
-                "format": "URI",
-                "description": "Next is URL to request next page of data. Please note that the same\nbody must be used as in initial request."
+              "Weles-List-Batch-Size": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Weles-List-Batch-Size is the count of records returned on\ncurrent page."
               },
-              "Previous": {
-                "type": "string",
-                "format": "URI",
-                "description": "Previous is URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
-              },
-              "RemainingRecords": {
+              "Weles-List-Remaining": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "RemainingRecords is number of records after current page.\nPlease note that this value may change when requesting for the\nsame data at a different moment in time."
+                "description": "Weles-List-Remaining is number of records after current page.\nPlease note that this value may change when requesting for the\nsame data at a different moment in time."
               },
-              "TotalRecords": {
+              "Weles-List-Total": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "TotalRecords is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
+                "description": "Weles-List-Total is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
+              },
+              "Weles-Next-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Next-Page is URL to request next page of data. Please\nnote that the same body must be used as in initial request."
+              },
+              "Weles-Previous-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Previous-Page is URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
               }
             }
           },
@@ -1120,20 +1150,25 @@ func init() {
               }
             },
             "headers": {
-              "Next": {
-                "type": "string",
-                "format": "URI",
-                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
+              "Weles-List-Batch-Size": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Weles-List-Batch-Size is the count of records returned on\ncurrent page."
               },
-              "Previous": {
-                "type": "string",
-                "format": "URI",
-                "description": "Previous is the URL suffix to request previous page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "TotalRecords": {
+              "Weles-List-Total": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "TotalRecords is the count of records currently fulfilling the\nrequested JobFilter. Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
+                "description": "Weles-List-Total is the count of records currently\nfulfilling the requested JobFilter. Please note that this value\nmay change when requesting for the same data at a different\nmoments in time."
+              },
+              "Weles-Next-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
+              },
+              "Weles-Previous-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Previous-Page is the URL suffix to request previous page\nof data.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -1146,25 +1181,30 @@ func init() {
               }
             },
             "headers": {
-              "Next": {
-                "type": "string",
-                "format": "URI",
-                "description": "Next is the URL suffix to request next page of data. Please\nnote that the same body must be used as in initial request."
+              "Weles-List-Batch-Size": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Weles-List-Batch-Size is the count of records returned on\ncurrent page."
               },
-              "Previous": {
-                "type": "string",
-                "format": "URI",
-                "description": "Previous is the URL suffix to request previous page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "RemainingRecords": {
+              "Weles-List-Remaining": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "RemainingRecords is the number of records after current page.\nPlease note that this value may change when requesting for the\nsame data at a different moments in time."
+                "description": "Weles-List-Remaining is the number of records after current\npage.  Please note that this value may change when requesting\nfor the same data at a different moments in time."
               },
-              "TotalRecords": {
+              "Weles-List-Total": {
                 "type": "integer",
                 "format": "uint64",
-                "description": "TotalRecords is the count of records currently fulfilling\nrequested JobFilter.  Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
+                "description": "Weles-List-Total is the count of records currently fulfilling\nrequested JobFilter.  Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
+              },
+              "Weles-Next-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
+              },
+              "Weles-Previous-Page": {
+                "type": "string",
+                "format": "URI",
+                "description": "Weles-Previous-Page is the URL suffix to request previous page\nof data.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -1255,11 +1295,11 @@ func init() {
               "$ref": "#/definitions/Version"
             },
             "headers": {
-              "Weles-API-State": {
+              "Weles-Api-State": {
                 "type": "string",
                 "description": "State of Weles API."
               },
-              "Weles-API-Version": {
+              "Weles-Api-Version": {
                 "type": "string",
                 "description": "Version of Weles API."
               },

@@ -46,6 +46,13 @@ const (
 	basePath          = "/api/v1"
 	listArtifactsPath = "/artifacts/list"
 	listJobsPath      = "/jobs/list"
+
+	//headers
+	NextPageHdr      = "Weles-Next-Page"
+	PreviousPageHdr  = "Weles-Previous-Page"
+	ListTotalHdr     = "Weles-List-Total"
+	ListRemainingHdr = "Weles-List-Remaining"
+	ListBatchSize    = "Weles-List-Batch-Size"
 )
 
 func TestServer(t *testing.T) {

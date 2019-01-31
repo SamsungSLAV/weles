@@ -62,8 +62,9 @@ func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 	var artifactListerURL artifacts.ArtifactListerURL
 
 	responder = artifacts.NewArtifactListerPartialContent()
-	responder.SetTotalRecords(listInfo.TotalRecords)
-	responder.SetRemainingRecords(listInfo.RemainingRecords)
+	responder.SetWelesListTotal(listInfo.TotalRecords)
+	responder.SetWelesListRemaining(listInfo.RemainingRecords)
+	responder.SetWelesListBatchSize(int32(len(artifactInfoReturned)))
 
 	tmp := artifactInfoReturned[len(artifactInfoReturned)-1].ID
 	artifactListerURL.After = &tmp
@@ -72,7 +73,7 @@ func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 		tmp := paginator.Limit
 		artifactListerURL.Limit = &tmp
 	}
-	responder.SetNext(artifactListerURL.String())
+	responder.SetWelesNextPage(artifactListerURL.String())
 
 	if paginator.ID != 0 { //... and not the first
 		//paginator.ID is from query parameter not artifactmanager
@@ -83,7 +84,7 @@ func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 			tmp := paginator.Limit
 			artifactListerURL.Limit = &tmp
 		}
-		responder.SetPrevious(artifactListerURL.String())
+		responder.SetWelesPreviousPage(artifactListerURL.String())
 	}
 	responder.SetPayload(artifactInfoReturned)
 	return
@@ -94,8 +95,11 @@ func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 	artifactInfoReturned []*weles.ArtifactInfoExt, defaultPageLimit int32,
 ) (responder *artifacts.ArtifactListerOK) {
 	var artifactListerURL artifacts.ArtifactListerURL
+
 	responder = artifacts.NewArtifactListerOK()
-	responder.SetTotalRecords(listInfo.TotalRecords)
+	responder.SetWelesListTotal(listInfo.TotalRecords)
+	responder.SetWelesListBatchSize(int32(len(artifactInfoReturned)))
+
 	if paginator.ID != 0 { //not the first page
 		// keep in mind that ArtifactPath in paginator is taken from query parameter,
 		// not ArtifactManager
@@ -108,7 +112,7 @@ func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 				tmp := paginator.Limit
 				artifactListerURL.Limit = &tmp
 			}
-			responder.SetPrevious(artifactListerURL.String())
+			responder.SetWelesPreviousPage(artifactListerURL.String())
 		} else {
 			if len(artifactInfoReturned) != 0 {
 				tmp := artifactInfoReturned[len(artifactInfoReturned)-1].ID
@@ -118,7 +122,7 @@ func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPagin
 				tmp2 := paginator.Limit
 				artifactListerURL.Limit = &tmp2
 			}
-			responder.SetNext(artifactListerURL.String())
+			responder.SetWelesNextPage(artifactListerURL.String())
 		}
 	}
 	responder.SetPayload(artifactInfoReturned)

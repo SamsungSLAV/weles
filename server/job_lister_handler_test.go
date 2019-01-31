@@ -300,10 +300,10 @@ var _ = Describe("Listing jobs with server initialized", func() {
 					checkReceivedJobInfo(respBody, jobInfo)
 
 					Expect(resp.StatusCode).To(Equal(200))
-					Expect(resp.Header.Get("Next")).To(Equal(""))
-					Expect(resp.Header.Get("Previous")).To(Equal(""))
-					Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
-					Expect(resp.Header.Get("TotalRecords")).To(Equal(strconv.Itoa(
+					Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(strconv.Itoa(
 						len(jobInfo))))
 
 				},
@@ -348,10 +348,10 @@ var _ = Describe("Listing jobs with server initialized", func() {
 
 				checkReceivedJobErr(respBody, amerr)
 				Expect(resp.StatusCode).To(Equal(statusCode))
-				Expect(resp.Header.Get("Next")).To(Equal(""))
-				Expect(resp.Header.Get("Previous")).To(Equal(""))
-				Expect(resp.Header.Get("TotalRecords")).To(Equal(""))
-				Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
+				Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+				Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+				Expect(resp.Header.Get(ListTotalHdr)).To(Equal(""))
+				Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
 
 			},
 			Entry("pagination off, 404 status, Job not found error",
@@ -443,10 +443,10 @@ var _ = Describe("Listing jobs with server initialized", func() {
 					checkReceivedJobErr(respBody, weles.ErrBeforeAfterNotAllowed)
 
 					Expect(resp.StatusCode).To(Equal(400))
-					Expect(resp.Header.Get("Next")).To(Equal(""))
-					Expect(resp.Header.Get("Previous")).To(Equal(""))
-					Expect(resp.Header.Get("TotalRecords")).To(Equal(""))
-					Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
+					Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
 
 				},
 				Entry("empty body", "?before=10&after=20"),
