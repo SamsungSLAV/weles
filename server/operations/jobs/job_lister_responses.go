@@ -37,24 +37,36 @@ const JobListerOKCode int = 200
 swagger:response jobListerOK
 */
 type JobListerOK struct {
-	/*Next is the URL suffix to request next page of data. Please
-	note that the same body must be used as in initial request.
+	/*Weles-List-Batch-Size is the count of records returned on
+	current page.
 
 	*/
-	Next string `json:"Next"`
-	/*Previous is the URL suffix to request previous page of data.
+	WelesListBatchSize int32 `json:"Weles-List-Batch-Size"`
+	/*Weles-List-Remaining is number of records after current page.
+	Please note that this value may change when requesting for the
+	same data at a different moment in time.
+
+	*/
+	WelesListRemaining uint64 `json:"Weles-List-Remaining"`
+	/*Weles-List-Total is the count of records currently
+	fulfilling the requested JobFilter. Please note that this value
+	may change when requesting for the same data at a different
+	moments in time.
+
+	*/
+	WelesListTotal uint64 `json:"Weles-List-Total"`
+	/*Weles-Next-Page is the URL suffix to request next page of data.
 	Please note that the same body must be used as in initial
 	request.
 
 	*/
-	Previous string `json:"Previous"`
-	/*TotalRecords is the count of records currently fulfilling the
-	requested JobFilter. Please note that this value may change
-	when requesting for the same data at a different moments in
-	time.
+	WelesNextPage string `json:"Weles-Next-Page"`
+	/*Weles-Previous-Page is the URL suffix to request previous page
+	of data.  Please note that the same body must be used as in
+	initial request.
 
 	*/
-	TotalRecords uint64 `json:"TotalRecords"`
+	WelesPreviousPage string `json:"Weles-Previous-Page"`
 
 	/*
 	  In: Body
@@ -68,37 +80,59 @@ func NewJobListerOK() *JobListerOK {
 	return &JobListerOK{}
 }
 
-// WithNext adds the next to the job lister o k response
-func (o *JobListerOK) WithNext(next string) *JobListerOK {
-	o.Next = next
+// WithWelesListBatchSize adds the welesListBatchSize to the job lister o k response
+func (o *JobListerOK) WithWelesListBatchSize(welesListBatchSize int32) *JobListerOK {
+	o.WelesListBatchSize = welesListBatchSize
 	return o
 }
 
-// SetNext sets the next to the job lister o k response
-func (o *JobListerOK) SetNext(next string) {
-	o.Next = next
+// SetWelesListBatchSize sets the welesListBatchSize to the job lister o k response
+func (o *JobListerOK) SetWelesListBatchSize(welesListBatchSize int32) {
+	o.WelesListBatchSize = welesListBatchSize
 }
 
-// WithPrevious adds the previous to the job lister o k response
-func (o *JobListerOK) WithPrevious(previous string) *JobListerOK {
-	o.Previous = previous
+// WithWelesListRemaining adds the welesListRemaining to the job lister o k response
+func (o *JobListerOK) WithWelesListRemaining(welesListRemaining uint64) *JobListerOK {
+	o.WelesListRemaining = welesListRemaining
 	return o
 }
 
-// SetPrevious sets the previous to the job lister o k response
-func (o *JobListerOK) SetPrevious(previous string) {
-	o.Previous = previous
+// SetWelesListRemaining sets the welesListRemaining to the job lister o k response
+func (o *JobListerOK) SetWelesListRemaining(welesListRemaining uint64) {
+	o.WelesListRemaining = welesListRemaining
 }
 
-// WithTotalRecords adds the totalRecords to the job lister o k response
-func (o *JobListerOK) WithTotalRecords(totalRecords uint64) *JobListerOK {
-	o.TotalRecords = totalRecords
+// WithWelesListTotal adds the welesListTotal to the job lister o k response
+func (o *JobListerOK) WithWelesListTotal(welesListTotal uint64) *JobListerOK {
+	o.WelesListTotal = welesListTotal
 	return o
 }
 
-// SetTotalRecords sets the totalRecords to the job lister o k response
-func (o *JobListerOK) SetTotalRecords(totalRecords uint64) {
-	o.TotalRecords = totalRecords
+// SetWelesListTotal sets the welesListTotal to the job lister o k response
+func (o *JobListerOK) SetWelesListTotal(welesListTotal uint64) {
+	o.WelesListTotal = welesListTotal
+}
+
+// WithWelesNextPage adds the welesNextPage to the job lister o k response
+func (o *JobListerOK) WithWelesNextPage(welesNextPage string) *JobListerOK {
+	o.WelesNextPage = welesNextPage
+	return o
+}
+
+// SetWelesNextPage sets the welesNextPage to the job lister o k response
+func (o *JobListerOK) SetWelesNextPage(welesNextPage string) {
+	o.WelesNextPage = welesNextPage
+}
+
+// WithWelesPreviousPage adds the welesPreviousPage to the job lister o k response
+func (o *JobListerOK) WithWelesPreviousPage(welesPreviousPage string) *JobListerOK {
+	o.WelesPreviousPage = welesPreviousPage
+	return o
+}
+
+// SetWelesPreviousPage sets the welesPreviousPage to the job lister o k response
+func (o *JobListerOK) SetWelesPreviousPage(welesPreviousPage string) {
+	o.WelesPreviousPage = welesPreviousPage
 }
 
 // WithPayload adds the payload to the job lister o k response
@@ -115,25 +149,39 @@ func (o *JobListerOK) SetPayload(payload []*weles.JobInfo) {
 // WriteResponse to the client
 func (o *JobListerOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	// response header Next
+	// response header Weles-List-Batch-Size
 
-	next := o.Next
-	if next != "" {
-		rw.Header().Set("Next", next)
+	welesListBatchSize := swag.FormatInt32(o.WelesListBatchSize)
+	if welesListBatchSize != "" {
+		rw.Header().Set("Weles-List-Batch-Size", welesListBatchSize)
 	}
 
-	// response header Previous
+	// response header Weles-List-Remaining
 
-	previous := o.Previous
-	if previous != "" {
-		rw.Header().Set("Previous", previous)
+	welesListRemaining := swag.FormatUint64(o.WelesListRemaining)
+	if welesListRemaining != "" {
+		rw.Header().Set("Weles-List-Remaining", welesListRemaining)
 	}
 
-	// response header TotalRecords
+	// response header Weles-List-Total
 
-	totalRecords := swag.FormatUint64(o.TotalRecords)
-	if totalRecords != "" {
-		rw.Header().Set("TotalRecords", totalRecords)
+	welesListTotal := swag.FormatUint64(o.WelesListTotal)
+	if welesListTotal != "" {
+		rw.Header().Set("Weles-List-Total", welesListTotal)
+	}
+
+	// response header Weles-Next-Page
+
+	welesNextPage := o.WelesNextPage
+	if welesNextPage != "" {
+		rw.Header().Set("Weles-Next-Page", welesNextPage)
+	}
+
+	// response header Weles-Previous-Page
+
+	welesPreviousPage := o.WelesPreviousPage
+	if welesPreviousPage != "" {
+		rw.Header().Set("Weles-Previous-Page", welesPreviousPage)
 	}
 
 	rw.WriteHeader(200)
@@ -156,30 +204,36 @@ const JobListerPartialContentCode int = 206
 swagger:response jobListerPartialContent
 */
 type JobListerPartialContent struct {
-	/*Next is the URL suffix to request next page of data. Please
-	note that the same body must be used as in initial request.
+	/*Weles-List-Batch-Size is the count of records returned on
+	current page.
 
 	*/
-	Next string `json:"Next"`
-	/*Previous is the URL suffix to request previous page of data.
-	Please note that the same body must be used as in initial
-	request.
+	WelesListBatchSize int32 `json:"Weles-List-Batch-Size"`
+	/*Weles-List-Remaining is the number of records after current
+	page.  Please note that this value may change when requesting
+	for the same data at a different moments in time.
 
 	*/
-	Previous string `json:"Previous"`
-	/*RemainingRecords is the number of records after current page.
-	Please note that this value may change when requesting for the
-	same data at a different moments in time.
-
-	*/
-	RemainingRecords uint64 `json:"RemainingRecords"`
-	/*TotalRecords is the count of records currently fulfilling
+	WelesListRemaining uint64 `json:"Weles-List-Remaining"`
+	/*Weles-List-Total is the count of records currently fulfilling
 	requested JobFilter.  Please note that this value may change
 	when requesting for the same data at a different moments in
 	time.
 
 	*/
-	TotalRecords uint64 `json:"TotalRecords"`
+	WelesListTotal uint64 `json:"Weles-List-Total"`
+	/*Weles-Next-Page is the URL suffix to request next page of data.
+	Please note that the same body must be used as in initial
+	request.
+
+	*/
+	WelesNextPage string `json:"Weles-Next-Page"`
+	/*Weles-Previous-Page is the URL suffix to request previous page
+	of data.  Please note that the same body must be used as in
+	initial request.
+
+	*/
+	WelesPreviousPage string `json:"Weles-Previous-Page"`
 
 	/*
 	  In: Body
@@ -193,48 +247,59 @@ func NewJobListerPartialContent() *JobListerPartialContent {
 	return &JobListerPartialContent{}
 }
 
-// WithNext adds the next to the job lister partial content response
-func (o *JobListerPartialContent) WithNext(next string) *JobListerPartialContent {
-	o.Next = next
+// WithWelesListBatchSize adds the welesListBatchSize to the job lister partial content response
+func (o *JobListerPartialContent) WithWelesListBatchSize(welesListBatchSize int32) *JobListerPartialContent {
+	o.WelesListBatchSize = welesListBatchSize
 	return o
 }
 
-// SetNext sets the next to the job lister partial content response
-func (o *JobListerPartialContent) SetNext(next string) {
-	o.Next = next
+// SetWelesListBatchSize sets the welesListBatchSize to the job lister partial content response
+func (o *JobListerPartialContent) SetWelesListBatchSize(welesListBatchSize int32) {
+	o.WelesListBatchSize = welesListBatchSize
 }
 
-// WithPrevious adds the previous to the job lister partial content response
-func (o *JobListerPartialContent) WithPrevious(previous string) *JobListerPartialContent {
-	o.Previous = previous
+// WithWelesListRemaining adds the welesListRemaining to the job lister partial content response
+func (o *JobListerPartialContent) WithWelesListRemaining(welesListRemaining uint64) *JobListerPartialContent {
+	o.WelesListRemaining = welesListRemaining
 	return o
 }
 
-// SetPrevious sets the previous to the job lister partial content response
-func (o *JobListerPartialContent) SetPrevious(previous string) {
-	o.Previous = previous
+// SetWelesListRemaining sets the welesListRemaining to the job lister partial content response
+func (o *JobListerPartialContent) SetWelesListRemaining(welesListRemaining uint64) {
+	o.WelesListRemaining = welesListRemaining
 }
 
-// WithRemainingRecords adds the remainingRecords to the job lister partial content response
-func (o *JobListerPartialContent) WithRemainingRecords(remainingRecords uint64) *JobListerPartialContent {
-	o.RemainingRecords = remainingRecords
+// WithWelesListTotal adds the welesListTotal to the job lister partial content response
+func (o *JobListerPartialContent) WithWelesListTotal(welesListTotal uint64) *JobListerPartialContent {
+	o.WelesListTotal = welesListTotal
 	return o
 }
 
-// SetRemainingRecords sets the remainingRecords to the job lister partial content response
-func (o *JobListerPartialContent) SetRemainingRecords(remainingRecords uint64) {
-	o.RemainingRecords = remainingRecords
+// SetWelesListTotal sets the welesListTotal to the job lister partial content response
+func (o *JobListerPartialContent) SetWelesListTotal(welesListTotal uint64) {
+	o.WelesListTotal = welesListTotal
 }
 
-// WithTotalRecords adds the totalRecords to the job lister partial content response
-func (o *JobListerPartialContent) WithTotalRecords(totalRecords uint64) *JobListerPartialContent {
-	o.TotalRecords = totalRecords
+// WithWelesNextPage adds the welesNextPage to the job lister partial content response
+func (o *JobListerPartialContent) WithWelesNextPage(welesNextPage string) *JobListerPartialContent {
+	o.WelesNextPage = welesNextPage
 	return o
 }
 
-// SetTotalRecords sets the totalRecords to the job lister partial content response
-func (o *JobListerPartialContent) SetTotalRecords(totalRecords uint64) {
-	o.TotalRecords = totalRecords
+// SetWelesNextPage sets the welesNextPage to the job lister partial content response
+func (o *JobListerPartialContent) SetWelesNextPage(welesNextPage string) {
+	o.WelesNextPage = welesNextPage
+}
+
+// WithWelesPreviousPage adds the welesPreviousPage to the job lister partial content response
+func (o *JobListerPartialContent) WithWelesPreviousPage(welesPreviousPage string) *JobListerPartialContent {
+	o.WelesPreviousPage = welesPreviousPage
+	return o
+}
+
+// SetWelesPreviousPage sets the welesPreviousPage to the job lister partial content response
+func (o *JobListerPartialContent) SetWelesPreviousPage(welesPreviousPage string) {
+	o.WelesPreviousPage = welesPreviousPage
 }
 
 // WithPayload adds the payload to the job lister partial content response
@@ -251,32 +316,39 @@ func (o *JobListerPartialContent) SetPayload(payload []*weles.JobInfo) {
 // WriteResponse to the client
 func (o *JobListerPartialContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	// response header Next
+	// response header Weles-List-Batch-Size
 
-	next := o.Next
-	if next != "" {
-		rw.Header().Set("Next", next)
+	welesListBatchSize := swag.FormatInt32(o.WelesListBatchSize)
+	if welesListBatchSize != "" {
+		rw.Header().Set("Weles-List-Batch-Size", welesListBatchSize)
 	}
 
-	// response header Previous
+	// response header Weles-List-Remaining
 
-	previous := o.Previous
-	if previous != "" {
-		rw.Header().Set("Previous", previous)
+	welesListRemaining := swag.FormatUint64(o.WelesListRemaining)
+	if welesListRemaining != "" {
+		rw.Header().Set("Weles-List-Remaining", welesListRemaining)
 	}
 
-	// response header RemainingRecords
+	// response header Weles-List-Total
 
-	remainingRecords := swag.FormatUint64(o.RemainingRecords)
-	if remainingRecords != "" {
-		rw.Header().Set("RemainingRecords", remainingRecords)
+	welesListTotal := swag.FormatUint64(o.WelesListTotal)
+	if welesListTotal != "" {
+		rw.Header().Set("Weles-List-Total", welesListTotal)
 	}
 
-	// response header TotalRecords
+	// response header Weles-Next-Page
 
-	totalRecords := swag.FormatUint64(o.TotalRecords)
-	if totalRecords != "" {
-		rw.Header().Set("TotalRecords", totalRecords)
+	welesNextPage := o.WelesNextPage
+	if welesNextPage != "" {
+		rw.Header().Set("Weles-Next-Page", welesNextPage)
+	}
+
+	// response header Weles-Previous-Page
+
+	welesPreviousPage := o.WelesPreviousPage
+	if welesPreviousPage != "" {
+		rw.Header().Set("Weles-Previous-Page", welesPreviousPage)
 	}
 
 	rw.WriteHeader(206)

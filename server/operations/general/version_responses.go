@@ -39,11 +39,11 @@ type VersionOK struct {
 	/*State of Weles API.
 
 	 */
-	WelesAPIState string `json:"Weles-API-State"`
+	WelesAPIState string `json:"Weles-Api-State"`
 	/*Version of Weles API.
 
 	 */
-	WelesAPIVersion string `json:"Weles-API-Version"`
+	WelesAPIVersion string `json:"Weles-Api-Version"`
 	/*Version of Weles server.
 
 	 */
@@ -108,18 +108,18 @@ func (o *VersionOK) SetPayload(payload *weles.Version) {
 // WriteResponse to the client
 func (o *VersionOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	// response header Weles-API-State
+	// response header Weles-Api-State
 
 	welesAPIState := o.WelesAPIState
 	if welesAPIState != "" {
-		rw.Header().Set("Weles-API-State", welesAPIState)
+		rw.Header().Set("Weles-Api-State", welesAPIState)
 	}
 
-	// response header Weles-API-Version
+	// response header Weles-Api-Version
 
 	welesAPIVersion := o.WelesAPIVersion
 	if welesAPIVersion != "" {
-		rw.Header().Set("Weles-API-Version", welesAPIVersion)
+		rw.Header().Set("Weles-Api-Version", welesAPIVersion)
 	}
 
 	// response header Weles-Server-Version

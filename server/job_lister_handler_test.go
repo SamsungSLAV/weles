@@ -46,15 +46,11 @@ var _ = Describe("Listing jobs with server initialized", func() {
 		testserver     *httptest.Server
 	)
 
-	type queryPaginator struct {
-		query     string
-		paginator weles.JobPaginator
-	}
 	// data to test against
 	var (
-		emptyJobFilter = weles.JobFilter{}
+		emptyFilter = weles.JobFilter{}
 
-		filledJobFilter = weles.JobFilter{
+		filletFilter = weles.JobFilter{
 			JobID: []weles.JobID{10, 100, 131},
 			Info:  []string{"something", "and something else"},
 			Name:  []string{"name123"},
@@ -111,34 +107,34 @@ var _ = Describe("Listing jobs with server initialized", func() {
 	})
 
 	// helper functions
-	createRequest := func(reqBody io.Reader, query, contentH, acceptH string) (req *http.Request) {
+	newHTTPRequest := func(reqBody io.Reader, query, contentH, acceptH string) (req *http.Request) {
 		req, err := http.NewRequest(http.MethodPost, testserver.URL+basePath+listJobsPath+query,
 			reqBody)
 		Expect(err).ToNot(HaveOccurred())
 		req.Header.Set("Content-Type", contentH)
 		req.Header.Set("Accept", acceptH)
+		req.Close = true
 		return req
 	}
 
-	createRequestBody := func(f weles.JobFilter, s weles.JobSorter) *bytes.Reader {
-		tomarshall := jobs.JobListerBody{
+	newBody := func(f weles.JobFilter, s weles.JobSorter) *bytes.Reader {
+		data := jobs.JobListerBody{
 			Filter: &f,
 			Sorter: &s,
 		}
-		marshalled, err := json.Marshal(tomarshall)
+		marshalled, err := json.Marshal(data)
 		Expect(err).ToNot(HaveOccurred())
 		return bytes.NewReader(marshalled)
 	}
 
-	checkReceivedJobInfo := func(respBody []byte, jobInfo []weles.JobInfo) {
-
+	checkJobInfoMarshalling := func(respBody []byte, jobInfo []weles.JobInfo) {
 		marshalled, err := json.Marshal(jobInfo)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(string(respBody)).To(MatchJSON(string(marshalled)))
 
 	}
 
-	checkReceivedJobErr := func(respBody []byte, e error) {
+	checkErrorMarshalling := func(respBody []byte, e error) {
 		errMarshalled, err := json.Marshal(weles.ErrResponse{
 			Message: e.Error(),
 			Type:    "",
@@ -151,20 +147,15 @@ var _ = Describe("Listing jobs with server initialized", func() {
 		Describe("client sends correct request", func() {
 			It("server should accept empty post request", func() {
 				apiDefaults.PageLimit = 0
-
 				listInfo := weles.ListInfo{
 					TotalRecords:     uint64(len(jobInfo420)),
 					RemainingRecords: 0,
 				}
-				// should pass correct default values of Sorter to JobManager
 				mockJobManager.EXPECT().ListJobs(
-					emptyJobFilter, sorterDefault, emptyPaginatorOff).Return(
+					emptyFilter, sorterDefault, emptyPaginatorOff).Return(
 					jobInfo420, listInfo, nil)
 
-				client := testserver.Client()
-				req := createRequest(nil, "", JSON, JSON)
-				req.Close = true
-				_, err := client.Do(req)
+				_, err := testserver.Client().Do(newHTTPRequest(nil, "", JSON, JSON))
 				Expect(err).ToNot(HaveOccurred())
 
 			})
@@ -172,19 +163,15 @@ var _ = Describe("Listing jobs with server initialized", func() {
 			DescribeTable("server should ignore query params",
 				func(query string) {
 					apiDefaults.PageLimit = 0
-
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(jobInfo420)),
 						RemainingRecords: 0,
 					}
-					mockJobManager.EXPECT().ListJobs(emptyJobFilter,
+					mockJobManager.EXPECT().ListJobs(emptyFilter,
 						sorterDefault, emptyPaginatorOff).Return(
 						jobInfo420, listInfo, nil)
 
-					client := testserver.Client()
-					req := createRequest(nil, query, JSON, JSON)
-					req.Close = true
-					_, err := client.Do(req)
+					_, err := testserver.Client().Do(newHTTPRequest(nil, query, JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 				},
 
@@ -199,49 +186,37 @@ var _ = Describe("Listing jobs with server initialized", func() {
 
 			DescribeTable("server should pass filter to JobManager",
 				func(filter weles.JobFilter) {
-
 					apiDefaults.PageLimit = 0
-
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(jobInfo420)),
 						RemainingRecords: 0,
 					}
-
 					mockJobManager.EXPECT().ListJobs(
 						filter, sorterDefault, emptyPaginatorOff).Return(
 						jobInfo420, listInfo, nil)
-					reqBody := createRequestBody(filter, sorterEmpty)
 
-					client := testserver.Client()
-					req := createRequest(reqBody, "", JSON, JSON)
-
-					_, err := client.Do(req)
+					_, err := testserver.Client().Do(
+						newHTTPRequest(newBody(filter, sorterEmpty), "", JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 				},
-				Entry("when receiving empty filter", emptyJobFilter),
-				Entry("when receiving filled filter", filledJobFilter),
+				Entry("when receiving empty filter", emptyFilter),
+				Entry("when receiving filled filter", filletFilter),
 			)
 
 			DescribeTable("server should pass sorter to JobManager, but set default values "+
 				"on empty fields",
 				func(sent, expected weles.JobSorter) {
-
 					apiDefaults.PageLimit = 0
-
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(jobInfo420)),
 						RemainingRecords: 0,
 					}
-
 					mockJobManager.EXPECT().ListJobs(
-						emptyJobFilter, expected, emptyPaginatorOff).Return(
+						emptyFilter, expected, emptyPaginatorOff).Return(
 						jobInfo420, listInfo, nil)
-					reqBody := createRequestBody(emptyJobFilter, sent)
 
-					client := testserver.Client()
-					req := createRequest(reqBody, "", JSON, JSON)
-
-					_, err := client.Do(req)
+					_, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sent), "", JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 				},
 				Entry("should set default order and by",
@@ -274,36 +249,32 @@ var _ = Describe("Listing jobs with server initialized", func() {
 			DescribeTable("should respond with all jobs and correct headers",
 				func(recordCount int) {
 					apiDefaults.PageLimit = 0
-
 					jobInfo := createJobInfoSlice(recordCount)
-
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(jobInfo)),
 						RemainingRecords: 0,
 					}
-
-					mockJobManager.EXPECT().ListJobs(emptyJobFilter,
+					mockJobManager.EXPECT().ListJobs(emptyFilter,
 						sorterDefault, emptyPaginatorOff).Return(
 						jobInfo, listInfo, nil)
 
-					reqBody := createRequestBody(emptyJobFilter, sorterDefault)
-
-					client := testserver.Client()
-					req := createRequest(reqBody, "", JSON, JSON)
-					resp, err := client.Do(req)
+					resp, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 
-					defer resp.Body.Close()
 					respBody, err := ioutil.ReadAll(resp.Body)
+					defer resp.Body.Close()
 					Expect(err).ToNot(HaveOccurred())
 
-					checkReceivedJobInfo(respBody, jobInfo)
+					checkJobInfoMarshalling(respBody, jobInfo)
 
 					Expect(resp.StatusCode).To(Equal(200))
-					Expect(resp.Header.Get("Next")).To(Equal(""))
-					Expect(resp.Header.Get("Previous")).To(Equal(""))
-					Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
-					Expect(resp.Header.Get("TotalRecords")).To(Equal(strconv.Itoa(
+					Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal("0"))
+					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(strconv.Itoa(
+						len(jobInfo))))
+					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(strconv.Itoa(
 						len(jobInfo))))
 
 				},
@@ -318,9 +289,7 @@ var _ = Describe("Listing jobs with server initialized", func() {
 	Describe("JobManager returns error", func() {
 		DescribeTable("Server should return appropriate status code and error message",
 			func(pageLimit int32, statusCode int, amerr error) {
-
 				apiDefaults.PageLimit = pageLimit
-
 				listInfo := weles.ListInfo{
 					TotalRecords:     uint64(len(jobInfo420)),
 					RemainingRecords: 0,
@@ -333,25 +302,25 @@ var _ = Describe("Listing jobs with server initialized", func() {
 					paginator.Limit = pageLimit
 				}
 				mockJobManager.EXPECT().ListJobs(
-					emptyJobFilter, sorterDefault, paginator).Return(
+					emptyFilter, sorterDefault, paginator).Return(
 					jobInfo420, listInfo, amerr)
-				reqBody := createRequestBody(emptyJobFilter, sorterDefault)
 
-				client := testserver.Client()
-				req := createRequest(reqBody, "", JSON, JSON)
-				resp, err := client.Do(req)
+				resp, err := testserver.Client().Do(
+					newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
 				Expect(err).ToNot(HaveOccurred())
 
-				defer resp.Body.Close()
 				respBody, err := ioutil.ReadAll(resp.Body)
+				defer resp.Body.Close()
 				Expect(err).ToNot(HaveOccurred())
 
-				checkReceivedJobErr(respBody, amerr)
+				checkErrorMarshalling(respBody, amerr)
 				Expect(resp.StatusCode).To(Equal(statusCode))
-				Expect(resp.Header.Get("Next")).To(Equal(""))
-				Expect(resp.Header.Get("Previous")).To(Equal(""))
-				Expect(resp.Header.Get("TotalRecords")).To(Equal(""))
-				Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
+				// should not set headers on error
+				Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+				Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+				Expect(resp.Header.Get(ListTotalHdr)).To(Equal(""))
+				Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
+				Expect(resp.Header.Get(ListBatchSizeHdr)).To(Equal(""))
 
 			},
 			Entry("pagination off, 404 status, Job not found error",
@@ -369,20 +338,16 @@ var _ = Describe("Listing jobs with server initialized", func() {
 			DescribeTable("server should set paginator object depending on query params",
 				func(query string, expectedPaginator weles.JobPaginator) {
 					apiDefaults.PageLimit = 500
-
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(jobInfo420)),
 						RemainingRecords: 0,
 					}
-
 					mockJobManager.EXPECT().ListJobs(
-						emptyJobFilter, sorterDefault, expectedPaginator).Return(
+						emptyFilter, sorterDefault, expectedPaginator).Return(
 						jobInfo420, listInfo, nil)
-					reqBody := createRequestBody(emptyJobFilter, sorterDefault)
 
-					client := testserver.Client()
-					req := createRequest(reqBody, query, JSON, JSON)
-					_, err := client.Do(req)
+					_, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault), query, JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 
 				},
@@ -403,26 +368,84 @@ var _ = Describe("Listing jobs with server initialized", func() {
 			DescribeTable("server should respond with 200/206 depending on "+
 				"ListInfo.RemainingRecords returned by JobManager",
 				func(listInfo weles.ListInfo, statusCode int) {
-
 					apiDefaults.PageLimit = 100
 					paginator := emptyPaginatorOn
 					paginator.Limit = apiDefaults.PageLimit
+
 					mockJobManager.EXPECT().ListJobs(
-						emptyJobFilter, sorterDefault, paginator).Return(
+						emptyFilter, sorterDefault, paginator).Return(
 						jobInfo420, listInfo, nil)
-					reqBody := createRequestBody(emptyJobFilter, sorterDefault)
 
-					client := testserver.Client()
-					req := createRequest(reqBody, "", JSON, JSON)
-					_, err := client.Do(req)
+					resp, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
-
-					//TODO: check headers
+					Expect(resp.StatusCode).To(Equal(statusCode))
 				},
 				Entry("first and last page",
 					weles.ListInfo{RemainingRecords: 0}, 200),
 				Entry("first page out of n (n>3)",
 					weles.ListInfo{RemainingRecords: 20}, 206),
+			)
+
+			DescribeTable("on last page, server should NOT set headers:",
+				func(paginator weles.JobPaginator, query string) {
+					apiDefaults.PageLimit = 100
+					paginator.Limit = apiDefaults.PageLimit
+
+					mockJobManager.EXPECT().
+						ListJobs(emptyFilter, sorterDefault, paginator).
+						Return(jobInfo420,
+							weles.ListInfo{TotalRecords: 420, RemainingRecords: 0},
+							nil)
+
+					resp, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault), query, JSON, JSON))
+					Expect(err).ToNot(HaveOccurred())
+
+					Expect(resp.StatusCode).To(Equal(200))
+					if paginator.Forward {
+						Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+					} else {
+						Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+					}
+
+				},
+				Entry("Weles-Next-Page when paginating forward (page n/n, n!=0)",
+					weles.JobPaginator{JobID: 400, Forward: true}, "?after=400"),
+				Entry("Weles-Previous-Page when paginating forward (page 0/n, n!=0)",
+					weles.JobPaginator{JobID: 100, Forward: false}, "?before=100"),
+			)
+
+			// Correctness of setting Weles-{Next,Previous}-Page is omitted due to implementation
+			// being generated swagger code.
+
+			DescribeTable("Should set Weles-List-{Total,Remaining,Batch-Size} "+
+				"based on ListInfo and JobInfo",
+				func(jobInfo []weles.JobInfo, listInfo weles.ListInfo) {
+					apiDefaults.PageLimit = 100
+					paginator := emptyPaginatorOn
+					paginator.Limit = apiDefaults.PageLimit
+
+					mockJobManager.EXPECT().
+						ListJobs(emptyFilter, sorterDefault, paginator).
+						Return(jobInfo, listInfo, nil)
+
+					resp, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
+					Expect(err).ToNot(HaveOccurred())
+					defer resp.Body.Close()
+
+					Expect(resp.Header.Get(ListTotalHdr)).
+						To(Equal(strconv.FormatUint(listInfo.TotalRecords, 10)))
+					Expect(resp.Header.Get(ListRemainingHdr)).
+						To(Equal(strconv.FormatUint(listInfo.RemainingRecords, 10)))
+					Expect(resp.Header.Get(ListBatchSizeHdr)).
+						To(Equal(strconv.Itoa(len(jobInfo))))
+				},
+				Entry("case 1",
+					jobInfo420, weles.ListInfo{TotalRecords: 420, RemainingRecords: 50}),
+				Entry("case 2",
+					jobInfo420[:100], weles.ListInfo{TotalRecords: 100, RemainingRecords: 10}),
 			)
 		})
 
@@ -431,22 +454,20 @@ var _ = Describe("Listing jobs with server initialized", func() {
 				func(query string) {
 					apiDefaults.PageLimit = 100
 
-					req := createRequest(nil, query, JSON, JSON)
-
-					client := testserver.Client()
-					resp, err := client.Do(req)
+					resp, err := testserver.Client().Do(newHTTPRequest(nil, query, JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
-					defer resp.Body.Close()
 
 					respBody, err := ioutil.ReadAll(resp.Body)
+					defer resp.Body.Close()
 					Expect(err).ToNot(HaveOccurred())
-					checkReceivedJobErr(respBody, weles.ErrBeforeAfterNotAllowed)
+
+					checkErrorMarshalling(respBody, weles.ErrBeforeAfterNotAllowed)
 
 					Expect(resp.StatusCode).To(Equal(400))
-					Expect(resp.Header.Get("Next")).To(Equal(""))
-					Expect(resp.Header.Get("Previous")).To(Equal(""))
-					Expect(resp.Header.Get("TotalRecords")).To(Equal(""))
-					Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
+					Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
 
 				},
 				Entry("empty body", "?before=10&after=20"),

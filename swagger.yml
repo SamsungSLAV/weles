@@ -158,27 +158,41 @@ paths:
             items:
               $ref: '#/definitions/JobInfo'
           headers:
-            Previous:
+            Weles-Previous-Page:
               type: string
               format: URI
               description: |-
-                Previous is the URL suffix to request previous page of data.
+                Weles-Previous-Page is the URL suffix to request previous page
+                of data.  Please note that the same body must be used as in
+                initial request.
+            Weles-Next-Page:
+              type: string
+              format: URI
+              description: |-
+                Weles-Next-Page is the URL suffix to request next page of data.
                 Please note that the same body must be used as in initial
                 request.
-            Next:
-              type: string
-              format: URI
-              description: |-
-                Next is the URL suffix to request next page of data. Please
-                note that the same body must be used as in initial request.
-            TotalRecords:
+            Weles-List-Total:
               type: integer
               format: uint64
               description: |-
-                TotalRecords is the count of records currently fulfilling the
-                requested JobFilter. Please note that this value may change
-                when requesting for the same data at a different moments in
-                time.
+                Weles-List-Total is the count of records currently
+                fulfilling the requested JobFilter. Please note that this value
+                may change when requesting for the same data at a different
+                moments in time.
+            Weles-List-Remaining:
+              type: integer
+              format: uint64
+              description: |-
+                Weles-List-Remaining is number of records after current page.
+                Please note that this value may change when requesting for the
+                same data at a different moment in time.
+            Weles-List-Batch-Size:
+              type: integer
+              format: int32
+              description: |-
+                Weles-List-Batch-Size is the count of records returned on
+                current page.
         '206':
           description: Partial Content
           schema:
@@ -186,34 +200,41 @@ paths:
             items:
               $ref: '#/definitions/JobInfo'
           headers:
-            Previous:
+            Weles-Previous-Page:
               type: string
               format: URI
               description: |-
-                Previous is the URL suffix to request previous page of data.
+                Weles-Previous-Page is the URL suffix to request previous page
+                of data.  Please note that the same body must be used as in
+                initial request.
+            Weles-Next-Page:
+              type: string
+              format: URI
+              description: |-
+                Weles-Next-Page is the URL suffix to request next page of data.
                 Please note that the same body must be used as in initial
                 request.
-            Next:
-              type: string
-              format: URI
-              description: |-
-                Next is the URL suffix to request next page of data. Please
-                note that the same body must be used as in initial request.
-            TotalRecords:
+            Weles-List-Total:
               type: integer
               format: uint64
               description: |-
-                 TotalRecords is the count of records currently fulfilling
+                 Weles-List-Total is the count of records currently fulfilling
                  requested JobFilter.  Please note that this value may change
                  when requesting for the same data at a different moments in
                  time.
-            RemainingRecords:
+            Weles-List-Remaining:
               type: integer
               format: uint64
               description: |-
-                RemainingRecords is the number of records after current page.
-                Please note that this value may change when requesting for the
-                same data at a different moments in time.
+                Weles-List-Remaining is the number of records after current
+                page.  Please note that this value may change when requesting
+                for the same data at a different moments in time.
+            Weles-List-Batch-Size:
+              type: integer
+              format: int32
+              description: |-
+                Weles-List-Batch-Size is the count of records returned on
+                current page.
         '400':
           $ref: '#/responses/BadRequest'
         '404':
@@ -288,27 +309,41 @@ paths:
             items:
               $ref: '#/definitions/ArtifactInfo'
           headers:
-            Previous:
+            Weles-Previous-Page:
               type: string
               format: URI
               description: |-
-                Previous  is the URL suffix to request next page of data.
+                Weles-Previous-Page is the URL suffix to request next page of
+                data.  Please note that the same body must be used as in
+                initial request.
+            Weles-Next-Page:
+              type: string
+              format: URI
+              description: |-
+                Weles-Next-Page is the URL suffix to request next page of data.
                 Please note that the same body must be used as in initial
                 request.
-            Next:
-              type: string
-              format: URI
-              description: |-
-                Next is the URL suffix to request next page of data. Please
-                note that the same body must be used as in initial request.
-            TotalRecords:
+            Weles-List-Total:
               type: integer
               format: uint64
               description: |-
-                TotalRecords is count of records currently fulfilling the
+                Weles-List-Total is count of records currently fulfilling the
                 requested ArtifactFilter. Please note that this value may
                 change when requesting for the same data at a different moment
                 in time.
+            Weles-List-Remaining:
+              type: integer
+              format: uint64
+              description: |-
+                Weles-List-Remaining is number of records after current page.
+                Please note that this value may change when requesting for the
+                same data at a different moment in time.
+            Weles-List-Batch-Size:
+              type: integer
+              format: int32
+              description: |-
+                Weles-List-Batch-Size is the count of records returned on
+                current page.
         '206':
           description: Partial Content
           schema:
@@ -316,33 +351,40 @@ paths:
             items:
               $ref: '#/definitions/ArtifactInfo'
           headers:
-            Previous:
+            Weles-Previous-Page:
               type: string
               format: URI
               description: |-
-                Previous is URL suffix to request next page of data. Please
+                Weles-Previous-Page is URL suffix to request next page of data.
+                Please note that the same body must be used as in initial
+                request.
+            Weles-Next-Page:
+              type: string
+              format: URI
+              description: |-
+                Weles-Next-Page is URL to request next page of data. Please
                 note that the same body must be used as in initial request.
-            Next:
-              type: string
-              format: URI
-              description: |-
-                Next is URL to request next page of data. Please note that the same
-                body must be used as in initial request.
-            TotalRecords:
+            Weles-List-Total:
               type: integer
               format: uint64
               description: |-
-                TotalRecords is count of records currently fulfilling the
+                Weles-List-Total is count of records currently fulfilling the
                 requested ArtifactFilter. Please note that this value may
                 change when requesting for the same data at a different moment
                 in time.
-            RemainingRecords:
+            Weles-List-Remaining:
               type: integer
               format: uint64
               description: |-
-                RemainingRecords is number of records after current page.
+                Weles-List-Remaining is number of records after current page.
                 Please note that this value may change when requesting for the
                 same data at a different moment in time.
+            Weles-List-Batch-Size:
+              type: integer
+              format: int32
+              description: |-
+                Weles-List-Batch-Size is the count of records returned on
+                current page.
         '400':
           $ref: '#/responses/BadRequest'
         '404':
@@ -369,10 +411,10 @@ paths:
             Weles-Server-Version:
               type: string
               description: Version of Weles server.
-            Weles-API-Version:
+            Weles-Api-Version:
               type: string
               description: Version of Weles API.
-            Weles-API-State:
+            Weles-Api-State:
               type: string
               description: State of Weles API.
         '500':

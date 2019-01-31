@@ -71,8 +71,9 @@ func responder206(listInfo weles.ListInfo, paginator weles.JobPaginator,
 	var jobListerURL jobs.JobListerURL
 
 	responder = jobs.NewJobListerPartialContent()
-	responder.SetTotalRecords(listInfo.TotalRecords)
-	responder.SetRemainingRecords(listInfo.RemainingRecords)
+	responder.SetWelesListTotal(listInfo.TotalRecords)
+	responder.SetWelesListRemaining(listInfo.RemainingRecords)
+	responder.SetWelesListBatchSize(int32(len(jobInfoReturned)))
 
 	tmp := uint64(jobInfoReturned[len(jobInfoReturned)-1].JobID)
 	jobListerURL.After = &tmp
@@ -81,7 +82,7 @@ func responder206(listInfo weles.ListInfo, paginator weles.JobPaginator,
 		tmp := paginator.Limit
 		jobListerURL.Limit = &tmp
 	}
-	responder.SetNext(jobListerURL.String())
+	responder.SetWelesNextPage(jobListerURL.String())
 	if paginator.JobID != 0 { // not the first page
 		var jobListerURL jobs.JobListerURL
 		tmp = uint64(jobInfoReturned[0].JobID)
@@ -90,7 +91,7 @@ func responder206(listInfo weles.ListInfo, paginator weles.JobPaginator,
 			tmp := paginator.Limit
 			jobListerURL.Limit = &tmp
 		}
-		responder.SetPrevious(jobListerURL.String())
+		responder.SetWelesPreviousPage(jobListerURL.String())
 	}
 	responder.SetPayload(jobInfoReturned)
 	return
@@ -102,7 +103,9 @@ func responder200(listInfo weles.ListInfo, paginator weles.JobPaginator,
 	var jobListerURL jobs.JobListerURL
 
 	responder = jobs.NewJobListerOK()
-	responder.SetTotalRecords(listInfo.TotalRecords)
+	responder.SetWelesListTotal(listInfo.TotalRecords)
+	responder.SetWelesListRemaining(listInfo.RemainingRecords)
+	responder.SetWelesListBatchSize(int32(len(jobInfoReturned)))
 
 	if paginator.JobID != 0 { //not the first page
 		// keep in mind that JobID in paginator is taken from query parameter, not jobmanager
@@ -115,7 +118,7 @@ func responder200(listInfo weles.ListInfo, paginator weles.JobPaginator,
 				tmp := paginator.Limit
 				jobListerURL.Limit = &tmp
 			}
-			responder.SetPrevious(jobListerURL.String())
+			responder.SetWelesPreviousPage(jobListerURL.String())
 		} else {
 			if len(jobInfoReturned) != 0 {
 				tmp := uint64(jobInfoReturned[len(jobInfoReturned)-1].JobID)
@@ -125,7 +128,7 @@ func responder200(listInfo weles.ListInfo, paginator weles.JobPaginator,
 				tmp := paginator.Limit
 				jobListerURL.Limit = &tmp
 			}
-			responder.SetNext(jobListerURL.String())
+			responder.SetWelesNextPage(jobListerURL.String())
 		}
 	}
 	responder.SetPayload(jobInfoReturned)

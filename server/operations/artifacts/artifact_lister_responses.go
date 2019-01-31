@@ -37,24 +37,36 @@ const ArtifactListerOKCode int = 200
 swagger:response artifactListerOK
 */
 type ArtifactListerOK struct {
-	/*Next is the URL suffix to request next page of data. Please
-	note that the same body must be used as in initial request.
+	/*Weles-List-Batch-Size is the count of records returned on
+	current page.
 
 	*/
-	Next string `json:"Next"`
-	/*Previous  is the URL suffix to request next page of data.
-	Please note that the same body must be used as in initial
-	request.
+	WelesListBatchSize int32 `json:"Weles-List-Batch-Size"`
+	/*Weles-List-Remaining is number of records after current page.
+	Please note that this value may change when requesting for the
+	same data at a different moment in time.
 
 	*/
-	Previous string `json:"Previous"`
-	/*TotalRecords is count of records currently fulfilling the
+	WelesListRemaining uint64 `json:"Weles-List-Remaining"`
+	/*Weles-List-Total is count of records currently fulfilling the
 	requested ArtifactFilter. Please note that this value may
 	change when requesting for the same data at a different moment
 	in time.
 
 	*/
-	TotalRecords uint64 `json:"TotalRecords"`
+	WelesListTotal uint64 `json:"Weles-List-Total"`
+	/*Weles-Next-Page is the URL suffix to request next page of data.
+	Please note that the same body must be used as in initial
+	request.
+
+	*/
+	WelesNextPage string `json:"Weles-Next-Page"`
+	/*Weles-Previous-Page is the URL suffix to request next page of
+	data.  Please note that the same body must be used as in
+	initial request.
+
+	*/
+	WelesPreviousPage string `json:"Weles-Previous-Page"`
 
 	/*
 	  In: Body
@@ -68,37 +80,59 @@ func NewArtifactListerOK() *ArtifactListerOK {
 	return &ArtifactListerOK{}
 }
 
-// WithNext adds the next to the artifact lister o k response
-func (o *ArtifactListerOK) WithNext(next string) *ArtifactListerOK {
-	o.Next = next
+// WithWelesListBatchSize adds the welesListBatchSize to the artifact lister o k response
+func (o *ArtifactListerOK) WithWelesListBatchSize(welesListBatchSize int32) *ArtifactListerOK {
+	o.WelesListBatchSize = welesListBatchSize
 	return o
 }
 
-// SetNext sets the next to the artifact lister o k response
-func (o *ArtifactListerOK) SetNext(next string) {
-	o.Next = next
+// SetWelesListBatchSize sets the welesListBatchSize to the artifact lister o k response
+func (o *ArtifactListerOK) SetWelesListBatchSize(welesListBatchSize int32) {
+	o.WelesListBatchSize = welesListBatchSize
 }
 
-// WithPrevious adds the previous to the artifact lister o k response
-func (o *ArtifactListerOK) WithPrevious(previous string) *ArtifactListerOK {
-	o.Previous = previous
+// WithWelesListRemaining adds the welesListRemaining to the artifact lister o k response
+func (o *ArtifactListerOK) WithWelesListRemaining(welesListRemaining uint64) *ArtifactListerOK {
+	o.WelesListRemaining = welesListRemaining
 	return o
 }
 
-// SetPrevious sets the previous to the artifact lister o k response
-func (o *ArtifactListerOK) SetPrevious(previous string) {
-	o.Previous = previous
+// SetWelesListRemaining sets the welesListRemaining to the artifact lister o k response
+func (o *ArtifactListerOK) SetWelesListRemaining(welesListRemaining uint64) {
+	o.WelesListRemaining = welesListRemaining
 }
 
-// WithTotalRecords adds the totalRecords to the artifact lister o k response
-func (o *ArtifactListerOK) WithTotalRecords(totalRecords uint64) *ArtifactListerOK {
-	o.TotalRecords = totalRecords
+// WithWelesListTotal adds the welesListTotal to the artifact lister o k response
+func (o *ArtifactListerOK) WithWelesListTotal(welesListTotal uint64) *ArtifactListerOK {
+	o.WelesListTotal = welesListTotal
 	return o
 }
 
-// SetTotalRecords sets the totalRecords to the artifact lister o k response
-func (o *ArtifactListerOK) SetTotalRecords(totalRecords uint64) {
-	o.TotalRecords = totalRecords
+// SetWelesListTotal sets the welesListTotal to the artifact lister o k response
+func (o *ArtifactListerOK) SetWelesListTotal(welesListTotal uint64) {
+	o.WelesListTotal = welesListTotal
+}
+
+// WithWelesNextPage adds the welesNextPage to the artifact lister o k response
+func (o *ArtifactListerOK) WithWelesNextPage(welesNextPage string) *ArtifactListerOK {
+	o.WelesNextPage = welesNextPage
+	return o
+}
+
+// SetWelesNextPage sets the welesNextPage to the artifact lister o k response
+func (o *ArtifactListerOK) SetWelesNextPage(welesNextPage string) {
+	o.WelesNextPage = welesNextPage
+}
+
+// WithWelesPreviousPage adds the welesPreviousPage to the artifact lister o k response
+func (o *ArtifactListerOK) WithWelesPreviousPage(welesPreviousPage string) *ArtifactListerOK {
+	o.WelesPreviousPage = welesPreviousPage
+	return o
+}
+
+// SetWelesPreviousPage sets the welesPreviousPage to the artifact lister o k response
+func (o *ArtifactListerOK) SetWelesPreviousPage(welesPreviousPage string) {
+	o.WelesPreviousPage = welesPreviousPage
 }
 
 // WithPayload adds the payload to the artifact lister o k response
@@ -115,25 +149,39 @@ func (o *ArtifactListerOK) SetPayload(payload []*weles.ArtifactInfoExt) {
 // WriteResponse to the client
 func (o *ArtifactListerOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	// response header Next
+	// response header Weles-List-Batch-Size
 
-	next := o.Next
-	if next != "" {
-		rw.Header().Set("Next", next)
+	welesListBatchSize := swag.FormatInt32(o.WelesListBatchSize)
+	if welesListBatchSize != "" {
+		rw.Header().Set("Weles-List-Batch-Size", welesListBatchSize)
 	}
 
-	// response header Previous
+	// response header Weles-List-Remaining
 
-	previous := o.Previous
-	if previous != "" {
-		rw.Header().Set("Previous", previous)
+	welesListRemaining := swag.FormatUint64(o.WelesListRemaining)
+	if welesListRemaining != "" {
+		rw.Header().Set("Weles-List-Remaining", welesListRemaining)
 	}
 
-	// response header TotalRecords
+	// response header Weles-List-Total
 
-	totalRecords := swag.FormatUint64(o.TotalRecords)
-	if totalRecords != "" {
-		rw.Header().Set("TotalRecords", totalRecords)
+	welesListTotal := swag.FormatUint64(o.WelesListTotal)
+	if welesListTotal != "" {
+		rw.Header().Set("Weles-List-Total", welesListTotal)
+	}
+
+	// response header Weles-Next-Page
+
+	welesNextPage := o.WelesNextPage
+	if welesNextPage != "" {
+		rw.Header().Set("Weles-Next-Page", welesNextPage)
+	}
+
+	// response header Weles-Previous-Page
+
+	welesPreviousPage := o.WelesPreviousPage
+	if welesPreviousPage != "" {
+		rw.Header().Set("Weles-Previous-Page", welesPreviousPage)
 	}
 
 	rw.WriteHeader(200)
@@ -156,29 +204,35 @@ const ArtifactListerPartialContentCode int = 206
 swagger:response artifactListerPartialContent
 */
 type ArtifactListerPartialContent struct {
-	/*Next is URL to request next page of data. Please note that the same
-	body must be used as in initial request.
+	/*Weles-List-Batch-Size is the count of records returned on
+	current page.
 
 	*/
-	Next string `json:"Next"`
-	/*Previous is URL suffix to request next page of data. Please
-	note that the same body must be used as in initial request.
-
-	*/
-	Previous string `json:"Previous"`
-	/*RemainingRecords is number of records after current page.
+	WelesListBatchSize int32 `json:"Weles-List-Batch-Size"`
+	/*Weles-List-Remaining is number of records after current page.
 	Please note that this value may change when requesting for the
 	same data at a different moment in time.
 
 	*/
-	RemainingRecords uint64 `json:"RemainingRecords"`
-	/*TotalRecords is count of records currently fulfilling the
+	WelesListRemaining uint64 `json:"Weles-List-Remaining"`
+	/*Weles-List-Total is count of records currently fulfilling the
 	requested ArtifactFilter. Please note that this value may
 	change when requesting for the same data at a different moment
 	in time.
 
 	*/
-	TotalRecords uint64 `json:"TotalRecords"`
+	WelesListTotal uint64 `json:"Weles-List-Total"`
+	/*Weles-Next-Page is URL to request next page of data. Please
+	note that the same body must be used as in initial request.
+
+	*/
+	WelesNextPage string `json:"Weles-Next-Page"`
+	/*Weles-Previous-Page is URL suffix to request next page of data.
+	Please note that the same body must be used as in initial
+	request.
+
+	*/
+	WelesPreviousPage string `json:"Weles-Previous-Page"`
 
 	/*
 	  In: Body
@@ -192,48 +246,59 @@ func NewArtifactListerPartialContent() *ArtifactListerPartialContent {
 	return &ArtifactListerPartialContent{}
 }
 
-// WithNext adds the next to the artifact lister partial content response
-func (o *ArtifactListerPartialContent) WithNext(next string) *ArtifactListerPartialContent {
-	o.Next = next
+// WithWelesListBatchSize adds the welesListBatchSize to the artifact lister partial content response
+func (o *ArtifactListerPartialContent) WithWelesListBatchSize(welesListBatchSize int32) *ArtifactListerPartialContent {
+	o.WelesListBatchSize = welesListBatchSize
 	return o
 }
 
-// SetNext sets the next to the artifact lister partial content response
-func (o *ArtifactListerPartialContent) SetNext(next string) {
-	o.Next = next
+// SetWelesListBatchSize sets the welesListBatchSize to the artifact lister partial content response
+func (o *ArtifactListerPartialContent) SetWelesListBatchSize(welesListBatchSize int32) {
+	o.WelesListBatchSize = welesListBatchSize
 }
 
-// WithPrevious adds the previous to the artifact lister partial content response
-func (o *ArtifactListerPartialContent) WithPrevious(previous string) *ArtifactListerPartialContent {
-	o.Previous = previous
+// WithWelesListRemaining adds the welesListRemaining to the artifact lister partial content response
+func (o *ArtifactListerPartialContent) WithWelesListRemaining(welesListRemaining uint64) *ArtifactListerPartialContent {
+	o.WelesListRemaining = welesListRemaining
 	return o
 }
 
-// SetPrevious sets the previous to the artifact lister partial content response
-func (o *ArtifactListerPartialContent) SetPrevious(previous string) {
-	o.Previous = previous
+// SetWelesListRemaining sets the welesListRemaining to the artifact lister partial content response
+func (o *ArtifactListerPartialContent) SetWelesListRemaining(welesListRemaining uint64) {
+	o.WelesListRemaining = welesListRemaining
 }
 
-// WithRemainingRecords adds the remainingRecords to the artifact lister partial content response
-func (o *ArtifactListerPartialContent) WithRemainingRecords(remainingRecords uint64) *ArtifactListerPartialContent {
-	o.RemainingRecords = remainingRecords
+// WithWelesListTotal adds the welesListTotal to the artifact lister partial content response
+func (o *ArtifactListerPartialContent) WithWelesListTotal(welesListTotal uint64) *ArtifactListerPartialContent {
+	o.WelesListTotal = welesListTotal
 	return o
 }
 
-// SetRemainingRecords sets the remainingRecords to the artifact lister partial content response
-func (o *ArtifactListerPartialContent) SetRemainingRecords(remainingRecords uint64) {
-	o.RemainingRecords = remainingRecords
+// SetWelesListTotal sets the welesListTotal to the artifact lister partial content response
+func (o *ArtifactListerPartialContent) SetWelesListTotal(welesListTotal uint64) {
+	o.WelesListTotal = welesListTotal
 }
 
-// WithTotalRecords adds the totalRecords to the artifact lister partial content response
-func (o *ArtifactListerPartialContent) WithTotalRecords(totalRecords uint64) *ArtifactListerPartialContent {
-	o.TotalRecords = totalRecords
+// WithWelesNextPage adds the welesNextPage to the artifact lister partial content response
+func (o *ArtifactListerPartialContent) WithWelesNextPage(welesNextPage string) *ArtifactListerPartialContent {
+	o.WelesNextPage = welesNextPage
 	return o
 }
 
-// SetTotalRecords sets the totalRecords to the artifact lister partial content response
-func (o *ArtifactListerPartialContent) SetTotalRecords(totalRecords uint64) {
-	o.TotalRecords = totalRecords
+// SetWelesNextPage sets the welesNextPage to the artifact lister partial content response
+func (o *ArtifactListerPartialContent) SetWelesNextPage(welesNextPage string) {
+	o.WelesNextPage = welesNextPage
+}
+
+// WithWelesPreviousPage adds the welesPreviousPage to the artifact lister partial content response
+func (o *ArtifactListerPartialContent) WithWelesPreviousPage(welesPreviousPage string) *ArtifactListerPartialContent {
+	o.WelesPreviousPage = welesPreviousPage
+	return o
+}
+
+// SetWelesPreviousPage sets the welesPreviousPage to the artifact lister partial content response
+func (o *ArtifactListerPartialContent) SetWelesPreviousPage(welesPreviousPage string) {
+	o.WelesPreviousPage = welesPreviousPage
 }
 
 // WithPayload adds the payload to the artifact lister partial content response
@@ -250,32 +315,39 @@ func (o *ArtifactListerPartialContent) SetPayload(payload []*weles.ArtifactInfoE
 // WriteResponse to the client
 func (o *ArtifactListerPartialContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	// response header Next
+	// response header Weles-List-Batch-Size
 
-	next := o.Next
-	if next != "" {
-		rw.Header().Set("Next", next)
+	welesListBatchSize := swag.FormatInt32(o.WelesListBatchSize)
+	if welesListBatchSize != "" {
+		rw.Header().Set("Weles-List-Batch-Size", welesListBatchSize)
 	}
 
-	// response header Previous
+	// response header Weles-List-Remaining
 
-	previous := o.Previous
-	if previous != "" {
-		rw.Header().Set("Previous", previous)
+	welesListRemaining := swag.FormatUint64(o.WelesListRemaining)
+	if welesListRemaining != "" {
+		rw.Header().Set("Weles-List-Remaining", welesListRemaining)
 	}
 
-	// response header RemainingRecords
+	// response header Weles-List-Total
 
-	remainingRecords := swag.FormatUint64(o.RemainingRecords)
-	if remainingRecords != "" {
-		rw.Header().Set("RemainingRecords", remainingRecords)
+	welesListTotal := swag.FormatUint64(o.WelesListTotal)
+	if welesListTotal != "" {
+		rw.Header().Set("Weles-List-Total", welesListTotal)
 	}
 
-	// response header TotalRecords
+	// response header Weles-Next-Page
 
-	totalRecords := swag.FormatUint64(o.TotalRecords)
-	if totalRecords != "" {
-		rw.Header().Set("TotalRecords", totalRecords)
+	welesNextPage := o.WelesNextPage
+	if welesNextPage != "" {
+		rw.Header().Set("Weles-Next-Page", welesNextPage)
+	}
+
+	// response header Weles-Previous-Page
+
+	welesPreviousPage := o.WelesPreviousPage
+	if welesPreviousPage != "" {
+		rw.Header().Set("Weles-Previous-Page", welesPreviousPage)
 	}
 
 	rw.WriteHeader(206)
