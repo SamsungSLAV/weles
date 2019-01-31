@@ -45,10 +45,6 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 		testserver          *httptest.Server
 	)
 
-	type queryPaginator struct {
-		query     string
-		paginator weles.ArtifactPaginator
-	}
 	// data to test against
 	var (
 		emptyFilter = weles.ArtifactFilter{}
@@ -111,34 +107,33 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 	})
 
 	// helper functions
-	createRequest := func(reqBody io.Reader, query, contentH, acceptH string) (req *http.Request) {
+	newHTTPRequest := func(reqBody io.Reader, query, contentH, acceptH string) (req *http.Request) {
 		req, err := http.NewRequest(
 			http.MethodPost, testserver.URL+basePath+listArtifactsPath+query, reqBody)
 		Expect(err).ToNot(HaveOccurred())
 		req.Header.Set("Content-Type", contentH)
 		req.Header.Set("Accept", acceptH)
+		req.Close = true
 		return req
 	}
 
-	createRequestBody := func(f weles.ArtifactFilter, s weles.ArtifactSorter) *bytes.Reader {
-		tomarshall := artifacts.ArtifactListerBody{
+	newBody := func(f weles.ArtifactFilter, s weles.ArtifactSorter) *bytes.Reader {
+		data := artifacts.ArtifactListerBody{
 			Filter: &f,
 			Sorter: &s,
 		}
-		marshalled, err := json.Marshal(tomarshall)
+		marshalled, err := json.Marshal(data)
 		Expect(err).ToNot(HaveOccurred())
 		return bytes.NewReader(marshalled)
 	}
 
-	checkReceivedArtifactInfo := func(respBody []byte, artifactInfo []weles.ArtifactInfo) {
-
+	checkArtifactInfoMarshalling := func(respBody []byte, artifactInfo []weles.ArtifactInfo) {
 		marshalled, err := json.Marshal(artifactInfo)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(string(respBody)).To(MatchJSON(string(marshalled)))
-
 	}
 
-	checkReceivedArtifactErr := func(respBody []byte, e error) {
+	checkErrorMarshalling := func(respBody []byte, e error) {
 		errMarshalled, err := json.Marshal(weles.ErrResponse{
 			Message: e.Error(),
 			Type:    "",
@@ -151,28 +146,21 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 		Describe("client sends correct request", func() {
 			It("server should accept empty post request", func() {
 				apiDefaults.PageLimit = 0
-
 				listInfo := weles.ListInfo{
 					TotalRecords:     uint64(len(artifactInfo420)),
 					RemainingRecords: 0,
 				}
-				// should pass correct default values of Sorter to ArtifactManager
 				mockArtifactManager.EXPECT().ListArtifact(
 					emptyFilter, sorterDefault, emptyPaginatorOff).Return(
 					artifactInfo420, listInfo, nil)
 
-				client := testserver.Client()
-				req := createRequest(nil, "", JSON, JSON)
-				req.Close = true
-				_, err := client.Do(req)
+				_, err := testserver.Client().Do(newHTTPRequest(nil, "", JSON, JSON))
 				Expect(err).ToNot(HaveOccurred())
-
 			})
 
 			DescribeTable("server should ignore query params",
 				func(query string) {
 					apiDefaults.PageLimit = 0
-
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(artifactInfo420)),
 						RemainingRecords: 0,
@@ -181,10 +169,7 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 						sorterDefault, emptyPaginatorOff).Return(
 						artifactInfo420, listInfo, nil)
 
-					client := testserver.Client()
-					req := createRequest(nil, query, JSON, JSON)
-					req.Close = true
-					_, err := client.Do(req)
+					_, err := testserver.Client().Do(newHTTPRequest(nil, query, JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 				},
 
@@ -199,23 +184,17 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 
 			DescribeTable("server should pass filter to ArtifactManager",
 				func(filter weles.ArtifactFilter) {
-
 					apiDefaults.PageLimit = 0
-
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(artifactInfo420)),
 						RemainingRecords: 0,
 					}
-
 					mockArtifactManager.EXPECT().ListArtifact(
 						filter, sorterDefault, emptyPaginatorOff).Return(
 						artifactInfo420, listInfo, nil)
-					reqBody := createRequestBody(filter, sorterEmpty)
 
-					client := testserver.Client()
-					req := createRequest(reqBody, "", JSON, JSON)
-
-					_, err := client.Do(req)
+					_, err := testserver.Client().Do(
+						newHTTPRequest(newBody(filter, sorterEmpty), "", JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 				},
 				Entry("when receiving empty filter", emptyFilter),
@@ -225,23 +204,17 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 			DescribeTable("server should pass sorter to ArtifactManager, but set default values "+
 				"on empty fields",
 				func(sent, expected weles.ArtifactSorter) {
-
 					apiDefaults.PageLimit = 0
-
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(artifactInfo420)),
 						RemainingRecords: 0,
 					}
-
 					mockArtifactManager.EXPECT().ListArtifact(
 						emptyFilter, expected, emptyPaginatorOff).Return(
 						artifactInfo420, listInfo, nil)
-					reqBody := createRequestBody(emptyFilter, sent)
 
-					client := testserver.Client()
-					req := createRequest(reqBody, "", JSON, JSON)
-
-					_, err := client.Do(req)
+					_, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sent), "", JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 				},
 				Entry("should set default order and by",
@@ -270,48 +243,41 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 			DescribeTable("should respond with all artifacts and correct headers",
 				func(recordCount int) {
 					apiDefaults.PageLimit = 0
-
 					artifactInfo := fixtures.CreateArtifactInfoSlice(recordCount)
-
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(artifactInfo)),
 						RemainingRecords: 0,
 					}
-
 					mockArtifactManager.EXPECT().ListArtifact(emptyFilter,
 						sorterDefault, emptyPaginatorOff).Return(
 						artifactInfo, listInfo, nil)
 
-					reqBody := createRequestBody(emptyFilter, sorterDefault)
-
-					client := testserver.Client()
-					req := createRequest(reqBody, "", JSON, JSON)
-					resp, err := client.Do(req)
+					resp, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
+					defer resp.Body.Close()
 					Expect(err).ToNot(HaveOccurred())
 
-					defer resp.Body.Close()
 					respBody, err := ioutil.ReadAll(resp.Body)
 					Expect(err).ToNot(HaveOccurred())
 
-					checkReceivedArtifactInfo(respBody, artifactInfo)
+					checkArtifactInfoMarshalling(respBody, artifactInfo)
 
 					By("Response must have 200 statuscode")
 					Expect(resp.StatusCode).To(Equal(200))
 					By("Next, Previous, RemainingRecords Headers should not be set")
-					Expect(resp.Header.Get("Next")).To(Equal(""))
-					Expect(resp.Header.Get("Previous")).To(Equal(""))
-					Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
+					Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
 					By("TotalRecords should be set to length of list")
-					Expect(resp.Header.Get("TotalRecords")).To(Equal(strconv.Itoa(
+					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(strconv.Itoa(
 						len(artifactInfo))))
-
+					Expect(resp.Header.Get(ListBatchSizeHdr)).To(Equal(strconv.Itoa(
+						len(artifactInfo))))
 				},
 				Entry("20 records avaliable", 20),
 				Entry("420 records avaliable", 420),
 			)
-
 		})
-
 	})
 
 	Describe("ArtifactManager returns error", func() {
@@ -334,24 +300,23 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 				mockArtifactManager.EXPECT().ListArtifact(
 					emptyFilter, sorterDefault, paginator).Return(
 					artifactInfo420, listInfo, amerr)
-				reqBody := createRequestBody(emptyFilter, sorterDefault)
 
-				client := testserver.Client()
-				req := createRequest(reqBody, "", JSON, JSON)
-				resp, err := client.Do(req)
+				resp, err := testserver.Client().Do(
+					newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
 				Expect(err).ToNot(HaveOccurred())
 
 				defer resp.Body.Close()
 				respBody, err := ioutil.ReadAll(resp.Body)
 				Expect(err).ToNot(HaveOccurred())
 
-				checkReceivedArtifactErr(respBody, amerr)
-				By("Headers should not be set")
+				checkErrorMarshalling(respBody, amerr)
 				Expect(resp.StatusCode).To(Equal(statusCode))
-				Expect(resp.Header.Get("Next")).To(Equal(""))
-				Expect(resp.Header.Get("Previous")).To(Equal(""))
-				Expect(resp.Header.Get("TotalRecords")).To(Equal(""))
-				Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
+				// should not set headers on error
+				Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+				Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+				Expect(resp.Header.Get(ListTotalHdr)).To(Equal(""))
+				Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
+				Expect(resp.Header.Get(ListBatchSizeHdr)).To(Equal(""))
 
 			},
 			Entry("pagination off, 404 status, Artifact not found error",
@@ -364,25 +329,22 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 				int32(100), 500, errors.New("This is unexpected error")),
 		)
 	})
+
 	Describe("Pagination turned on", func() {
 		Describe("Correct request", func() {
 			DescribeTable("server should set paginator object depending on query params",
 				func(query string, expectedPaginator weles.ArtifactPaginator) {
 					apiDefaults.PageLimit = 500
-
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(artifactInfo420)),
 						RemainingRecords: 0,
 					}
-
 					mockArtifactManager.EXPECT().ListArtifact(
 						emptyFilter, sorterDefault, expectedPaginator).Return(
 						artifactInfo420, listInfo, nil)
-					reqBody := createRequestBody(emptyFilter, sorterDefault)
 
-					client := testserver.Client()
-					req := createRequest(reqBody, query, JSON, JSON)
-					_, err := client.Do(req)
+					_, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault), query, JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 
 				},
@@ -403,26 +365,85 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 			DescribeTable("server should respond with 200/206 depending on "+
 				"ListInfo.RemainingRecords returned by ArtifactManager",
 				func(listInfo weles.ListInfo, statusCode int) {
-
 					apiDefaults.PageLimit = 100
 					paginator := emptyPaginatorOn
 					paginator.Limit = apiDefaults.PageLimit
+
 					mockArtifactManager.EXPECT().
 						ListArtifact(emptyFilter, sorterDefault, paginator).
 						Return(artifactInfo420, listInfo, nil)
-					reqBody := createRequestBody(emptyFilter, sorterDefault)
-
-					client := testserver.Client()
-					req := createRequest(reqBody, "", JSON, JSON)
-					_, err := client.Do(req)
+					resp, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 
-					//TODO: check headers
+					Expect(resp.StatusCode).To(Equal(statusCode))
 				},
 				Entry("No more artifacts",
 					weles.ListInfo{RemainingRecords: 0}, 200),
 				Entry("More artifacts to show",
 					weles.ListInfo{RemainingRecords: 320}, 206),
+			)
+
+			DescribeTable("on last page, server should NOT set headers: Weles-List-Remaining and",
+				func(paginator weles.ArtifactPaginator, query string) {
+					apiDefaults.PageLimit = 100
+					paginator.Limit = apiDefaults.PageLimit
+
+					mockArtifactManager.EXPECT().
+						ListArtifact(emptyFilter, sorterDefault, paginator).
+						Return(artifactInfo420,
+							weles.ListInfo{TotalRecords: 420, RemainingRecords: 0},
+							nil)
+
+					resp, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault), query, JSON, JSON))
+					Expect(err).ToNot(HaveOccurred())
+
+					Expect(resp.StatusCode).To(Equal(200))
+					if paginator.Forward {
+						Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+					} else {
+						Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+					}
+					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
+
+				},
+				Entry("Weles-Next-Page when paginating forward (page n/n, n!=0)",
+					weles.ArtifactPaginator{ID: 400, Forward: true}, "?after=400"),
+				Entry("Weles-Previous-Page when paginating forward (page 0/n, n!=0)",
+					weles.ArtifactPaginator{ID: 100, Forward: false}, "?before=100"),
+			)
+
+			// Checking Weles-{Next,Previous}-Page is omitted due to implementation
+			// being generated swagger code.
+
+			DescribeTable("Should set Weles-List-{Total,Remaining,Batch-Size} "+
+				"based on listinfo and artifactlist",
+				func(artifactInfo []weles.ArtifactInfo, listInfo weles.ListInfo) {
+					apiDefaults.PageLimit = 100
+					paginator := emptyPaginatorOn
+					paginator.Limit = apiDefaults.PageLimit
+
+					mockArtifactManager.EXPECT().
+						ListArtifact(emptyFilter, sorterDefault, paginator).
+						Return(artifactInfo, listInfo, nil)
+
+					resp, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
+					Expect(err).ToNot(HaveOccurred())
+
+					Expect(resp.Header.Get(ListTotalHdr)).
+						To(Equal(strconv.FormatUint(listInfo.TotalRecords, 10)))
+					Expect(resp.Header.Get(ListRemainingHdr)).
+						To(Equal(strconv.FormatUint(listInfo.RemainingRecords, 10)))
+					Expect(resp.Header.Get(ListBatchSizeHdr)).
+						To(Equal(strconv.Itoa(len(artifactInfo))))
+
+				},
+				Entry("case 1",
+					artifactInfo420, weles.ListInfo{TotalRecords: 420, RemainingRecords: 50}),
+				Entry("case 2",
+					artifactInfo420[:100], weles.ListInfo{TotalRecords: 100, RemainingRecords: 10}),
 			)
 		})
 
@@ -431,23 +452,20 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 				func(query string) {
 					apiDefaults.PageLimit = 100
 
-					req := createRequest(nil, query, JSON, JSON)
-
-					client := testserver.Client()
-					resp, err := client.Do(req)
+					resp, err := testserver.Client().Do(newHTTPRequest(nil, query, JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
-					defer resp.Body.Close()
 
 					respBody, err := ioutil.ReadAll(resp.Body)
+					defer resp.Body.Close()
 					Expect(err).ToNot(HaveOccurred())
-					checkReceivedArtifactErr(respBody, weles.ErrBeforeAfterNotAllowed)
+					checkErrorMarshalling(respBody, weles.ErrBeforeAfterNotAllowed)
 
 					Expect(resp.StatusCode).To(Equal(400))
-					By("Headers should not be set")
-					Expect(resp.Header.Get("Next")).To(Equal(""))
-					Expect(resp.Header.Get("Previous")).To(Equal(""))
-					Expect(resp.Header.Get("TotalRecords")).To(Equal(""))
-					Expect(resp.Header.Get("RemainingRecords")).To(Equal(""))
+					// headers should not be set on error
+					Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(""))
+					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
 
 				},
 				Entry("empty body", "?before=10&after=20"),

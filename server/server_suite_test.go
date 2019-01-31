@@ -43,9 +43,17 @@ const (
 	durationIncrement1 = "25h"
 	durationIncrement2 = "+100h"
 
+	// api paths
 	basePath          = "/api/v1"
 	listArtifactsPath = "/artifacts/list"
 	listJobsPath      = "/jobs/list"
+
+	//headers
+	NextPageHdr      = "Weles-Next-Page"
+	PreviousPageHdr  = "Weles-Previous-Page"
+	ListTotalHdr     = "Weles-List-Total"
+	ListRemainingHdr = "Weles-List-Remaining"
+	ListBatchSizeHdr = "Weles-List-Batch-Size"
 )
 
 func TestServer(t *testing.T) {
