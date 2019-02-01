@@ -107,9 +107,8 @@ var _ = Describe("Listing jobs with server initialized", func() {
 	})
 
 	// helper functions
-	newHTTPRequest := func(reqBody io.Reader, query, contentH, acceptH string) (req *http.Request) {
-		req, err := http.NewRequest(http.MethodPost, testserver.URL+basePath+listJobsPath+query,
-			reqBody)
+	newHTTPRequest := func(reqBody io.Reader, contentH, acceptH string) (req *http.Request) {
+		req, err := http.NewRequest(http.MethodPost, testserver.URL+basePath+listJobsPath, reqBody)
 		Expect(err).ToNot(HaveOccurred())
 		req.Header.Set("Content-Type", contentH)
 		req.Header.Set("Accept", acceptH)
@@ -117,10 +116,11 @@ var _ = Describe("Listing jobs with server initialized", func() {
 		return req
 	}
 
-	newBody := func(f weles.JobFilter, s weles.JobSorter) *bytes.Reader {
+	newBody := func(f weles.JobFilter, s weles.JobSorter, p weles.JobPaginator) *bytes.Reader {
 		data := jobs.JobListerBody{
-			Filter: &f,
-			Sorter: &s,
+			Filter:    &f,
+			Sorter:    &s,
+			Paginator: &p,
 		}
 		marshalled, err := json.Marshal(data)
 		Expect(err).ToNot(HaveOccurred())
@@ -155,33 +155,37 @@ var _ = Describe("Listing jobs with server initialized", func() {
 					emptyFilter, sorterDefault, emptyPaginatorOff).Return(
 					jobInfo420, listInfo, nil)
 
-				_, err := testserver.Client().Do(newHTTPRequest(nil, "", JSON, JSON))
+				_, err := testserver.Client().Do(newHTTPRequest(nil, JSON, JSON))
 				Expect(err).ToNot(HaveOccurred())
 
 			})
 
-			DescribeTable("server should ignore query params",
-				func(query string) {
+			DescribeTable("server should ignore paginator object",
+				func(paginator weles.JobPaginator) {
 					apiDefaults.PageLimit = 0
 					listInfo := weles.ListInfo{
 						TotalRecords:     uint64(len(jobInfo420)),
 						RemainingRecords: 0,
 					}
 					mockJobManager.EXPECT().ListJobs(emptyFilter,
-						sorterDefault, emptyPaginatorOff).Return(
+						sorterDefault, paginator).Return(
 						jobInfo420, listInfo, nil)
 
-					_, err := testserver.Client().Do(newHTTPRequest(nil, query, JSON, JSON))
+					resp, err := testserver.Client().Do(
+						newHTTPRequest(newBody(emptyFilter, sorterDefault, paginator), JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
+					respBody, err := ioutil.ReadAll(resp.Body)
+					defer resp.Body.Close()
+					Expect(err).ToNot(HaveOccurred())
+					checkJobInfoMarshalling(respBody, jobInfo420)
+					//TODO check if lenght of response is correct
 				},
 
-				Entry("no query params set", ""),
-				Entry("after query set", "?after=50"),
-				Entry("after and limit query set", "?after=50&limit=10"),
-				Entry("after and before query set", "?after=50&before=20"),
-				Entry("after and before and limit query set", "?after=50&before=30&limit=13"),
-				Entry("before query set", "?before=100"),
-				Entry("before and limit query set", "?before=100&limit=12"),
+				Entry("when empty", emptyPaginatorOff),
+				Entry("when non-empty 1", weles.JobPaginator{Forward: true, JobID: 50}),
+				Entry("when non-empty 2", weles.JobPaginator{Forward: true, JobID: 50, Limit: 100}),
+				Entry("when non-empty 3", weles.JobPaginator{Forward: false, JobID: 50}),
+				Entry("when non-empty 4", weles.JobPaginator{Forward: false, JobID: 50, Limit: 100}),
 			)
 
 			DescribeTable("server should pass filter to JobManager",
@@ -196,7 +200,7 @@ var _ = Describe("Listing jobs with server initialized", func() {
 						jobInfo420, listInfo, nil)
 
 					_, err := testserver.Client().Do(
-						newHTTPRequest(newBody(filter, sorterEmpty), "", JSON, JSON))
+						newHTTPRequest(newBody(filter, sorterEmpty, emptyPaginatorOff), JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 				},
 				Entry("when receiving empty filter", emptyFilter),
@@ -216,7 +220,7 @@ var _ = Describe("Listing jobs with server initialized", func() {
 						jobInfo420, listInfo, nil)
 
 					_, err := testserver.Client().Do(
-						newHTTPRequest(newBody(emptyFilter, sent), "", JSON, JSON))
+						newHTTPRequest(newBody(emptyFilter, sent, emptyPaginatorOff), JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 				},
 				Entry("should set default order and by",
@@ -258,8 +262,8 @@ var _ = Describe("Listing jobs with server initialized", func() {
 						sorterDefault, emptyPaginatorOff).Return(
 						jobInfo, listInfo, nil)
 
-					resp, err := testserver.Client().Do(
-						newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
+					resp, err := testserver.Client().Do(newHTTPRequest(
+						newBody(emptyFilter, sorterDefault, emptyPaginatorOff), JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 
 					respBody, err := ioutil.ReadAll(resp.Body)
@@ -306,7 +310,7 @@ var _ = Describe("Listing jobs with server initialized", func() {
 					jobInfo420, listInfo, amerr)
 
 				resp, err := testserver.Client().Do(
-					newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
+					newHTTPRequest(newBody(emptyFilter, sorterDefault, paginator), JSON, JSON))
 				Expect(err).ToNot(HaveOccurred())
 
 				respBody, err := ioutil.ReadAll(resp.Body)
@@ -347,8 +351,9 @@ var _ = Describe("Listing jobs with server initialized", func() {
 						jobInfo420, listInfo, nil)
 
 					_, err := testserver.Client().Do(
-						newHTTPRequest(newBody(emptyFilter, sorterDefault), query, JSON, JSON))
+						newHTTPRequest(newBody(emptyFilter, sorterDefault, expectedPaginator), JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
+					//TODO: this test makes no sense now
 
 				},
 				Entry("when no query params set", "",
@@ -377,7 +382,7 @@ var _ = Describe("Listing jobs with server initialized", func() {
 						jobInfo420, listInfo, nil)
 
 					resp, err := testserver.Client().Do(
-						newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
+						newHTTPRequest(newBody(emptyFilter, sorterDefault, paginator), JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(resp.StatusCode).To(Equal(statusCode))
 				},
@@ -399,7 +404,7 @@ var _ = Describe("Listing jobs with server initialized", func() {
 							nil)
 
 					resp, err := testserver.Client().Do(
-						newHTTPRequest(newBody(emptyFilter, sorterDefault), query, JSON, JSON))
+						newHTTPRequest(newBody(emptyFilter, sorterDefault, paginator), JSON, JSON))
 					Expect(err).ToNot(HaveOccurred())
 
 					Expect(resp.StatusCode).To(Equal(200))
@@ -432,7 +437,7 @@ var _ = Describe("Listing jobs with server initialized", func() {
 						Return(jobInfo, listInfo, nil)
 
 					resp, err := testserver.Client().Do(
-						newHTTPRequest(newBody(emptyFilter, sorterDefault), "", JSON, JSON))
+						newHTTPRequest(newBody(emptyFilter, sorterDefault, paginator), JSON, JSON))
 					defer resp.Body.Close()
 					Expect(err).ToNot(HaveOccurred())
 
@@ -447,32 +452,6 @@ var _ = Describe("Listing jobs with server initialized", func() {
 					jobInfo420, weles.ListInfo{TotalRecords: 420, RemainingRecords: 50}),
 				Entry("case 2",
 					jobInfo420[:100], weles.ListInfo{TotalRecords: 100, RemainingRecords: 10}),
-			)
-		})
-
-		Describe("Error ", func() {
-			DescribeTable("returned by server due to both before and after query params set",
-				func(query string) {
-					apiDefaults.PageLimit = 100
-
-					resp, err := testserver.Client().Do(newHTTPRequest(nil, query, JSON, JSON))
-					Expect(err).ToNot(HaveOccurred())
-
-					respBody, err := ioutil.ReadAll(resp.Body)
-					defer resp.Body.Close()
-					Expect(err).ToNot(HaveOccurred())
-
-					checkErrorMarshalling(respBody, weles.ErrBeforeAfterNotAllowed)
-
-					Expect(resp.StatusCode).To(Equal(400))
-					Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
-					Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
-					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(""))
-					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
-
-				},
-				Entry("empty body", "?before=10&after=20"),
-				Entry("empty body, additional limit query set", "?before=10&after=20&limit=10"),
 			)
 		})
 	})

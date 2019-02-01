@@ -447,30 +447,5 @@ var _ = Describe("Listing artifacts with server initialized", func() {
 			)
 		})
 
-		Describe("Error ", func() {
-			DescribeTable("returned by server due to both before and after query params set",
-				func(query string) {
-					apiDefaults.PageLimit = 100
-
-					resp, err := testserver.Client().Do(newHTTPRequest(nil, query, JSON, JSON))
-					Expect(err).ToNot(HaveOccurred())
-
-					respBody, err := ioutil.ReadAll(resp.Body)
-					defer resp.Body.Close()
-					Expect(err).ToNot(HaveOccurred())
-					checkErrorMarshalling(respBody, weles.ErrBeforeAfterNotAllowed)
-
-					Expect(resp.StatusCode).To(Equal(400))
-					// headers should not be set on error
-					Expect(resp.Header.Get(NextPageHdr)).To(Equal(""))
-					Expect(resp.Header.Get(PreviousPageHdr)).To(Equal(""))
-					Expect(resp.Header.Get(ListTotalHdr)).To(Equal(""))
-					Expect(resp.Header.Get(ListRemainingHdr)).To(Equal(""))
-
-				},
-				Entry("empty body", "?before=10&after=20"),
-				Entry("empty body, additional limit query set", "?before=10&after=20&limit=10"),
-			)
-		})
 	})
 })

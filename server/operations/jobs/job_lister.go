@@ -98,6 +98,9 @@ type JobListerBody struct {
 	// filter
 	Filter *weles.JobFilter `json:"Filter,omitempty"`
 
+	// paginator
+	Paginator *weles.JobPaginator `json:"Paginator,omitempty"`
+
 	// sorter
 	Sorter *weles.JobSorter `json:"Sorter,omitempty"`
 }
@@ -107,6 +110,10 @@ func (o *JobListerBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateFilter(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validatePaginator(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -129,7 +136,25 @@ func (o *JobListerBody) validateFilter(formats strfmt.Registry) error {
 	if o.Filter != nil {
 		if err := o.Filter.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("jobFilterAndSort" + "." + "Filter")
+				return ve.ValidateName("JobListBody" + "." + "Filter")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *JobListerBody) validatePaginator(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Paginator) { // not required
+		return nil
+	}
+
+	if o.Paginator != nil {
+		if err := o.Paginator.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("JobListBody" + "." + "Paginator")
 			}
 			return err
 		}
@@ -147,7 +172,7 @@ func (o *JobListerBody) validateSorter(formats strfmt.Registry) error {
 	if o.Sorter != nil {
 		if err := o.Sorter.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("jobFilterAndSort" + "." + "Sorter")
+				return ve.ValidateName("JobListBody" + "." + "Sorter")
 			}
 			return err
 		}

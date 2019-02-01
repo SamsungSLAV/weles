@@ -29,14 +29,10 @@ import (
 func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responder {
 	paginator := weles.JobPaginator{}
 	if a.PageLimit != 0 {
-		if (params.After != nil) && (params.Before != nil) {
-			return jobs.NewJobListerBadRequest().WithPayload(
-				&weles.ErrResponse{Message: weles.ErrBeforeAfterNotAllowed.Error()})
-		}
-		paginator = setJobPaginator(params, a.PageLimit)
+		paginator = *params.JobListBody.Paginator
 	}
-	filter := setJobFilter(params.JobFilterAndSort.Filter)
-	sorter := setJobSorter(params.JobFilterAndSort.Sorter)
+	filter := setJobFilter(params.JobListBody.Filter)
+	sorter := setJobSorter(params.JobListBody.Sorter)
 
 	jobInfoReceived, listInfo, err := a.Managers.JM.ListJobs(filter, sorter, paginator)
 	if err != nil {
@@ -57,81 +53,24 @@ func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responde
 				&weles.ErrResponse{Message: err.Error()})
 		}
 	}
+
 	jobInfoReturned := jobInfoReceivedToReturned(jobInfoReceived)
-
 	if (listInfo.RemainingRecords == 0) || (a.PageLimit == 0) {
-		return responder200(listInfo, paginator, jobInfoReturned, a.PageLimit)
+		return jobs.NewJobListerOK().
+			WithWelesListTotal(listInfo.TotalRecords).
+			WithWelesListBatchSize(int32(len(jobInfoReturned))).
+			WithPayload(jobInfoReturned)
+	} else {
+		return jobs.NewJobListerPartialContent().
+			WithWelesListTotal(listInfo.TotalRecords).
+			WithWelesListRemaining(listInfo.RemainingRecords).
+			WithWelesListBatchSize(int32(len(jobInfoReturned))).
+			WithPayload(jobInfoReturned)
 	}
-	return responder206(listInfo, paginator, jobInfoReturned, a.PageLimit)
-}
+	// should never happen but better be safe.
+	return jobs.NewJobListerInternalServerError().
+		WithPayload(&weles.ErrResponse{Message: "Unkown internal error occurred."})
 
-func responder206(listInfo weles.ListInfo, paginator weles.JobPaginator,
-	jobInfoReturned []*weles.JobInfo, defaultPageLimit int32,
-) (responder *jobs.JobListerPartialContent) {
-	var jobListerURL jobs.JobListerURL
-
-	responder = jobs.NewJobListerPartialContent()
-	responder.SetWelesListTotal(listInfo.TotalRecords)
-	responder.SetWelesListRemaining(listInfo.RemainingRecords)
-	responder.SetWelesListBatchSize(int32(len(jobInfoReturned)))
-
-	tmp := uint64(jobInfoReturned[len(jobInfoReturned)-1].JobID)
-	jobListerURL.After = &tmp
-
-	if defaultPageLimit != paginator.Limit {
-		tmp := paginator.Limit
-		jobListerURL.Limit = &tmp
-	}
-	responder.SetWelesNextPage(jobListerURL.String())
-	if paginator.JobID != 0 { // not the first page
-		var jobListerURL jobs.JobListerURL
-		tmp = uint64(jobInfoReturned[0].JobID)
-		jobListerURL.Before = &tmp
-		if defaultPageLimit != paginator.Limit {
-			tmp := paginator.Limit
-			jobListerURL.Limit = &tmp
-		}
-		responder.SetWelesPreviousPage(jobListerURL.String())
-	}
-	responder.SetPayload(jobInfoReturned)
-	return
-}
-
-func responder200(listInfo weles.ListInfo, paginator weles.JobPaginator,
-	jobInfoReturned []*weles.JobInfo, defaultPageLimit int32,
-) (responder *jobs.JobListerOK) {
-	var jobListerURL jobs.JobListerURL
-
-	responder = jobs.NewJobListerOK()
-	responder.SetWelesListTotal(listInfo.TotalRecords)
-	responder.SetWelesListBatchSize(int32(len(jobInfoReturned)))
-
-	if paginator.JobID != 0 { //not the first page
-		// keep in mind that JobID in paginator is taken from query parameter, not jobmanager
-		if paginator.Forward {
-			if len(jobInfoReturned) != 0 {
-				tmp := uint64(jobInfoReturned[0].JobID)
-				jobListerURL.Before = &tmp
-			}
-			if defaultPageLimit != paginator.Limit {
-				tmp := paginator.Limit
-				jobListerURL.Limit = &tmp
-			}
-			responder.SetWelesPreviousPage(jobListerURL.String())
-		} else {
-			if len(jobInfoReturned) != 0 {
-				tmp := uint64(jobInfoReturned[len(jobInfoReturned)-1].JobID)
-				jobListerURL.After = &tmp
-			}
-			if defaultPageLimit != paginator.Limit {
-				tmp := paginator.Limit
-				jobListerURL.Limit = &tmp
-			}
-			responder.SetWelesNextPage(jobListerURL.String())
-		}
-	}
-	responder.SetPayload(jobInfoReturned)
-	return
 }
 
 // normalizeDate is a helper function - adjusts 0 value to "0001-01-01T00:00:00.000Z" instead of
@@ -173,24 +112,6 @@ func setJobFilter(i *weles.JobFilter) (o weles.JobFilter) {
 				o.Status = i.Status
 			}
 		}
-	}
-	return
-}
-
-func setJobPaginator(params jobs.JobListerParams, defaultPageLimit int32,
-) (paginator weles.JobPaginator) {
-	paginator.Forward = true
-	if params.After != nil {
-		paginator.JobID = weles.JobID(*params.After)
-	} else if params.Before != nil {
-		paginator.JobID = weles.JobID(*params.Before)
-		paginator.Forward = false
-	}
-
-	if params.Limit == nil {
-		paginator.Limit = defaultPageLimit
-	} else {
-		paginator.Limit = *params.Limit
 	}
 	return
 }

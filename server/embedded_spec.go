@@ -76,7 +76,7 @@ func init() {
         "parameters": [
           {
             "description": "Artifact Filter and Sort object.",
-            "name": "artifactFilterAndSort",
+            "name": "ArtifactListBody",
             "in": "body",
             "schema": {
               "description": "ArtifactFilterAndSort contains data for filtering and sorting\nWeles Artifacts lists. Please refer to ArtifactFilter and\nArtifactSorter documentation for more details.",
@@ -85,32 +85,14 @@ func init() {
                 "Filter": {
                   "$ref": "#/definitions/ArtifactFilter"
                 },
+                "Paginator": {
+                  "$ref": "#/definitions/ArtifactPaginator"
+                },
                 "Sorter": {
                   "$ref": "#/definitions/ArtifactSorter"
                 }
               }
             }
-          },
-          {
-            "type": "integer",
-            "format": "int64",
-            "description": "After should be filled with Artifact's ID (don't mix it with JobID)\nof the last element from current page to receive next one.",
-            "name": "after",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int64",
-            "description": "Before should be filled with Artifact's ID (don't mix it with\nJobID) of the first element from current page to receive previous\none.",
-            "name": "before",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "description": "Limit is the number of records to return. Overrides default server\npage limit.",
-            "name": "limit",
-            "in": "query"
           }
         ],
         "responses": {
@@ -132,16 +114,6 @@ func init() {
                 "type": "integer",
                 "format": "uint64",
                 "description": "Weles-List-Total is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
-              },
-              "Weles-Next-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "Weles-Previous-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Previous-Page is the URL suffix to request next page of\ndata.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -168,16 +140,6 @@ func init() {
                 "type": "integer",
                 "format": "uint64",
                 "description": "Weles-List-Total is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
-              },
-              "Weles-Next-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Next-Page is URL to request next page of data. Please\nnote that the same body must be used as in initial request."
-              },
-              "Weles-Previous-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Previous-Page is URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
               }
             }
           },
@@ -252,7 +214,7 @@ func init() {
         "parameters": [
           {
             "description": "Job Filter and Sort object.",
-            "name": "jobFilterAndSort",
+            "name": "JobListBody",
             "in": "body",
             "schema": {
               "description": "JobFilterAndSort contains data for filtering and sorting\nWeles Jobs lists. Please refer to JobFilter and\nJobSorter documentation for more details.",
@@ -261,32 +223,14 @@ func init() {
                 "Filter": {
                   "$ref": "#/definitions/JobFilter"
                 },
+                "Paginator": {
+                  "$ref": "#/definitions/JobPaginator"
+                },
                 "Sorter": {
                   "$ref": "#/definitions/JobSorter"
                 }
               }
             }
-          },
-          {
-            "type": "integer",
-            "format": "uint64",
-            "description": "After should be filled with JobID of the last element from current\npage to receive next one.",
-            "name": "after",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "uint64",
-            "description": "Before should be filled with JobID of the first element from\ncurrent page to receive previous one.",
-            "name": "before",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "description": "Limit is the number of records to return. Overrides default server\npage limit.",
-            "name": "limit",
-            "in": "query"
           }
         ],
         "responses": {
@@ -308,16 +252,6 @@ func init() {
                 "type": "integer",
                 "format": "uint64",
                 "description": "Weles-List-Total is the count of records currently\nfulfilling the requested JobFilter. Please note that this value\nmay change when requesting for the same data at a different\nmoments in time."
-              },
-              "Weles-Next-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "Weles-Previous-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Previous-Page is the URL suffix to request previous page\nof data.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -344,16 +278,6 @@ func init() {
                 "type": "integer",
                 "format": "uint64",
                 "description": "Weles-List-Total is the count of records currently fulfilling\nrequested JobFilter.  Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
-              },
-              "Weles-Next-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "Weles-Previous-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Previous-Page is the URL suffix to request previous page\nof data.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -948,7 +872,7 @@ func init() {
         "parameters": [
           {
             "description": "Artifact Filter and Sort object.",
-            "name": "artifactFilterAndSort",
+            "name": "ArtifactListBody",
             "in": "body",
             "schema": {
               "description": "ArtifactFilterAndSort contains data for filtering and sorting\nWeles Artifacts lists. Please refer to ArtifactFilter and\nArtifactSorter documentation for more details.",
@@ -957,32 +881,14 @@ func init() {
                 "Filter": {
                   "$ref": "#/definitions/ArtifactFilter"
                 },
+                "Paginator": {
+                  "$ref": "#/definitions/ArtifactPaginator"
+                },
                 "Sorter": {
                   "$ref": "#/definitions/ArtifactSorter"
                 }
               }
             }
-          },
-          {
-            "type": "integer",
-            "format": "int64",
-            "description": "After should be filled with Artifact's ID (don't mix it with JobID)\nof the last element from current page to receive next one.",
-            "name": "after",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int64",
-            "description": "Before should be filled with Artifact's ID (don't mix it with\nJobID) of the first element from current page to receive previous\none.",
-            "name": "before",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "description": "Limit is the number of records to return. Overrides default server\npage limit.",
-            "name": "limit",
-            "in": "query"
           }
         ],
         "responses": {
@@ -1004,16 +910,6 @@ func init() {
                 "type": "integer",
                 "format": "uint64",
                 "description": "Weles-List-Total is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
-              },
-              "Weles-Next-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "Weles-Previous-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Previous-Page is the URL suffix to request next page of\ndata.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -1040,16 +936,6 @@ func init() {
                 "type": "integer",
                 "format": "uint64",
                 "description": "Weles-List-Total is count of records currently fulfilling the\nrequested ArtifactFilter. Please note that this value may\nchange when requesting for the same data at a different moment\nin time."
-              },
-              "Weles-Next-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Next-Page is URL to request next page of data. Please\nnote that the same body must be used as in initial request."
-              },
-              "Weles-Previous-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Previous-Page is URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
               }
             }
           },
@@ -1142,7 +1028,7 @@ func init() {
         "parameters": [
           {
             "description": "Job Filter and Sort object.",
-            "name": "jobFilterAndSort",
+            "name": "JobListBody",
             "in": "body",
             "schema": {
               "description": "JobFilterAndSort contains data for filtering and sorting\nWeles Jobs lists. Please refer to JobFilter and\nJobSorter documentation for more details.",
@@ -1151,32 +1037,14 @@ func init() {
                 "Filter": {
                   "$ref": "#/definitions/JobFilter"
                 },
+                "Paginator": {
+                  "$ref": "#/definitions/JobPaginator"
+                },
                 "Sorter": {
                   "$ref": "#/definitions/JobSorter"
                 }
               }
             }
-          },
-          {
-            "type": "integer",
-            "format": "uint64",
-            "description": "After should be filled with JobID of the last element from current\npage to receive next one.",
-            "name": "after",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "uint64",
-            "description": "Before should be filled with JobID of the first element from\ncurrent page to receive previous one.",
-            "name": "before",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "description": "Limit is the number of records to return. Overrides default server\npage limit.",
-            "name": "limit",
-            "in": "query"
           }
         ],
         "responses": {
@@ -1198,16 +1066,6 @@ func init() {
                 "type": "integer",
                 "format": "uint64",
                 "description": "Weles-List-Total is the count of records currently\nfulfilling the requested JobFilter. Please note that this value\nmay change when requesting for the same data at a different\nmoments in time."
-              },
-              "Weles-Next-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "Weles-Previous-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Previous-Page is the URL suffix to request previous page\nof data.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
@@ -1234,16 +1092,6 @@ func init() {
                 "type": "integer",
                 "format": "uint64",
                 "description": "Weles-List-Total is the count of records currently fulfilling\nrequested JobFilter.  Please note that this value may change\nwhen requesting for the same data at a different moments in\ntime."
-              },
-              "Weles-Next-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Next-Page is the URL suffix to request next page of data.\nPlease note that the same body must be used as in initial\nrequest."
-              },
-              "Weles-Previous-Page": {
-                "type": "string",
-                "format": "URI",
-                "description": "Weles-Previous-Page is the URL suffix to request previous page\nof data.  Please note that the same body must be used as in\ninitial request."
               }
             }
           },
