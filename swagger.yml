@@ -630,6 +630,30 @@ definitions:
         description: |-
           Order in which Jobs will be sorted. For more details, see SortOrder
           documentation.
+  JobPaginator:
+    description: |-
+      JobPaginator holds information neccessary to request for a single page of
+      data.
+      When JobID is set, and Forward is false - Controller should return a page
+      of records before the supplied JobID.
+      When JobID is set, and Forward is true - Controller should return page
+      of record after the supplied JobID.
+      In both cases, returned page should not include supplied JobID.
+      Limit denotes the number of records to be returned on the page. When
+      Limit is set to 0, pagination is disabled, JobID and Forward fields are
+      ignored and all records are returned.
+    type: object
+    properties:
+      JobID:
+        description: JobID is the key used for pagination.
+        $ref: '#/definitions/JobID'
+      Forward:
+        description: Forward denotes direction of pagination.
+        type: boolean
+      Limit:
+        description: Limit the page size.
+        type: integer
+        format: int32
   ArtifactType:
     description: |
       denotes type and function of an Artifact. Depends on Job Submission file.
@@ -804,6 +828,31 @@ definitions:
           Order in which Artifacts will be sorted. For more details, see
           SortOrder documentation.
         $ref: '#/definitions/SortOrder'
+  ArtifactPaginator:
+    description: |-
+      ArtifactPaginator holds information neccessary to request for a single
+      page of data from ArtifactManager.
+      When ID is set, and Forward is false - ArtifactManager should return a
+      page of records before the supplied ID.
+      When ID is set, and Forward is true -  ArtifactManager should return page
+      of records after the supplied ID.
+      In both cases, returned page should not include supplied ID.
+      Limit denotes the number of records to be returned on the page.  When
+      Limit is set to 0, pagination is disabled, ID and Forward fields are
+      ignored and all records are returned.
+    type: object
+    properties:
+      ID:
+        description: ID is the key used for pagination.
+        type: integer
+        format: int64
+      Forward:
+        description: Forward denotes direction of pagination.
+        type: boolean
+      Limit:
+        description: Limit the page size.
+        type: integer
+        format: int32
   Version:
     description: |-
       defines version of Weles API (and its state) and server.

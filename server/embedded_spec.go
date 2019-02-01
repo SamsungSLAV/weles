@@ -541,6 +541,26 @@ func init() {
       },
       "x-go-name": "ArtifactInfoExt"
     },
+    "ArtifactPaginator": {
+      "description": "ArtifactPaginator holds information neccessary to request for a single\npage of data from ArtifactManager.\nWhen ID is set, and Forward is false - ArtifactManager should return a\npage of records before the supplied ID.\nWhen ID is set, and Forward is true -  ArtifactManager should return page\nof records after the supplied ID.\nIn both cases, returned page should not include supplied ID.\nLimit denotes the number of records to be returned on the page.  When\nLimit is set to 0, pagination is disabled, ID and Forward fields are\nignored and all records are returned.",
+      "type": "object",
+      "properties": {
+        "Forward": {
+          "description": "Forward denotes direction of pagination.",
+          "type": "boolean"
+        },
+        "ID": {
+          "description": "ID is the key used for pagination.",
+          "type": "integer",
+          "format": "int64"
+        },
+        "Limit": {
+          "description": "Limit the page size.",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "ArtifactSortBy": {
       "description": "denotes the key for sorting list of all artifacts.\n\n* ID - sorting by artifact ID.\n",
       "type": "string",
@@ -714,6 +734,25 @@ func init() {
           "type": "string",
           "format": "date-time",
           "x-omitempty": false
+        }
+      }
+    },
+    "JobPaginator": {
+      "description": "JobPaginator holds information neccessary to request for a single page of\ndata.\nWhen JobID is set, and Forward is false - Controller should return a page\nof records before the supplied JobID.\nWhen JobID is set, and Forward is true - Controller should return page\nof record after the supplied JobID.\nIn both cases, returned page should not include supplied JobID.\nLimit denotes the number of records to be returned on the page. When\nLimit is set to 0, pagination is disabled, JobID and Forward fields are\nignored and all records are returned.",
+      "type": "object",
+      "properties": {
+        "Forward": {
+          "description": "Forward denotes direction of pagination.",
+          "type": "boolean"
+        },
+        "JobID": {
+          "description": "JobID is the key used for pagination.",
+          "$ref": "#/definitions/JobID"
+        },
+        "Limit": {
+          "description": "Limit the page size.",
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1413,6 +1452,26 @@ func init() {
       },
       "x-go-name": "ArtifactInfoExt"
     },
+    "ArtifactPaginator": {
+      "description": "ArtifactPaginator holds information neccessary to request for a single\npage of data from ArtifactManager.\nWhen ID is set, and Forward is false - ArtifactManager should return a\npage of records before the supplied ID.\nWhen ID is set, and Forward is true -  ArtifactManager should return page\nof records after the supplied ID.\nIn both cases, returned page should not include supplied ID.\nLimit denotes the number of records to be returned on the page.  When\nLimit is set to 0, pagination is disabled, ID and Forward fields are\nignored and all records are returned.",
+      "type": "object",
+      "properties": {
+        "Forward": {
+          "description": "Forward denotes direction of pagination.",
+          "type": "boolean"
+        },
+        "ID": {
+          "description": "ID is the key used for pagination.",
+          "type": "integer",
+          "format": "int64"
+        },
+        "Limit": {
+          "description": "Limit the page size.",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "ArtifactSortBy": {
       "description": "denotes the key for sorting list of all artifacts.\n\n* ID - sorting by artifact ID.\n",
       "type": "string",
@@ -1586,6 +1645,25 @@ func init() {
           "type": "string",
           "format": "date-time",
           "x-omitempty": false
+        }
+      }
+    },
+    "JobPaginator": {
+      "description": "JobPaginator holds information neccessary to request for a single page of\ndata.\nWhen JobID is set, and Forward is false - Controller should return a page\nof records before the supplied JobID.\nWhen JobID is set, and Forward is true - Controller should return page\nof record after the supplied JobID.\nIn both cases, returned page should not include supplied JobID.\nLimit denotes the number of records to be returned on the page. When\nLimit is set to 0, pagination is disabled, JobID and Forward fields are\nignored and all records are returned.",
+      "type": "object",
+      "properties": {
+        "Forward": {
+          "description": "Forward denotes direction of pagination.",
+          "type": "boolean"
+        },
+        "JobID": {
+          "description": "JobID is the key used for pagination.",
+          "$ref": "#/definitions/JobID"
+        },
+        "Limit": {
+          "description": "Limit the page size.",
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
