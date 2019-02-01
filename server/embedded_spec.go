@@ -618,6 +618,21 @@ func init() {
       "type": "string",
       "format": "uri"
     },
+    "Direction": {
+      "description": "Direction of pagination.",
+      "type": "string",
+      "enum": [
+        "forward",
+        "backward"
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "Direction"
+      }
+    },
     "ErrResponse": {
       "description": "is a standard error response containing information about the error. It consists of error type and message.",
       "type": "object",
@@ -777,6 +792,26 @@ func init() {
           "package": "github.com/SamsungSLAV/weles/enums"
         },
         "type": "JobStatus"
+      }
+    },
+    "Paginator": {
+      "description": "Paginator holds information neccessary to request for a single\npage of data.",
+      "type": "object",
+      "properties": {
+        "Direction": {
+          "description": "Direction of pagination.",
+          "$ref": "#/definitions/Direction"
+        },
+        "ID": {
+          "description": "ID is the key used for pagination. JobID for listing jobs, artifact\nID when listing artifacts.",
+          "type": "integer",
+          "format": "int64"
+        },
+        "Limit": {
+          "description": "Limit the page size.",
+          "type": "integer",
+          "format": "int32"
+        }
       }
     },
     "SortOrder": {
@@ -1500,6 +1535,21 @@ func init() {
       "type": "string",
       "format": "uri"
     },
+    "Direction": {
+      "description": "Direction of pagination.",
+      "type": "string",
+      "enum": [
+        "forward",
+        "backward"
+      ],
+      "x-go-type": {
+        "import": {
+          "alias": "enums",
+          "package": "github.com/SamsungSLAV/weles/enums"
+        },
+        "type": "Direction"
+      }
+    },
     "ErrResponse": {
       "description": "is a standard error response containing information about the error. It consists of error type and message.",
       "type": "object",
@@ -1659,6 +1709,26 @@ func init() {
           "package": "github.com/SamsungSLAV/weles/enums"
         },
         "type": "JobStatus"
+      }
+    },
+    "Paginator": {
+      "description": "Paginator holds information neccessary to request for a single\npage of data.",
+      "type": "object",
+      "properties": {
+        "Direction": {
+          "description": "Direction of pagination.",
+          "$ref": "#/definitions/Direction"
+        },
+        "ID": {
+          "description": "ID is the key used for pagination. JobID for listing jobs, artifact\nID when listing artifacts.",
+          "type": "integer",
+          "format": "int64"
+        },
+        "Limit": {
+          "description": "Limit the page size.",
+          "type": "integer",
+          "format": "int32"
+        }
       }
     },
     "SortOrder": {

@@ -818,6 +818,36 @@ definitions:
           Order in which Artifacts will be sorted. For more details, see
           SortOrder documentation.
         $ref: '#/definitions/SortOrder'
+  Paginator:
+    description: |-
+      Paginator holds information neccessary to request for a single
+      page of data.
+    type: object
+    properties:
+      ID:
+        description: |-
+          ID is the key used for pagination. JobID for listing jobs, artifact
+          ID when listing artifacts.
+        type: integer
+        format: int64
+      Direction:
+        description: Direction of pagination.
+        $ref: '#/definitions/Direction'
+      Limit:
+        description: Limit the page size.
+        type: integer
+        format: int32
+  Direction:
+    description: Direction of pagination.
+    type: string
+    enum:
+      - forward
+      - backward
+    x-go-type:
+      import:
+        package: "github.com/SamsungSLAV/weles/enums"
+        alias: "enums"
+      type: "Direction"
   Version:
     description: |-
       defines version of Weles API (and its state) and server.
