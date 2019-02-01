@@ -129,27 +129,8 @@ paths:
                 $ref: '#/definitions/JobFilter'
               Sorter:
                 $ref: '#/definitions/JobSorter'
-        - in: query
-          name: after
-          description: |-
-            After should be filled with JobID of the last element from current
-            page to receive next one.
-          type: integer
-          format: uint64
-        - in: query
-          name: before
-          description: |-
-            Before should be filled with JobID of the first element from
-            current page to receive previous one.
-          type: integer
-          format: uint64
-        - in: query
-          name: limit
-          description: |-
-            Limit is the number of records to return. Overrides default server
-            page limit.
-          type: integer
-          format: int32
+              Paginator:
+                $ref: '#/definitions/JobPaginator'
       responses:
         '200':
           description: OK
@@ -158,20 +139,6 @@ paths:
             items:
               $ref: '#/definitions/JobInfo'
           headers:
-            Weles-Previous-Page:
-              type: string
-              format: URI
-              description: |-
-                Weles-Previous-Page is the URL suffix to request previous page
-                of data.  Please note that the same body must be used as in
-                initial request.
-            Weles-Next-Page:
-              type: string
-              format: URI
-              description: |-
-                Weles-Next-Page is the URL suffix to request next page of data.
-                Please note that the same body must be used as in initial
-                request.
             Weles-List-Total:
               type: integer
               format: uint64
@@ -193,20 +160,6 @@ paths:
             items:
               $ref: '#/definitions/JobInfo'
           headers:
-            Weles-Previous-Page:
-              type: string
-              format: URI
-              description: |-
-                Weles-Previous-Page is the URL suffix to request previous page
-                of data.  Please note that the same body must be used as in
-                initial request.
-            Weles-Next-Page:
-              type: string
-              format: URI
-              description: |-
-                Weles-Next-Page is the URL suffix to request next page of data.
-                Please note that the same body must be used as in initial
-                request.
             Weles-List-Total:
               type: integer
               format: uint64
@@ -272,28 +225,8 @@ paths:
                 $ref: '#/definitions/ArtifactFilter'
               Sorter:
                 $ref: '#/definitions/ArtifactSorter'
-        - in: query
-          name: after
-          description: |-
-            After should be filled with Artifact's ID (don't mix it with JobID)
-            of the last element from current page to receive next one.
-          type: integer
-          format: int64
-        - in: query
-          name: before
-          description: |-
-            Before should be filled with Artifact's ID (don't mix it with
-            JobID) of the first element from current page to receive previous
-            one.
-          type: integer
-          format: int64
-        - in: query
-          name: limit
-          description: |-
-            Limit is the number of records to return. Overrides default server
-            page limit.
-          type: integer
-          format: int32
+              Paginator:
+                $ref: '#/definitions/ArtifactPaginator'
       responses:
         '200':
           description: OK
@@ -302,20 +235,6 @@ paths:
             items:
               $ref: '#/definitions/ArtifactInfo'
           headers:
-            Weles-Previous-Page:
-              type: string
-              format: URI
-              description: |-
-                Weles-Previous-Page is the URL suffix to request next page of
-                data.  Please note that the same body must be used as in
-                initial request.
-            Weles-Next-Page:
-              type: string
-              format: URI
-              description: |-
-                Weles-Next-Page is the URL suffix to request next page of data.
-                Please note that the same body must be used as in initial
-                request.
             Weles-List-Total:
               type: integer
               format: uint64
@@ -337,19 +256,6 @@ paths:
             items:
               $ref: '#/definitions/ArtifactInfo'
           headers:
-            Weles-Previous-Page:
-              type: string
-              format: URI
-              description: |-
-                Weles-Previous-Page is URL suffix to request next page of data.
-                Please note that the same body must be used as in initial
-                request.
-            Weles-Next-Page:
-              type: string
-              format: URI
-              description: |-
-                Weles-Next-Page is URL to request next page of data. Please
-                note that the same body must be used as in initial request.
             Weles-List-Total:
               type: integer
               format: uint64

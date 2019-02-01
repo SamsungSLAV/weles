@@ -49,18 +49,6 @@ type JobListerOK struct {
 
 	*/
 	WelesListTotal uint64 `json:"Weles-List-Total"`
-	/*Weles-Next-Page is the URL suffix to request next page of data.
-	Please note that the same body must be used as in initial
-	request.
-
-	*/
-	WelesNextPage string `json:"Weles-Next-Page"`
-	/*Weles-Previous-Page is the URL suffix to request previous page
-	of data.  Please note that the same body must be used as in
-	initial request.
-
-	*/
-	WelesPreviousPage string `json:"Weles-Previous-Page"`
 
 	/*
 	  In: Body
@@ -96,28 +84,6 @@ func (o *JobListerOK) SetWelesListTotal(welesListTotal uint64) {
 	o.WelesListTotal = welesListTotal
 }
 
-// WithWelesNextPage adds the welesNextPage to the job lister o k response
-func (o *JobListerOK) WithWelesNextPage(welesNextPage string) *JobListerOK {
-	o.WelesNextPage = welesNextPage
-	return o
-}
-
-// SetWelesNextPage sets the welesNextPage to the job lister o k response
-func (o *JobListerOK) SetWelesNextPage(welesNextPage string) {
-	o.WelesNextPage = welesNextPage
-}
-
-// WithWelesPreviousPage adds the welesPreviousPage to the job lister o k response
-func (o *JobListerOK) WithWelesPreviousPage(welesPreviousPage string) *JobListerOK {
-	o.WelesPreviousPage = welesPreviousPage
-	return o
-}
-
-// SetWelesPreviousPage sets the welesPreviousPage to the job lister o k response
-func (o *JobListerOK) SetWelesPreviousPage(welesPreviousPage string) {
-	o.WelesPreviousPage = welesPreviousPage
-}
-
 // WithPayload adds the payload to the job lister o k response
 func (o *JobListerOK) WithPayload(payload []*weles.JobInfo) *JobListerOK {
 	o.Payload = payload
@@ -144,20 +110,6 @@ func (o *JobListerOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pro
 	welesListTotal := swag.FormatUint64(o.WelesListTotal)
 	if welesListTotal != "" {
 		rw.Header().Set("Weles-List-Total", welesListTotal)
-	}
-
-	// response header Weles-Next-Page
-
-	welesNextPage := o.WelesNextPage
-	if welesNextPage != "" {
-		rw.Header().Set("Weles-Next-Page", welesNextPage)
-	}
-
-	// response header Weles-Previous-Page
-
-	welesPreviousPage := o.WelesPreviousPage
-	if welesPreviousPage != "" {
-		rw.Header().Set("Weles-Previous-Page", welesPreviousPage)
 	}
 
 	rw.WriteHeader(200)
@@ -198,18 +150,6 @@ type JobListerPartialContent struct {
 
 	*/
 	WelesListTotal uint64 `json:"Weles-List-Total"`
-	/*Weles-Next-Page is the URL suffix to request next page of data.
-	Please note that the same body must be used as in initial
-	request.
-
-	*/
-	WelesNextPage string `json:"Weles-Next-Page"`
-	/*Weles-Previous-Page is the URL suffix to request previous page
-	of data.  Please note that the same body must be used as in
-	initial request.
-
-	*/
-	WelesPreviousPage string `json:"Weles-Previous-Page"`
 
 	/*
 	  In: Body
@@ -256,28 +196,6 @@ func (o *JobListerPartialContent) SetWelesListTotal(welesListTotal uint64) {
 	o.WelesListTotal = welesListTotal
 }
 
-// WithWelesNextPage adds the welesNextPage to the job lister partial content response
-func (o *JobListerPartialContent) WithWelesNextPage(welesNextPage string) *JobListerPartialContent {
-	o.WelesNextPage = welesNextPage
-	return o
-}
-
-// SetWelesNextPage sets the welesNextPage to the job lister partial content response
-func (o *JobListerPartialContent) SetWelesNextPage(welesNextPage string) {
-	o.WelesNextPage = welesNextPage
-}
-
-// WithWelesPreviousPage adds the welesPreviousPage to the job lister partial content response
-func (o *JobListerPartialContent) WithWelesPreviousPage(welesPreviousPage string) *JobListerPartialContent {
-	o.WelesPreviousPage = welesPreviousPage
-	return o
-}
-
-// SetWelesPreviousPage sets the welesPreviousPage to the job lister partial content response
-func (o *JobListerPartialContent) SetWelesPreviousPage(welesPreviousPage string) {
-	o.WelesPreviousPage = welesPreviousPage
-}
-
 // WithPayload adds the payload to the job lister partial content response
 func (o *JobListerPartialContent) WithPayload(payload []*weles.JobInfo) *JobListerPartialContent {
 	o.Payload = payload
@@ -311,20 +229,6 @@ func (o *JobListerPartialContent) WriteResponse(rw http.ResponseWriter, producer
 	welesListTotal := swag.FormatUint64(o.WelesListTotal)
 	if welesListTotal != "" {
 		rw.Header().Set("Weles-List-Total", welesListTotal)
-	}
-
-	// response header Weles-Next-Page
-
-	welesNextPage := o.WelesNextPage
-	if welesNextPage != "" {
-		rw.Header().Set("Weles-Next-Page", welesNextPage)
-	}
-
-	// response header Weles-Previous-Page
-
-	welesPreviousPage := o.WelesPreviousPage
-	if welesPreviousPage != "" {
-		rw.Header().Set("Weles-Previous-Page", welesPreviousPage)
 	}
 
 	rw.WriteHeader(206)
