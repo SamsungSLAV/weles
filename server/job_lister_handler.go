@@ -27,16 +27,9 @@ import (
 
 // JobLister is a handler which passess requests for listing jobs to jobmanager.
 func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responder {
-	paginator := weles.JobPaginator{}
-	if a.PageLimit != 0 {
-		if (params.After != nil) && (params.Before != nil) {
-			return jobs.NewJobListerBadRequest().WithPayload(
-				&weles.ErrResponse{Message: weles.ErrBeforeAfterNotAllowed.Error()})
-		}
-		paginator = setJobPaginator(params, a.PageLimit)
-	}
-	filter := setJobFilter(params.JobFilterAndSort.Filter)
-	sorter := setJobSorter(params.JobFilterAndSort.Sorter)
+	paginator := setJobPaginator(params.JobListBody.Paginator, a.PageLimit)
+	filter := setJobFilter(params.JobListBody.Filter)
+	sorter := setJobSorter(params.JobListBody.Sorter)
 
 	jobInfoReceived, listInfo, err := a.Managers.JM.ListJobs(filter, sorter, paginator)
 	if err != nil {
@@ -57,81 +50,36 @@ func (a *APIDefaults) JobLister(params jobs.JobListerParams) middleware.Responde
 				&weles.ErrResponse{Message: err.Error()})
 		}
 	}
+
 	jobInfoReturned := jobInfoReceivedToReturned(jobInfoReceived)
-
 	if (listInfo.RemainingRecords == 0) || (a.PageLimit == 0) {
-		return responder200(listInfo, paginator, jobInfoReturned, a.PageLimit)
+		return jobs.NewJobListerOK().
+			WithWelesListTotal(listInfo.TotalRecords).
+			WithWelesListBatchSize(int32(len(jobInfoReturned))).
+			WithPayload(jobInfoReturned)
 	}
-	return responder206(listInfo, paginator, jobInfoReturned, a.PageLimit)
+	return jobs.NewJobListerPartialContent().
+		WithWelesListTotal(listInfo.TotalRecords).
+		WithWelesListRemaining(listInfo.RemainingRecords).
+		WithWelesListBatchSize(int32(len(jobInfoReturned))).
+		WithPayload(jobInfoReturned)
 }
 
-func responder206(listInfo weles.ListInfo, paginator weles.JobPaginator,
-	jobInfoReturned []*weles.JobInfo, defaultPageLimit int32,
-) (responder *jobs.JobListerPartialContent) {
-	var jobListerURL jobs.JobListerURL
-
-	responder = jobs.NewJobListerPartialContent()
-	responder.SetWelesListTotal(listInfo.TotalRecords)
-	responder.SetWelesListRemaining(listInfo.RemainingRecords)
-	responder.SetWelesListBatchSize(int32(len(jobInfoReturned)))
-
-	tmp := uint64(jobInfoReturned[len(jobInfoReturned)-1].JobID)
-	jobListerURL.After = &tmp
-
-	if defaultPageLimit != paginator.Limit {
-		tmp := paginator.Limit
-		jobListerURL.Limit = &tmp
+func setJobPaginator(pi *weles.Paginator, globalLimit int32) (po weles.JobPaginator) {
+	if pi == nil {
+		return weles.JobPaginator{Forward: true, Limit: globalLimit}
 	}
-	responder.SetWelesNextPage(jobListerURL.String())
-	if paginator.JobID != 0 { // not the first page
-		var jobListerURL jobs.JobListerURL
-		tmp = uint64(jobInfoReturned[0].JobID)
-		jobListerURL.Before = &tmp
-		if defaultPageLimit != paginator.Limit {
-			tmp := paginator.Limit
-			jobListerURL.Limit = &tmp
-		}
-		responder.SetWelesPreviousPage(jobListerURL.String())
+	if pi.ID != 0 {
+		po.JobID = weles.JobID(pi.ID)
 	}
-	responder.SetPayload(jobInfoReturned)
-	return
-}
-
-func responder200(listInfo weles.ListInfo, paginator weles.JobPaginator,
-	jobInfoReturned []*weles.JobInfo, defaultPageLimit int32,
-) (responder *jobs.JobListerOK) {
-	var jobListerURL jobs.JobListerURL
-
-	responder = jobs.NewJobListerOK()
-	responder.SetWelesListTotal(listInfo.TotalRecords)
-	responder.SetWelesListRemaining(listInfo.RemainingRecords)
-	responder.SetWelesListBatchSize(int32(len(jobInfoReturned)))
-
-	if paginator.JobID != 0 { //not the first page
-		// keep in mind that JobID in paginator is taken from query parameter, not jobmanager
-		if paginator.Forward {
-			if len(jobInfoReturned) != 0 {
-				tmp := uint64(jobInfoReturned[0].JobID)
-				jobListerURL.Before = &tmp
-			}
-			if defaultPageLimit != paginator.Limit {
-				tmp := paginator.Limit
-				jobListerURL.Limit = &tmp
-			}
-			responder.SetWelesPreviousPage(jobListerURL.String())
-		} else {
-			if len(jobInfoReturned) != 0 {
-				tmp := uint64(jobInfoReturned[len(jobInfoReturned)-1].JobID)
-				jobListerURL.After = &tmp
-			}
-			if defaultPageLimit != paginator.Limit {
-				tmp := paginator.Limit
-				jobListerURL.Limit = &tmp
-			}
-			responder.SetWelesNextPage(jobListerURL.String())
-		}
+	if pi.Direction != enums.DirectionBackward {
+		po.Forward = true // default order
 	}
-	responder.SetPayload(jobInfoReturned)
+	if pi.Limit == 0 {
+		po.Limit = globalLimit
+	} else {
+		po.Limit = pi.Limit
+	}
 	return
 }
 
@@ -148,50 +96,34 @@ func normalizeDate(i strfmt.DateTime) strfmt.DateTime {
 // Controller treats slices with 0 len as empty, slices with lenght of 1 and empty value should not
 // be passed to controller.
 func setJobFilter(i *weles.JobFilter) (o weles.JobFilter) {
-	if i != nil {
-		o.CreatedBefore = normalizeDate(i.CreatedBefore)
-		o.CreatedAfter = normalizeDate(i.CreatedAfter)
-		o.UpdatedBefore = normalizeDate(i.UpdatedBefore)
-		o.UpdatedAfter = normalizeDate(i.UpdatedAfter)
-
-		if len(i.JobID) > 0 {
-			if !(len(i.JobID) == 1 && i.JobID[0] == 0) {
-				o.JobID = i.JobID
-			}
-		}
-		if len(i.Info) > 0 {
-			if !(len(i.Info) == 1 && i.Info[0] == "") {
-				o.Info = i.Info
-			}
-		}
-		if len(i.Name) > 0 {
-			if !(len(i.Name) == 1 && i.Name[0] == "") {
-				o.Name = i.Name
-			}
-		}
-		if len(i.Status) > 0 {
-			if !(len(i.Status) == 1 && i.Status[0] == "") {
-				o.Status = i.Status
-			}
-		}
-	}
-	return
-}
-
-func setJobPaginator(params jobs.JobListerParams, defaultPageLimit int32,
-) (paginator weles.JobPaginator) {
-	paginator.Forward = true
-	if params.After != nil {
-		paginator.JobID = weles.JobID(*params.After)
-	} else if params.Before != nil {
-		paginator.JobID = weles.JobID(*params.Before)
-		paginator.Forward = false
+	if i == nil {
+		return
 	}
 
-	if params.Limit == nil {
-		paginator.Limit = defaultPageLimit
-	} else {
-		paginator.Limit = *params.Limit
+	o.CreatedBefore = normalizeDate(i.CreatedBefore)
+	o.CreatedAfter = normalizeDate(i.CreatedAfter)
+	o.UpdatedBefore = normalizeDate(i.UpdatedBefore)
+	o.UpdatedAfter = normalizeDate(i.UpdatedAfter)
+
+	if len(i.JobID) > 0 {
+		if !(len(i.JobID) == 1 && i.JobID[0] == 0) {
+			o.JobID = i.JobID
+		}
+	}
+	if len(i.Info) > 0 {
+		if !(len(i.Info) == 1 && i.Info[0] == "") {
+			o.Info = i.Info
+		}
+	}
+	if len(i.Name) > 0 {
+		if !(len(i.Name) == 1 && i.Name[0] == "") {
+			o.Name = i.Name
+		}
+	}
+	if len(i.Status) > 0 {
+		if !(len(i.Status) == 1 && i.Status[0] == "") {
+			o.Status = i.Status
+		}
 	}
 	return
 }

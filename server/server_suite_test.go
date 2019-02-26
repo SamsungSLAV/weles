@@ -43,6 +43,8 @@ const (
 	durationIncrement1 = "25h"
 	durationIncrement2 = "+100h"
 
+	defaultPageLimit = 100
+
 	// api paths
 	basePath          = "/api/v1"
 	listArtifactsPath = "/artifacts/list"
@@ -72,7 +74,8 @@ func testServerSetup() (mockCtrl *gomock.Controller, mockJobManager *mock.MockJo
 	api := operations.NewWelesAPI(swaggerSpec)
 	srv := server.NewServer(api)
 	apiDefaults = &server.APIDefaults{
-		Managers: server.NewManagers(mockJobManager, mockArtifactManager),
+		Managers:  server.NewManagers(mockJobManager, mockArtifactManager),
+		PageLimit: defaultPageLimit,
 	}
 	srv.WelesConfigureAPI(apiDefaults)
 	testserver = httptest.NewServer(srv.GetHandler())

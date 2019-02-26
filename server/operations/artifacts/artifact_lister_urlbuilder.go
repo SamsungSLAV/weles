@@ -24,19 +24,11 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
-
-	"github.com/go-openapi/swag"
 )
 
 // ArtifactListerURL generates an URL for the artifact lister operation
 type ArtifactListerURL struct {
-	After  *int64
-	Before *int64
-	Limit  *int32
-
 	_basePath string
-	// avoid unkeyed usage
-	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
@@ -65,34 +57,6 @@ func (o *ArtifactListerURL) Build() (*url.URL, error) {
 		_basePath = "/api/v1"
 	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
-
-	qs := make(url.Values)
-
-	var after string
-	if o.After != nil {
-		after = swag.FormatInt64(*o.After)
-	}
-	if after != "" {
-		qs.Set("after", after)
-	}
-
-	var before string
-	if o.Before != nil {
-		before = swag.FormatInt64(*o.Before)
-	}
-	if before != "" {
-		qs.Set("before", before)
-	}
-
-	var limit string
-	if o.Limit != nil {
-		limit = swag.FormatInt32(*o.Limit)
-	}
-	if limit != "" {
-		qs.Set("limit", limit)
-	}
-
-	result.RawQuery = qs.Encode()
 
 	return &result, nil
 }

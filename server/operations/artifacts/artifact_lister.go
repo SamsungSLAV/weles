@@ -98,6 +98,9 @@ type ArtifactListerBody struct {
 	// filter
 	Filter *weles.ArtifactFilter `json:"Filter,omitempty"`
 
+	// paginator
+	Paginator *weles.Paginator `json:"Paginator,omitempty"`
+
 	// sorter
 	Sorter *weles.ArtifactSorter `json:"Sorter,omitempty"`
 }
@@ -107,6 +110,10 @@ func (o *ArtifactListerBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateFilter(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validatePaginator(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -129,7 +136,25 @@ func (o *ArtifactListerBody) validateFilter(formats strfmt.Registry) error {
 	if o.Filter != nil {
 		if err := o.Filter.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("artifactFilterAndSort" + "." + "Filter")
+				return ve.ValidateName("ArtifactListBody" + "." + "Filter")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *ArtifactListerBody) validatePaginator(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Paginator) { // not required
+		return nil
+	}
+
+	if o.Paginator != nil {
+		if err := o.Paginator.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ArtifactListBody" + "." + "Paginator")
 			}
 			return err
 		}
@@ -147,7 +172,7 @@ func (o *ArtifactListerBody) validateSorter(formats strfmt.Registry) error {
 	if o.Sorter != nil {
 		if err := o.Sorter.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("artifactFilterAndSort" + "." + "Sorter")
+				return ve.ValidateName("ArtifactListBody" + "." + "Sorter")
 			}
 			return err
 		}
