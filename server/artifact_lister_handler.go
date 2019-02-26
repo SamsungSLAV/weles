@@ -24,16 +24,9 @@ import (
 
 // ArtifactLister is a handler which passess requests for listing artifacts to ArtifactManager.
 func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) middleware.Responder {
-	paginator := weles.ArtifactPaginator{}
-	if a.PageLimit != 0 {
-		if (params.After != nil) && (params.Before != nil) {
-			return artifacts.NewArtifactListerBadRequest().WithPayload(&weles.ErrResponse{
-				Message: weles.ErrBeforeAfterNotAllowed.Error()})
-		}
-		paginator = setArtifactPaginator(params, a.PageLimit)
-	}
-	filter := setArtifactFilter(params.ArtifactFilterAndSort.Filter)
-	sorter := setArtifactSorter(params.ArtifactFilterAndSort.Sorter)
+	paginator := setArtifactPaginator(params.ArtifactListBody.Paginator, a.PageLimit)
+	filter := setArtifactFilter(params.ArtifactListBody.Filter)
+	sorter := setArtifactSorter(params.ArtifactListBody.Sorter)
 
 	artifactInfoReceived, listInfo, err := a.Managers.AM.ListArtifact(filter, sorter, paginator)
 
@@ -48,85 +41,33 @@ func (a *APIDefaults) ArtifactLister(params artifacts.ArtifactListerParams) midd
 	}
 
 	artifactInfoReturned := artifactInfoReceivedToReturn(artifactInfoReceived)
-
 	if (listInfo.RemainingRecords == 0) || (a.PageLimit == 0) { //last page...
-		return responderArtifact200(listInfo, paginator, artifactInfoReturned, a.PageLimit)
-	} //not last page...
-	return responderArtifact206(listInfo, paginator, artifactInfoReturned, a.PageLimit)
+		return artifacts.NewArtifactListerOK().
+			WithWelesListTotal(listInfo.TotalRecords).
+			WithWelesListBatchSize(int32(len(artifactInfoReturned))).
+			WithPayload(artifactInfoReturned)
+	}
+	return artifacts.NewArtifactListerPartialContent().
+		WithWelesListTotal(listInfo.TotalRecords).
+		WithWelesListRemaining(listInfo.RemainingRecords).
+		WithWelesListBatchSize(int32(len(artifactInfoReturned))).
+		WithPayload(artifactInfoReturned)
 }
 
-// responderArtifact206 builds 206 HTTP response with appropriate headers and body.
-func responderArtifact206(listInfo weles.ListInfo, paginator weles.ArtifactPaginator,
-	artifactInfoReturned []*weles.ArtifactInfoExt, defaultPageLimit int32,
-) (responder *artifacts.ArtifactListerPartialContent) {
-	var artifactListerURL artifacts.ArtifactListerURL
-
-	responder = artifacts.NewArtifactListerPartialContent()
-	responder.SetWelesListTotal(listInfo.TotalRecords)
-	responder.SetWelesListRemaining(listInfo.RemainingRecords)
-	responder.SetWelesListBatchSize(int32(len(artifactInfoReturned)))
-
-	tmp := artifactInfoReturned[len(artifactInfoReturned)-1].ID
-	artifactListerURL.After = &tmp
-
-	if defaultPageLimit != paginator.Limit {
-		tmp := paginator.Limit
-		artifactListerURL.Limit = &tmp
+func setArtifactPaginator(pi *weles.Paginator, globalLimit int32) (po weles.ArtifactPaginator) {
+	if pi == nil {
+		return weles.ArtifactPaginator{Forward: true, Limit: globalLimit}
 	}
-	responder.SetWelesNextPage(artifactListerURL.String())
+	po.ID = pi.ID
 
-	if paginator.ID != 0 { //... and not the first
-		//paginator.ID is from query parameter not artifactmanager
-		var artifactListerURL artifacts.ArtifactListerURL
-		tmp = artifactInfoReturned[0].ID
-		artifactListerURL.Before = &tmp
-		if defaultPageLimit != paginator.Limit {
-			tmp := paginator.Limit
-			artifactListerURL.Limit = &tmp
-		}
-		responder.SetWelesPreviousPage(artifactListerURL.String())
+	if pi.Direction != enums.DirectionBackward { // might be ""
+		po.Forward = true // default value
 	}
-	responder.SetPayload(artifactInfoReturned)
-	return
-}
-
-// responderArtifact200 builds 200 HTTP response with appropriate headers and body.
-func responderArtifact200(listInfo weles.ListInfo, paginator weles.ArtifactPaginator,
-	artifactInfoReturned []*weles.ArtifactInfoExt, defaultPageLimit int32,
-) (responder *artifacts.ArtifactListerOK) {
-	var artifactListerURL artifacts.ArtifactListerURL
-
-	responder = artifacts.NewArtifactListerOK()
-	responder.SetWelesListTotal(listInfo.TotalRecords)
-	responder.SetWelesListRemaining(listInfo.RemainingRecords)
-	responder.SetWelesListBatchSize(int32(len(artifactInfoReturned)))
-
-	if paginator.ID != 0 { //not the first page
-		// keep in mind that ArtifactPath in paginator is taken from query parameter,
-		// not ArtifactManager
-		if paginator.Forward {
-			if len(artifactInfoReturned) != 0 {
-				tmp := artifactInfoReturned[0].ID
-				artifactListerURL.Before = &tmp
-			}
-			if defaultPageLimit != paginator.Limit {
-				tmp := paginator.Limit
-				artifactListerURL.Limit = &tmp
-			}
-			responder.SetWelesPreviousPage(artifactListerURL.String())
-		} else {
-			if len(artifactInfoReturned) != 0 {
-				tmp := artifactInfoReturned[len(artifactInfoReturned)-1].ID
-				artifactListerURL.After = &tmp
-			}
-			if defaultPageLimit != paginator.Limit {
-				tmp2 := paginator.Limit
-				artifactListerURL.Limit = &tmp2
-			}
-			responder.SetWelesNextPage(artifactListerURL.String())
-		}
+	if pi.Limit == 0 {
+		po.Limit = globalLimit
+	} else {
+		po.Limit = pi.Limit
 	}
-	responder.SetPayload(artifactInfoReturned)
 	return
 }
 
@@ -175,24 +116,6 @@ func setArtifactSorter(si *weles.ArtifactSorter) (so weles.ArtifactSorter) {
 		so.By = si.By
 	}
 	return
-}
-
-// setArtifactPaginator creates and fills paginator object with default values.
-func setArtifactPaginator(params artifacts.ArtifactListerParams, defaultPageLimit int32,
-) (paginator weles.ArtifactPaginator) {
-	paginator.Forward = true
-	if params.After != nil {
-		paginator.ID = *params.After
-	} else if params.Before != nil {
-		paginator.ID = *params.Before
-		paginator.Forward = false
-	}
-	if params.Limit == nil {
-		paginator.Limit = defaultPageLimit
-	} else {
-		paginator.Limit = *params.Limit
-	}
-	return paginator
 }
 
 // artifactInfoReceivedToReturn creates slice of pointers from slice of values of ArtifactInfo
