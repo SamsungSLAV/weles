@@ -62,8 +62,8 @@ func main() {
 	var srv *server.Server // make sure init is called
 	var apiDefaults server.APIDefaults
 
-	flag.Int32Var(&apiDefaults.PageLimit, "page-limit", 0, "Default limit of page size returned "+
-		"by Weles API. If set to 0 pagination will be turned off")
+	flag.Int32Var(&apiDefaults.PageLimit, "page-limit", 30, "Default limit of page size returned "+
+		"by Weles API.")
 
 	flag.StringVar(&borutaAddress, "boruta-address", "http://127.0.0.1:8487",
 		"Boruta address. Must contain protocol.")
@@ -102,6 +102,11 @@ You can find out more at weles.rtfd.io`+"\n\n"+flag.CommandLine.FlagUsages())
 	if version {
 		fmt.Println("weles version", weles.SrvVersion)
 		os.Exit(0)
+	}
+
+	if apiDefaults.PageLimit == 0 {
+		fmt.Println("Limit can't be 0.")
+		os.Exit(1)
 	}
 
 	var yap parser.Parser
