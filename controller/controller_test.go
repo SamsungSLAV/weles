@@ -40,7 +40,7 @@ var _ = Describe("JobManager", func() {
 		bor := cmock.NewMockRequests(ctrl)
 		djm := mock.NewMockDryadJobManager(ctrl)
 
-		bor.EXPECT().ListRequests(nil).AnyTimes()
+		bor.EXPECT().ListRequests(gomock.Any(), nil, gomock.Any()).AnyTimes()
 
 		jm := NewJobManager(arm, yap, bor, time.Second, djm)
 		Expect(jm).NotTo(BeNil())

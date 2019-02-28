@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"github.com/SamsungSLAV/boruta"
+	reqfilter "github.com/SamsungSLAV/boruta/filter"
 	"github.com/SamsungSLAV/weles"
 	"github.com/SamsungSLAV/weles/controller/notifier"
 )
@@ -66,6 +67,10 @@ type BoruterImpl struct {
 	finish chan int
 	// looper waits for internal goroutine running loop to finish.
 	looper sync.WaitGroup
+	// filterIDs keeps actual ReqID list for ListRequests boruta's method filter.
+	filterIDs []boruta.ReqID
+	// rid2FilterIndex maps Boruta's RequestID to filter IDs index.
+	rid2FilterIndex map[boruta.ReqID]int
 }
 
 // NewBoruter creates a new BoruterImpl structure setting up references
@@ -80,6 +85,8 @@ func NewBoruter(j JobsController, b boruta.Requests, period time.Duration) Borut
 		mutex:             new(sync.Mutex),
 		borutaCheckPeriod: period,
 		finish:            make(chan int),
+		filterIDs:         make([]boruta.ReqID, 0),
+		rid2FilterIndex:   make(map[boruta.ReqID]int),
 	}
 	ret.looper.Add(1)
 	go ret.loop()
@@ -101,6 +108,24 @@ func (h *BoruterImpl) add(j weles.JobID, r boruta.ReqID) {
 		rid: r,
 	}
 	h.rid2Job[r] = j
+	h.rid2FilterIndex[r] = len(h.filterIDs)
+	h.filterIDs = append(h.filterIDs, r)
+}
+
+// del is a helper function for cleaning up Job and Boruta's request ID from internal structures.
+// The method must be used in h.mutex critical section.
+func (h *BoruterImpl) del(j weles.JobID, r boruta.ReqID) {
+	delete(h.rid2Job, r)
+	delete(h.info, j)
+
+	lastIdx := len(h.filterIDs) - 1
+	idx := h.rid2FilterIndex[r]
+	movedR := h.filterIDs[lastIdx]
+
+	h.filterIDs[idx] = movedR
+	h.rid2FilterIndex[movedR] = idx
+	delete(h.rid2FilterIndex, r)
+	h.filterIDs = h.filterIDs[:lastIdx]
 }
 
 // remove Boruta's request ID for the Job from monitored requests.
@@ -108,8 +133,7 @@ func (h *BoruterImpl) remove(j weles.JobID, r boruta.ReqID) {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
 
-	delete(h.rid2Job, r)
-	delete(h.info, j)
+	h.del(j, r)
 }
 
 // pop gets and removes Boruta's request ID for the Job and a Job from monitored set.
@@ -123,8 +147,7 @@ func (h *BoruterImpl) pop(j weles.JobID) (r boruta.ReqID, err error) {
 		return r, weles.ErrJobNotFound
 	}
 	r = rinfo.rid
-	delete(h.rid2Job, r)
-	delete(h.info, j)
+	h.del(j, r)
 	return
 }
 
@@ -181,6 +204,20 @@ func (h *BoruterImpl) acquire(j weles.JobID, rinfo boruta.ReqInfo) {
 // loop monitors Boruta's requests.
 func (h *BoruterImpl) loop() {
 	defer h.looper.Done()
+
+	paginator := &boruta.RequestsPaginator{
+		ID:        boruta.ReqID(0),
+		Direction: boruta.DirectionForward,
+		Limit:     boruta.MaxPageLimit,
+	}
+	filter := reqfilter.NewRequests(nil, nil, []boruta.ReqState{
+		boruta.INPROGRESS,
+		boruta.CANCEL,
+		boruta.DONE,
+		boruta.TIMEOUT,
+		boruta.INVALID,
+		boruta.FAILED,
+	})
 	for {
 		select {
 		case <-h.finish:
@@ -188,33 +225,41 @@ func (h *BoruterImpl) loop() {
 		case <-time.After(h.borutaCheckPeriod):
 		}
 
-		// TODO use filter with slice of ReqIDs when implemented in Boruta.
-		requests, err := h.boruta.ListRequests(nil)
-		if err != nil {
-			// TODO log error
-			continue
-		}
+		filter.IDs = h.filterIDs
+		paginator.ID = boruta.ReqID(0)
 
-		for _, rinfo := range requests {
-			status, j := h.updateStatus(rinfo)
-
-			switch status {
-			case boruta.INPROGRESS:
-				h.acquire(j, rinfo)
-			case boruta.CANCEL:
-				h.remove(j, rinfo.ID)
-			case boruta.DONE:
-				h.remove(j, rinfo.ID)
-			case boruta.TIMEOUT:
-				h.remove(j, rinfo.ID)
-				h.SendFail(j, "Timeout in Boruta.")
-			case boruta.INVALID:
-				h.remove(j, rinfo.ID)
-				h.SendFail(j, "No suitable device in Boruta to run test.")
-			case boruta.FAILED:
-				h.remove(j, rinfo.ID)
-				h.SendFail(j, "Boruta failed during request execution.")
+		for {
+			requests, pageInfo, err := h.boruta.ListRequests(filter, nil, paginator)
+			if err != nil {
+				// TODO log error
+				break
 			}
+
+			for _, rinfo := range requests {
+				status, j := h.updateStatus(rinfo)
+
+				switch status {
+				case boruta.INPROGRESS:
+					h.acquire(j, rinfo)
+				case boruta.CANCEL:
+					h.remove(j, rinfo.ID)
+				case boruta.DONE:
+					h.remove(j, rinfo.ID)
+				case boruta.TIMEOUT:
+					h.remove(j, rinfo.ID)
+					h.SendFail(j, "Timeout in Boruta.")
+				case boruta.INVALID:
+					h.remove(j, rinfo.ID)
+					h.SendFail(j, "No suitable device in Boruta to run test.")
+				case boruta.FAILED:
+					h.remove(j, rinfo.ID)
+					h.SendFail(j, "Boruta failed during request execution.")
+				}
+			}
+			if pageInfo == nil || pageInfo.RemainingItems == 0 {
+				break
+			}
+			paginator.ID = requests[len(requests)-1].ID
 		}
 	}
 }

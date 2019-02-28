@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/SamsungSLAV/boruta"
+	reqfilter "github.com/SamsungSLAV/boruta/filter"
 	"github.com/SamsungSLAV/weles"
 	cmock "github.com/SamsungSLAV/weles/controller/mock"
 	"github.com/SamsungSLAV/weles/controller/notifier"
@@ -124,8 +125,9 @@ var _ = Describe("BoruterImpl", func() {
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
 				rid, nil)
-			req.EXPECT().ListRequests(nil).AnyTimes().Return([]boruta.ReqInfo{}, err).Do(
-				func(boruta.ListFilter) {
+			req.EXPECT().ListRequests(gomock.Any(), nil, gomock.Any()).AnyTimes().Return(
+				[]boruta.ReqInfo{}, &boruta.ListInfo{}, err).Do(
+				func(boruta.ListFilter, *boruta.SortInfo, *boruta.RequestsPaginator) {
 					mutex.Lock()
 					defer mutex.Unlock()
 					counter--
@@ -154,7 +156,7 @@ var _ = Describe("BoruterImpl", func() {
 					va = validAfter
 					dl = deadline
 				})
-			req.EXPECT().ListRequests(nil).AnyTimes()
+			req.EXPECT().ListRequests(gomock.Any(), nil, gomock.Any()).AnyTimes()
 
 			before := time.Now()
 			h.Request(j)
@@ -182,7 +184,7 @@ var _ = Describe("BoruterImpl", func() {
 					va = validAfter
 					dl = deadline
 				})
-			req.EXPECT().ListRequests(nil).AnyTimes()
+			req.EXPECT().ListRequests(gomock.Any(), nil, gomock.Any()).AnyTimes()
 
 			before := time.Now()
 			h.Request(j)
@@ -200,7 +202,7 @@ var _ = Describe("BoruterImpl", func() {
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(caps, priority, owner, gomock.Any(), gomock.Any()).Return(
 				boruta.ReqID(0), err)
-			req.EXPECT().ListRequests(nil).AnyTimes()
+			req.EXPECT().ListRequests(gomock.Any(), nil, gomock.Any()).AnyTimes()
 
 			h.Request(j)
 
@@ -210,7 +212,7 @@ var _ = Describe("BoruterImpl", func() {
 		It("should fail if GetConfig fails", func() {
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "")
 			jc.EXPECT().GetConfig(j).Return(weles.Config{}, err)
-			req.EXPECT().ListRequests(nil).AnyTimes()
+			req.EXPECT().ListRequests(gomock.Any(), nil, gomock.Any()).AnyTimes()
 
 			h.Request(j)
 
@@ -219,7 +221,7 @@ var _ = Describe("BoruterImpl", func() {
 		})
 		It("should fail if SetStatusAndInfo fails", func() {
 			jc.EXPECT().SetStatusAndInfo(j, weles.JobStatusWAITING, "").Return(err)
-			req.EXPECT().ListRequests(nil).AnyTimes()
+			req.EXPECT().ListRequests(gomock.Any(), nil, gomock.Any()).AnyTimes()
 
 			h.Request(j)
 
@@ -232,7 +234,7 @@ var _ = Describe("BoruterImpl", func() {
 			jc.EXPECT().GetConfig(j).Return(config, nil)
 			req.EXPECT().NewRequest(boruta.Capabilities{}, priority, owner, gomock.Any(),
 				gomock.Any()).Return(boruta.ReqID(0), err)
-			req.EXPECT().ListRequests(nil).AnyTimes()
+			req.EXPECT().ListRequests(gomock.Any(), nil, gomock.Any()).AnyTimes()
 
 			h.Request(j)
 
@@ -252,7 +254,7 @@ var _ = Describe("BoruterImpl", func() {
 				jc.EXPECT().GetConfig(j).Return(config, nil)
 				req.EXPECT().NewRequest(caps, v, owner, gomock.Any(), gomock.Any()).Return(
 					boruta.ReqID(0), err)
-				req.EXPECT().ListRequests(nil).AnyTimes()
+				req.EXPECT().ListRequests(gomock.Any(), nil, gomock.Any()).AnyTimes()
 
 				h.Request(j)
 
@@ -263,6 +265,8 @@ var _ = Describe("BoruterImpl", func() {
 	})
 	Describe("With registered request", func() {
 		var listRequestRet chan []boruta.ReqInfo
+		var remainingRequests chan uint64
+		var sinceID chan boruta.ReqID
 		states := []boruta.ReqState{
 			boruta.WAIT,
 			boruta.INPROGRESS,
@@ -290,10 +294,39 @@ var _ = Describe("BoruterImpl", func() {
 					va = validAfter
 					dl = deadline
 				})
-			listRequestRet = make(chan []boruta.ReqInfo)
-			req.EXPECT().ListRequests(nil).AnyTimes().DoAndReturn(
-				func(boruta.ListFilter) ([]boruta.ReqInfo, error) {
-					return <-listRequestRet, nil
+			listRequestRet = make(chan []boruta.ReqInfo, 10)
+			remainingRequests = make(chan uint64, 10)
+			sinceID = make(chan boruta.ReqID, 10)
+			req.EXPECT().ListRequests(gomock.Any(), nil, gomock.Any()).AnyTimes().DoAndReturn(
+				func(f boruta.ListFilter, s *boruta.SortInfo, p *boruta.RequestsPaginator) (
+					[]boruta.ReqInfo, *boruta.ListInfo, error) {
+
+					elems := <-listRequestRet
+					remaining := <-remainingRequests
+					lastID := <-sinceID
+
+					Expect(f).NotTo(BeNil())
+					fr := f.(*reqfilter.Requests)
+					Expect(fr).NotTo(BeNil())
+					Expect(fr.IDs).To(ConsistOf(rid))
+					Expect(fr.Priorities).To(BeNil())
+					Expect(fr.States).To(ConsistOf(
+						boruta.INPROGRESS,
+						boruta.CANCEL,
+						boruta.DONE,
+						boruta.TIMEOUT,
+						boruta.INVALID,
+						boruta.FAILED))
+					Expect(s).To(BeNil())
+					Expect(p).NotTo(BeNil())
+					Expect(p.ID).To(Equal(lastID))
+					Expect(p.Direction).To(Equal(boruta.DirectionForward))
+					Expect(p.Limit).To(Equal(boruta.MaxPageLimit))
+
+					return elems, &boruta.ListInfo{
+						RemainingItems: remaining,
+						TotalItems:     uint64(len(elems)),
+					}, nil
 				})
 
 			before := time.Now()
@@ -311,10 +344,13 @@ var _ = Describe("BoruterImpl", func() {
 			for _, s := range states {
 				rinfo := boruta.ReqInfo{ID: boruta.ReqID(0x0BCA), State: s}
 				listRequestRet <- []boruta.ReqInfo{rinfo}
+				remainingRequests <- 0
+				sinceID <- boruta.ReqID(0)
 
 				expectRegistered(1)
 			}
 		})
+
 		for _, s := range states { // Every state is a separate It,
 			//because objects must be reinitialized.
 			It("should ignore if request's state is unchanged : "+string(s), func() {
@@ -329,6 +365,8 @@ var _ = Describe("BoruterImpl", func() {
 
 				rinfo := boruta.ReqInfo{ID: rid, State: s}
 				listRequestRet <- []boruta.ReqInfo{rinfo}
+				remainingRequests <- 0
+				sinceID <- boruta.ReqID(0)
 
 				expectRegistered(1)
 			})
@@ -348,6 +386,8 @@ var _ = Describe("BoruterImpl", func() {
 				Job:   &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)},
 			}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
+			remainingRequests <- 0
+			sinceID <- boruta.ReqID(0)
 
 			eventuallyNoti(1, true, "")
 		})
@@ -366,6 +406,8 @@ var _ = Describe("BoruterImpl", func() {
 				Job:   &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)},
 			}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
+			remainingRequests <- 0
+			sinceID <- boruta.ReqID(0)
 
 			eventuallyNoti(1, false, "Internal Weles error while setting Dryad : test error")
 			eventuallyEmpty(1)
@@ -379,6 +421,8 @@ var _ = Describe("BoruterImpl", func() {
 				Job:   &boruta.JobInfo{Timeout: time.Now().AddDate(0, 0, 1)},
 			}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
+			remainingRequests <- 0
+			sinceID <- boruta.ReqID(0)
 
 			eventuallyNoti(1, false, "Cannot acquire worker from Boruta : test error")
 			eventuallyEmpty(1)
@@ -386,18 +430,24 @@ var _ = Describe("BoruterImpl", func() {
 		It("should remove request if state changes to CANCEL", func() {
 			rinfo := boruta.ReqInfo{ID: rid, State: boruta.CANCEL}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
+			remainingRequests <- 0
+			sinceID <- boruta.ReqID(0)
 
 			eventuallyEmpty(1)
 		})
 		It("should remove request if state changes to DONE", func() {
 			rinfo := boruta.ReqInfo{ID: rid, State: boruta.DONE}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
+			remainingRequests <- 0
+			sinceID <- boruta.ReqID(0)
 
 			eventuallyEmpty(1)
 		})
 		It("should fail and remove request if state changes to TIMEOUT", func() {
 			rinfo := boruta.ReqInfo{ID: rid, State: boruta.TIMEOUT}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
+			remainingRequests <- 0
+			sinceID <- boruta.ReqID(0)
 
 			eventuallyNoti(1, false, "Timeout in Boruta.")
 			eventuallyEmpty(1)
@@ -405,6 +455,8 @@ var _ = Describe("BoruterImpl", func() {
 		It("should fail and remove request if state changes to INVALID", func() {
 			rinfo := boruta.ReqInfo{ID: rid, State: boruta.INVALID}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
+			remainingRequests <- 0
+			sinceID <- boruta.ReqID(0)
 
 			eventuallyNoti(1, false, "No suitable device in Boruta to run test.")
 			eventuallyEmpty(1)
@@ -412,8 +464,43 @@ var _ = Describe("BoruterImpl", func() {
 		It("should fail and remove request if state changes to FAILED", func() {
 			rinfo := boruta.ReqInfo{ID: rid, State: boruta.FAILED}
 			listRequestRet <- []boruta.ReqInfo{rinfo}
+			remainingRequests <- 0
+			sinceID <- boruta.ReqID(0)
 
 			eventuallyNoti(1, false, "Boruta failed during request execution.")
+			eventuallyEmpty(1)
+		})
+		It("iterate through many pages of boruta's response", func() {
+			infoF1 := boruta.ReqInfo{ID: boruta.ReqID(rid + 1), State: boruta.WAIT}
+			infoF2 := boruta.ReqInfo{ID: boruta.ReqID(rid + 2), State: boruta.WAIT}
+			infoF3 := boruta.ReqInfo{ID: boruta.ReqID(rid + 3), State: boruta.WAIT}
+			infoF4 := boruta.ReqInfo{ID: boruta.ReqID(rid + 4), State: boruta.WAIT}
+			infoF5 := boruta.ReqInfo{ID: boruta.ReqID(rid + 5), State: boruta.WAIT}
+			infoF6 := boruta.ReqInfo{ID: boruta.ReqID(rid + 6), State: boruta.WAIT}
+			infoF7 := boruta.ReqInfo{ID: boruta.ReqID(rid + 7), State: boruta.WAIT}
+			infoF8 := boruta.ReqInfo{ID: boruta.ReqID(rid + 8), State: boruta.WAIT}
+
+			// send first 3 items
+			listRequestRet <- []boruta.ReqInfo{infoF1, infoF2, infoF3}
+			remainingRequests <- 5
+			sinceID <- boruta.ReqID(0)
+
+			// send next 2 items
+			listRequestRet <- []boruta.ReqInfo{infoF4, infoF5}
+			remainingRequests <- 3
+			sinceID <- boruta.ReqID(rid + 3)
+
+			// send last 3 items
+			listRequestRet <- []boruta.ReqInfo{infoF6, infoF7, infoF8}
+			remainingRequests <- 0
+			sinceID <- boruta.ReqID(rid + 5)
+
+			// make a new ListRequests call
+			rinfo := boruta.ReqInfo{ID: rid, State: boruta.DONE}
+			listRequestRet <- []boruta.ReqInfo{rinfo}
+			remainingRequests <- 0
+			sinceID <- boruta.ReqID(0)
+
 			eventuallyEmpty(1)
 		})
 		Describe("Release", func() {
