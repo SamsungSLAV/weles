@@ -310,9 +310,8 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 	var path string
 	for i, tc := range config.Action.Test.TestCases {
 		for k, ta := range tc.TestActions {
-			switch ta.(type) {
+			switch action := ta.(type) {
 			case weles.Push:
-				action := ta.(weles.Push)
 				path, err = h.push(j, weles.ArtifactTypeTEST, action.Alias, action.URI)
 				if err != nil {
 					h.fail(j, fmt.Sprintf(formatURI, action.URI, err.Error()))
@@ -321,7 +320,6 @@ func (h *DownloaderImpl) DispatchDownloads(j weles.JobID) {
 				action.Path = path
 				config.Action.Test.TestCases[i].TestActions[k] = action
 			case weles.Pull:
-				action := ta.(weles.Pull)
 				path, err = h.pullCreate(j, action.Alias)
 				if err != nil {
 					h.fail(j, fmt.Sprintf(formatPath, err.Error()))

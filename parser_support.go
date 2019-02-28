@@ -44,7 +44,7 @@ func (t *ValidPeriod) UnmarshalYAML(unmarshal func(interface{}) error) error {
 		}
 	}
 
-	return errors.New("Invalid timeout")
+	return errors.New("invalid timeout")
 }
 
 // LocalTestActionContainer contains fields for all types of test cases.
