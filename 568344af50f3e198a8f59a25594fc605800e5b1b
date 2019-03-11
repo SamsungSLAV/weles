@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1cc49a80_1e84f45d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2019-03-11T14:21:37Z",
+      "side": 1,
+      "message": "done",
+      "range": {
+        "startLine": 10,
+        "startChar": 2,
+        "endLine": 10,
+        "endChar": 34
+      },
+      "revId": "568344af50f3e198a8f59a25594fc605800e5b1b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7cf778c_c9ecfa7b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2019-03-11T14:21:37Z",
+      "side": 1,
+      "message": "I think it would be better to explicitly state that this changes are due to v0.2.0, so:\n\u0027in version v0.2.0\u0027",
+      "range": {
+        "startLine": 13,
+        "startChar": 30,
+        "endLine": 13,
+        "endChar": 50
+      },
+      "revId": "568344af50f3e198a8f59a25594fc605800e5b1b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "562243d9_768ed5e1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2019-03-11T14:21:37Z",
+      "side": 1,
+      "message": "relevant",
+      "range": {
+        "startLine": 16,
+        "startChar": 40,
+        "endLine": 16,
+        "endChar": 51
+      },
+      "revId": "568344af50f3e198a8f59a25594fc605800e5b1b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08e80591_324715d7",
+        "filename": "controller/boruterimpl.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2019-03-11T14:21:37Z",
+      "side": 1,
+      "message": "We need those advanced filters (\u0027not WAITING\u0027 instead of this list).",
+      "range": {
+        "startLine": 214,
+        "startChar": 2,
+        "endLine": 219,
+        "endChar": 16
+      },
+      "revId": "568344af50f3e198a8f59a25594fc605800e5b1b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d07b8053_b2eee0f8",
+        "filename": "controller/boruterimpl.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2019-03-11T14:21:37Z",
+      "side": 1,
+      "message": "Why isn\u0027t it done in NewRequests() call?",
+      "range": {
+        "startLine": 228,
+        "startChar": 2,
+        "endLine": 228,
+        "endChar": 26
+      },
+      "revId": "568344af50f3e198a8f59a25594fc605800e5b1b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b753c81_3b93a62f",
+        "filename": "controller/boruterimpl.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1015210
+      },
+      "writtenOn": "2019-03-11T14:21:37Z",
+      "side": 1,
+      "message": "unnecessary",
+      "range": {
+        "startLine": 229,
+        "startChar": 2,
+        "endLine": 229,
+        "endChar": 32
+      },
+      "revId": "568344af50f3e198a8f59a25594fc605800e5b1b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
