@@ -2,6 +2,121 @@
   "comments": [
     {
       "key": {
+        "uuid": "dd0deea2_b8ff021d",
+        "filename": "server/doc.go",
+        "patchSetId": 12
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015718
+      },
+      "writtenOn": "2019-06-26T13:43:11Z",
+      "side": 1,
+      "message": "Is it existing official page of Weles documentation? This page is marked as fishing by my IT department.",
+      "range": {
+        "startLine": 21,
+        "startChar": 15,
+        "endLine": 21,
+        "endChar": 35
+      },
+      "revId": "948cfd3ba4bcd04d902b244ee8d8228d69925c13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e20d2af8_fa839760",
+        "filename": "server/doc.go",
+        "patchSetId": 12
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1015718
+      },
+      "writtenOn": "2019-06-26T13:43:11Z",
+      "side": 1,
+      "message": "Must this go file be filled by administrator of Weles instance before compilation?",
+      "range": {
+        "startLine": 34,
+        "startChar": 14,
+        "endLine": 34,
+        "endChar": 34
+      },
+      "revId": "948cfd3ba4bcd04d902b244ee8d8228d69925c13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2019358d_f5aaa21b",
+        "filename": "server/embedded_spec.go",
+        "patchSetId": 12
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 1015718
+      },
+      "writtenOn": "2019-06-26T13:43:11Z",
+      "side": 1,
+      "message": "What is alternative name of an Artifact?",
+      "range": {
+        "startLine": 432,
+        "startChar": 22,
+        "endLine": 432,
+        "endChar": 29
+      },
+      "revId": "948cfd3ba4bcd04d902b244ee8d8228d69925c13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22d57271_e7030aac",
+        "filename": "server/embedded_spec.go",
+        "patchSetId": 12
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1015718
+      },
+      "writtenOn": "2019-06-26T13:43:11Z",
+      "side": 1,
+      "message": "Shouldn\u0027t it be ArtEfact in whole system?",
+      "range": {
+        "startLine": 440,
+        "startChar": 58,
+        "endLine": 440,
+        "endChar": 66
+      },
+      "revId": "948cfd3ba4bcd04d902b244ee8d8228d69925c13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "35ac37a9_2667fed3",
+        "filename": "server/embedded_spec.go",
+        "patchSetId": 12
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 1015718
+      },
+      "writtenOn": "2019-06-26T13:43:11Z",
+      "side": 1,
+      "message": "Why so much spaces?",
+      "range": {
+        "startLine": 712,
+        "startChar": 59,
+        "endLine": 712,
+        "endChar": 71
+      },
+      "revId": "948cfd3ba4bcd04d902b244ee8d8228d69925c13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "520266ca_08547cb4",
         "filename": "swagger.yml",
         "patchSetId": 12
