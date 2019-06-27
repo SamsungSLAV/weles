@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99196779_f5846f24",
+        "filename": "server/artifact_download.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015718
+      },
+      "writtenOn": "2019-06-27T12:49:57Z",
+      "side": 1,
+      "message": "2019?",
+      "range": {
+        "startLine": 1,
+        "startChar": 16,
+        "endLine": 1,
+        "endChar": 26
+      },
+      "revId": "b008b0f44eefde15da972667d6989cb843e1c5d9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af1c7bd5_289b8f74",
+        "filename": "server/artifact_download_test.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015718
+      },
+      "writtenOn": "2019-06-27T12:49:57Z",
+      "side": 1,
+      "message": "2019?",
+      "range": {
+        "startLine": 1,
+        "startChar": 17,
+        "endLine": 1,
+        "endChar": 26
+      },
+      "revId": "b008b0f44eefde15da972667d6989cb843e1c5d9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4dbdcc6_75ff287c",
+        "filename": "server/artifact_download_test.go",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1015718
+      },
+      "writtenOn": "2019-06-27T12:49:57Z",
+      "side": 1,
+      "message": "Is it empty test file?",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 19
+      },
+      "revId": "b008b0f44eefde15da972667d6989cb843e1c5d9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
